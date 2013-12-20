@@ -13,8 +13,9 @@ class ProjectRazor::Slice < ProjectRazor::Object
 
   # Initializes the Slice Base
   # @param [Array] args
-  def initialize(args)
-    @command_array = args
+  def initialize(args = nil)
+    @command_array = []
+    @command_array = args if args
     @command_help_text = ""
     @web_command = false
     @prev_args = Stack.new
