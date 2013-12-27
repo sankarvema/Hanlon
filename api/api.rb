@@ -5,6 +5,9 @@ require 'grape-swagger'
 module Razor
   module WebService
     class API < Grape::API
+      mount ::Razor::WebService::Config::APIv1
+      mount ::Razor::WebService::Boot::APIv1
+      mount ::Razor::WebService::Image::APIv1
       mount ::Razor::WebService::Node::APIv1
       mount ::Razor::WebService::Model::APIv1
       #if the service.yaml file includes the necessary configuration parameter (and it's

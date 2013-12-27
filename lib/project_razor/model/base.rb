@@ -223,7 +223,7 @@ module ProjectRazor
       end
 
       def api_svc_uri
-        "http://#{config.image_svc_host}:#{config.api_port}/razor/api"
+        "http://#{config.image_svc_host}:#{config.api_port}#{config.websvc_root}"
       end
 
       def web_create_metadata(provided_metadata)

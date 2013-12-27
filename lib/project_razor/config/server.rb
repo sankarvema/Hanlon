@@ -23,6 +23,7 @@ module ProjectRazor
       attr_accessor :persist_password
       attr_accessor :persist_timeout
 
+      attr_accessor :websvc_root
       attr_accessor :admin_port
       attr_accessor :api_port
       attr_accessor :image_svc_port
@@ -32,8 +33,8 @@ module ProjectRazor
       attr_accessor :mk_checkin_skew
       attr_accessor :mk_uri
       attr_accessor :mk_fact_excl_pattern
-      attr_accessor :mk_register_path # : /project_razor/api/node/register
-      attr_accessor :mk_checkin_path # checkin: /project_razor/api/node/checkin
+      attr_accessor :mk_register_path # : /project_razor/api/v1/node/register
+      attr_accessor :mk_checkin_path # checkin: /project_razor/api/v1/node/checkin
 
       # mk_log_level should be 'Logger::FATAL', 'Logger::ERROR', 'Logger::WARN',
       # 'Logger::INFO', or 'Logger::DEBUG' (default is 'Logger::ERROR')
@@ -129,6 +130,7 @@ module ProjectRazor
 
       # Obtain our defaults
       def defaults
+        default_websvc_root = '/razor/api/v1'
         defaults = {
           'image_svc_host'           => get_an_ip,
           'persist_mode'             => :mongo,
@@ -138,6 +140,7 @@ module ProjectRazor
           'persist_password'         => '',
           'persist_timeout'          => 10,
 
+          'websvc_root'              => default_websvc_root,
           'admin_port'               => 8025,
           'api_port'                 => 8026,
           'image_svc_port'           => 8027,
@@ -145,8 +148,8 @@ module ProjectRazor
 
           'mk_checkin_interval'      => 60,
           'mk_checkin_skew'          => 5,
-          'mk_register_path'         => "/razor/api/node/register",
-          'mk_checkin_path'          => "/razor/api/node/checkin",
+          'mk_register_path'         => "#{default_websvc_root}/node/register",
+          'mk_checkin_path'          => "#{default_websvc_root}/node/checkin",
           'mk_fact_excl_pattern'     => [
             "(^facter.*$)", "(^id$)", "(^kernel.*$)", "(^memoryfree$)",
             "(^operating.*$)", "(^osfamily$)", "(^path$)", "(^ps$)",

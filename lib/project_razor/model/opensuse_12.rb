@@ -269,7 +269,7 @@ module ProjectRazor
       end
 
       def api_svc_uri
-        "http://#{config.image_svc_host}:#{config.api_port}/razor/api"
+        "http://#{config.image_svc_host}:#{config.api_port}#{config.websvc_root}"
       end
 
       def generate_yast(policy_uuid)

@@ -303,7 +303,7 @@ module ProjectRazor
       end
 
       def api_svc_uri
-        "http://#{config.image_svc_host}:#{config.api_port}/razor/api"
+        "http://#{config.image_svc_host}:#{config.api_port}#{config.websvc_root}"
       end
 
       # ERB.result(binding) is failing in Ruby 1.9.2 and 1.9.3 so template is processed in the def block.

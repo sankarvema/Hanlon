@@ -12,22 +12,6 @@ module Razor
         format :json
         default_format :json
 
-        class NilResourceId < StandardError
-          attr_reader :message
-
-          def initialize(message)
-            @message = message
-          end
-        end
-
-        rescue_from NilResourceId do |e|
-          Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
-              400,
-              { "Content-type" => "application/json" }
-          )
-        end
-
         rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
               Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
