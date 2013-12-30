@@ -1,6 +1,7 @@
 #
 
 require 'json'
+require 'socket'
 
 module Razor
   module WebService
@@ -56,14 +57,33 @@ module Razor
 
           # GET /config
           # Query for Razor server configuration
+          after_validation do
+            # only test if directly accessing the /config resource
+            if env["PATH_INFO"].match(/config$/)
+              # only allow access to configuration resource from the localhost
+              if !Socket.ip_address_list.map{|val| val.ip_address}.include?(env['REMOTE_ADDR'])
+                error!({ error: "Remote Access Forbidden",
+                         detail: "Access to /config resource is only allowed from Razor server",
+                       }, 403)
+              end
+            end
+          end
           get do
             JSON(ProjectRazor.config.to_hash.to_json)
           end     # end GET /config
 
           resource :ipxe do
-
             # GET /config/ipxe
             # Query for iPXE boot script to use (from Microkernel)
+            after_validation do
+              # only allow access to configuration resource from the localhost
+              if !Socket.ip_address_list.map{|val| val.ip_address}.include?(env['REMOTE_ADDR'])
+                env['api.format'] = :text
+                error!({ error: "Remote Access Forbidden",
+                         detail: "Access to /config/ipxe resource is only allowed from Razor server",
+                       }, 403)
+              end
+            end
             get do
               @ipxe_options = {}
               @ipxe_options[:style] = :new
