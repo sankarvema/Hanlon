@@ -1,9 +1,7 @@
 #
 
 require 'json'
-require 'facter'
-require 'facter/util/ip'
-require 'ipaddr'
+require 'api_utils'
 
 module Razor
   module WebService
@@ -42,6 +40,10 @@ module Razor
             env['api.format']
           end
 
+          def request_is_from_razor_subnet(ip_addr)
+            Razor::WebService::Utils::request_from_razor_subnet?(ip_addr)
+          end
+
         end
 
         resource :boot do
@@ -52,30 +54,9 @@ module Razor
           #         required:
           #           :hw_id      | String | The hardware ID for the node. |                   | Default: unavailable
           #           :dhcp_mac   | String | The MAC address the DHCP NIC. |                   | Default: unavailable
-          after_validation do
-            # only allow for access to this resource from the localhost or the
-            # subnet being managed by the Razor server; to test this, first we
-            # need to retrieve a few parameters (the Razor server's IP address,
-            # the array of interfaces on the local machine, and the IP address
-            # of the client making the request)
-            razor_server_ip = ProjectRazor.config.to_hash["@mk_uri"].match(/\/\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)[1]
-            interface_array = Facter::Util::IP.get_interfaces
-            remote_addr = env['REMOTE_ADDR']
-            # then, need to test each interface to see if that interface includes
-            # the remote_addr IP address
-            in_razor_subnet = interface_array.map { |val|
-              ip_addr = Facter::Util::IP.get_interface_value(val,'ipaddress')
-              # skip to next unless looking at loopback interface or IP address is the same as the razor_server_ip
-              next unless val == "lo" || ip_addr == razor_server_ip
-              netmask = Facter::Util::IP.get_interface_value(val,'netmask')
-              # construct a new IPAddr object from the ip_addr and netmask we just
-              # retrieved, then test to see if our remote_addr is in that same subnet
-              # (if so, map to true, otherwise map to false)
-              internal = IPAddr.new("#{ip_addr}/#{netmask}")
-              internal.include?(remote_addr) ? true : false
-            }.include?(true)
-            # if no match was found, then access to this resource is denied
-            unless in_razor_subnet
+          before do
+            # only allow access to this resource from the Razor subnet
+            unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
               env['api.format'] = :text
               error!({ error: "Remote Access Forbidden",
                        detail: "Access to /boot resource is not allowed from outside of the Razor subnet",

@@ -24,7 +24,7 @@ IPXE_TIMEOUT = 15
 
 require "monkey_patch"
 Dir.glob(File.join(PROJECT_ROOT, "/api/api_*.rb")) do |f|
-  next if f == "." || f == ".."
+  next if f == "." || f == ".." || /\/api_utils.rb$/.match(f)
   require File.basename(f)
 end
 

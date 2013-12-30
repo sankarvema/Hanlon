@@ -1,7 +1,7 @@
 #
 
 require 'json'
-require 'socket'
+require 'api_utils'
 
 module Razor
   module WebService
@@ -51,17 +51,22 @@ module Razor
           def is_uuid?(string_)
             string_ =~ /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/
           end
+
+          def request_is_from_razor_server(ip_addr)
+            Razor::WebService::Utils::request_from_razor_server?(ip_addr)
+          end
+
         end
 
         resource :config do
 
           # GET /config
           # Query for Razor server configuration
-          after_validation do
+          before do
             # only test if directly accessing the /config resource
             if env["PATH_INFO"].match(/config$/)
-              # only allow access to configuration resource from the localhost
-              if !Socket.ip_address_list.map{|val| val.ip_address}.include?(env['REMOTE_ADDR'])
+              # only allow access to configuration resource from the razor server
+              unless request_is_from_razor_server(env['REMOTE_ADDR'])
                 error!({ error: "Remote Access Forbidden",
                          detail: "Access to /config resource is only allowed from Razor server",
                        }, 403)
@@ -75,9 +80,9 @@ module Razor
           resource :ipxe do
             # GET /config/ipxe
             # Query for iPXE boot script to use (from Microkernel)
-            after_validation do
-              # only allow access to configuration resource from the localhost
-              if !Socket.ip_address_list.map{|val| val.ip_address}.include?(env['REMOTE_ADDR'])
+            before do
+              # only allow access to configuration resource from the razor server
+              unless request_is_from_razor_server(env['REMOTE_ADDR'])
                 env['api.format'] = :text
                 error!({ error: "Remote Access Forbidden",
                          detail: "Access to /config/ipxe resource is only allowed from Razor server",
