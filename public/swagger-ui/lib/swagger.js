@@ -479,12 +479,13 @@
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         parameter = _ref1[_i];
         parameter.name = parameter.name || parameter.dataType;
-        if (parameter.dataType.toLowerCase() === 'boolean') {
+        type = parameter.type || parameter.dataType;
+        if (type != 'undefined' && type.toLowerCase() === 'boolean') {
           parameter.allowableValues = {};
           parameter.allowableValues.values = this.resource.api.booleanValues;
         }
-        parameter.signature = this.getSignature(parameter.dataType, this.resource.models);
-        parameter.sampleJSON = this.getSampleJSON(parameter.dataType, this.resource.models);
+        parameter.signature = this.getSignature(type, this.resource.models);
+        parameter.sampleJSON = this.getSampleJSON(type, this.resource.models);
         if (parameter.allowableValues != null) {
           if (parameter.allowableValues.valueType === "RANGE") {
             parameter.isRange = true;

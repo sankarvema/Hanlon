@@ -68,6 +68,7 @@ module Razor
             #         optional:
             #           :field      | String | The field to return. |                           | Default: unavailable
             params do
+              requires :uuid, type: String
               optional :field, type: String
             end
             get do

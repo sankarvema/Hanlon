@@ -58,6 +58,13 @@ module Razor
 
         end
 
+        # the following description hides this endpoint from the swagger-ui-based documentation
+        # (since the functionality provided by this endpoint is not intended to be used off of
+        # the Razor server)
+        desc 'Hide this endpoint', {
+            :hidden => true
+        }
+
         resource :config do
 
           # GET /config

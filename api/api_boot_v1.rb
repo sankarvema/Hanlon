@@ -46,6 +46,15 @@ module Razor
 
         end
 
+        # the following code snippet hides this endpoint from the swagger-ui-based documentation
+        # (since the functionality provided by this endpoint is not intended to for users, instead
+        # this functionality is used during the iPXE boot process to retrieve the appropriate
+        # iPXE-boot script for a given node based on it's hardware ID nad the MAC address of the
+        # interface that it received it's DHCP assignment from)
+        desc 'Hide this endpoint', {
+            :hidden => true
+        }
+
         resource :boot do
 
           # GET /boot

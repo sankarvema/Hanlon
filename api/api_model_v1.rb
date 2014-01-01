@@ -79,6 +79,9 @@ module Razor
 
             # GET /model/{uuid}
             # Query for the state of a specific node.
+            params do
+              requires :uuid, type: String
+            end
             get do
               model_slice = ProjectRazor::Slice.new
               model_uuid = params[:uuid]

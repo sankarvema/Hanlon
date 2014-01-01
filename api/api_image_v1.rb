@@ -1,6 +1,7 @@
 #
 
 require 'json'
+require 'uri'
 
 module Razor
   module WebService
@@ -61,8 +62,15 @@ module Razor
 
         end
 
-        resource :image do
+        # the following description hides this endpoint from the swagger-ui-based documentation
+        # (since the functionality provided by this endpoint is not intended to be used outside
+        # of the razor subnet, or in the case of a GET on the /image resource, off of the Razor
+        # server itself)
+        desc 'Hide this endpoint', {
+            :hidden => true
+        }
 
+        resource :image do
           # GET /image
           # Query for images.
           before do
@@ -82,6 +90,7 @@ module Razor
           end     # end GET /image
 
           resource '/:path', requirements: { path: /.*/ } do
+
             # GET /image/{path}
             # Query for file from an image (by path)
             before do
@@ -92,6 +101,9 @@ module Razor
                          detail: "Access to /image/{path} resource is not allowed from outside of the Razor subnet",
                        }, 403)
               end
+            end
+            params do
+              requires :path, type: String
             end
             get do
               path = params[:path]
