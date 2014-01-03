@@ -1,6 +1,7 @@
 #
 
 require 'json'
+require 'api_utils'
 
 module Razor
   module WebService
@@ -50,6 +51,27 @@ module Razor
           def is_uuid?(string_)
             string_ =~ /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/
           end
+
+          def validate_param(param)
+            Razor::WebService::Utils::validate_parameter(param)
+          end
+
+          def slice_success_web(slice, command, response, options = {})
+            mk_response = options[:mk_response] ? options[:mk_response] : false
+            type = options[:success_type] ? options[:success_type] : :generic
+            # Slice Success types
+            # Created, Updated, Removed, Retrieved. Generic
+            return_hash = {}
+            return_hash["resource"] = slice.class.to_s
+            return_hash["command"] = command.to_s
+            return_hash["result"] = slice.success_types[type][:message]
+            return_hash["http_err_code"] = slice.success_types[type][:http_code]
+            return_hash["errcode"] = 0
+            return_hash["response"] = response
+            return_hash["client_config"] = ProjectRazor.config.get_client_config_hash if mk_response
+            return_hash
+          end
+
         end
 
         resource :node do
@@ -60,6 +82,90 @@ module Razor
             node_slice = ProjectRazor::Slice.new
             Razor::WebService::Response.new(200, 'OK', 'Success.', node_slice.get_object("nodes", :node))
           end       # end GET /node
+
+          resource :checkin do
+
+            # GET /node/checkin
+            # handle a node checkin (from a Razor Microkernel instance)
+            #   parameters:
+            #         required:
+            #           :hw_id      | String | The hardware ID of the node.          |           | Default: unavailable
+            #           :last_state | String | The "state" the node is currently in. |           | Default: unavailable
+            params do
+              requires :hw_id, type: String
+              requires :last_state, type: String
+              optional :first_checkin, type: Boolean
+            end
+            get do
+              hw_id = params[:hw_id]
+              last_state = params[:last_state]
+              first_checkin = params[:first_checkin]
+              # Validate our args are here
+              raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
+              raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
+              hw_id = hw_id.split("_") unless hw_id.is_a? Array
+              raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
+              # grab a couple of references we need
+              engine = ProjectRazor::Engine.instance
+              node_slice = ProjectRazor::Slice::Node.new([])
+              # if it's not the first node, check to see if the node exists
+              unless first_checkin
+                new_node = engine.lookup_node_by_hw_id(:hw_id => hw_id)
+                if new_node
+                  # if a node with this hardware id exists, simply acknowledge the checkin request
+                  command = engine.mk_checkin(new_node.uuid, last_state)
+                  return slice_success_web(node_slice, :checkin_node, command, :mk_response => true)
+                end
+              end
+              # otherwise, if we get this far, return a command telling the Microkernel to register
+              # (either because no matching node already exists or because it's the first checkin
+              # by the Microkernel)
+              command = engine.mk_command(:register,{})
+              slice_success_web(node_slice, :checkin_node, command, :mk_response => true)
+            end     # end GET /node/checkin
+
+          end     # end resource /node/checkin
+
+          resource :register do
+
+            # POST /node/register
+            # register a node with Razor
+            #   parameters:
+            #     required:
+            #       :json_hash | Hash |
+            params do
+              requires :json_hash, type: String
+            end
+            post do
+              json_hash = JSON.parse(params[:json_hash])
+              hw_id = json_hash['@hw_id']
+              last_state = json_hash['@last_state']
+              attributes_hash = json_hash['@attributes_hash']
+              # Validate our args are here
+              raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
+              raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
+              raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Attributes Hash[attributes_hash]" unless attributes_hash.is_a? Hash and attributes_hash.size > 0
+              hw_id = hw_id.split("_") if hw_id.is_a? String
+              raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
+              engine = ProjectRazor::Engine.instance
+              new_node = engine.lookup_node_by_hw_id(:hw_id => hw_id)
+              if new_node
+                new_node.hw_id = new_node.hw_id | hw_id
+              else
+                shell_node = ProjectRazor::Node.new({})
+                shell_node.hw_id = hw_id
+                new_node = engine.register_new_node_with_hw_id(shell_node)
+                raise ProjectRazor::Error::Slice::CouldNotRegisterNode, "Could not register new node" unless new_node
+              end
+              new_node.timestamp = Time.now.to_i
+              new_node.attributes_hash = attributes_hash
+              new_node.last_state = last_state
+              raise ProjectRazor::Error::Slice::CouldNotRegisterNode, "Could not register node" unless new_node.update_self
+              node_slice = ProjectRazor::Slice::Node.new([])
+              slice_success_web(node_slice, :register_node, new_node.to_hash, :mk_response => true)
+            end     # end POST /node/register
+
+          end     # end resource /node/register
 
           resource '/:uuid' do
             # GET /node/{uuid}
@@ -91,9 +197,9 @@ module Razor
               end
             end     # end GET /node/{uuid}
 
-          end       # end resource /node/:uuid
+          end     # end resource /node/:uuid
 
-        end         # end resource :node
+        end     # end resource :node
 
       end
 

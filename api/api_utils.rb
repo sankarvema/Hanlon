@@ -37,6 +37,14 @@ module Razor
       end
       module_function :request_from_razor_server?
 
+      # Checks to make sure an parameter is a format that supports a noun (uuid, etc))
+      def validate_parameter(*param)
+        param.each do |a|
+          return false unless a && (a.to_s =~ /^\{.*\}$/) == nil && a != '' && a != {}
+        end
+      end
+      module_function :validate_parameter
+
     end
   end
 end
