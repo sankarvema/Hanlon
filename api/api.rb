@@ -10,6 +10,7 @@ module Razor
       mount ::Razor::WebService::Image::APIv1
       mount ::Razor::WebService::Node::APIv1
       mount ::Razor::WebService::Model::APIv1
+      mount ::Razor::WebService::ActiveModel::APIv1
       #if the service.yaml file includes the necessary configuration parameter (and it's
       # set to true), then make the swagger-ui-based documentation available as part of
       # the UI

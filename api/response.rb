@@ -4,9 +4,9 @@ module Razor
   module WebService
     # Response class
     class Response
-      attr_reader :code, :type, :description, :entity, :request_id, :entity_count
+      attr_reader :code, :type, :description, :entity, :entity_count
 
-      def initialize(code, type, description, entity = nil, request_id = nil)
+      def initialize(code, type, description, entity = nil)
         # HTTP Code
         @code        = code
         # Type of code: accepted, created, etc
@@ -15,8 +15,6 @@ module Razor
         @description = description
         # Optional Entity
         @entity      = entity
-        # Optional tracking of requests using message tracker
-        @request_id  = request_id
         # Entity count if is an Array
         if entity && entity.respond_to?(:each)
           @entity_count = entity.count
@@ -51,21 +49,11 @@ module Razor
             hash[:response][:entity] = entity.to_hash
           end
         end
-        if request_id
-          hash[:response][:request_status] = {
-              :id            => request_id,
-              :location_path => request_location_path
-          }
-        end
         hash
       end
 
       def to_json
         JSON.pretty_generate(to_hash)
-      end
-
-      def request_location_path
-        "#{Zombie::Rez::WebService::Resource::App.base_uri}/v1/request/#{request_id}"
       end
 
     end

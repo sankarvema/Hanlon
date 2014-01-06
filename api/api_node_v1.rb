@@ -131,16 +131,19 @@ module Razor
             # POST /node/register
             # register a node with Razor
             #   parameters:
-            #     required:
-            #       :json_hash | Hash |
+            #     hw_id           | String | The hardware ID of the node.          |           | Default: unavailable
+            #     last_state      | String | The "state" the node is currently in. |           | Default: unavailable
+            #     attributes_hash | Hash   | The attributes_hash of the node.      |           | Default: unavailable
             params do
-              requires :json_hash, type: String
+              requires "hw_id", type: String
+              requires "last_state", type: String
+              requires "attributes_hash", type: Hash
             end
             post do
-              json_hash = JSON.parse(params[:json_hash])
-              hw_id = json_hash['@hw_id']
-              last_state = json_hash['@last_state']
-              attributes_hash = json_hash['@attributes_hash']
+              #json_hash = JSON.parse(params[:json_hash])
+              hw_id = params["hw_id"]
+              last_state = params["last_state"]
+              attributes_hash = params["attributes_hash"]
               # Validate our args are here
               raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
               raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)

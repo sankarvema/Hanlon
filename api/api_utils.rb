@@ -45,6 +45,15 @@ module Razor
       end
       module_function :validate_parameter
 
+      # gets a reference to the ProjectRazor::Data instance (and checks to make sure it
+      # is working before returning the result)
+      def get_data
+        data = ProjectRazor::Data.instance
+        data.check_init
+        data
+      end
+      module_function :get_data
+
     end
   end
 end
