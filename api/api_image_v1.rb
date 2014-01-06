@@ -21,6 +21,14 @@ module Razor
           )
         end
 
+        rescue_from ProjectRazor::Error::Slice::MethodNotAllowed do |e|
+          Rack::Response.new(
+              Razor::WebService::Response.new(403, e.class.name, e.message).to_json,
+              403,
+              { "Content-type" => "application/json" }
+          )
+        end
+
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
@@ -78,9 +86,7 @@ module Razor
             if env["PATH_INFO"].match(/image$/)
               # only allow access to configuration resource from the razor server
               unless request_is_from_razor_server(env['REMOTE_ADDR'])
-                error!({ error: "Remote Access Forbidden",
-                         detail: "Access to /image resource is only allowed from Razor server",
-                       }, 403)
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is only allowed from Razor server"
               end
             end
           end
@@ -97,9 +103,7 @@ module Razor
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
                 env['api.format'] = :text
-                error!({ error: "Remote Access Forbidden",
-                         detail: "Access to /image/{path} resource is not allowed from outside of the Razor subnet",
-                       }, 403)
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image/{path} resource is not allowed from outside of the Razor subnet"
               end
             end
             params do

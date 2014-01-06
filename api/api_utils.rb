@@ -54,6 +54,45 @@ module Razor
       end
       module_function :get_data
 
+      # used to construct a response to a RESTful request that is similar to the "slice_success"
+      # response used previously by Razor
+      def rz_slice_success_web(slice, command, response, options = {})
+        mk_response = options[:mk_response] ? options[:mk_response] : false
+        type = options[:success_type] ? options[:success_type] : :generic
+        # Slice Success types
+        # Created, Updated, Removed, Retrieved. Generic
+        return_hash = {}
+        return_hash["resource"] = slice.class.to_s
+        return_hash["command"] = command.to_s
+        return_hash["result"] = slice.success_types[type][:message]
+        return_hash["http_err_code"] = slice.success_types[type][:http_code]
+        return_hash["errcode"] = 0
+        return_hash["response"] = response
+        return_hash["client_config"] = ProjectRazor.config.get_client_config_hash if mk_response
+        return_hash
+      end
+      module_function :rz_slice_success_web
+
+      # used to construct a response that includes a status (created, deleted, etc)
+      def rz_response_with_status(slice, command, object_array, options = { })
+        if slice.uri_root
+          object_array = object_array.collect do |object|
+            if object.respond_to?("is_template") && object.is_template
+              object.to_hash
+            else
+              obj_web = object.to_hash
+              obj_web = Hash[obj_web.reject { |k, v| !%w(@uuid @classname, @noun).include?(k) }] unless object_array.count == 1
+              slice.add_uri_to_object_hash(obj_web)
+              obj_web
+            end
+          end
+        else
+          object_array = object_array.collect { |object| object.to_hash }
+        end
+        rz_slice_success_web(slice, command, object_array, options)
+      end
+      module_function :rz_response_with_status
+
     end
   end
 end

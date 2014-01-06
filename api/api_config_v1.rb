@@ -21,6 +21,14 @@ module Razor
           )
         end
 
+        rescue_from ProjectRazor::Error::Slice::MethodNotAllowed do |e|
+          Rack::Response.new(
+              Razor::WebService::Response.new(403, e.class.name, e.message).to_json,
+              403,
+              { "Content-type" => "application/json" }
+          )
+        end
+
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
@@ -74,9 +82,7 @@ module Razor
             if env["PATH_INFO"].match(/config$/)
               # only allow access to configuration resource from the razor server
               unless request_is_from_razor_server(env['REMOTE_ADDR'])
-                error!({ error: "Remote Access Forbidden",
-                         detail: "Access to /config resource is only allowed from Razor server",
-                       }, 403)
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config resource is only allowed from Razor server"
               end
             end
           end
@@ -91,9 +97,7 @@ module Razor
               # only allow access to configuration resource from the razor server
               unless request_is_from_razor_server(env['REMOTE_ADDR'])
                 env['api.format'] = :text
-                error!({ error: "Remote Access Forbidden",
-                         detail: "Access to /config/ipxe resource is only allowed from Razor server",
-                       }, 403)
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config/ipxe resource is only allowed from Razor server"
               end
             end
             get do

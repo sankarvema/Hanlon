@@ -7,7 +7,7 @@ require 'require_all'
 class ProjectRazor::Slice < ProjectRazor::Object
   include ProjectRazor::Logging
 
-  attr_accessor :web_command, :hidden
+  attr_accessor :web_command, :uri_root, :hidden
   attr_accessor :verbose
   attr_accessor :debug
 
@@ -20,7 +20,7 @@ class ProjectRazor::Slice < ProjectRazor::Object
     @web_command = false
     @prev_args = Stack.new
     @hidden = true
-    @uri_root = ProjectRazor.config.mk_uri + "/razor/api/"
+    @uri_root = ProjectRazor.config.mk_uri + "/razor/api/v1/"
     @data = get_data
   end
 

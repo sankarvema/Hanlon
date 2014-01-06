@@ -56,6 +56,14 @@ module Razor
             Razor::WebService::Utils::get_data
           end
 
+          def slice_success_web(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_web(slice, command, response, options)
+          end
+
+          def response_with_status_web(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_response_with_status(slice, command, response, options)
+          end
+
         end
 
         resource :model do
@@ -86,10 +94,10 @@ module Razor
             image_uuid = params["image_uuid"]
             req_metadata_hash = params["req_metadata_hash"]
             # check the values that were passed in
-            slice_ref = ProjectRazor::Slice::Model.new([])
-            model = slice_ref.verify_template(template)
+            model_slice = ProjectRazor::Slice::Model.new([])
+            model = model_slice.verify_template(template)
             raise ProjectRazor::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
-            image = model.image_prefix ? slice_ref.verify_image(model, image_uuid) : true
+            image = model.image_prefix ? model_slice.verify_image(model, image_uuid) : true
             raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image
             # use the arguments passed in (above) to create a new model
             raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
@@ -100,7 +108,7 @@ module Razor
             model.is_template = false
             get_data_ref.persist_object(model)
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Model") unless model
-            Razor::WebService::Response.new(200, 'OK', 'Model created', model)
+            response_with_status_web(model_slice, :create_model, [model], :success_type => :created)
           end     # end PUT /model/{uuid}
 
           resource :templates do
@@ -133,16 +141,56 @@ module Razor
             end     # end GET /model/{uuid}
 
             # PUT /model/{uuid}
-            # Update a Razor model
+            # Update a Razor model (any of the the label, image UUID, or req_metadata_hash
+            # can be updated using this endpoint; note that the model template cannot be updated
+            # once a model is created
             #   parameters:
-            #     required:
-            #       :json_hash | Hash |
+            #     label             | String | The "label" to use for the new model    |         | Default: unavailable
+            #     image_uuid        | String | The UUID of the image to use            |         | Default: unavailable
+            #     req_metadata_hash | Hash   | The metadata to use for the new model   |         | Default: unavailable
             params do
-              requires :json_hash, type: String
+              requires :uuid, type: String
+              optional "label", type: String
+              optional "image_uuid", type: String
+              optional "req_metadata_hash", type: Hash
             end
             put do
-
+              # get the input parameters that were passed in as part of the request
+              # (at least one of these should be a non-nil value)
+              label = params["label"]
+              image_uuid = params["image_uuid"]
+              req_metadata_hash = params["req_metadata_hash"]
+              # get the UUID for the model being updated
+              model_uuid = params[:uuid]
+              # check the values that were passed in (and gather new meta-data if
+              # the --change-metadata flag was included in the update command and the
+              # command was invoked via the CLI...it's an error to use this flag via
+              # the RESTful API, the req_metadata_hash should be used instead)
+              model_slice = ProjectRazor::Slice::Model.new([])
+              model = model_slice.get_object("model_with_uuid", :model, model_uuid)
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
+              model.web_create_metadata(req_metadata_hash) if req_metadata_hash
+              model.label = label if label
+              image = model.image_prefix ? model_slice.verify_image(model, image_uuid) : true if image_uuid
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
+              model.image_uuid = image.uuid if image
+              raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Model [#{model.uuid}]" unless model.update_self
+              response_with_status_web(model_slice, :update_model, [model], :success_type => :updated)
             end     # end PUT /model/{uuid}
+
+            # DELETE /model/{uuid}
+            # Remove a Razor model (by UUID)
+            params do
+              requires :uuid, type: String
+            end
+            delete do
+              model_slice = ProjectRazor::Slice::Model.new([])
+              model_uuid = params[:uuid]
+              model = model_slice.get_object("model_with_uuid", :model, model_uuid)
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
+              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Model [#{model.uuid}]" unless get_data_ref.delete_object(model)
+              slice_success_web(model_slice, :remove_model_by_uuid, "Model [#{model.uuid}] removed", :success_type => :removed)
+            end     # end DELETE /model/{uuid}
 
           end       # end resource /model/:uuid
 

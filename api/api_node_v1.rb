@@ -57,19 +57,7 @@ module Razor
           end
 
           def slice_success_web(slice, command, response, options = {})
-            mk_response = options[:mk_response] ? options[:mk_response] : false
-            type = options[:success_type] ? options[:success_type] : :generic
-            # Slice Success types
-            # Created, Updated, Removed, Retrieved. Generic
-            return_hash = {}
-            return_hash["resource"] = slice.class.to_s
-            return_hash["command"] = command.to_s
-            return_hash["result"] = slice.success_types[type][:message]
-            return_hash["http_err_code"] = slice.success_types[type][:http_code]
-            return_hash["errcode"] = 0
-            return_hash["response"] = response
-            return_hash["client_config"] = ProjectRazor.config.get_client_config_hash if mk_response
-            return_hash
+            Razor::WebService::Utils::rz_slice_success_web(slice, command, response, options)
           end
 
         end
@@ -140,7 +128,6 @@ module Razor
               requires "attributes_hash", type: Hash
             end
             post do
-              #json_hash = JSON.parse(params[:json_hash])
               hw_id = params["hw_id"]
               last_state = params["last_state"]
               attributes_hash = params["attributes_hash"]

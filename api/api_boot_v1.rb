@@ -13,6 +13,14 @@ module Razor
         format :json
         default_format :json
 
+        rescue_from ProjectRazor::Error::Slice::MethodNotAllowed do |e|
+          Rack::Response.new(
+              Razor::WebService::Response.new(403, e.class.name, e.message).to_json,
+              403,
+              { "Content-type" => "application/json" }
+          )
+        end
+
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
@@ -67,9 +75,7 @@ module Razor
             # only allow access to this resource from the Razor subnet
             unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
               env['api.format'] = :text
-              error!({ error: "Remote Access Forbidden",
-                       detail: "Access to /boot resource is not allowed from outside of the Razor subnet",
-                     }, 403)
+              raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /boot resource is not allowed from outside of the Razor subnet"
             end
           end
           params do

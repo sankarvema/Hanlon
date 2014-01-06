@@ -21,6 +21,14 @@ module Razor
           )
         end
 
+        rescue_from ProjectRazor::Error::Slice::MethodNotAllowed do |e|
+          Rack::Response.new(
+              Razor::WebService::Response.new(403, e.class.name, e.message).to_json,
+              403,
+              { "Content-type" => "application/json" }
+          )
+        end
+
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
@@ -52,8 +60,16 @@ module Razor
             string_ =~ /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/
           end
 
+          def get_data_ref
+            Razor::WebService::Utils::get_data
+          end
+
           def request_is_from_razor_server(ip_addr)
             Razor::WebService::Utils::request_from_razor_server?(ip_addr)
+          end
+
+          def request_is_from_razor_subnet(ip_addr)
+            Razor::WebService::Utils::request_from_razor_subnet?(ip_addr)
           end
 
           def get_active_model_by_uuid(uuid)
@@ -109,9 +125,7 @@ module Razor
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_server(env['REMOTE_ADDR'])
-                error!({ error: "Remote Access Forbidden",
-                         detail: "Access to /active_model/logs resource is only allowed from Razor server",
-                       }, 403)
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /active_model/logs resource is only allowed from Razor server"
               end
             end
             get do
@@ -137,6 +151,27 @@ module Razor
               Razor::WebService::Response.new(200, 'OK', 'Success.', get_active_model_by_uuid(uuid))
             end     # end GET /active_model/{uuid}
 
+
+            # DELETE /active_model/{uuid}
+            # Remove an active_model instance (by UUID)
+            before do
+              # only allow access to this resource from the Razor subnet
+              unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to DELETE action for /active_model/{uuid} resource is only allowed from Razor subnet"
+              end
+            end
+            params do
+              requires :uuid, type: String
+            end
+            delete do
+              active_model_slice = ProjectRazor::Slice::ActiveModel.new([])
+              active_model_uuid = params[:uuid]
+              active_model = active_model_slice.get_object("active_model_instance", :active, active_model_uuid)
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
+              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Active Model [#{active_model.uuid}]" unless get_data_ref.delete_object(active_model)
+              slice_success_web(active_model_slice, :remove_active_model_by_uuid, "Active Model [#{active_model.uuid}] removed", :success_type => :removed)
+            end     # end DELETE /active_model/{uuid}
+
             resource '/logs' do
 
               # GET /active_model/{uuid}/logs
@@ -144,9 +179,7 @@ module Razor
               before do
                 # only allow access to this resource from the Razor subnet
                 unless request_is_from_razor_server(env['REMOTE_ADDR'])
-                  error!({ error: "Remote Access Forbidden",
-                           detail: "Access to /active_model/{uuid}/logs resource is only allowed from Razor server",
-                         }, 403)
+                  raise ProjectRazor::Error::Slice::MethodNotAllowed, "Access to /active_model/{uuid}/logs resource is only allowed from Razor server"
                 end
               end
               params do
