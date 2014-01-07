@@ -62,7 +62,6 @@ module Razor
         desc 'Hide this endpoint', {
             :hidden => true
         }
-
         resource :boot do
 
           # GET /boot
@@ -90,7 +89,7 @@ module Razor
             ProjectRazor::Engine.instance.boot_checkin(:hw_id => hw_id, :dhcp_mac => dhcp_mac)
           end     # end GET /boot
 
-        end         # end resource /boot
+        end     # end resource /boot
 
       end
 

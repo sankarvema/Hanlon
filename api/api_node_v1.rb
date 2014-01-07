@@ -71,6 +71,12 @@ module Razor
             Razor::WebService::Response.new(200, 'OK', 'Success.', node_slice.get_object("nodes", :node))
           end       # end GET /node
 
+          # the following description hides this endpoint from the swagger-ui-based documentation
+          # (since the functionality provided by this endpoint is not intended to be used off of
+          # the Razor server)
+          desc 'Hide this endpoint', {
+              :hidden => true
+          }
           resource :checkin do
 
             # GET /node/checkin
@@ -114,6 +120,9 @@ module Razor
 
           end     # end resource /node/checkin
 
+          desc 'Hide this endpoint', {
+              :hidden => true
+          }
           resource :register do
 
             # POST /node/register

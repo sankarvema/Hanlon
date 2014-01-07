@@ -77,7 +77,6 @@ module Razor
         desc 'Hide this endpoint', {
             :hidden => true
         }
-
         resource :image do
           # GET /image
           # Query for images.

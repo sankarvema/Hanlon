@@ -118,10 +118,16 @@ module Razor
             Razor::WebService::Response.new(200, 'OK', 'Success.', slice_ref.get_object("active_models", :active))
           end     # end GET /active_model
 
+          # the following description hides this endpoint from the swagger-ui-based documentation
+          # (since the functionality provided by this endpoint is not intended to be used off of
+          # the Razor server)
+          desc 'Hide this endpoint', {
+              :hidden => true
+          }
           resource '/logs' do
 
             # GET /active_model
-            # Retrieve list of active_models.
+            # Retrieve all active_model logs.
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_server(env['REMOTE_ADDR'])
@@ -172,6 +178,12 @@ module Razor
               slice_success_web(active_model_slice, :remove_active_model_by_uuid, "Active Model [#{active_model.uuid}] removed", :success_type => :removed)
             end     # end DELETE /active_model/{uuid}
 
+            # the following description hides this endpoint from the swagger-ui-based documentation
+            # (since the functionality provided by this endpoint is not intended to be used off of
+            # the Razor server)
+            desc 'Hide this endpoint', {
+                :hidden => true
+            }
             resource '/logs' do
 
               # GET /active_model/{uuid}/logs
@@ -191,11 +203,11 @@ module Razor
                 Razor::WebService::Response.new(200, 'OK', 'Success.', get_logs_for_active_model(active_model))
               end     # end GET /active_model/{uuid}/logs
 
-            end       # end resource /active_model/:uuid/logs
+            end     # end resource /active_model/:uuid/logs
 
-          end       # end resource /active_model/:uuid
+          end     # end resource /active_model/:uuid
 
-        end         # end resource /active_model
+        end     # end resource /active_model
 
       end
 

@@ -69,7 +69,7 @@ module Razor
         resource :model do
 
           # GET /model
-          # Query registered nodes.
+          # Query for defined models.
           get do
             slice_ref = ProjectRazor::Slice.new
             Razor::WebService::Response.new(200, 'OK', 'Success.', slice_ref.get_object("models", :model))
@@ -109,7 +109,7 @@ module Razor
             get_data_ref.persist_object(model)
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Model") unless model
             response_with_status_web(model_slice, :create_model, [model], :success_type => :created)
-          end     # end PUT /model/{uuid}
+          end     # end POST /model
 
           resource :templates do
 
@@ -123,12 +123,12 @@ module Razor
               Razor::WebService::Response.new(200, 'OK', 'Success.', model_templates.collect { |object| object.to_hash })
             end     # end GET /model/templates
 
-          end       # end resource /model/templates
+          end     # end resource /model/templates
 
           resource '/:uuid' do
 
             # GET /model/{uuid}
-            # Query for the state of a specific node.
+            # Query for the state of a specific model.
             params do
               requires :uuid, type: String
             end
@@ -192,9 +192,9 @@ module Razor
               slice_success_web(model_slice, :remove_model_by_uuid, "Model [#{model.uuid}] removed", :success_type => :removed)
             end     # end DELETE /model/{uuid}
 
-          end       # end resource /model/:uuid
+          end     # end resource /model/:uuid
 
-        end         # end resource /model
+        end     # end resource /model
 
       end
 

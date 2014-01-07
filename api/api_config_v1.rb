@@ -72,7 +72,6 @@ module Razor
         desc 'Hide this endpoint', {
             :hidden => true
         }
-
         resource :config do
 
           # GET /config
@@ -110,9 +109,9 @@ module Razor
               ERB.new(File.read(IPXE_ERB)).result(binding)
             end     # end GET /config/ipxe
 
-          end       # end resource /config/ipxe
+          end     # end resource /config/ipxe
 
-        end         # end resource /model
+        end     # end resource /config
 
       end
 
