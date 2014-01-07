@@ -126,13 +126,13 @@ module Razor
             maximum = params["maximum"]
             # check for errors in inputs
             policy_slice = ProjectRazor::Slice::Policy.new([])
-            policy = new_object_from_template_name(POLICY_PREFIX, policy_template)
+            policy = policy_slice.new_object_from_template_name(POLICY_PREFIX, policy_template)
             raise ProjectRazor::Error::Slice::InvalidPolicyTemplate, "Policy Template is not valid [#{policy_template}]" unless policy
             model = policy_slice.get_object("model_by_uuid", :model, model_uuid)
             raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
             raise ProjectRazor::Error::Slice::InvalidModel, "Invalid Model Type [#{model.template}] != [#{policy.template}]" unless policy.template.to_s == model.template.to_s
             broker = policy_slice.get_object("broker_by_uuid", :broker, broker_uuid)
-            raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || options[:broker_uuid] == "none"
+            raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
             tags = tags.split(",") unless tags.class.to_s == "Array"
             raise ProjectRazor::Error::Slice::MissingTags, "Must provide at least one tag ['tag(,tag)']" unless tags.count > 0
             raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless maximum.to_i.to_s == maximum
@@ -178,7 +178,7 @@ module Razor
               resource '/:namespace_and_args', requirements: { namespace_and_args: /.*/ } do
 
                 # GET /policy/callback/{uuid}/{namespace_and_args}
-                # Make a callback "call" (used during the install/broker_handoff process to track progress)
+                # Make a callback "call" (used during the install/broker-handoff process to track progress)
                 before do
                   # only allow access to this resource from the Razor subnet
                   unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -236,6 +236,7 @@ module Razor
             #     model_uuid        | String | The new model UUID value                 |         | Default: unavailable
             #     tags              | String | The new (comma-separated) list of tags   |         | Default: unavailable
             #     broker_uuid       | String | The new broker UUID value                |         | Default: unavailable
+            #     new_line_number   | String | The new line number in the policy table  |         | Default: unavailable
             #     enabled           | String | A new "enabled flag" value               |         | Default: unavailable
             #     maximum           | String | The new maximum_count value              |         | Default: unavailable
             params do
@@ -277,7 +278,7 @@ module Razor
               broker = nil
               if broker_uuid
                 broker = policy_slice.get_object("broker_by_uuid", :broker, broker_uuid)
-                raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || options[:broker_uuid] == "none"
+                raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
               end
               new_line_number = (new_line_number ? new_line_number.strip : nil)
               raise ProjectRazor::Error::Slice::InputError, "New index '#{new_line_number}' is not an integer" if new_line_number && !/^[+-]?\d+$/.match(new_line_number)
@@ -310,12 +311,12 @@ module Razor
               requires :uuid, type: String
             end
             delete do
-              policy_slice = ProjectRazor::Slice::Model.new([])
+              policy_slice = ProjectRazor::Slice::Policy.new([])
               policy_uuid = params[:uuid]
-              policy = get_object("policy_with_uuid", :policy, policy_uuid)
+              policy = policy_slice.get_object("policy_with_uuid", :policy, policy_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove policy [#{policy.uuid}]" unless @data.delete_object(policy)
-              slice_success_web(model_slice, :remove_model_by_uuid, "Model [#{model.uuid}] removed", :success_type => :removed)
+              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove policy [#{policy.uuid}]" unless get_data_ref.delete_object(policy)
+              slice_success_web(policy_slice, :remove_model_by_uuid, "Policy [#{policy.uuid}] removed", :success_type => :removed)
             end     # end DELETE /policy/{uuid}
 
           end     # end resource /policy/:uuid
