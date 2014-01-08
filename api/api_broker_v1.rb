@@ -12,6 +12,7 @@ module Razor
         version :v1, :using => :path, :vendor => "razor"
         format :json
         default_format :json
+        SLICE_REF = ProjectRazor::Slice::Broker.new([])
 
         # Root namespace for broker objects
         # used to find them in object space for plugin checking
@@ -60,12 +61,12 @@ module Razor
             Razor::WebService::Utils::get_data
           end
 
-          def slice_success_web(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_web(slice, command, response, options)
+          def slice_success_response(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def response_with_status_web(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_response_with_status(slice, command, response, options)
+          def slice_success_object_array(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
           end
 
         end
@@ -75,8 +76,8 @@ module Razor
           # GET /broker
           # Query for defined brokers.
           get do
-            slice_ref = ProjectRazor::Slice.new
-            Razor::WebService::Response.new(200, 'OK', 'Success.', slice_ref.get_object("broker_instances", :broker))
+            brokers = SLICE_REF.get_object("broker_instances", :broker)
+            slice_success_object_array(SLICE_REF, :get_all_brokers, brokers, :success_type => :generic)
           end     # end GET /broker
 
           # POST /broker
@@ -98,8 +99,7 @@ module Razor
             description = params["description"]
             req_metadata_hash = params["req_metadata_hash"]
             # use the arguments passed in to create a new broker
-            broker_slice = ProjectRazor::Slice::Broker.new([])
-            broker = broker_slice.new_object_from_template_name(BROKER_PREFIX, plugin)
+            broker = SLICE_REF.new_object_from_template_name(BROKER_PREFIX, plugin)
             raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
                 req_metadata_hash
             broker.web_create_metadata(req_metadata_hash)
@@ -109,7 +109,7 @@ module Razor
             # persist that broker, and print the result (or raise an error if cannot persist it)
             get_data_ref.persist_object(broker)
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Broker Target") unless broker
-            response_with_status_web(broker_slice, :create_broker, [broker], :success_type => :created)
+            slice_success_object_array(SLICE_REF, :create_broker, [broker], :success_type => :created)
           end     # end POST /broker
 
           resource :plugins do
@@ -117,11 +117,10 @@ module Razor
             # GET /broker/plugins
             # Query for available broker plugins
             get do
-              slice_ref = ProjectRazor::Slice.new
-              broker_plugins = slice_ref.get_child_templates(ProjectRazor::BrokerPlugin)
-              # convert each element of the array to a hash, then use that array of hashes
-              # to construct the response
-              Razor::WebService::Response.new(200, 'OK', 'Success.', broker_plugins.collect { |object| object.to_hash })
+              # get the broker plugins (as an array)
+              broker_plugins = SLICE_REF.get_child_templates(ProjectRazor::BrokerPlugin)
+              # then, construct the response
+              slice_success_object_array(SLICE_REF, :get_broker_plugins, broker_plugins, :success_type => :generic)
             end     # end GET /broker/plugins
 
           end     # end resource /broker/plugins
@@ -134,11 +133,10 @@ module Razor
               requires :uuid, type: String
             end
             get do
-              slice_ref = ProjectRazor::Slice.new
               broker_uuid = params[:uuid]
-              broker = slice_ref.get_object("broker instances", :broker, broker_uuid)
+              broker = SLICE_REF.get_object("broker instances", :broker, broker_uuid)
               raise ProjectRazor::Error::Slice::NotFound, "Broker Target UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
-              Razor::WebService::Response.new(200, 'OK', 'Success.', broker)
+              slice_success_object_array(SLICE_REF, :get_broker_by_uuid, [broker], :success_type => :generic)
             end     # end GET /broker/{uuid}
 
             # PUT /broker/{uuid}
@@ -167,8 +165,7 @@ module Razor
               # the --change-metadata flag was included in the update command and the
               # command was invoked via the CLI...it's an error to use this flag via
               # the RESTful API, the req_metadata_hash should be used instead)
-              broker_slice = ProjectRazor::Slice::Broker.new([])
-              broker = broker_slice.get_object("broker_with_uuid", :broker, broker_uuid)
+              broker = SLICE_REF.get_object("broker_with_uuid", :broker, broker_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
               # fill in the fields with the new values that were passed in (if any)
               broker.name             = name if name
@@ -176,7 +173,7 @@ module Razor
               broker.is_template      = false
               broker.web_create_metadata(req_metadata_hash) if req_metadata_hash
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless broker.update_self
-              response_with_status_web(broker_slice, :update_broker, [broker], :success_type => :updated)
+              slice_success_object_array(SLICE_REF, :update_broker, [broker], :success_type => :updated)
             end     # end PUT /broker/{uuid}
 
             # DELETE /broker/{uuid}
@@ -185,12 +182,11 @@ module Razor
               requires :uuid, type: String
             end
             delete do
-              broker_slice = ProjectRazor::Slice::Broker.new([])
               broker_uuid = params[:uuid]
-              broker = broker_slice.get_object("broker_with_uuid", :broker, broker_uuid)
+              broker = SLICE_REF.get_object("broker_with_uuid", :broker, broker_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Broker with UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
               raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Broker [#{broker.uuid}]" unless get_data_ref.delete_object(broker)
-              slice_success_web(broker_slice, :remove_broker_by_uuid, "Broker [#{broker.uuid}] removed", :success_type => :removed)
+              slice_success_response(SLICE_REF, :remove_broker_by_uuid, "Broker [#{broker.uuid}] removed", :success_type => :removed)
             end     # end DELETE /broker/{uuid}
 
           end     # end resource /broker/:uuid

@@ -12,6 +12,7 @@ module Razor
         version :v1, :using => :path, :vendor => "razor"
         format :json
         default_format :json
+        SLICE_REF = ProjectRazor::Slice::Node.new([])
 
         rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
@@ -56,8 +57,12 @@ module Razor
             Razor::WebService::Utils::validate_parameter(param)
           end
 
-          def slice_success_web(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_web(slice, command, response, options)
+          def slice_success_response(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+          end
+
+          def slice_success_object_array(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
           end
 
         end
@@ -67,8 +72,8 @@ module Razor
           # GET /node
           # Query registered nodes.
           get do
-            node_slice = ProjectRazor::Slice.new
-            Razor::WebService::Response.new(200, 'OK', 'Success.', node_slice.get_object("nodes", :node))
+            nodes = SLICE_REF.get_object("nodes", :node)
+            slice_success_object_array(SLICE_REF, :get_all_nodes, nodes, :success_type => :generic)
           end       # end GET /node
 
           # the following description hides this endpoint from the swagger-ui-based documentation
@@ -101,21 +106,20 @@ module Razor
               raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
               # grab a couple of references we need
               engine = ProjectRazor::Engine.instance
-              node_slice = ProjectRazor::Slice::Node.new([])
               # if it's not the first node, check to see if the node exists
               unless first_checkin
                 new_node = engine.lookup_node_by_hw_id(:hw_id => hw_id)
                 if new_node
                   # if a node with this hardware id exists, simply acknowledge the checkin request
                   command = engine.mk_checkin(new_node.uuid, last_state)
-                  return slice_success_web(node_slice, :checkin_node, command, :mk_response => true)
+                  return slice_success_response(SLICE_REF, :checkin_node, command, :mk_response => true)
                 end
               end
               # otherwise, if we get this far, return a command telling the Microkernel to register
               # (either because no matching node already exists or because it's the first checkin
               # by the Microkernel)
               command = engine.mk_command(:register,{})
-              slice_success_web(node_slice, :checkin_node, command, :mk_response => true)
+              slice_success_response(SLICE_REF, :checkin_node, command, :mk_response => true)
             end     # end GET /node/checkin
 
           end     # end resource /node/checkin
@@ -160,8 +164,7 @@ module Razor
               new_node.attributes_hash = attributes_hash
               new_node.last_state = last_state
               raise ProjectRazor::Error::Slice::CouldNotRegisterNode, "Could not register node" unless new_node.update_self
-              node_slice = ProjectRazor::Slice::Node.new([])
-              slice_success_web(node_slice, :register_node, new_node.to_hash, :mk_response => true)
+              slice_success_response(SLICE_REF, :register_node, new_node.to_hash, :mk_response => true)
             end     # end POST /node/register
 
           end     # end resource /node/register
@@ -177,19 +180,18 @@ module Razor
               optional :field, type: String
             end
             get do
-              node_slice = ProjectRazor::Slice.new
               node_uuid = params[:uuid]
-              node = node_slice.get_object("node_with_uuid", :node, node_uuid)
+              node = SLICE_REF.get_object("node_with_uuid", :node, node_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
               selected_option = params[:field]
               # if no params were passed in, then just return a summary for the specified node
               unless selected_option
-                Razor::WebService::Response.new(200, 'OK', 'Success.', node)
+                slice_success_object_array(SLICE_REF, :get_node_by_uuid, [node], :success_type => :generic)
               else
                 if /^(attrib|attributes)$/.match(selected_option)
-                  Razor::WebService::Response.new(200, 'OK', 'Success.', [Hash[node.attributes_hash.sort]])
+                  slice_success_response(SLICE_REF, :get_node_attributes, Hash[node.attributes_hash.sort], :success_type => :generic)
                 elsif /^(hardware|hardware_id|hardware_ids)$/.match(selected_option)
-                  Razor::WebService::Response.new(200, 'OK', 'Success.', [{"hw_id" => node.hw_id}])
+                  slice_success_response(SLICE_REF, :get_node_hardware_ids, {"hw_id" => node.hw_id}, :success_type => :generic)
                 else
                   raise ProjectRazor::Error::Slice::InputError, "unrecognized fieldname '#{selected_option}'"
                 end

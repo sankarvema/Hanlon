@@ -2,6 +2,7 @@
 
 require 'json'
 require 'uri'
+require 'api_utils'
 
 module Razor
   module WebService
@@ -12,6 +13,7 @@ module Razor
         version :v1, :using => :path, :vendor => "razor"
         format :json
         default_format :json
+        SLICE_REF = ProjectRazor::Slice::Image.new([])
 
         rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
@@ -68,6 +70,14 @@ module Razor
             Razor::WebService::Utils::request_from_razor_subnet?(ip_addr)
           end
 
+          def slice_success_response(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+          end
+
+          def slice_success_object_array(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          end
+
         end
 
         # the following description hides this endpoint from the swagger-ui-based documentation
@@ -84,20 +94,19 @@ module Razor
             # only test if directly accessing the /config resource
             if env["PATH_INFO"].match(/image$/)
               # only allow access to configuration resource from the razor server
-              unless request_is_from_razor_server(env['REMOTE_ADDR'])
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is only allowed from Razor server"
+              unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is not allowed from outside of the Razor subnet"
               end
             end
           end
           get do
-            image_slice = ProjectRazor::Slice.new
-            Razor::WebService::Response.new(200, 'OK', 'Success.', image_slice.get_object("images", :images))
+            images = SLICE_REF.get_object("images", :images)
+            slice_success_object_array(SLICE_REF, :get_images, images, :success_type => :created)
           end     # end GET /image
 
-          resource '/:path', requirements: { path: /.*/ } do
-
-            # GET /image/{path}
-            # Query for file from an image (by path)
+          resource '/:component', requirements: { component: /.*/ } do
+            # GET /image/{component}
+            # Handles GET operations for images (by UUID) and files from an image (by path)
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -106,18 +115,30 @@ module Razor
               end
             end
             params do
-              requires :path, type: String
+              requires :component, type: String
             end
             get do
-              path = params[:path]
-              filename = path.split(File::SEPARATOR)[-1]
-              #content_type "application/octet-stream"
-              header['Content-Disposition'] = "attachment; filename=#{filename}"
-              env['api.format'] = :binary
-              File.read(File.join(PROJECT_ROOT, "image", path))
-            end    # end GET /image/{path}
+              component = params[:component]
+              # test to see if the component looks more like a UUID or a path to a component
+              # of the image that the user is interested in
+              if /^[^\/]+$/.match(component)
+                # it's a UUID, to retrieve the appropriate image and return it
+                image_uuid = component
+                image = SLICE_REF.get_object("images", :images, image_uuid)
+                slice_success_object_array(SLICE_REF, :get_image_by_uuid, [image], :success_type => :generic)
+              else
+                path = component
+                # it's not a UUID, so treat it as a path to a file and return the component
+                # of the image that the user is interested in
+                filename = path.split(File::SEPARATOR)[-1]
+                #content_type "application/octet-stream"
+                header['Content-Disposition'] = "attachment; filename=#{filename}"
+                env['api.format'] = :binary
+                File.read(File.join(PROJECT_ROOT, "image", path))
+              end
+            end    # end GET /image/{component}
 
-          end    # end resource /image/{path}
+          end    # end resource /image/{component}
 
         end     # end resource /image
 

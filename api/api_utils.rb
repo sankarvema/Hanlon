@@ -56,7 +56,7 @@ module Razor
 
       # used to construct a response to a RESTful request that is similar to the "slice_success"
       # response used previously by Razor
-      def rz_slice_success_web(slice, command, response, options = {})
+      def rz_slice_success_response(slice, command, response, options = {})
         mk_response = options[:mk_response] ? options[:mk_response] : false
         type = options[:success_type] ? options[:success_type] : :generic
         # Slice Success types
@@ -71,10 +71,11 @@ module Razor
         return_hash["client_config"] = ProjectRazor.config.get_client_config_hash if mk_response
         return_hash
       end
-      module_function :rz_slice_success_web
+      module_function :rz_slice_success_response
 
-      # used to construct a response that includes a status (created, deleted, etc)
-      def rz_response_with_status(slice, command, object_array, options = { })
+      # a method similar rz_slice_success_response method (above) that properly returns
+      # an object array as part of the response
+      def rz_slice_success_object_array(slice, command, object_array, options = { })
         if slice.uri_root
           object_array = object_array.collect do |object|
             if object.respond_to?("is_template") && object.is_template
@@ -89,9 +90,9 @@ module Razor
         else
           object_array = object_array.collect { |object| object.to_hash }
         end
-        rz_slice_success_web(slice, command, object_array, options)
+        rz_slice_success_response(slice, command, object_array, options)
       end
-      module_function :rz_response_with_status
+      module_function :rz_slice_success_object_array
 
     end
   end

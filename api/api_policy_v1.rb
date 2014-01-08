@@ -12,6 +12,7 @@ module Razor
         version :v1, :using => :path, :vendor => "razor"
         format :json
         default_format :json
+        SLICE_REF = ProjectRazor::Slice::Broker.new([])
 
         rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
@@ -68,12 +69,12 @@ module Razor
             Razor::WebService::Utils::get_data
           end
 
-          def slice_success_web(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_web(slice, command, response, options)
+          def slice_success_response(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def response_with_status_web(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_response_with_status(slice, command, response, options)
+          def slice_success_object_array(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
           end
 
           def make_callback(active_model, callback_namespace, command_array)
@@ -92,8 +93,8 @@ module Razor
           # GET /policy
           # Query for defined policies.
           get do
-            slice_ref = ProjectRazor::Slice.new
-            Razor::WebService::Response.new(200, 'OK', 'Success.', slice_ref.get_object("policies", :policy))
+            policies = SLICE_REF.get_object("policies", :policy)
+            slice_success_object_array(SLICE_REF, :get_all_policies, policies, :success_type => :generic)
           end     # end GET /policy
 
           # POST /policy
@@ -125,13 +126,12 @@ module Razor
             enabled = params["enabled"]
             maximum = params["maximum"]
             # check for errors in inputs
-            policy_slice = ProjectRazor::Slice::Policy.new([])
-            policy = policy_slice.new_object_from_template_name(POLICY_PREFIX, policy_template)
+            policy = SLICE_REF.new_object_from_template_name(POLICY_PREFIX, policy_template)
             raise ProjectRazor::Error::Slice::InvalidPolicyTemplate, "Policy Template is not valid [#{policy_template}]" unless policy
-            model = policy_slice.get_object("model_by_uuid", :model, model_uuid)
+            model = SLICE_REF.get_object("model_by_uuid", :model, model_uuid)
             raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
             raise ProjectRazor::Error::Slice::InvalidModel, "Invalid Model Type [#{model.template}] != [#{policy.template}]" unless policy.template.to_s == model.template.to_s
-            broker = policy_slice.get_object("broker_by_uuid", :broker, broker_uuid)
+            broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
             raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
             tags = tags.split(",") unless tags.class.to_s == "Array"
             raise ProjectRazor::Error::Slice::MissingTags, "Must provide at least one tag ['tag(,tag)']" unless tags.count > 0
@@ -148,7 +148,7 @@ module Razor
             # Add policy
             policy_rules         = ProjectRazor::Policies.instance
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Policy") unless policy_rules.add(policy)
-            response_with_status_web(policy_slice, :create_policy, [policy], :success_type => :created)
+            slice_success_object_array(SLICE_REF, :create_policy, [policy], :success_type => :created)
           end     # end POST /policy
 
           resource :templates do
@@ -156,11 +156,9 @@ module Razor
             # GET /policy/templates
             # Query for available policy templates
             get do
-              slice_ref = ProjectRazor::Slice.new
-              policy_templates = slice_ref.get_child_templates(ProjectRazor::PolicyTemplate)
-              # convert each element of the array to a hash, then use that array of hashes
-              # to construct the response
-              Razor::WebService::Response.new(200, 'OK', 'Success.', policy_templates.collect { |object| object.to_hash })
+              policy_templates = SLICE_REF.get_child_templates(ProjectRazor::PolicyTemplate)
+              # then, construct the response
+              slice_success_object_array(SLICE_REF, :get_policy_templates, policy_templates, :success_type => :generic)
             end     # end GET /policy/templates
 
           end     # end resource /policy/templates
@@ -192,12 +190,11 @@ module Razor
                 end
                 get do
                   # get (and check) the required parameters
-                  slice_ref = ProjectRazor::Slice.new
                   active_model_uuid  = params[:uuid]
-                  raise ProjectRazor::Error::Slice::MissingActiveModelUUID, "Missing active model uuid" unless slice_ref.validate_arg(active_model_uuid)
+                  raise ProjectRazor::Error::Slice::MissingActiveModelUUID, "Missing active model uuid" unless SLICE_REF.validate_arg(active_model_uuid)
                   command_args = params[:namespace_and_args].split('/')
                   callback_namespace = namespace_and_args.shift
-                  raise ProjectRazor::Error::Slice::MissingCallbackNamespace, "Missing callback namespace" unless slice_ref.validate_arg(callback_namespace)
+                  raise ProjectRazor::Error::Slice::MissingCallbackNamespace, "Missing callback namespace" unless SLICE_REF.validate_arg(callback_namespace)
                   engine       = ProjectRazor::Engine.instance
                   active_model = nil
                   engine.get_active_models.each { |am| active_model = am if am.uuid == active_model_uuid }
@@ -220,11 +217,10 @@ module Razor
               requires :uuid, type: String
             end
             get do
-              slice_ref = ProjectRazor::Slice.new
               policy_uuid = params[:uuid]
-              policy = slice_ref.get_object("get_policy_by_uuid", :policy, policy_uuid)
+              policy = SLICE_REF.get_object("get_policy_by_uuid", :policy, policy_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-              Razor::WebService::Response.new(200, 'OK', 'Success.', policy)
+              slice_success_object_array(SLICE_REF, :get_policy_by_uuid, [policy], :success_type => :generic)
             end     # end GET /policy/{uuid}
 
             # PUT /policy/{uuid}
@@ -261,8 +257,7 @@ module Razor
 
               # and check the values that were passed in (skipping those that were not)
               policy_uuid = params[:uuid]
-              policy_slice = ProjectRazor::Slice::Policy.new([])
-              policy = policy_slice.get_object("policy_with_uuid", :policy, policy_uuid)
+              policy = SLICE_REF.get_object("policy_with_uuid", :policy, policy_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Policy UUID [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
 
               if tags
@@ -271,13 +266,13 @@ module Razor
               end
               model = nil
               if model_uuid
-                model = policy_slice.get_object("model_by_uuid", :model, model_uuid)
+                model = SLICE_REF.get_object("model_by_uuid", :model, model_uuid)
                 raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
                 raise ProjectRazor::Error::Slice::InvalidModel, "Invalid Model Type [#{model.label}]" unless policy.template == model.template
               end
               broker = nil
               if broker_uuid
-                broker = policy_slice.get_object("broker_by_uuid", :broker, broker_uuid)
+                broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
                 raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
               end
               new_line_number = (new_line_number ? new_line_number.strip : nil)
@@ -302,7 +297,7 @@ module Razor
               end
               # Update object
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless policy.update_self
-              response_with_status_web(policy_slice, :update_policy, [policy], :success_type => :updated)
+              slice_success_object_array(SLICE_REF, :update_policy, [policy], :success_type => :updated)
             end     # end PUT /policy/{uuid}
 
             # DELETE /policy/{uuid}
@@ -311,12 +306,11 @@ module Razor
               requires :uuid, type: String
             end
             delete do
-              policy_slice = ProjectRazor::Slice::Policy.new([])
               policy_uuid = params[:uuid]
-              policy = policy_slice.get_object("policy_with_uuid", :policy, policy_uuid)
+              policy = SLICE_REF.get_object("policy_with_uuid", :policy, policy_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove policy [#{policy.uuid}]" unless get_data_ref.delete_object(policy)
-              slice_success_web(policy_slice, :remove_model_by_uuid, "Policy [#{policy.uuid}] removed", :success_type => :removed)
+              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Policy [#{policy.uuid}]" unless get_data_ref.delete_object(policy)
+              slice_success_response(SLICE_REF, :remove_policy_by_uuid, "Policy [#{policy.uuid}] removed", :success_type => :removed)
             end     # end DELETE /policy/{uuid}
 
           end     # end resource /policy/:uuid

@@ -12,6 +12,7 @@ module Razor
         version :v1, :using => :path, :vendor => "razor"
         format :json
         default_format :json
+        SLICE_REF = ProjectRazor::Slice::ActiveModel.new([])
 
         rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
@@ -73,8 +74,7 @@ module Razor
           end
 
           def get_active_model_by_uuid(uuid)
-            slice_ref = ProjectRazor::Slice.new
-            active_model = slice_ref.get_object("active_model_instance", :active, uuid)
+            active_model = SLICE_REF.get_object("active_model_instance", :active, uuid)
             raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
             active_model
           end
@@ -107,6 +107,14 @@ module Razor
             log_entries
           end
 
+          def slice_success_response(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+          end
+
+          def slice_success_object_array(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          end
+
         end
 
         resource :active_model do
@@ -114,8 +122,8 @@ module Razor
           # GET /active_model
           # Retrieve list of active_models.
           get do
-            slice_ref = ProjectRazor::Slice.new
-            Razor::WebService::Response.new(200, 'OK', 'Success.', slice_ref.get_object("active_models", :active))
+            active_models = SLICE_REF.get_object("active_models", :active)
+            slice_success_object_array(SLICE_REF, :get_all_active_models, active_models, :success_type => :generic)
           end     # end GET /active_model
 
           # the following description hides this endpoint from the swagger-ui-based documentation
@@ -135,12 +143,11 @@ module Razor
               end
             end
             get do
-              slice_ref = ProjectRazor::Slice.new
-              active_models = slice_ref.get_object("active_models", :active)
+              active_models = SLICE_REF.get_object("active_models", :active)
               log_items = []
               active_models.each { |bp| log_items = log_items | get_logs_for_active_model(bp, true) }
               log_items.sort! { |a, b| a[:Time] <=> b[:Time] }
-              Razor::WebService::Response.new(200, 'OK', 'Success.', log_items)
+              slice_success_response(SLICE_REF, :get_active_model_logs, log_items, :success_type => :generic)
             end     # end GET /active_model/logs
 
           end     # end resource /active_model/logs
@@ -154,7 +161,8 @@ module Razor
             end
             get do
               uuid = params[:uuid]
-              Razor::WebService::Response.new(200, 'OK', 'Success.', get_active_model_by_uuid(uuid))
+              active_model = get_active_model_by_uuid(uuid)
+              slice_success_object_array(SLICE_REF, :get_active_model_by_uuid, [active_model], :success_type => :generic)
             end     # end GET /active_model/{uuid}
 
 
@@ -170,12 +178,11 @@ module Razor
               requires :uuid, type: String
             end
             delete do
-              active_model_slice = ProjectRazor::Slice::ActiveModel.new([])
               active_model_uuid = params[:uuid]
-              active_model = active_model_slice.get_object("active_model_instance", :active, active_model_uuid)
+              active_model = SLICE_REF.get_object("active_model_instance", :active, active_model_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
               raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Active Model [#{active_model.uuid}]" unless get_data_ref.delete_object(active_model)
-              slice_success_web(active_model_slice, :remove_active_model_by_uuid, "Active Model [#{active_model.uuid}] removed", :success_type => :removed)
+              slice_success_response(SLICE_REF, :remove_active_model_by_uuid, "Active Model [#{active_model.uuid}] removed", :success_type => :removed)
             end     # end DELETE /active_model/{uuid}
 
             # the following description hides this endpoint from the swagger-ui-based documentation
@@ -200,7 +207,8 @@ module Razor
               get do
                 uuid = params[:uuid]
                 active_model = get_active_model_by_uuid(uuid)
-                Razor::WebService::Response.new(200, 'OK', 'Success.', get_logs_for_active_model(active_model))
+                log_items = get_logs_for_active_model(active_model)
+                slice_success_response(SLICE_REF, :get_active_model_logs, log_items, :success_type => :generic)
               end     # end GET /active_model/{uuid}/logs
 
             end     # end resource /active_model/:uuid/logs
