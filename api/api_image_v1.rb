@@ -111,7 +111,7 @@ module Razor
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
                 env['api.format'] = :text
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image/{path} resource is not allowed from outside of the Razor subnet"
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image/{component} resource is not allowed from outside of the Razor subnet"
               end
             end
             params do

@@ -171,7 +171,7 @@ module Razor
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to DELETE action for /active_model/{uuid} resource is only allowed from Razor subnet"
+                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /active_model/{uuid} resource is only allowed from Razor subnet"
               end
             end
             params do
