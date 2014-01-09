@@ -65,8 +65,8 @@ module Razor
             Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def slice_success_object_array(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          def slice_success_object(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -77,7 +77,7 @@ module Razor
           # Query for defined brokers.
           get do
             brokers = SLICE_REF.get_object("broker_instances", :broker)
-            slice_success_object_array(SLICE_REF, :get_all_brokers, brokers, :success_type => :generic)
+            slice_success_object(SLICE_REF, :get_all_brokers, brokers, :success_type => :generic)
           end     # end GET /broker
 
           # POST /broker
@@ -109,7 +109,7 @@ module Razor
             # persist that broker, and print the result (or raise an error if cannot persist it)
             get_data_ref.persist_object(broker)
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Broker Target") unless broker
-            slice_success_object_array(SLICE_REF, :create_broker, [broker], :success_type => :created)
+            slice_success_object(SLICE_REF, :create_broker, broker, :success_type => :created)
           end     # end POST /broker
 
           resource :plugins do
@@ -120,7 +120,7 @@ module Razor
               # get the broker plugins (as an array)
               broker_plugins = SLICE_REF.get_child_templates(ProjectRazor::BrokerPlugin)
               # then, construct the response
-              slice_success_object_array(SLICE_REF, :get_broker_plugins, broker_plugins, :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_broker_plugins, broker_plugins, :success_type => :generic)
             end     # end GET /broker/plugins
 
           end     # end resource /broker/plugins
@@ -136,7 +136,7 @@ module Razor
               broker_uuid = params[:uuid]
               broker = SLICE_REF.get_object("broker instances", :broker, broker_uuid)
               raise ProjectRazor::Error::Slice::NotFound, "Broker Target UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
-              slice_success_object_array(SLICE_REF, :get_broker_by_uuid, [broker], :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_broker_by_uuid, broker, :success_type => :generic)
             end     # end GET /broker/{uuid}
 
             # PUT /broker/{uuid}
@@ -173,7 +173,7 @@ module Razor
               broker.is_template      = false
               broker.web_create_metadata(req_metadata_hash) if req_metadata_hash
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless broker.update_self
-              slice_success_object_array(SLICE_REF, :update_broker, [broker], :success_type => :updated)
+              slice_success_object(SLICE_REF, :update_broker, broker, :success_type => :updated)
             end     # end PUT /broker/{uuid}
 
             # DELETE /broker/{uuid}

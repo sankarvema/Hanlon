@@ -61,8 +61,8 @@ module Razor
             Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def slice_success_object_array(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          def slice_success_object(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
           def find_matcher_for_tag(tag_uuid, matcher_uuid)
@@ -91,7 +91,7 @@ module Razor
           # Query for defined tags.
           get do
             tagrules = SLICE_REF.get_object("tagrules", :tag)
-            slice_success_object_array(SLICE_REF, :get_all_tagrules, tagrules, :success_type => :generic)
+            slice_success_object(SLICE_REF, :get_all_tagrules, tagrules, :success_type => :generic)
           end     # end GET /tag
 
           # POST /tag
@@ -109,7 +109,7 @@ module Razor
             tagrule = ProjectRazor::Tagging::TagRule.new({"@name" => params["name"], "@tag" => params["tag"]})
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Tag Rule") unless tagrule
             get_data_ref.persist_object(tagrule)
-            slice_success_object_array(SLICE_REF, :create_tag, [tagrule], :success_type => :created)
+            slice_success_object(SLICE_REF, :create_tag, tagrule, :success_type => :created)
           end     # end POST /tag
 
           resource '/:uuid' do
@@ -123,7 +123,7 @@ module Razor
               tag_uuid = params[:uuid]
               tagrule = SLICE_REF.get_object("tagrule_by_uuid", :tag, tag_uuid)
               raise ProjectRazor::Error::Slice::NotFound, "Tag UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
-              slice_success_object_array(SLICE_REF, :get_tagrule_by_uuid, [tagrule], :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_tagrule_by_uuid, tagrule, :success_type => :generic)
             end     # end GET /tag/{uuid}
 
             # PUT /tag/{uuid}
@@ -153,7 +153,7 @@ module Razor
               tagrule.name = name if name
               tagrule.tag = tag if tag
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Tag Rule [#{tagrule.uuid}]" unless tagrule.update_self
-              slice_success_object_array(SLICE_REF, :update_tag, [tagrule], :success_type => :updated)
+              slice_success_object(SLICE_REF, :update_tag, tagrule, :success_type => :updated)
             end     # end PUT /tag/{uuid}
 
             # DELETE /tag/{uuid}
@@ -177,7 +177,7 @@ module Razor
                 tag_uuid = params[:uuid]
                 matchers, tagrule = get_matchers(tag_uuid)
                 raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Tag with UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
-                slice_success_object_array(SLICE_REF, :get_all_matchers, matchers, :success_type => :generic)
+                slice_success_object(SLICE_REF, :get_all_matchers, matchers, :success_type => :generic)
               end     # end GET /tag/{uuid}/matcher
 
               # POST /tag/{uuid}/matcher
@@ -208,7 +208,7 @@ module Razor
                 matcher = tagrule.add_tag_matcher(:key => key, :compare => compare, :value => value, :inverse => inverse)
                 raise ProjectRazor::Error::Slice::CouldNotCreate, "Could not create tag matcher" unless matcher
                 raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Tag Matcher") unless tagrule.update_self
-                slice_success_object_array(SLICE_REF, :create_matcher, [matcher], :success_type => :created)
+                slice_success_object(SLICE_REF, :create_matcher, matcher, :success_type => :created)
               end     # end POST /tag/{uuid}/matcher
 
               resource '/:matcher_uuid' do
@@ -224,7 +224,7 @@ module Razor
                   matcher_uuid = params[:matcher_uuid]
                   matcher, tagrule = find_matcher_for_tag(tag_uuid, matcher_uuid)
                   raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag Matcher with UUID [#{matcher_uuid}] in Tag with UUID [#{tag_uuid}]" unless matcher
-                  slice_success_object_array(SLICE_REF, :get_matcher_by_uuid, [matcher], :success_type => :generic)
+                  slice_success_object(SLICE_REF, :get_matcher_by_uuid, matcher, :success_type => :generic)
                 end     # end GET /tag/{uuid}/matcher/{matcher_uuid}
 
                 # PUT /tag/{uuid}/matcher/{matcher_uuid}
@@ -266,7 +266,7 @@ module Razor
                   matcher.inverse = inverse if inverse
                   # throw an error if cannot update the tag with the new matcher
                   raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Tag Matcher [#{matcher.uuid}]" unless tag.update_self
-                  slice_success_object_array(SLICE_REF, :update_matcher, [matcher], :success_type => :updated)
+                  slice_success_object(SLICE_REF, :update_matcher, matcher, :success_type => :updated)
                 end     # end PUT /tag/{uuid}/matcher/{matcher_uuid}
 
                 # DELETE /tag/{uuid}/matcher/{matcher_uuid}

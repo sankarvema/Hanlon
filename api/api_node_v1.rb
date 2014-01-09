@@ -61,8 +61,8 @@ module Razor
             Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def slice_success_object_array(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          def slice_success_object(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -73,7 +73,7 @@ module Razor
           # Query registered nodes.
           get do
             nodes = SLICE_REF.get_object("nodes", :node)
-            slice_success_object_array(SLICE_REF, :get_all_nodes, nodes, :success_type => :generic)
+            slice_success_object(SLICE_REF, :get_all_nodes, nodes, :success_type => :generic)
           end       # end GET /node
 
           # the following description hides this endpoint from the swagger-ui-based documentation
@@ -186,7 +186,7 @@ module Razor
               selected_option = params[:field]
               # if no params were passed in, then just return a summary for the specified node
               unless selected_option
-                slice_success_object_array(SLICE_REF, :get_node_by_uuid, [node], :success_type => :generic)
+                slice_success_object(SLICE_REF, :get_node_by_uuid, node, :success_type => :generic)
               else
                 if /^(attrib|attributes)$/.match(selected_option)
                   slice_success_response(SLICE_REF, :get_node_attributes, Hash[node.attributes_hash.sort], :success_type => :generic)

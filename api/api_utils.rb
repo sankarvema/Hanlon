@@ -74,25 +74,37 @@ module Razor
       module_function :rz_slice_success_response
 
       # a method similar rz_slice_success_response method (above) that properly returns
-      # an object array as part of the response
-      def rz_slice_success_object_array(slice, command, object_array, options = { })
-        if slice.uri_root
-          object_array = object_array.collect do |object|
-            if object.respond_to?("is_template") && object.is_template
-              object.to_hash
-            else
-              obj_web = object.to_hash
-              obj_web = Hash[obj_web.reject { |k, v| !%w(@uuid @classname, @noun).include?(k) }] unless object_array.count == 1
-              slice.add_uri_to_object_hash(obj_web)
-              obj_web
+      # a Razor object (or array of Razor objects) as part of the response
+      def rz_slice_success_object(slice, command, rz_object, options = { })
+        if rz_object.respond_to?(:collect)
+          # if here, it's a collection
+          if slice.uri_root
+            # if here, then we can reduce the details down and just show a URI to access
+            # each element of the collection
+            rz_object = rz_object.collect do |element|
+              elem_hash = element.to_hash
+              unless element.respond_to?("is_template") && element.is_template
+                # filter down to just the @uuid, @classname, and @noun fields and add a URI
+                # to the element we're returning that can be used to access the details for
+                # that element
+                elem_hash = Hash[elem_hash.reject { |k, v| !%w(@uuid @classname, @noun).include?(k) }]
+                slice.add_uri_to_object_hash(elem_hash)
+              end
+              elem_hash
             end
+          else
+            # if here, then there is no way to reference each element using
+            # a URI, so show the full details for each
+            rz_object = rz_object.collect { |element| element.to_hash }
           end
         else
-          object_array = object_array.collect { |object| object.to_hash }
+          # if here, then we're dealing with a single object, not a collection
+          # so show the full details
+          rz_object = rz_object.to_hash
         end
-        rz_slice_success_response(slice, command, object_array, options)
+        rz_slice_success_response(slice, command, rz_object, options)
       end
-      module_function :rz_slice_success_object_array
+      module_function :rz_slice_success_object
 
     end
   end

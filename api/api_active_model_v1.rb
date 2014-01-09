@@ -111,8 +111,8 @@ module Razor
             Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def slice_success_object_array(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          def slice_success_object(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -123,7 +123,7 @@ module Razor
           # Retrieve list of active_models.
           get do
             active_models = SLICE_REF.get_object("active_models", :active)
-            slice_success_object_array(SLICE_REF, :get_all_active_models, active_models, :success_type => :generic)
+            slice_success_object(SLICE_REF, :get_all_active_models, active_models, :success_type => :generic)
           end     # end GET /active_model
 
           # the following description hides this endpoint from the swagger-ui-based documentation
@@ -162,7 +162,7 @@ module Razor
             get do
               uuid = params[:uuid]
               active_model = get_active_model_by_uuid(uuid)
-              slice_success_object_array(SLICE_REF, :get_active_model_by_uuid, [active_model], :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_active_model_by_uuid, active_model, :success_type => :generic)
             end     # end GET /active_model/{uuid}
 
 

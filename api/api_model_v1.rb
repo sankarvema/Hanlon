@@ -61,8 +61,8 @@ module Razor
             Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def slice_success_object_array(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          def slice_success_object(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -73,7 +73,7 @@ module Razor
           # Query for defined models.
           get do
             models = SLICE_REF.get_object("models", :model)
-            slice_success_object_array(SLICE_REF, :get_all_models, models, :success_type => :generic)
+            slice_success_object(SLICE_REF, :get_all_models, models, :success_type => :generic)
           end     # end GET /model
 
           # POST /model
@@ -108,7 +108,7 @@ module Razor
             model.is_template = false
             get_data_ref.persist_object(model)
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Model") unless model
-            slice_success_object_array(SLICE_REF, :create_model, [model], :success_type => :created)
+            slice_success_object(SLICE_REF, :create_model, model, :success_type => :created)
           end     # end POST /model
 
           resource :templates do
@@ -119,8 +119,7 @@ module Razor
               model_templates = SLICE_REF.get_child_templates(ProjectRazor::ModelTemplate)
               # convert each element of the array to a hash, then use that array of hashes
               # to construct the response
-              # model_templates = model_templates.collect { |object| object.to_hash }
-              slice_success_object_array(SLICE_REF, :get_all_templates, model_templates, :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_all_templates, model_templates, :success_type => :generic)
             end     # end GET /model/templates
 
           end     # end resource /model/templates
@@ -136,7 +135,7 @@ module Razor
               model_uuid = params[:uuid]
               model = SLICE_REF.get_object("get_model_by_uuid", :model, model_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-              slice_success_object_array(SLICE_REF, :get_model_by_uuid, [model], :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_model_by_uuid, model, :success_type => :generic)
             end     # end GET /model/{uuid}
 
             # PUT /model/{uuid}
@@ -173,7 +172,7 @@ module Razor
               raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
               model.image_uuid = image.uuid if image
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Model [#{model.uuid}]" unless model.update_self
-              slice_success_object_array(SLICE_REF, :update_model, [model], :success_type => :updated)
+              slice_success_object(SLICE_REF, :update_model, model, :success_type => :updated)
             end     # end PUT /model/{uuid}
 
             # DELETE /model/{uuid}

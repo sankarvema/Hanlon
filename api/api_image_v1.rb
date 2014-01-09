@@ -74,8 +74,8 @@ module Razor
             Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def slice_success_object_array(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          def slice_success_object(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -101,7 +101,7 @@ module Razor
           end
           get do
             images = SLICE_REF.get_object("images", :images)
-            slice_success_object_array(SLICE_REF, :get_images, images, :success_type => :created)
+            slice_success_object(SLICE_REF, :get_all_images, images, :success_type => :created)
           end     # end GET /image
 
           resource '/:component', requirements: { component: /.*/ } do
@@ -125,7 +125,7 @@ module Razor
                 # it's a UUID, to retrieve the appropriate image and return it
                 image_uuid = component
                 image = SLICE_REF.get_object("images", :images, image_uuid)
-                slice_success_object_array(SLICE_REF, :get_image_by_uuid, [image], :success_type => :generic)
+                slice_success_object(SLICE_REF, :get_image_by_uuid, image, :success_type => :generic)
               else
                 path = component
                 # it's not a UUID, so treat it as a path to a file and return the component

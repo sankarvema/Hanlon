@@ -73,8 +73,8 @@ module Razor
             Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
-          def slice_success_object_array(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object_array(slice, command, response, options)
+          def slice_success_object(slice, command, response, options = {})
+            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
           def make_callback(active_model, callback_namespace, command_array)
@@ -94,7 +94,7 @@ module Razor
           # Query for defined policies.
           get do
             policies = SLICE_REF.get_object("policies", :policy)
-            slice_success_object_array(SLICE_REF, :get_all_policies, policies, :success_type => :generic)
+            slice_success_object(SLICE_REF, :get_all_policies, policies, :success_type => :generic)
           end     # end GET /policy
 
           # POST /policy
@@ -148,7 +148,7 @@ module Razor
             # Add policy
             policy_rules         = ProjectRazor::Policies.instance
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Policy") unless policy_rules.add(policy)
-            slice_success_object_array(SLICE_REF, :create_policy, [policy], :success_type => :created)
+            slice_success_object(SLICE_REF, :create_policy, policy, :success_type => :created)
           end     # end POST /policy
 
           resource :templates do
@@ -158,7 +158,7 @@ module Razor
             get do
               policy_templates = SLICE_REF.get_child_templates(ProjectRazor::PolicyTemplate)
               # then, construct the response
-              slice_success_object_array(SLICE_REF, :get_policy_templates, policy_templates, :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_policy_templates, policy_templates, :success_type => :generic)
             end     # end GET /policy/templates
 
           end     # end resource /policy/templates
@@ -220,7 +220,7 @@ module Razor
               policy_uuid = params[:uuid]
               policy = SLICE_REF.get_object("get_policy_by_uuid", :policy, policy_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-              slice_success_object_array(SLICE_REF, :get_policy_by_uuid, [policy], :success_type => :generic)
+              slice_success_object(SLICE_REF, :get_policy_by_uuid, policy, :success_type => :generic)
             end     # end GET /policy/{uuid}
 
             # PUT /policy/{uuid}
@@ -297,7 +297,7 @@ module Razor
               end
               # Update object
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless policy.update_self
-              slice_success_object_array(SLICE_REF, :update_policy, [policy], :success_type => :updated)
+              slice_success_object(SLICE_REF, :update_policy, policy, :success_type => :updated)
             end     # end PUT /policy/{uuid}
 
             # DELETE /policy/{uuid}
