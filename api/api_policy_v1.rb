@@ -12,7 +12,7 @@ module Razor
         version :v1, :using => :path, :vendor => "razor"
         format :json
         default_format :json
-        SLICE_REF = ProjectRazor::Slice::Broker.new([])
+        SLICE_REF = ProjectRazor::Slice::Policy.new([])
 
         rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
@@ -156,10 +156,27 @@ module Razor
             # GET /policy/templates
             # Query for available policy templates
             get do
+              # get the policy templates (as an array)
               policy_templates = SLICE_REF.get_child_templates(ProjectRazor::PolicyTemplate)
               # then, construct the response
               slice_success_object(SLICE_REF, :get_policy_templates, policy_templates, :success_type => :generic)
             end     # end GET /policy/templates
+
+            resource '/:name' do
+
+              # GET /policy/templates/{name}
+              # Query for a specific policy template (by UUID)
+              get do
+                # get the matching policy template
+                policy_template_name = params[:name]
+                policy_templates = SLICE_REF.get_child_templates(ProjectRazor::PolicyTemplate)
+                policy_template = policy_templates.select { |template| template.template.to_s == policy_template_name }
+                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy Template Named: [#{policy_template_name}]" unless policy_template && (policy_template.class != Array || policy_template.length > 0)
+                # then, construct the response
+                slice_success_object(SLICE_REF, :get_policy_template_by_name, policy_template[0], :success_type => :generic)
+              end     # end GET /policy/templates/{name}
+
+            end     # end resource /policy/templates/:name
 
           end     # end resource /policy/templates
 

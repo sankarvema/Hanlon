@@ -116,11 +116,27 @@ module Razor
             # GET /model/templates
             # Query for available model templates
             get do
+              # get the model templates (as an array)
               model_templates = SLICE_REF.get_child_templates(ProjectRazor::ModelTemplate)
-              # convert each element of the array to a hash, then use that array of hashes
-              # to construct the response
-              slice_success_object(SLICE_REF, :get_all_templates, model_templates, :success_type => :generic)
+              # then, construct the response
+              slice_success_object(SLICE_REF, :get_model_templates, model_templates, :success_type => :generic)
             end     # end GET /model/templates
+
+            resource '/:name' do
+
+              # GET /model/templates/{name}
+              # Query for a specific model template (by name)
+              get do
+                # get the matching model template
+                model_template_name = params[:name]
+                model_templates = SLICE_REF.get_child_templates(ProjectRazor::ModelTemplate)
+                model_template = model_templates.select { |template| template.name == model_template_name }
+                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Model Template Named: [#{model_template_name}]" unless model_template && (model_template.class != Array || model_template.length > 0)
+                # then, construct the response
+                slice_success_object(SLICE_REF, :get_model_template_by_uuid, model_template[0], :success_type => :generic)
+              end     # end GET /model/templates/{uuid}
+
+            end     # end resource /model/templates/:uuid
 
           end     # end resource /model/templates
 

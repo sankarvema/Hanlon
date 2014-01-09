@@ -11,6 +11,13 @@ class ProjectRazor::Slice < ProjectRazor::Object
   attr_accessor :verbose
   attr_accessor :debug
 
+  # Load service config
+  PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.to_s
+  SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
+  # and initialize a constant pointing to the root of all Razor URIs
+  RAZOR_URI_ROOT = SERVICE_CONFIG[:config][:swagger_ui][:base_path] + '/' +
+      SERVICE_CONFIG[:config][:swagger_ui][:api_version]
+
   # Initializes the Slice Base
   # @param [Array] args
   def initialize(args = nil)
@@ -30,11 +37,11 @@ class ProjectRazor::Slice < ProjectRazor::Object
   # hot path.
   def slice_name
     self.class.name.
-      split('::').
-      last.
-      scan(/[[:upper:]][[:lower:]]*/).
-      join('_').
-      downcase
+        split('::').
+        last.
+        scan(/[[:upper:]][[:lower:]]*/).
+        join('_').
+        downcase
   end
 
   def slice_commands
@@ -59,18 +66,18 @@ class ProjectRazor::Slice < ProjectRazor::Object
 
   def coercively_equal(want, have)
     case want
-    when Symbol, String
-      want.to_s == have.to_s
+      when Symbol, String
+        want.to_s == have.to_s
 
-    when Regexp
-      have =~ want
+      when Regexp
+        have =~ want
 
-    when Array
-      # We simply ignore `nil` values in the array, as per the original code.
-      want.reject(&:nil?).any? {|x| coercively_equal(x, have) }
+      when Array
+        # We simply ignore `nil` values in the array, as per the original code.
+        want.reject(&:nil?).any? {|x| coercively_equal(x, have) }
 
-    else
-      fail "unknown coercive comparator class #{want.class}"
+      else
+        fail "unknown coercive comparator class #{want.class}"
     end
   end
   private 'coercively_equal'
@@ -106,18 +113,18 @@ class ProjectRazor::Slice < ProjectRazor::Object
 
   def eval_action(command_hash, command_action)
     case command_hash[command_action]
-    when Symbol
-      # Symbol reroutes to another command
-      @command_array.unshift(command_hash[command_action].to_s)
-      eval_command(command_hash)
-    when String
-      # String calls a method
-      self.send(command_hash[command_action])
-    when Hash
-      # A hash is iterated
-      eval_command(command_hash[command_action])
-    else
-      raise "InvalidActionSlice"
+      when Symbol
+        # Symbol reroutes to another command
+        @command_array.unshift(command_hash[command_action].to_s)
+        eval_command(command_hash)
+      when String
+        # String calls a method
+        self.send(command_hash[command_action])
+      when Hash
+        # A hash is iterated
+        eval_command(command_hash[command_action])
+      else
+        raise "InvalidActionSlice"
     end
   end
 
@@ -151,22 +158,22 @@ class ProjectRazor::Slice < ProjectRazor::Object
 
   def success_types
     {
-      :generic => {
-        :http_code => 200,
-        :message => "Ok"
-      },
-      :created => {
-        :http_code => 201,
-        :message => "Created"
-      },
-      :updated => {
-        :http_code => 202,
-        :message => "Updated"
-      },
-      :removed => {
-        :http_code => 202,
-        :message => "Removed"
-      }
+        :generic => {
+            :http_code => 200,
+            :message => "Ok"
+        },
+        :created => {
+            :http_code => 201,
+            :message => "Created"
+        },
+        :updated => {
+            :http_code => 202,
+            :message => "Updated"
+        },
+        :removed => {
+            :http_code => 202,
+            :message => "Removed"
+        }
     }
   end
 
@@ -228,7 +235,7 @@ class ProjectRazor::Slice < ProjectRazor::Object
     # albeit without preserving the exact exception.  I don't think anyone
     # cares, since nothing in Razor catches it specifically. --daniel 2013-04-16
     all_command_option_data[command.to_sym] or
-      fail "Unknown command #{command} was looked up in `command_option_data`"
+        fail "Unknown command #{command} was looked up in `command_option_data`"
   end
 
   # here, we define a Stack class that simply delegates the equivalent "push", "pop",
@@ -311,18 +318,18 @@ class ProjectRazor::Slice < ProjectRazor::Object
     validate_options[:logic] ||= :require_none
     option_names = validate_options[:options].map { |key, value| key }
     case validate_options[:logic]
-    when :require_one
-      count = 0
-      validate_options[:option_items].each do
+      when :require_one
+        count = 0
+        validate_options[:option_items].each do
         |opt_item|
-        count += 1 if opt_item[:required] && validate_arg(validate_options[:options][opt_item[:name]])
-      end
-      raise ProjectRazor::Error::Slice::MissingArgument, "Must provide one option from #{option_names.inspect}." if count < 1
-    when :require_all
-      validate_options[:option_items].each do
+          count += 1 if opt_item[:required] && validate_arg(validate_options[:options][opt_item[:name]])
+        end
+        raise ProjectRazor::Error::Slice::MissingArgument, "Must provide one option from #{option_names.inspect}." if count < 1
+      when :require_all
+        validate_options[:option_items].each do
         |opt_item|
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide: [#{opt_item[:description]}]" if opt_item[:required] && !validate_arg(validate_options[:options][opt_item[:name]])
-      end
+          raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide: [#{opt_item[:description]}]" if opt_item[:required] && !validate_arg(validate_options[:options][opt_item[:name]])
+        end
     end
 
   end
@@ -377,15 +384,15 @@ class ProjectRazor::Slice < ProjectRazor::Object
     banner = ""
     if contained_resource
       banner = ( option_items.select { |elem| elem[:uuid_is] == "required" }.length > 0 ?
-        "razor #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (UUID) (options...)" :
-        "razor #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (options...)")
+          "razor #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (UUID) (options...)" :
+          "razor #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (options...)")
     else
       banner = ( option_items.select { |elem| elem[:uuid_is] == "required" }.length > 0 ?
-        "razor #{slice_name} #{command} (UUID) (options...)" :
-        "razor #{slice_name} #{command} (options...)")
+          "razor #{slice_name} #{command} (UUID) (options...)" :
+          "razor #{slice_name} #{command} (options...)")
     end
     usage_lines = get_options({}, :options_items => option_items,
-      :banner => banner).to_s.split("\n")
+                              :banner => banner).to_s.split("\n")
     if usage_lines
       puts "Usage: #{usage_lines[0]}"
       usage_lines[1..usage_lines.size].each { |line|
@@ -403,7 +410,7 @@ class ProjectRazor::Slice < ProjectRazor::Object
     if exclusive_choice && selected_options.length > 1
       # if it's an exclusive choice and more than one option was chosen, it's an error
       raise ProjectRazor::Error::Slice::SliceCommandParsingFailed,
-      "Only one of the #{options.map { |key, val| key }.inspect} flags may be used"
+            "Only one of the #{options.map { |key, val| key }.inspect} flags may be used"
     end
     # check all of the flags that were passed to see if the UUID was included
     # if it's required for that flag (and if it was not if it is not allowed
@@ -411,10 +418,10 @@ class ProjectRazor::Slice < ProjectRazor::Object
     selected_options.each { |selected_option|
       if (!uuid_included && selected_option[:uuid_is] == "required")
         raise ProjectRazor::Error::Slice::SliceCommandParsingFailed,
-        "Must specify a UUID value when using the '#{selected_option[:name]}' option"
+              "Must specify a UUID value when using the '#{selected_option[:name]}' option"
       elsif (uuid_included &&  selected_option[:uuid_is] == "not_allowed")
         raise ProjectRazor::Error::Slice::SliceCommandParsingFailed,
-        "Cannot specify a UUID value when using the '#{selected_option[:name]}' option"
+              "Cannot specify a UUID value when using the '#{selected_option[:name]}' option"
       end
     }
   end
@@ -432,21 +439,21 @@ class ProjectRazor::Slice < ProjectRazor::Object
     command_str = "razor #{slice_name} #{@prev_args.join(" ")}"
     command_str << " " + @command_array.join(" ") if @command_array && @command_array.length > 0
     raise ProjectRazor::Error::Slice::SliceCommandParsingFailed,
-    "failed to parse slice command: '#{command_str}'; check usage"
+          "failed to parse slice command: '#{command_str}'; check usage"
   end
 
   # used by the slices to throw an error when a UUID was expected in a slice command
   # but no UUID value was found
   def throw_missing_uuid_error
     raise ProjectRazor::Error::Slice::MissingArgument,
-    "Expected UUID argument missing; a UUID is required for this command"
+          "Expected UUID argument missing; a UUID is required for this command"
   end
 
   # used by slices to support an error indicating that an operation is not
   # supported by that slice
   def throw_get_by_uuid_not_supported
     raise ProjectRazor::Error::Slice::NotImplemented,
-    "there is no 'get_by_uuid' operation defined for the #{slice_name} slice"
+          "there is no 'get_by_uuid' operation defined for the #{slice_name} slice"
   end
 
   # used by slices to construct a typical @slice_command hash map based on
@@ -459,48 +466,48 @@ class ProjectRazor::Slice < ProjectRazor::Object
     remove_all_cmd_name = "throw_missing_uuid_error" unless remove_all_cmd_name
     get_by_uuid_cmd_name = "throw_get_by_uuid_not_supported" unless get_by_uuid_cmd_name
     raise ProjectRazor::Error::Slice::MissingArgument,
-    "A 'help_cmd_name' parameter must be included" unless help_cmd_name
+          "A 'help_cmd_name' parameter must be included" unless help_cmd_name
 
     # add a get action if non-nil values for the get-related command names
     # were included in the input arguments
     cmd_map[:get] = {
-      return_all                      => get_all_cmd_name,
-      :default                        => get_all_cmd_name,
-      ["--help", "-h"]                => help_cmd_name,
-      /^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/ => {
-        [/^\{.*\}$/]                    => get_by_uuid_cmd_name,
-        :default                        => get_by_uuid_cmd_name,
-        :else                           => "throw_syntax_error"
-      }
+        return_all                      => get_all_cmd_name,
+        :default                        => get_all_cmd_name,
+        ["--help", "-h"]                => help_cmd_name,
+        /^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/ => {
+            [/^\{.*\}$/]                    => get_by_uuid_cmd_name,
+            :default                        => get_by_uuid_cmd_name,
+            :else                           => "throw_syntax_error"
+        }
     } if (get_all_cmd_name && get_by_uuid_cmd_name)
     # add an add action if a non-nil value for the add_cmd_name parameter
     # was included in the input arguments
     cmd_map[:add] = {
-      :default         => add_cmd_name,
-      :else            => add_cmd_name,
-      ["--help", "-h"] => help_cmd_name
+        :default         => add_cmd_name,
+        :else            => add_cmd_name,
+        ["--help", "-h"] => help_cmd_name
     } if add_cmd_name
     # add an update action if a non-nil value for the update_cmd_name
     # parameter names was included in the input arguments
     cmd_map[:update] = {
-      :default                        => "throw_missing_uuid_error",
-      ["--help", "-h"]                => help_cmd_name,
-      /^(?!^(all|\-\-help|\-h)$)\S+$/ => {
-        :else                           => update_cmd_name,
-        :default                        => update_cmd_name
-      }
+        :default                        => "throw_missing_uuid_error",
+        ["--help", "-h"]                => help_cmd_name,
+        /^(?!^(all|\-\-help|\-h)$)\S+$/ => {
+            :else                           => update_cmd_name,
+            :default                        => update_cmd_name
+        }
     } if update_cmd_name
     # add an update action if a non-nil value for the remove_cmd_name
     # parameter names was included in the input arguments
     cmd_map[:remove] = {
-      ["all"]                         => remove_all_cmd_name,
-      :default                        => "throw_missing_uuid_error",
-      ["--help", "-h"]                => help_cmd_name,
-      /^(?!^(all|\-\-help|\-h)$)\S+$/ => {
-        [/^\{.*\}$/]                    => remove_by_uuid_cmd_name,
-        :else                           => "throw_syntax_error",
-        :default                        => remove_by_uuid_cmd_name
-      }
+        ["all"]                         => remove_all_cmd_name,
+        :default                        => "throw_missing_uuid_error",
+        ["--help", "-h"]                => help_cmd_name,
+        /^(?!^(all|\-\-help|\-h)$)\S+$/ => {
+            [/^\{.*\}$/]                    => remove_by_uuid_cmd_name,
+            :else                           => "throw_syntax_error",
+            :default                        => remove_by_uuid_cmd_name
+        }
     } if (remove_all_cmd_name && remove_by_uuid_cmd_name)
     # add a few more elements that are common between slices
     cmd_map[:default] = :get
@@ -620,7 +627,7 @@ class ProjectRazor::Slice < ProjectRazor::Object
 
         if (object_array.count == 1 || options[:style] == :item) && options[:style] != :table
           object_array.each do
-            |object|
+          |object|
             puts print_single_item(object)
           end
         else
@@ -638,10 +645,15 @@ class ProjectRazor::Slice < ProjectRazor::Object
     end
   end
 
-  def add_uri_to_object_hash(object_hash)
+  def add_uri_to_object_hash(object_hash, field_name="@uuid", additional_uri_path = "")
     noun = object_hash["@noun"]
-    object_hash["@uri"] = "#@uri_root#{noun}/#{object_hash["@uuid"]}" if noun
-
+    if noun
+      if additional_uri_path
+        object_hash["@uri"] = "#@uri_root#{noun}/#{additional_uri_path}/#{object_hash[field_name]}"
+      else
+        object_hash["@uri"] = "#@uri_root#{noun}/#{object_hash[field_name]}"
+      end
+    end
     object_hash.each do |k, v|
       if object_hash[k].class == Array
         object_hash[k].each do |item|

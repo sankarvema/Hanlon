@@ -83,11 +83,31 @@ module Razor
             # each element of the collection
             rz_object = rz_object.collect do |element|
               elem_hash = element.to_hash
-              unless element.respond_to?("is_template") && element.is_template
+              if element.respond_to?("is_template") && element.is_template
+                key_field = ""
+                additional_uri_str = ""
+                if slice.class.to_s == 'ProjectRazor::Slice::Broker'
+                  key_field = "@plugin"
+                  additional_uri_str = "plugins"
+                elsif slice.class.to_s == 'ProjectRazor::Slice::Model'
+                  key_field = "@name"
+                  additional_uri_str = "templates"
+                elsif slice.class.to_s == 'ProjectRazor::Slice::Policy'
+                  key_field = "@template"
+                  additional_uri_str = "templates"
+                end
+                # filter down to just the #{key_field}, @classname, and @noun fields and add a URI
+                # (based on the name fo the template) to the element we're returning that can
+                # be used to access the details for that element
+                test_array = [key_field, "@classname", "@noun"]
+                elem_hash = Hash[elem_hash.reject { |k, v| !test_array.include?(k) }]
+                slice.add_uri_to_object_hash(elem_hash, key_field, additional_uri_str)
+              else
                 # filter down to just the @uuid, @classname, and @noun fields and add a URI
                 # to the element we're returning that can be used to access the details for
                 # that element
-                elem_hash = Hash[elem_hash.reject { |k, v| !%w(@uuid @classname, @noun).include?(k) }]
+                puts "restricting to @uuid, @classname, and @noun..."
+                elem_hash = Hash[elem_hash.reject { |k, v| !%w(@uuid @classname @noun).include?(k) }]
                 slice.add_uri_to_object_hash(elem_hash)
               end
               elem_hash

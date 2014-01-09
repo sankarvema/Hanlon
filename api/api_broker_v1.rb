@@ -123,6 +123,22 @@ module Razor
               slice_success_object(SLICE_REF, :get_broker_plugins, broker_plugins, :success_type => :generic)
             end     # end GET /broker/plugins
 
+            resource '/:name' do
+
+              # GET /broker/plugins/{name}
+              # Query for a specific broker plugin (by name)
+              get do
+                # get the matching broker plugin
+                broker_plugin_name = params[:name]
+                broker_plugins = SLICE_REF.get_child_templates(ProjectRazor::BrokerPlugin)
+                broker_plugin = broker_plugins.select { |plugin| plugin.plugin.to_s == broker_plugin_name }
+                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Broker Plugin Named: [#{broker_plugin_name}]" unless broker_plugin && (broker_plugin.class != Array || broker_plugin.length > 0)
+                # then, construct the response
+                slice_success_object(SLICE_REF, :get_broker_plugin_by_uuid, broker_plugin[0], :success_type => :generic)
+              end     # end GET /broker/plugins/{uuid}
+
+            end     # end resource /broker/plugins/:uuid
+
           end     # end resource /broker/plugins
 
           resource '/:uuid' do
