@@ -341,6 +341,11 @@ module ProjectRazor
       tags         = []
       tag_policies.each do
       |tag_pol|
+        # ToDo; resolve error that is thrown from this line sporadically.
+        # Error thrown looks like this:
+        #
+        #   undefined method 'check_tag_rule' for true:TrueClass
+        #
         if tag_pol.check_tag_rule(node.attributes_hash)
           tags << tag_pol.get_tag(node.attributes_hash)
         end

@@ -59,7 +59,7 @@ module Razor
           end
 
           def is_uuid?(string_)
-            string_ =~ /[A-Za-z0-9]{1,22}/
+            string_ =~ /^[A-Za-z0-9]{1,22}$/
           end
 
           def get_data_ref

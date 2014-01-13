@@ -58,7 +58,7 @@ module Razor
           end
 
           def is_uuid?(string_)
-            string_ =~ /[A-Za-z0-9]{1,22}/
+            string_ =~ /^[A-Za-z0-9]{1,22}$/
           end
 
           def request_is_from_razor_subnet(ip_addr)

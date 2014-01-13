@@ -23,6 +23,8 @@ class ProjectRazor::Object
 
   # Set default values
   def initialize
+    UUID.state_file = false
+    UUID.generator.next_sequence
     @uuid = create_uuid
     @version = 0
     @classname = self.class.to_s
