@@ -102,10 +102,14 @@ module Razor
             broker = SLICE_REF.new_object_from_template_name(BROKER_PREFIX, plugin)
             raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
                 req_metadata_hash
-            broker.web_create_metadata(req_metadata_hash)
             broker.name             = name
             broker.user_description = description
             broker.is_template      = false
+            req_metadata_hash.each { |key, md_hash_value|
+              value = params[key]
+              broker.set_metadata_value(key, value, md_hash_value[:validation])
+            }
+            broker.req_metadata_hash = req_metadata_hash
             # persist that broker, and print the result (or raise an error if cannot persist it)
             get_data_ref.persist_object(broker)
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Broker Target") unless broker
@@ -184,10 +188,16 @@ module Razor
               broker = SLICE_REF.get_object("broker_with_uuid", :broker, broker_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
               # fill in the fields with the new values that were passed in (if any)
-              broker.name             = name if name
-              broker.user_description = description if description
-              broker.is_template      = false
-              broker.web_create_metadata(req_metadata_hash) if req_metadata_hash
+              broker.name              = name if name
+              broker.user_description  = description if description
+              broker.is_template       = false
+              if req_metadata_hash
+                req_metadata_hash.each { |key, md_hash_value|
+                  value = params[key]
+                  broker.set_metadata_value(key, value, md_hash_value[:validation])
+                }
+                broker.req_metadata_hash = req_metadata_hash
+              end
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless broker.update_self
               slice_success_object(SLICE_REF, :update_broker, broker, :success_type => :updated)
             end     # end PUT /broker/{uuid}

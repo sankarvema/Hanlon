@@ -177,12 +177,17 @@ module ProjectRazor
         model.cli_create_metadata
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
-        json_data = {
+        body_hash = {
             "template" => template,
             "label" => label,
             "image_uuid" => image_uuid,
             "req_metadata_hash" => model.req_metadata_hash
-        }.to_json
+        }
+        model.req_metadata_hash.each { |key, md_hash_value|
+          value = model.instance_variable_get(key)
+          body_hash[key] = value
+        }
+        json_data = body_hash.to_json
         result, response = rz_http_post_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
@@ -227,7 +232,13 @@ module ProjectRazor
         body_hash = {}
         body_hash["label"] = label if label
         body_hash["image_uuid"] = image_uuid if image_uuid
-        body_hash["req_metadata_hash"] = model.req_metadata_hash if change_metadata
+        if change_metadata
+          model.req_metadata_hash.each { |key, md_hash_value|
+            value = model.instance_variable_get(key)
+            body_hash[key] = value
+          }
+          body_hash["req_metadata_hash"] = model.req_metadata_hash
+        end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated policy) and return the results
         result, response = rz_http_put_json_data(uri, json_data, true)

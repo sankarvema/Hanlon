@@ -100,12 +100,15 @@ module Razor
             image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true
             raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image
             # use the arguments passed in (above) to create a new model
-            raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
-                req_metadata_hash
-            model.web_create_metadata(req_metadata_hash)
+            raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless req_metadata_hash
             model.label = label
             model.image_uuid = image.uuid
             model.is_template = false
+            req_metadata_hash.each { |key, md_hash_value|
+              value = params[key]
+              model.set_metadata_value(key, value, md_hash_value[:validation])
+            }
+            model.req_metadata_hash = req_metadata_hash
             get_data_ref.persist_object(model)
             raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Model") unless model
             slice_success_object(SLICE_REF, :create_model, model, :success_type => :created)
@@ -187,6 +190,13 @@ module Razor
               image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true if image_uuid
               raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
               model.image_uuid = image.uuid if image
+              if req_metadata_hash
+                req_metadata_hash.each { |key, md_hash_value|
+                  value = params[key]
+                  model.set_metadata_value(key, value, md_hash_value[:validation])
+                }
+                model.req_metadata_hash = req_metadata_hash
+              end
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Model [#{model.uuid}]" unless model.update_self
               slice_success_object(SLICE_REF, :update_model, model, :success_type => :updated)
             end     # end PUT /model/{uuid}

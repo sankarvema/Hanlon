@@ -172,12 +172,17 @@ module ProjectRazor
         broker.cli_create_metadata
         # setup the POST (to create the requested broker) and return the results
         uri = URI.parse @uri_string
-        json_data = {
+        body_hash = {
             "name" => options[:name],
             "description" => options[:description],
             "plugin" => options[:plugin],
             "req_metadata_hash" => broker.req_metadata_hash
-        }.to_json
+        }
+        broker.req_metadata_hash.each { |key, md_hash_value|
+          value = broker.instance_variable_get(key)
+          body_hash[key] = value
+        }
+        json_data = body_hash.to_json
         result, response = rz_http_post_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
@@ -222,7 +227,13 @@ module ProjectRazor
         body_hash = {}
         body_hash["name"] = name if name
         body_hash["description"] = description if description
-        body_hash["req_metadata_hash"] = broker.req_metadata_hash if change_metadata
+        if change_metadata
+          broker.req_metadata_hash.each { |key, md_hash_value|
+            value = broker.instance_variable_get(key)
+            body_hash[key] = value
+          }
+          body_hash["req_metadata_hash"] = broker.req_metadata_hash
+        end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated broker) and return the results
         result, response = rz_http_put_json_data(uri, json_data, true)
