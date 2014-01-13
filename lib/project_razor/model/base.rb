@@ -40,7 +40,7 @@ module ProjectRazor
         @final_state = :nothing
         @counter = 0
         @result = nil
-                               # Model Log
+        # Model Log
         @log = []
         @_namespace = :model
         from_hash(hash) unless hash == nil

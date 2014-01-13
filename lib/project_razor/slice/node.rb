@@ -1,14 +1,20 @@
+require 'net/http'
+
 # Root ProjectRazor namespace
 module ProjectRazor
   class Slice
+
     # ProjectRazor Slice Node (NEW)
     # Used for policy management
     class Node < ProjectRazor::Slice
+
       # @param [Array] args
       def initialize(args)
         super(args)
-        @hidden          = false
-        @engine = ProjectRazor::Engine.instance
+        @hidden     = false
+        @engine     = ProjectRazor::Engine.instance
+        @uri_string = ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + '/node'
+
       end
 
       def slice_commands
@@ -17,26 +23,24 @@ module ProjectRazor
         # no support for adding, updating, or removing nodes via the slice
         # API, so the last three arguments are nil
         commands = get_command_map("node_help", "get_all_nodes",
-                                          "get_node_by_uuid", nil, nil, nil, nil)
+                                   "get_node_by_uuid", nil, nil, nil, nil)
         # and add a few more commands specific to this slice
-        commands[["register", /^[Rr]$/]] = "register_node"
-        commands[["checkin", /^[Cc]$/]] = "checkin_node"
         commands[:get][/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:else] = "get_node_by_uuid"
         commands
       end
 
       def all_command_option_data
         {
-          :get => [
-            { :name        => :field,
-              :default     => nil,
-              :short_form  => '-f',
-              :long_form   => '--field FIELD_NAME',
-              :description => 'The fieldname (attributes or hardware_id) to get',
-              :uuid_is     => 'required',
-              :required    => false
-            }
-          ]
+            :get => [
+                { :name        => :field,
+                  :default     => nil,
+                  :short_form  => '-f',
+                  :long_form   => '--field FIELD_NAME',
+                  :description => 'The fieldname (attributes or hardware_id) to get',
+                  :uuid_is     => 'required',
+                  :required    => false
+                }
+            ]
         }.freeze
       end
 
@@ -71,17 +75,14 @@ module ProjectRazor
         @command = :get_all_nodes
         raise ProjectRazor::Error::Slice::SliceCommandParsingFailed,
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
-        # if it's a web command and the last argument wasn't the string "default" or "get", then a
-        # filter expression was included as part of the web command
-        @command_array.unshift(@prev_args.pop) if @web_command && @prev_args.peek(0) != "default" && @prev_args.peek(0) != "get"
-        print_object_array get_object("nodes", :node), "Discovered Nodes", :style => :table
+        uri = URI.parse @uri_string
+        node_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(node_array, "Discovered Nodes", :style => :table)
       end
 
       def get_node_by_uuid
         @command = :get_node_by_uuid
         includes_uuid = false
-        # ran one argument far when parsing if we were working with a web command
-        @command_array.unshift(@prev_args.pop) if @web_command
         # load the appropriate option items for the subcommand we are handling
         option_items = command_option_data(:get)
         # parse and validate the options that were passed in as part of this
@@ -89,129 +90,29 @@ module ProjectRazor
         # options map constructed from the @commmand_array)
         node_uuid, options = parse_and_validate_options(option_items, "razor node [get] (UUID) [--field,-f FIELD]", :require_all)
         includes_uuid = true if node_uuid
-        node = get_object("node_with_uuid", :node, node_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "no matching Node (with a uuid value of '#{node_uuid}') found" unless node && (node.class != Array || node.length > 0)
         selected_option = options[:field]
-        # if no options were passed in, then just print out the summary for the specified node
-        return print_object_array [node] unless selected_option
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + '/' + node_uuid)
+        print_node_attributes = false
         if /^(attrib|attributes)$/.match(selected_option)
-          get_node_attributes(node)
-        elsif /^(hardware|hardware_id|hardware_ids)$/.match(selected_option)
-          get_node_hardware_ids(node)
-        else
+          print_node_attributes = true
+        elsif !/^(hardware|hardware_id|hardware_ids)$/.match(selected_option)
           raise ProjectRazor::Error::Slice::InputError, "unrecognized fieldname '#{selected_option}'"
         end
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        return print_object_array(hash_array_to_obj_array([result]), "Node:") unless selected_option
+        if print_node_attributes
+          return print_object_array(hash_to_obj(result).print_attributes_hash, "Node Attributes:")
+        end
+        print_object_array(hash_to_obj(result).print_hardware_ids, "Node Hardware ID:")
       end
 
-      def get_node_attributes(node)
-        @command = :get_node_attributes
-        if @web_command
-          print_object_array [Hash[node.attributes_hash.sort]]
-        else
-          print_object_array node.print_attributes_hash, "Node Attributes:"
-        end
-      end
-
-      def get_node_hardware_ids(node)
-        @command = :get_node_hardware_ids
-        if @web_command
-          print_object_array [{"hw_id" => node.hw_id}]
-        else
-          print_object_array node.print_hardware_ids, "Node Hardware ID's:"
-        end
-      end
-
-      def register_node
-        @command = :register_node
-        @command_name = "register_node"
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot register nodes via the CLI" if !@web_command
-        # If a REST call we need to populate the values from the provided JSON string
-        #if @web_command
-        # Grab next arg as json string var
-        json_string = @command_array.first
-        # Validate JSON, if valid we treat like a POST VAR request. Otherwise it passes on to CLI which handles GET like CLI
-        begin
-          # Grab vars as hash using sanitize to strip the @ prefix if used
-          @vars_hash = sanitize_hash(JSON.parse(json_string))
-          @vars_hash['hw_id'] = @vars_hash['uuid'] if @vars_hash['uuid']
-          @hw_id = @vars_hash['hw_id']
-          @last_state = @vars_hash['last_state']
-          @attributes_hash = @vars_hash['attributes_hash']
-        rescue Exception
-          # @todo danielp 2013-03-27: the original code simply ignored invalid
-          # JSON in this field, and carried on.  Here we do the same, even
-          # though that puts a somewhat bad taste in my mouth.  (Yes, even to
-          # the level of capturing the parent of all exceptions here.)
-        end
-        #end
-        #@hw_id, @last_state, @attributes_hash = *@command_array unless @hw_id || @last_state || @attributes_hash
-        # Validate our args are here
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_arg(@hw_id)
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_arg(@last_state)
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Attributes Hash[attributes_hash]" unless @attributes_hash.is_a? Hash and @attributes_hash.size > 0
-        @hw_id = @hw_id.split("_") if @hw_id.is_a? String
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless @hw_id.count > 0
-        @engine = ProjectRazor::Engine.instance
-        @new_node = @engine.lookup_node_by_hw_id(:hw_id => @hw_id)
-        if @new_node
-          @new_node.hw_id = @new_node.hw_id | @hw_id
-        else
-          shell_node = ProjectRazor::Node.new({})
-          shell_node.hw_id = @hw_id
-          @new_node = @engine.register_new_node_with_hw_id(shell_node)
-          raise ProjectRazor::Error::Slice::CouldNotRegisterNode, "Could not register new node" unless @new_node
-        end
-        @new_node.timestamp = Time.now.to_i
-        @new_node.attributes_hash = @attributes_hash
-        @new_node.last_state = @last_state
-        raise ProjectRazor::Error::Slice::CouldNotRegisterNode, "Could not register node" unless @new_node.update_self
-        slice_success(@new_node.to_hash, :mk_response => true)
-      end
-
-      def checkin_node
-        @command = :checkin_node
-        @command_name = "checkin_node"
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot checkin nodes via the CLI" if !@web_command
-        # If a REST call we need to populate the values from the provided JSON string
-        #if @web_command
-        # Grab next arg as json string var
-        json_string = @command_array.first
-        # Validate JSON, if valid we treat like a POST VAR request. Otherwise it passes on to CLI which handles GET like CLI
-        begin
-          # Grab vars as hash using sanitize to strip the @ prefix if used
-          @vars_hash = sanitize_hash(JSON.parse(json_string))
-          @vars_hash['hw_id'] = @vars_hash['uuid'] if @vars_hash['uuid']
-          @hw_id = @vars_hash['hw_id']
-          @last_state = @vars_hash['last_state']
-          @first_checkin = @vars_hash['first_checkin']
-        rescue Exception
-          # @todo danielp 2013-03-27: the original code simply ignored invalid
-          # JSON in this field, and carried on.  Here we do the same, even
-          # though that puts a somewhat bad taste in my mouth.  (Yes, even to
-          # the level of capturing the parent of all exceptions here.)
-        end
-        #end
-        #@hw_id, @last_state, @first_checkin = *@command_array unless @hw_id || @last_state || @first_checkin
-        # Validate our args are here
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_arg(@hw_id)
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_arg(@last_state)
-        @hw_id = @hw_id.split("_") unless @hw_id.is_a? Array
-
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless @hw_id.count > 0
-        # if it's not the first node, check to see if the node exists
-        unless @first_checkin
-          @new_node = @engine.lookup_node_by_hw_id(:hw_id => @hw_id)
-          if @new_node
-            # if a node with this hardware id exists, simply acknowledge the checkin request
-            command = @engine.mk_checkin(@new_node.uuid, @last_state)
-            return slice_success(command, :mk_response => true)
-          end
-        end
-        # otherwise, if we get this far, return a command telling the Microkernel to register
-        # (either because no matching node already exists or because it's the first checkin
-        # by the Microkernel)
-        slice_success(@engine.mk_command(:register,{}), :mk_response => true)
-      end
     end
   end
 end

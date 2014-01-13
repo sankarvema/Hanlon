@@ -50,7 +50,7 @@ module Razor
           end
 
           def is_uuid?(string_)
-            string_ =~ /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/
+            string_ =~ /[A-Za-z0-9]{1,22}/
           end
 
           def validate_param(param)
@@ -182,7 +182,7 @@ module Razor
             get do
               node_uuid = params[:uuid]
               node = SLICE_REF.get_object("node_with_uuid", :node, node_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
               selected_option = params[:field]
               # if no params were passed in, then just return a summary for the specified node
               unless selected_option

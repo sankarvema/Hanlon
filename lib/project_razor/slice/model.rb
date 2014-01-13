@@ -1,29 +1,36 @@
 require 'json'
+require 'project_razor/model/base'
 
 # Root ProjectRazor namespace
 module ProjectRazor
   class Slice
+
     # ProjectRazor Slice Model
     class Model < ProjectRazor::Slice
-      include(ProjectRazor::Logging)
+
+      # Root namespace for model objects; used to find them
+      # in object space in order to gather meta-data for creating models
+      SLICE_MODEL_PREFIX = "ProjectRazor::ModelTemplate::"
+
       # Initializes ProjectRazor::Slice::Model including #slice_commands, #slice_commands_help
       # @param [Array] args
       def initialize(args)
         super(args)
         @hidden = false
+        @uri_string = ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + '/model'
       end
 
       def slice_commands
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
         commands = get_command_map(
-          "model_help",
-          "get_all_models",
-          "get_model_by_uuid",
-          "add_model",
-          "update_model",
-          "remove_all_models",
-          "remove_model_by_uuid")
+            "model_help",
+            "get_all_models",
+            "get_model_by_uuid",
+            "add_model",
+            "update_model",
+            "remove_all_models",
+            "remove_model_by_uuid")
         # and add any additional commands specific to this slice
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         commands[:get][:else] = "get_model_by_uuid"
@@ -34,58 +41,58 @@ module ProjectRazor
 
       def all_command_option_data
         {
-          :add => [
-            { :name        => :template,
-              :default     => false,
-              :short_form  => '-t',
-              :long_form   => '--template MODEL_TEMPLATE',
-              :description => 'The model template to use for the new model.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :label,
-              :default     => false,
-              :short_form  => '-l',
-              :long_form   => '--label MODEL_LABEL',
-              :description => 'The label to use for the new model.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :image_uuid,
-              :default     => false,
-              :short_form  => '-i',
-              :long_form   => '--image-uuid IMAGE_UUID',
-              :description => 'The image UUID to use for the new model.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            }
-          ],
-          :update => [
-            { :name        => :label,
-              :default     => false,
-              :short_form  => '-l',
-              :long_form   => '--label MODEL_LABEL',
-              :description => 'The new label to use for the model.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :image_uuid,
-              :default     => false,
-              :short_form  => '-i',
-              :long_form   => '--image-uuid IMAGE_UUID',
-              :description => 'The new image UUID to use for the model.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :change_metadata,
-              :default     => false,
-              :short_form  => '-c',
-              :long_form   => '--change-metadata',
-              :description => 'Used to trigger a change in the model\'s meta-data',
-              :uuid_is     => 'required',
-              :required    => true
-            }
-          ]
+            :add => [
+                { :name        => :template,
+                  :default     => false,
+                  :short_form  => '-t',
+                  :long_form   => '--template MODEL_TEMPLATE',
+                  :description => 'The model template to use for the new model.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :label,
+                  :default     => false,
+                  :short_form  => '-l',
+                  :long_form   => '--label MODEL_LABEL',
+                  :description => 'The label to use for the new model.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :image_uuid,
+                  :default     => false,
+                  :short_form  => '-i',
+                  :long_form   => '--image-uuid IMAGE_UUID',
+                  :description => 'The image UUID to use for the new model.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                }
+            ],
+            :update => [
+                { :name        => :label,
+                  :default     => false,
+                  :short_form  => '-l',
+                  :long_form   => '--label MODEL_LABEL',
+                  :description => 'The new label to use for the model.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :image_uuid,
+                  :default     => false,
+                  :short_form  => '-i',
+                  :long_form   => '--image-uuid IMAGE_UUID',
+                  :description => 'The new image UUID to use for the model.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :change_metadata,
+                  :default     => false,
+                  :short_form  => '-c',
+                  :long_form   => '--change-metadata',
+                  :description => 'Used to trigger a change in the model\'s meta-data',
+                  :uuid_is     => 'required',
+                  :required    => true
+                }
+            ]
         }.freeze
       end
 
@@ -119,30 +126,33 @@ module ProjectRazor
 
       def get_all_models
         @command = :get_all_models
-        # if it's a web command and the last argument wasn't the string "default" or "get", then a
-        # filter expression was included as part of the web command
-        @command_array.unshift(@prev_args.pop) if @web_command && @prev_args.peek(0) != "default" && @prev_args.peek(0) != "get"
-        # Get all tag rules and print/return
-        print_object_array get_object("models", :model), "Models", :style => :table, :success_type => :generic
+        uri = URI.parse @uri_string
+        model_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(model_array, "Models:", :style => :table)
       end
 
       def get_model_by_uuid
         @command = :get_model_by_uuid
         # the UUID is the first element of the @command_array
         model_uuid = @command_array.first
-        model = get_object("get_model_by_uuid", :model, model_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-        print_object_array [model] ,"",:success_type => :generic
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + '/' + model_uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        print_object_array(hash_array_to_obj_array([result]), "Model:")
       end
 
       def get_all_templates
         @command = :get_all_templates
-        if @web_command && @prev_args.peek(0) != "templates"
-          not_found_error = "(use of aliases not supported via REST; use '/model/templates' not '/model/#{@prev_args.peek(0)}')"
-          raise ProjectRazor::Error::Slice::NotFound, not_found_error
-        end
-        # We use the common method in Utility to fetch object templates by providing Namespace prefix
-        print_object_array get_child_templates(ProjectRazor::ModelTemplate), "Model Templates:"
+        # get the list of model templates nd print it
+        uri = URI.parse @uri_string + '/templates'
+        model_templates = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(model_templates, "Model Templates:")
       end
 
       def add_model
@@ -162,25 +172,22 @@ module ProjectRazor
         template = options[:template]
         label = options[:label]
         image_uuid = options[:image_uuid]
-        req_metadata_hash = options[:req_metadata_hash] if @web_command
-        # check the values that were passed in
-        model = verify_template(template)
-        raise ProjectRazor::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
-        image = model.image_prefix ? verify_image(model, image_uuid) : true
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image
-        # use the arguments passed in (above) to create a new model
-        if @web_command
-          raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
-              req_metadata_hash
-          model.web_create_metadata(req_metadata_hash)
-        else
-          raise ProjectRazor::Error::Slice::UserCancelled, "User cancelled Model creation" unless model.cli_create_metadata
+        # use the arguments passed in to create a new model
+        model = get_model_using_template_name(options[:template])
+        model.cli_create_metadata
+        # setup the POST (to create the requested policy) and return the results
+        uri = URI.parse @uri_string
+        json_data = {
+            "template" => template,
+            "label" => label,
+            "image_uuid" => image_uuid,
+            "req_metadata_hash" => model.req_metadata_hash
+        }.to_json
+        result, response = rz_http_post_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        model.label = label
-        model.image_uuid = image.uuid
-        model.is_template = false
-        @data.persist_object(model)
-        model ? print_object_array([model], "Model created", :success_type => :created) : raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Model")
+        print_object_array(hash_array_to_obj_array([result]), "Model Created:")
       end
 
       def update_model
@@ -191,24 +198,8 @@ module ProjectRazor
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        model_uuid, options = nil, nil
-        if @web_command
-          model_uuid, options = parse_and_validate_options(option_items, "razor model update UUID (options...)", :require_none)
-        else
-          model_uuid, options = parse_and_validate_options(option_items, "razor model update UUID (options...)", :require_one)
-        end
-
+        model_uuid, options = parse_and_validate_options(option_items, "razor model update UUID (options...)", :require_one)
         includes_uuid = true if model_uuid
-        # the :req_metadata_hash is not a valid value via the CLI but might be
-        # included as part of a web command; as such the parse_and_validate_options
-        # can't properly handle this error and we have to check here to ensure that
-        # at least one value was provided in the update command
-        if @web_command && options.all?{ |x| x == nil }
-          option_names = option_items.map { |val| val[:name] }
-          option_names.delete(:change_metadata)
-          option_names << :req_metadata_hash
-          raise ProjectRazor::Error::Slice::MissingArgument, "Must provide one option from #{option_names.inspect}."
-        end
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
@@ -216,61 +207,74 @@ module ProjectRazor
         label = options[:label]
         image_uuid = options[:image_uuid]
         change_metadata = options[:change_metadata]
-        req_metadata_hash = options[:req_metadata_hash] if @web_command
-
-        # check the values that were passed in (and gather new meta-data if
-        # the --change-metadata flag was included in the update command and the
-        # command was invoked via the CLI...it's an error to use this flag via
-        # the RESTful API, the req_metadata_hash should be used instead)
-        model = get_object("model_with_uuid", :model, model_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-        if @web_command
-          if change_metadata
-            raise ProjectRazor::Error::Slice::InputError, "Cannot use the change_metadata flag with a web command"
-          elsif req_metadata_hash
-            model.web_create_metadata(req_metadata_hash)
-          end
-        else
-          if change_metadata
-            raise ProjectRazor::Error::Slice::UserCancelled, "User cancelled Model creation" unless
-                model.cli_create_metadata
-          end
+        # now, use the values that were passed in to update the indicated model
+        uri = URI.parse(@uri_string + '/' + model_uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        model.label = label if label
-        image = model.image_prefix ? verify_image(model, image_uuid) : true if image_uuid
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
-        model.image_uuid = image.uuid if image
-        raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Model [#{model.uuid}]" unless model.update_self
-        print_object_array [model] ,"",:success_type => :updated
+        model = hash_to_obj(result)
+        # if the user requested a change to the meta-data hash associated with the
+        # indicated model, then gather that new meta-data from the user
+        if change_metadata
+          raise ProjectRazor::Error::Slice::UserCancelled, "User cancelled Model creation" unless
+              model.cli_create_metadata
+        end
+        # add properties passed in from command line to the json_data
+        # hash that we'll be passing in as the body of the request
+        body_hash = {}
+        body_hash["label"] = label if label
+        body_hash["image_uuid"] = image_uuid if image_uuid
+        body_hash["req_metadata_hash"] = model.req_metadata_hash if change_metadata
+        json_data = body_hash.to_json
+        # setup the PUT (to update the indicated policy) and return the results
+        result, response = rz_http_put_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        print_object_array(hash_array_to_obj_array([result]), "Model Updated:")
       end
 
       def remove_all_models
         @command = :remove_all_models
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot remove all Models via REST" if @web_command
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove all Tag Rules" unless @data.delete_all_objects(:model)
-        slice_success("All Models removed",:success_type => :removed)
+        raise ProjectRazor::Error::Slice::MethodNotAllowed, "This method has been deprecated"
       end
 
       def remove_model_by_uuid
         @command = :remove_model_by_uuid
         # the UUID was the last "previous argument"
         model_uuid = get_uuid_from_prev_args
-        model = get_object("model_with_uuid", :model, model_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Model [#{model.uuid}]" unless @data.delete_object(model)
-        slice_success("Active Model [#{model.uuid}] removed",:success_type => :removed)
-      end
-
-      def verify_template(template_name)
-        get_child_templates(ProjectRazor::ModelTemplate).each { |template| return template if template.name == template_name }
-        nil
+        # setup the DELETE (to remove the indicated model) and return the results
+        uri = URI.parse @uri_string + "/#{model_uuid}"
+        result, response = rz_http_delete(uri, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        slice_success(result, :success_type => :removed)
       end
 
       def verify_image(model, image_uuid)
-        image = get_object("find_image", :images, image_uuid)
+        uri = URI.parse ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + "/image/#{image_uuid}"
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        image = hash_to_obj(result)
         if image && (image.class != Array || image.length > 0)
           return image if model.image_prefix == image.path_prefix
         end
+        nil
+      end
+
+      def get_model_using_template_name(template_name)
+        get_child_types(SLICE_MODEL_PREFIX).each { |template|
+          return template if template.name.to_s == template_name
+        }
         nil
       end
 

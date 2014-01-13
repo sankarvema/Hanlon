@@ -50,7 +50,7 @@ module Razor
           end
 
           def is_uuid?(string_)
-            string_ =~ /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/
+            string_ =~ /[A-Za-z0-9]{1,22}/
           end
 
           def get_data_ref
@@ -95,7 +95,7 @@ module Razor
             image_uuid = params["image_uuid"]
             req_metadata_hash = params["req_metadata_hash"]
             # check the values that were passed in
-            model = SLICE_REF.verify_template(template)
+            model = SLICE_REF.get_model_using_template_name(template)
             raise ProjectRazor::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
             image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true
             raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image

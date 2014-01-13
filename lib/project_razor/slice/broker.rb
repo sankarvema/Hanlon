@@ -1,8 +1,5 @@
 require "json"
-
-# Root namespace for broker objects
-# used to find them in object space for plugin checking
-BROKER_PREFIX = "ProjectRazor::BrokerPlugin::"
+require "project_razor/broker/base"
 
 # Root ProjectRazor namespace
 module ProjectRazor
@@ -12,24 +9,29 @@ module ProjectRazor
     # Used for broker management
     class Broker < ProjectRazor::Slice
 
+      # Root namespace for broker objects; used to find them
+      # in object space in order to gather meta-data for creating brokers
+      SLICE_BROKER_PREFIX = "ProjectRazor::BrokerPlugin::"
+
       # Initializes ProjectRazor::Slice::Broker including #slice_commands, #slice_commands_help
       # @param [Array] args
       def initialize(args)
         super(args)
         @hidden          = false
+        @uri_string = ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + '/broker'
       end
 
       def slice_commands
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
         commands = get_command_map(
-          "broker_help",
-          "get_all_brokers",
-          "get_broker_by_uuid",
-          "add_broker",
-          "update_broker",
-          "remove_all_brokers",
-          "remove_broker_by_uuid")
+            "broker_help",
+            "get_all_brokers",
+            "get_broker_by_uuid",
+            "add_broker",
+            "update_broker",
+            "remove_all_brokers",
+            "remove_broker_by_uuid")
 
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         commands[:get][:else] = "get_broker_by_uuid"
@@ -40,58 +42,58 @@ module ProjectRazor
 
       def all_command_option_data
         {
-          :add => [
-            { :name        => :plugin,
-              :default     => false,
-              :short_form  => '-p',
-              :long_form   => '--plugin BROKER_PLUGIN',
-              :description => 'The broker plugin to use.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :name,
-              :default     => false,
-              :short_form  => '-n',
-              :long_form   => '--name BROKER_NAME',
-              :description => 'The name for the broker target.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :description,
-              :default     => false,
-              :short_form  => '-d',
-              :long_form   => '--description DESCRIPTION',
-              :description => 'A description for the broker target.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            }
-          ],
-          :update  =>  [
-            { :name        => :name,
-              :default     => false,
-              :short_form  => '-n',
-              :long_form   => '--name BROKER_NAME',
-              :description => 'New name for the broker target.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :description,
-              :default     => false,
-              :short_form  => '-d',
-              :long_form   => '--description DESCRIPTION',
-              :description => 'New description for the broker target.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :change_metadata,
-              :default     => false,
-              :short_form  => '-c',
-              :long_form   => '--change-metadata',
-              :description => 'Used to trigger a change in the broker\'s meta-data',
-              :uuid_is     => 'required',
-              :required    =>true
-            }
-          ]
+            :add => [
+                { :name        => :plugin,
+                  :default     => false,
+                  :short_form  => '-p',
+                  :long_form   => '--plugin BROKER_PLUGIN',
+                  :description => 'The broker plugin to use.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :name,
+                  :default     => false,
+                  :short_form  => '-n',
+                  :long_form   => '--name BROKER_NAME',
+                  :description => 'The name for the broker target.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :description,
+                  :default     => false,
+                  :short_form  => '-d',
+                  :long_form   => '--description DESCRIPTION',
+                  :description => 'A description for the broker target.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                }
+            ],
+            :update  =>  [
+                { :name        => :name,
+                  :default     => false,
+                  :short_form  => '-n',
+                  :long_form   => '--name BROKER_NAME',
+                  :description => 'New name for the broker target.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :description,
+                  :default     => false,
+                  :short_form  => '-d',
+                  :long_form   => '--description DESCRIPTION',
+                  :description => 'New description for the broker target.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :change_metadata,
+                  :default     => false,
+                  :short_form  => '-c',
+                  :long_form   => '--change-metadata',
+                  :description => 'Used to trigger a change in the broker\'s meta-data',
+                  :uuid_is     => 'required',
+                  :required    =>true
+                }
+            ]
         }.freeze
       end
 
@@ -122,30 +124,33 @@ module ProjectRazor
       # Returns all broker instances
       def get_all_brokers
         @command = :get_all_brokers
-        # if it's a web command and the last argument wasn't the string "default" or "get", then a
-        # filter expression was included as part of the web command
-        @command_array.unshift(@prev_args.pop) if @web_command && @prev_args.peek(0) != "default" && @prev_args.peek(0) != "get"
-        print_object_array get_object("broker_instances", :broker), "Broker Targets:"
+        uri = URI.parse @uri_string
+        broker_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(broker_array, "Broker Targets:", :style => :table)
       end
 
       # Returns the broker plugins available
       def get_broker_plugins
         @command = :get_broker_plugins
-        if @web_command && @prev_args.peek(0) != "plugins"
-          not_found_error = "(use of aliases not supported via REST; use '/broker/plugins' not '/broker/#{@prev_args.peek(0)}')"
-          raise ProjectRazor::Error::Slice::NotFound, not_found_error
-        end
-        # We use the common method in Utility to fetch object plugins by providing Namespace prefix
-        print_object_array get_child_templates(ProjectRazor::BrokerPlugin), "\nAvailable Broker Plugins:"
+        uri = URI.parse @uri_string + '/plugins'
+        broker_plugins = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(broker_plugins, "Available Broker Plugins:")
       end
 
       def get_broker_by_uuid
         @command = :get_broker_by_uuid
         # the UUID is the first element of the @command_array
         broker_uuid = @command_array.first
-        broker = get_object("broker instances", :broker, broker_uuid)
-        raise ProjectRazor::Error::Slice::NotFound, "Broker Target UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
-        print_object_array [broker]
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + '/' + broker_uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        print_object_array(hash_array_to_obj_array([result]), "Broker:")
       end
 
       def add_broker
@@ -162,25 +167,22 @@ module ProjectRazor
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
-        plugin = options[:plugin]
-        name = options[:name]
-        description = options[:description]
-        req_metadata_hash = options[:req_metadata_hash] if @web_command
-        # use the arguments passed in (above) to create a new broker
-        broker = new_object_from_template_name(BROKER_PREFIX, plugin)
-        if @web_command
-          raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
-              req_metadata_hash
-          broker.web_create_metadata(req_metadata_hash)
-        else
-          raise ProjectRazor::Error::Slice::UserCancelled, "User cancelled Broker creation" unless broker.cli_create_metadata
+        # use the arguments passed in to create a new broker
+        broker = new_object_from_template_name(SLICE_BROKER_PREFIX, options[:plugin])
+        broker.cli_create_metadata
+        # setup the POST (to create the requested broker) and return the results
+        uri = URI.parse @uri_string
+        json_data = {
+            "name" => options[:name],
+            "description" => options[:description],
+            "plugin" => options[:plugin],
+            "req_metadata_hash" => broker.req_metadata_hash
+        }.to_json
+        result, response = rz_http_post_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        broker.name             = name
-        broker.user_description = description
-        broker.is_template      = false
-        # persist that broker, and print the result (or raise an error if cannot persist it)
-        get_data.persist_object(broker)
-        broker ? print_object_array([broker], "", :success_type => :created) : raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Broker Target")
+        print_object_array(hash_array_to_obj_array([result]), "Broker Created:")
       end
 
       def update_broker
@@ -191,56 +193,43 @@ module ProjectRazor
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        if @web_command
-          broker_uuid, options = parse_and_validate_options(option_items, "razor broker update (UUID) (options...)", :require_none)
-        else
-          broker_uuid, options = parse_and_validate_options(option_items, "razor broker update (UUID) (options...)", :require_one)
-        end
-
+        broker_uuid, options = parse_and_validate_options(option_items, "razor broker update (UUID) (options...)", :require_one)
         includes_uuid = true if broker_uuid
-        # the :req_metadata_hash is not a valid value via the CLI but might be
-        # included as part of a web command; as such the parse_and_validate_options
-        # can't properly handle this error and we have to check here to ensure that
-        # at least one value was provided in the update command
-        if @web_command && options.all?{ |x| x == nil }
-          option_names = option_items.map { |val| val[:name] }
-          option_names.delete(:change_metadata)
-          option_names << :req_metadata_hash
-          raise ProjectRazor::Error::Slice::MissingArgument, "Must provide one option from #{option_names.inspect}."
-        end
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
-        plugin = options[:plugin]
         name = options[:name]
         description = options[:description]
         change_metadata = options[:change_metadata]
-        req_metadata_hash = options[:req_metadata_hash] if @web_command
-
-        # check the values that were passed in (and gather new meta-data if
-        # the --change-metadata flag was included in the update command and the
-        # command was invoked via the CLI...it's an error to use this flag via
-        # the RESTful API, the req_metadata_hash should be used instead)
-        broker = get_object("broker_with_uuid", :broker, broker_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Broker Target with UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
-        if @web_command
-          if change_metadata
-            raise ProjectRazor::Error::Slice::InputError, "Cannot use the change_metadata flag with a web command"
-          elsif req_metadata_hash
-            broker.web_create_metadata(req_metadata_hash)
-          end
-        else
-          if change_metadata
-            raise ProjectRazor::Error::Slice::UserCancelled, "User cancelled Broker creation" unless
-                broker.cli_create_metadata
-          end
+        # now, use the values that were passed in to update the indicated broker
+        uri = URI.parse(@uri_string + '/' + broker_uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        broker.name             = name if name
-        broker.user_description = description if description
-        broker.is_template      = false
-        raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless broker.update_self
-        print_object_array [broker], "", :success_type => :updated
+        broker = hash_to_obj(result)
+        # if the user requested a change to the meta-data hash associated with the
+        # indicated broker, then gather that new meta-data from the user
+        if change_metadata
+          raise ProjectRazor::Error::Slice::UserCancelled, "User cancelled Broker creation" unless
+              broker.cli_create_metadata
+        end
+        # add properties passed in from command line to the json_data
+        # hash that we'll be passing in as the body of the request
+        body_hash = {}
+        body_hash["name"] = name if name
+        body_hash["description"] = description if description
+        body_hash["req_metadata_hash"] = broker.req_metadata_hash if change_metadata
+        json_data = body_hash.to_json
+        # setup the PUT (to update the indicated broker) and return the results
+        result, response = rz_http_put_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        print_object_array(hash_array_to_obj_array([result]), "Broker Updated:")
       end
 
       def remove_broker
@@ -259,7 +248,6 @@ module ProjectRazor
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, true)
-
         # and then invoke the right method (based on usage)
         # selected_option = options.select { |k, v| v }.keys[0].to_s
         if options[:all]
@@ -269,27 +257,28 @@ module ProjectRazor
           # remove a specific Broker (by UUID)
           remove_broker_with_uuid(broker_uuid)
         else
-          # if get to here, no UUID was specified and the '--all' option was
-          # no included, so raise an error and exit
-          raise ProjectRazor::Error::Slice::MissingArgument, "Must provide a UUID for the broker to remove (or select the '--all' option)"
+          # if get to here, no UUID was specified and 'all' was to used to try to
+          # remove all brokers from the system no included, so raise an error and exit
+          raise ProjectRazor::Error::Slice::MissingArgument, "Must provide a UUID for the broker to remove (or 'all' to remove all)"
         end
       end
 
       def remove_all_brokers
         @command = :remove_all_brokers
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot remove all Brokers via REST" if @web_command
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove all Brokers" unless get_data.delete_all_objects(:broker)
-        slice_success("All brokers removed", :success_type => :removed)
+        raise ProjectRazor::Error::Slice::MethodNotAllowed, "This method has been deprecated"
       end
 
       def remove_broker_by_uuid
         @command = :remove_broker_by_uuid
         # the UUID is the first element of the @command_array
         broker_uuid = get_uuid_from_prev_args
-        broker = get_object("broker_with_uuid", :broker, broker_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Broker with UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove policy [#{broker.uuid}]" unless @data.delete_object(broker)
-        slice_success("Broker [#{broker.uuid}] removed", :success_type => :removed)
+        # setup the DELETE (to remove the indicated broker) and return the results
+        uri = URI.parse @uri_string + "/#{broker_uuid}"
+        result, response = rz_http_delete(uri, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        slice_success(result, :success_type => :removed)
       end
 
     end

@@ -1,4 +1,5 @@
 require "json"
+require "project_razor/policy/base"
 
 
 # Root ProjectRazor namespace
@@ -7,10 +8,12 @@ module ProjectRazor
 
     # ProjectRazor Slice Active_Model
     class ActiveModel < ProjectRazor::Slice
+
       def initialize(args)
         super(args)
-        @hidden          = false
-        @policies        = ProjectRazor::Policies.instance
+        @hidden     = false
+        @policies   = ProjectRazor::Policies.instance
+        @uri_string = ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + '/active_model'
       end
 
       def slice_commands
@@ -25,7 +28,7 @@ module ProjectRazor
           "remove_all_active_models",
           "remove_active_model_by_uuid")
 
-        commands[:logview] = "get_logview"
+        commands[:logs] = "get_logs"
         commands[:get][/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:logs] = "get_active_model_logs"
 
         commands
@@ -48,65 +51,84 @@ module ProjectRazor
         puts "Active Model Commands:".yellow
         puts "\trazor active_model [get] [all]          " + "View all active models".yellow
         puts "\trazor active_model [get] (UUID) [logs]  " + "View specific active model (log)".yellow
-        puts "\trazor active_model logview              " + "Prints an aggregate active model log view".yellow
+        puts "\trazor active_model logs                 " + "Prints an aggregate view of active model logs".yellow
         puts "\trazor active_model remove (UUID)|all    " + "Remove existing (or all) active model(s)".yellow
         puts "\trazor active_model --help|-h            " + "Display this screen".yellow
       end
 
       def get_all_active_models
         @command = :get_all_active_models
-        # if it's a web command and the last argument wasn't the string "default" or "get", then a
-        # filter expression was included as part of the web command
-        @command_array.unshift(@prev_args.pop) if @web_command && @prev_args.peek(0) != "default" && @prev_args.peek(0) != "get"
-        # Get all active model instances and print/return
-        print_object_array get_object("active_models", :active), "Active Models:", :success_type => :generic, :style => :table
+        raise ProjectRazor::Error::Slice::SliceCommandParsingFailed,
+              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
+        uri = URI.parse @uri_string
+        active_model_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(active_model_array, "Active Models:", :style => :table)
       end
 
       def get_active_model_by_uuid
         @command = :get_active_model_by_uuid
         # the UUID is the first element of the @command_array
         uuid = get_uuid_from_prev_args
-        active_model = get_object("active_model_instance", :active, uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
-        print_object_array [active_model], "", :success_type => :generic
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + '/' + uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        return print_object_array(hash_array_to_obj_array([result]), "Active Model:")
       end
 
       def get_active_model_logs
         @command = :get_active_model_logs
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot view Active Model logs via REST" if @web_command
         # the UUID is the first element of the @command_array
         uuid = @prev_args.peek(1)
-        active_model = get_object("active_model_instance", :active, uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
-        #print_object_array [active_model], "", :success_type => :generic, :style => :table
-        print_object_array active_model.print_log, "", :style => :table
+        # setup a URI to retrieve the active_model in question
+        uri = URI.parse(@uri_string + '/' + uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # convert the result into an active_model instance, then use that instance to
+        # print out the logs for that instance
+        active_model_ref = hash_to_obj(result)
+        print_object_array(active_model_ref.print_log, "", :style => :table)
       end
 
       def remove_all_active_models
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot remove all Active Models via REST" if @web_command
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove all Active Models" unless get_data.delete_all_objects(:active)
-        slice_success("All active models removed", :success_type => :removed)
+        @command = :remove_all_active_models
+        raise ProjectRazor::Error::Slice::MethodNotAllowed, "This method has been deprecated"
       end
 
       def remove_active_model_by_uuid
         @command = :remove_active_model_by_uuid
         # the UUID is the first element of the @command_array
         uuid = get_uuid_from_prev_args
-        active_model = get_object("active_model_instance", :active, uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Active Model [#{active_model.uuid}]" unless get_data.delete_object(active_model)
-        slice_success("Active model #{active_model.uuid} removed", :success_type => :removed)
+        # setup the DELETE (to update the remove the indicated active_model) and return the results
+        uri = URI.parse @uri_string + "/#{uuid}"
+        result, response = rz_http_delete(uri, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        slice_success(result, :success_type => :removed)
       end
 
-      def get_logview
-        @command = :get_logview
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot view Active Model logs via REST" if @web_command
-        active_models = get_object("active_models", :active)
-        log_items = []
-        active_models.each { |bp| log_items = log_items | bp.print_log_all }
-        log_items.sort! { |a, b| a.print_items[3] <=> b.print_items[3] }
-        log_items.each { |li| li.print_items[3] = Time.at(li.print_items[3]).strftime("%H:%M:%S") }
-        print_object_array(log_items, "All Active Model Logs:", :success_type => :generic, :style => :table)
+      def get_logs
+        @command = :get_logs
+        uri = URI.parse(@uri_string + '/logs')
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        lcl_slice_obj_ref = ProjectRazor::PolicyTemplate::Base.new({})
+        print_object_array(lcl_slice_obj_ref.print_log_all(result), "All Active Model Logs:", :style => :table)
       end
 
     end

@@ -106,7 +106,6 @@ module Razor
                 # filter down to just the @uuid, @classname, and @noun fields and add a URI
                 # to the element we're returning that can be used to access the details for
                 # that element
-                puts "restricting to @uuid, @classname, and @noun..."
                 elem_hash = Hash[elem_hash.reject { |k, v| !%w(@uuid @classname @noun).include?(k) }]
                 slice.add_uri_to_object_hash(elem_hash)
               end

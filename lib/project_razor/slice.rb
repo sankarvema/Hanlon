@@ -580,79 +580,55 @@ class ProjectRazor::Slice < ProjectRazor::Object
     @data.fetch_object_by_uuid_pattern(collection, uuid)
   end
 
-
   def print_object_array(object_array, title = nil, options = { })
     # This is for backwards compatibility
     title = options[:title] unless title
-    if @web_command
-      if @uri_root
-        object_array = object_array.collect do |object|
-
-          if object.respond_to?("is_template") && object.is_template
-            object.to_hash
-          else
-            obj_web = object.to_hash
-            obj_web = Hash[obj_web.reject { |k, v| !%w(@uuid @classname, @noun).include?(k) }] unless object_array.count == 1
-
-            add_uri_to_object_hash(obj_web)
-            obj_web
+    puts title if title
+    unless object_array.count > 0
+      puts "< none >".red
+    end
+    if @verbose
+      object_array.each do |obj|
+        obj.instance_variables.each do |iv|
+          unless iv.to_s.start_with?("@_")
+            key = iv.to_s.sub("@", "")
+            print "#{key}: "
+            print "#{obj.instance_variable_get(iv)}  ".green
           end
         end
-      else
-        object_array = object_array.collect { |object| object.to_hash }
+        print "\n"
       end
-
-      slice_success(object_array, options)
     else
-      puts title if title
-      unless object_array.count > 0
-        puts "< none >".red
-      end
-      if @verbose
-        object_array.each do |obj|
-          obj.instance_variables.each do |iv|
-            unless iv.to_s.start_with?("@_")
-              key = iv.to_s.sub("@", "")
-              print "#{key}: "
-              print "#{obj.instance_variable_get(iv)}  ".green
-            end
-          end
-          print "\n"
+      print_array  = []
+      header       = []
+      line_colors  = []
+      header_color = :white
+
+      if (object_array.count == 1 || options[:style] == :item) && options[:style] != :table
+        object_array.each do
+        |object|
+          puts print_single_item(object)
         end
       else
-        print_array  = []
-        header       = []
-        line_colors  = []
-        header_color = :white
-
-        if (object_array.count == 1 || options[:style] == :item) && options[:style] != :table
-          object_array.each do
-          |object|
-            puts print_single_item(object)
-          end
-        else
-          object_array.each do |obj|
-            print_array << obj.print_items
-            header = obj.print_header
-            line_colors << obj.line_color
-            header_color = obj.header_color
-          end
-          # If we have more than one item we use table view, otherwise use item view
-          print_array.unshift header if header != []
-          puts print_table(print_array, line_colors, header_color)
+        object_array.each do |obj|
+          print_array << obj.print_items
+          header = obj.print_header
+          line_colors << obj.line_color
+          header_color = obj.header_color
         end
+        # If we have more than one item we use table view, otherwise use item view
+        print_array.unshift header if header != []
+        puts print_table(print_array, line_colors, header_color)
       end
     end
   end
 
-  def add_uri_to_object_hash(object_hash, field_name="@uuid", additional_uri_path = "")
+  def add_uri_to_object_hash(object_hash, field_name="@uuid", additional_uri_path = nil)
     noun = object_hash["@noun"]
-    if noun
-      if additional_uri_path
-        object_hash["@uri"] = "#@uri_root#{noun}/#{additional_uri_path}/#{object_hash[field_name]}"
-      else
-        object_hash["@uri"] = "#@uri_root#{noun}/#{object_hash[field_name]}"
-      end
+    if additional_uri_path
+      object_hash["@uri"] = "#@uri_root#{noun}/#{additional_uri_path}/#{object_hash[field_name]}"
+    else
+      object_hash["@uri"] = "#@uri_root#{noun}/#{object_hash[field_name]}"
     end
     object_hash.each do |k, v|
       if object_hash[k].class == Array
@@ -683,6 +659,7 @@ class ProjectRazor::Slice < ProjectRazor::Object
     end
     line_color   = obj.line_color
     header_color = obj.header_color
+
     print_array.each_with_index do |val, index|
       if header_color
         print_output << " " + "#{header[index]}".send(header_color)
@@ -723,6 +700,121 @@ class ProjectRazor::Slice < ProjectRazor::Object
       table << line_string + "\n"
     end
     table
+  end
+
+  # used to retrieve a result when the endpoint is expected
+  # to return a JSON version of a hash map in the response body
+  # that includes the actual response in the "response" field
+  # of that hash map (requiring a JSON.parse call followed by
+  # retrieval of the response field to get the response to return
+  # to the user)
+  def rz_http_get(uri, include_http_response = false)
+    # setup the request
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Get.new(uri.request_uri)
+    # make the request
+    response = http.request(request)
+    # and return the result
+    return [JSON.parse(response.body)["response"], response] if include_http_response
+    JSON.parse(response.body)["response"]
+  end
+
+  # used to retrieve a result when the endpoint is expected
+  # to return a plain-text response (in which case the response
+  # body contains the response, not a JSON version of the response)
+  def rz_http_get_text(uri, include_http_response = false)
+    # setup the request
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Get.new(uri.request_uri)
+    # make the request
+    response = http.request(request)
+    # and return the result
+    return [response.body, response] if include_http_response
+    response.body
+  end
+
+  # used to retrieve a result when the endpoint is expected to return
+  # a JSON hash containing the results as the response (this is used
+  # in the config slice, for example, who's endpoint returns the configuration
+  # as a JSON hash in the response body)
+  def rz_http_get_hash_response(uri, include_http_response = false)
+    # setup the request
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Get.new(uri.request_uri)
+    # make the request
+    response = http.request(request)
+    # and return the result
+    return [JSON.parse(response.body), response] if include_http_response
+    JSON.parse(response.body)
+  end
+
+  def rz_http_post_json_data(uri, json_data, include_http_response = false)
+    # setup the request
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Post.new(uri.request_uri)
+    request.body = json_data
+    request["Content-Type"] = "application/json"
+    # make the request
+    response = http.request(request)
+    # and return the result
+    return [JSON.parse(response.body)["response"], response] if include_http_response
+    JSON.parse(response.body)["response"]
+  end
+
+  def rz_http_put_json_data(uri, json_data, include_http_response = false)
+    # setup the request
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Put.new(uri.request_uri)
+    request.body = json_data
+    request["Content-Type"] = "application/json"
+    # make the request
+    response = http.request(request)
+    # and return the result
+    return [JSON.parse(response.body)["response"], response] if include_http_response
+    JSON.parse(response.body)["response"]
+  end
+
+  def rz_http_delete(uri, include_http_response = false)
+    # setup the request
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Delete.new(uri.request_uri)
+    # make the request
+    response = http.request(request)
+    # and return the result
+    return [JSON.parse(response.body)["response"], response] if include_http_response
+    JSON.parse(response.body)["response"]
+  end
+
+  def expand_response_with_uris(http_response)
+    http_response.map { |response_elem|
+      if response_elem.has_key?("@uri")
+        uri = URI.parse response_elem["@uri"]
+        http = Net::HTTP.new(uri.host, uri.port)
+        request = Net::HTTP::Get.new(uri.request_uri)
+        response = http.request(request)
+        JSON.parse(response.body)["response"]
+      else
+        response_elem
+      end
+    }
+  end
+end
+
+def tag_matcher_hash_array_to_obj_array(hash_array, tagrule_uuid)
+  hash_array.map { |hash| class_from_string(hash["@classname"]).new(hash, tagrule_uuid) }
+end
+
+def hash_array_to_obj_array(hash_array)
+  hash_array.map { |hash_val| class_from_string(hash_val["@classname"]).new(hash_val) }
+end
+
+def hash_to_obj(hash)
+  class_from_string(hash["@classname"]).new(hash)
+end
+
+def class_from_string(str)
+  str.split('::').inject(Object) do |mod, class_name|
+    mod.const_get(class_name)
   end
 end
 

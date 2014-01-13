@@ -35,24 +35,12 @@ class ProjectRazor::CLI
       #exit
     end
 
-    @web_command = @options[:webcommand]
     @cli_private = false
 
-    if @options[:jsoncommand] then
-      if @web_command then
-        # We do not allow -j if it's combined with -w since that would create
-        # security problem.
-        puts JSON.dump({
-            "slice"         => "ProjectRazor::Slice",
-            "result"        => "BadRequest",
-            "http_err_code" => 400
-          })
-        # We must return true here to avoid a "500 Internal Server Error"
-        return true
-      end
-      @web_command = true
-      @cli_private = true
-    end
+    #if @options[:jsoncommand] then
+    #  @web_command = true
+    #  @cli_private = true
+    #end
 
     @debug = @options[:debug]
     @verbose = @options[:verbose]
@@ -74,16 +62,6 @@ class ProjectRazor::CLI
 
     slice = argv.shift
     if call_razor_slice(slice, argv)
-      return true
-    end
-
-    if @web_command then
-      puts JSON.dump({
-          "slice"         => "ProjectRazor::Slice",
-          "result"        => "InvalidSlice",
-          "http_err_code" => 404
-        })
-      # We must return true here to avoid a "500 Internal Server Error"
       return true
     end
 
@@ -161,15 +139,10 @@ class ProjectRazor::CLI
         @options[:debug] = true
       end
 
-      @options[:webcommand] = false
-      opts.on( '-w', '--webcommand', 'Accepts web commands.'.yellow ) do
-        @options[:webcommand] = true
-      end
-
-      @options[:jsoncommand] = false
-      opts.on( '-j', '--jsoncommand', 'Same as -w but not exposed in web UI.'.yellow ) do
-        @options[:jsoncommand] = true
-      end
+      #@options[:jsoncommand] = false
+      #opts.on( '-j', '--jsoncommand', 'Same as -w but not exposed in web UI.'.yellow ) do
+      #  @options[:jsoncommand] = true
+      #end
 
       @options[:nocolor] = false
       opts.on( '-n', '--no-color', 'Disables console color. Useful for script wrapping.'.yellow ) do

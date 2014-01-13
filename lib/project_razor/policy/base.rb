@@ -232,7 +232,7 @@ module ProjectRazor
         attr_array
       end
 
-      def print_log_all
+      def print_log_all(log_hash)
         # First see if we have the HashPrint class already defined
         begin
           self.class.const_get :HashPrint # This throws an error so we need to use begin/rescue to catch
@@ -243,22 +243,18 @@ module ProjectRazor
         # Create an array to store our HashPrint objects
         attr_array = []
         # Take each element in our attributes_hash and store as a HashPrint object in our array
-        @last_time = nil
-        @model.log.each do
-        |log_entry|
-          @first_time ||= Time.at(log_entry["timestamp"])
-          @last_time ||= Time.at(log_entry["timestamp"])
-          @total_time_diff = (Time.at(log_entry["timestamp"].to_i) - @first_time)
-          @last_time_diff = (Time.at(log_entry["timestamp"].to_i) - @last_time)
+        log_hash.each { |log_entry|
           attr_array << self.class.const_get(:HashPrint).new(%w(State Action Result Time Last Total Node),
-                                                             [state_print(log_entry["old_state"].to_s,log_entry["state"].to_s),
-                                                              log_entry["action"].to_s,
-                                                              log_entry["result"].to_s,
-                                                              log_entry["timestamp"].to_i,
-                                                              pretty_time(@last_time_diff.to_i),
-                                                              pretty_time(@total_time_diff.to_i), node_uuid.to_s], line_color, header_color)
-          @last_time = Time.at(log_entry["timestamp"])
-        end
+                                                             [log_entry["State"],
+                                                              log_entry["Action"],
+                                                              log_entry["Result"],
+                                                              log_entry["Time"],
+                                                              log_entry["Last"],
+                                                              log_entry["Total"],
+                                                              log_entry["NodeUUID"]
+                                                             ],
+                                                             line_color, header_color)
+        }
         # Return our array of HashPrint
         attr_array
       end

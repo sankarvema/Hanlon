@@ -11,6 +11,7 @@ module ProjectRazor
       def initialize(args)
         super(args)
         @hidden = false
+        @uri_string = ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + '/tag'
       end
 
       def slice_commands
@@ -24,7 +25,7 @@ module ProjectRazor
                                           "remove_all_tagrules",
                                           "remove_tagrule_by_uuid")
         # and add the corresponding 'matcher' commands to the set of slice_commands
-        tag_uuid_match = /^((?!(matcher|add|get|remove|update|default)))\S+/
+        tag_uuid_match = /^((?!(matcher|add|get|all|remove|update|default)))\S+/
         commands[tag_uuid_match] = {}
         commands[tag_uuid_match][:default] = "get_tagrule_by_uuid"
         commands[tag_uuid_match][:else] = "get_tagrule_by_uuid"
@@ -66,8 +67,10 @@ module ProjectRazor
         commands[:matcher][:remove][:default] = "throw_syntax_error"
         commands[:matcher][:remove][:else] = "throw_syntax_error"
         # getting a tag matcher
-        commands[tag_uuid_match][:matcher][:else] = "get_matcher_by_uuid"
-        commands[tag_uuid_match][:matcher][:default] = "throw_missing_uuid_error"
+        tag_matcher_uuid_match = /^((?!(add|get|all|remove|update|default)))\S+/
+        commands[tag_uuid_match][:matcher][tag_matcher_uuid_match] = "get_matcher_by_uuid"
+        commands[tag_uuid_match][:matcher][:else] = "get_matchers_for_tagrule"
+        commands[tag_uuid_match][:matcher][:default] = "get_matchers_for_tagrule"
 
         commands
       end
@@ -212,6 +215,7 @@ module ProjectRazor
                  "\trazor tag update (UUID) (...)                   " + "Update an existing Tag ".yellow,
                  "\trazor tag remove (UUID)|all                     " + "Remove existing Tag(s)".yellow,
                  "Tag Matcher commands:".yellow,
+                 "\trazor tag (T_UUID) matcher [get] [all]          " + "View Tag Matcher summary".yellow,
                  "\trazor tag (T_UUID) matcher [get] (UUID)         " + "View Tag Matcher details".yellow,
                  "\trazor tag (T_UUID) matcher add (...)            " + "Create a new Tag Matcher".yellow,
                  "\trazor tag (T_UUID) matcher update (UUID) (...)  " + "Update a Tag Matcher".yellow,
@@ -221,21 +225,27 @@ module ProjectRazor
 
       def get_all_tagrules
         @command = :get_all_tagrules
-        # if it's a web command and the last argument wasn't the string "default" or "get", then a
-        # filter expression was included as part of the web command
-        @command_array.unshift(@prev_args.pop) if @web_command && @prev_args.peek(0) != "default" && @prev_args.peek(0) != "get"
-        # Get all tag rules and print/return
-        print_object_array(get_object("tagrules", :tag), "Tag Rules",
-                           :style => :table, :success_type => :generic)
+        uri = URI.parse @uri_string
+        # get the tagrules from the RESTful API (as an array of objects)
+        result = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        # and print the result
+        print_object_array(result, "Tag Rules:", :style => :table)
       end
 
       def get_tagrule_by_uuid
         @command = :get_tagrule_by_uuid
         # the UUID was the last "previous argument"
         tagrule_uuid = get_uuid_from_prev_args
-        tagrule = get_object("tagrule_by_uuid", :tag, tagrule_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Tag Rule with UUID: [#{tagrule_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
-        print_object_array [tagrule], "", :success_type => :generic
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + '/' + tagrule_uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        print_object_array(hash_array_to_obj_array([result]), "Tag Rule:")
       end
 
       def add_tagrule
@@ -252,13 +262,17 @@ module ProjectRazor
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
-
-        # create a new tagrule using the options that were passed into this subcommand,
-        # then persist the tagrule object
-        tagrule = ProjectRazor::Tagging::TagRule.new({"@name" => options[:name], "@tag" => options[:tag]})
-        raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Tag Rule") unless tagrule
-        @data.persist_object(tagrule)
-        print_object_array([tagrule], "", :success_type => :created)
+        # setup the POST (to create the requested policy) and return the results
+        uri = URI.parse @uri_string
+        json_data = {
+            "name" => options[:name],
+            "tag" => options[:tag]
+        }.to_json
+        result, response = rz_http_post_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        print_object_array(hash_array_to_obj_array([result]), "Tag Rule Created:")
       end
 
       def update_tagrule
@@ -275,55 +289,67 @@ module ProjectRazor
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
-
-        # get the tagfule to update
-        tagrule = get_object("tagrule_with_uuid", :tag, tagrule_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Tag Rule with UUID: [#{tagrule_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
-        tagrule.name = options[:name] if options[:name]
-        tagrule.tag = options[:tag] if options[:tag]
-        raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Tag Rule [#{tagrule.uuid}]" unless tagrule.update_self
-        print_object_array [tagrule], "", :success_type => :updated
+        # add properties passed in from command line to the json_data
+        # hash that we'll be passing in as the body of the request
+        body_hash = {}
+        body_hash["name"] = options[:name] if options[:name]
+        body_hash["tag"] = options[:tag] if options[:tag]
+        json_data = body_hash.to_json
+        # setup the PUT (to update the indicated tag rule) and return the results
+        uri = URI.parse(@uri_string + '/' + tagrule_uuid)
+        result, response = rz_http_put_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        print_object_array(hash_array_to_obj_array([result]), "Tag Rule Updated:")
       end
 
       def remove_all_tagrules
         @command = :remove_all_tagrules
-        raise ProjectRazor::Error::Slice::MethodNotAllowed, "Cannot remove all Tag Rules via REST" if @web_command
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove all Tag Rules" unless @data.delete_all_objects(:tag)
-        slice_success("All Tag Rules removed", :success_type => :removed)
+        raise ProjectRazor::Error::Slice::MethodNotAllowed, "This method has been deprecated"
       end
 
       def remove_tagrule_by_uuid
         @command = :remove_tagrule_by_uuid
         # the UUID was the last "previous argument"
         tagrule_uuid = get_uuid_from_prev_args
-        tagrule = get_object("tagrule_with_uuid", :tag, tagrule_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Tag Rule with UUID: [#{tagrule_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Tag Rule [#{tagrule.uuid}]" unless @data.delete_object(tagrule)
-        slice_success("Tag Rule [#{tagrule.uuid}] removed", :success_type => :removed)
+        # setup the DELETE (to remove the indicated tag rule) and return the results
+        uri = URI.parse @uri_string + "/#{tagrule_uuid}"
+        result, response = rz_http_delete(uri, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        slice_success(result, :success_type => :removed)
       end
 
       # Tag Matcher
       #
 
-      def find_matcher(matcher_uuid)
-        found_matcher = []
-        @data.fetch_all_objects(:tag).each do
-        |tr|
-          tr.tag_matchers.each do
-          |matcher|
-            found_matcher << [matcher, tr] if matcher.uuid.scan(matcher_uuid).count > 0
-          end
-        end
-        found_matcher.count == 1 ? found_matcher.first : nil
+      def get_matchers_for_tagrule
+        @command = :get_matchers_for_tagrule
+        tagrule_uuid = @prev_args.peek(1)
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher")
+        # get the tag matchers for the indicated tagrule (from the RESTful API) as an array of objects
+        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)), tagrule_uuid)
+        # and print the result
+        print_object_array(result, "Tag Matchers:", :style => :table)
       end
 
       def get_matcher_by_uuid
         @command = :get_matcher_by_uuid
-        matcher_uuid = @command_array.shift
-        raise ProjectRazor::Error::Slice::MissingArgument, "Must provide a Tag Matcher UUID" unless validate_arg(matcher_uuid)
-        matcher, tagrule = find_matcher(matcher_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag Matcher with UUID [#{matcher_uuid}]" unless matcher
-        print_object_array [matcher], "", :success_type => :generic
+        tagrule_uuid = @prev_args.peek(2)
+        matcher_uuid = @prev_args.peek(0)
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}")
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher:")
       end
 
       def add_matcher
@@ -345,21 +371,25 @@ module ProjectRazor
         compare = options[:compare]
         value = options[:value]
         inverse = (options[:inverse] == nil ? "false" : options[:inverse])
-
-        # check the values that were passed in
-        tagrule = get_object("tagrule_with_uuid", :tag, tagrule_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Tag Rule with UUID: [#{tagrule_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
-        raise ProjectRazor::Error::Slice::MissingArgument, "Option for --compare must be [equal|like]" unless compare == "equal" || compare == "like"
-        matcher = tagrule.add_tag_matcher(:key => key, :compare => compare, :value => value, :inverse => inverse)
-        raise ProjectRazor::Error::Slice::CouldNotCreate, "Could not create tag matcher" unless matcher
-        raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Tag Matcher") unless tagrule.update_self
-        print_object_array([matcher], "Tag Matcher created:", :success_type => :created)
+        # setup the POST (to create the requested policy) and return the results
+        uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher"
+        json_data = {
+            "key" => key,
+            "compare" => compare,
+            "value" => value,
+            "inverse" => inverse
+        }.to_json
+        result, response = rz_http_post_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Added:")
       end
 
       def update_matcher
         @command = :update_matcher
         includes_uuid = false
-        tagrule_uuid = @prev_args.peek(2)
+        tagrule_uuid = @prev_args.peek(3)
         # load the appropriate option items for the subcommand we are handling
         option_items = command_option_data(:update_matcher)
         # parse and validate the options that were passed in as part of this
@@ -376,32 +406,36 @@ module ProjectRazor
         compare = options[:compare]
         value = options[:value]
         inverse = options[:inverse]
-
-        # check the values that were passed in
-        matcher, tagrule = find_matcher(matcher_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag Matcher with UUID [#{matcher_uuid}]" unless matcher
-        raise ProjectRazor::Error::Slice::MissingArgument, "Option for --compare must be [equal|like]" unless !compare || compare == "equal" || compare == "like"
-        raise ProjectRazor::Error::Slice::MissingArgument, "Option for --inverse must be [true|false]" unless !inverse || inverse == "true" || inverse == "false"
-        matcher.key = key if key
-        matcher.compare = compare if compare
-        matcher.value = value if value
-        matcher.inverse = inverse if inverse
-        if tagrule.update_self
-          print_object_array([matcher], "Tag Matcher updated [#{matcher.uuid}]\nTag Rule:", :success_type => :updated)
-        else
-          raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not update Tag Matcher")
+        # setup the PUT (to create the requested policy) and return the results
+        uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}"
+        puts uri.inspect
+        # add properties passed in from command line to the json_data
+        # hash that we'll be passing in as the body of the request
+        body_hash = {}
+        body_hash["key"] = key if key
+        body_hash["compare"] = compare if compare
+        body_hash["value"] = value if value
+        body_hash["inverse"] = inverse if inverse
+        json_data = body_hash.to_json
+        result, response = rz_http_put_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
         end
+        print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Added:")
       end
 
       def remove_matcher
         @command = :remove_matcher
+        tagrule_uuid = @prev_args.peek(3)
         # the UUID was the last "previous argument"
         matcher_uuid = get_uuid_from_prev_args
-        matcher, tagrule = find_matcher(matcher_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag Matcher with UUID [#{matcher_uuid}]" unless matcher
-        raise ProjectRazor::Error::Slice::CouldNotCreate, "Could not remove Tag Matcher" unless tagrule.remove_tag_matcher(matcher.uuid)
-        raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not remove Tag Matcher") unless tagrule.update_self
-        print_object_array([tagrule], "Tag Matcher removed [#{matcher.uuid}]\nTag Rule:", :success_type => :removed)
+        # setup the DELETE (to remove the indicated model) and return the results
+        uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}"
+        result, response = rz_http_delete(uri, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        slice_success(result, :success_type => :removed)
       end
 
     end

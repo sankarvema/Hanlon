@@ -4,16 +4,19 @@ require "yaml"
 # Root ProjectRazor namespace
 module ProjectRazor
   class Slice
-    # ProjectRazor Slice Boot
-    # Used for all boot logic by node
+
+    # ProjectRazor Slice Config
+    # Used to retrieve the current Razor configuration and the
+    # defined iPXE-boot script for the Razor server
     class Config < ProjectRazor::Slice
-      include(ProjectRazor::Logging)
+
       # Initializes ProjectRazor::Slice::Model including #slice_commands, #slice_commands_help
       # @param [Array] args
       def initialize(args)
         super(args)
         @hidden = true
         @engine = ProjectRazor::Engine.instance
+        @uri_string = ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + '/config'
       end
 
       def slice_commands
@@ -32,27 +35,19 @@ module ProjectRazor
       end
 
       def read_config
-        if @web_command # is this a web command
-          print ProjectRazor.config.to_hash.to_json
-        else
-          puts "ProjectRazor Config:"
-          ProjectRazor.config.to_hash.each do
-          |key,val|
+        uri = URI.parse @uri_string
+        config = rz_http_get_hash_response(uri)
+        puts "ProjectRazor Config:"
+        config.each { |key,val|
             print "\t#{key.sub("@","")}: ".white
             print "#{val} \n".green
-          end
-        end
+        }
       end
 
       def generate_ipxe_script
-        @ipxe_options = {}
-        @ipxe_options[:style] = :new
-        @ipxe_options[:uri] =  ProjectRazor.config.mk_uri
-        @ipxe_options[:timeout_sleep] = 15
-        @ipxe_options[:nic_max] = 7
-
-        ipxe_script = File.join(File.dirname(__FILE__), "config/razor.ipxe.erb")
-        puts ERB.new(File.read(ipxe_script)).result(binding)
+        uri = URI.parse @uri_string + '/ipxe'
+        ipxe_script = rz_http_get_text(uri)
+        puts ipxe_script
       end
 
     end

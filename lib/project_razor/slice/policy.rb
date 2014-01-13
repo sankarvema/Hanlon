@@ -1,5 +1,6 @@
 require 'project_razor/slice'
 require 'project_razor/data'
+require 'project_razor/utility'
 
 require "json"
 
@@ -19,8 +20,9 @@ module ProjectRazor
       # @param [Array] args
       def initialize(args)
         super(args)
-        @hidden          = false
-        @policies        = ProjectRazor::Policies.instance
+        @hidden     = false
+        @policies   = ProjectRazor::Policies.instance
+        @uri_string = ProjectRazor.config.mk_uri + RAZOR_URI_ROOT + '/policy'
       end
 
       def slice_commands
@@ -38,129 +40,7 @@ module ProjectRazor
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         commands[:get][:else] = "get_policy_by_uuid"
         commands[:get][[/^(temp|template|templates|types)$/]] = "get_policy_templates"
-        commands[:get][[/^(callback)$/]] = "get_callback"
         commands
-      end
-
-      def all_command_option_data
-        {
-          :add  =>  [
-            { :name        => :template,
-              :default     => nil,
-              :short_form  => '-p',
-              :long_form   => '--template TEMPLATE_NAME',
-              :description => 'The policy template name to use.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :label,
-              :default     => nil,
-              :short_form  => '-l',
-              :long_form   => '--label POLICY_LABEL',
-              :description => 'A label to name this policy.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :model_uuid,
-              :default     => nil,
-              :short_form  => '-m',
-              :long_form   => '--model-uuid MODEL_UUID',
-              :description => 'The model to attach to the policy.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :broker_uuid,
-              :default     => 'none',
-              :short_form  => '-b',
-              :long_form   => '--broker-uuid BROKER_UUID',
-              :description => 'The broker to attach to the policy [default: none].',
-              :uuid_is     => 'not_allowed',
-              :required    => false
-            },
-            { :name        => :tags,
-              :default     => nil,
-              :short_form  => '-t',
-              :long_form   => '--tags TAG{ ,TAG,TAG}',
-              :description => 'Policy tags. Comma delimited.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :enabled,
-              :default     => false,
-              :short_form  => '-e',
-              :long_form   => '--enabled ENABLED_FLAG',
-              :description => 'Should policy be enabled (true|false) [default: false]?',
-              :uuid_is     => 'not_allowed',
-              :required    => false
-            },
-            { :name        => :maximum,
-              :default     => '0',
-              :short_form  => '-x',
-              :long_form   => '--maximum MAXIMUM_COUNT',
-              :description => 'Sets the policy maximum count for nodes [default: 0].',
-              :uuid_is     => 'not_allowed',
-              :required    => false
-            }
-          ],
-          :update  =>  [
-            { :name        => :label,
-              :default     => nil,
-              :short_form  => '-l',
-              :long_form   => '--label POLICY_LABEL',
-              :description => 'A label to name this policy.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :model_uuid,
-              :default     => nil,
-              :short_form  => '-m',
-              :long_form   => '--model-uuid MODEL_UUID',
-              :description => 'The model to attached to the policy.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :broker_uuid,
-              :default     => nil,
-              :short_form  => '-b',
-              :long_form   => '--broker-uuid BROKER_UUID',
-              :description => 'The broker attached to the policy [default: none].',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :tags,
-              :default     => nil,
-              :short_form  => '-t',
-              :long_form   => '--tags TAG{ ,TAG,TAG}',
-              :description => 'Policy tags. Comma delimited.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :enabled,
-              :default     => nil,
-              :short_form  => '-e',
-              :long_form   => '--enabled ENABLED_FLAG',
-              :description => 'Should policy be enabled (true|false) [default: false]?',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :maximum,
-              :default     => nil,
-              :short_form  => '-x',
-              :long_form   => '--maximum MAXIMUM_COUNT',
-              :description => 'Sets the policy maximum count for nodes [default: 0].',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :new_line_number,
-              :default     => nil,
-              :short_form  => '-n',
-              :long_form   => '--new-line-number NEW_NUM',
-              :description => 'Change policy rule number.',
-              :uuid_is     => 'required',
-              :required    => true
-            }
-          ]
-        }.freeze
       end
 
       def policy_help
@@ -189,38 +69,163 @@ module ProjectRazor
                 "\trazor policy add (options...)                 " + "Create a new policy".yellow,
                 "\trazor policy update (UUID) (options...)       " + "Update an existing policy".yellow,
                 "\trazor policy remove (UUID)|all                " + "Remove existing policy(s)".yellow,
-                "\trazor policy callback (UUID) (NAMESPACE)      " + "Invoke a callback for an existing policy(s)".yellow,
                 "\trazor policy --help|-h                        " + "Display this screen".yellow].join("\n")
+      end
+
+      def all_command_option_data
+        {
+            :add  =>  [
+                { :name        => :template,
+                  :default     => nil,
+                  :short_form  => '-p',
+                  :long_form   => '--template TEMPLATE_NAME',
+                  :description => 'The policy template name to use.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :label,
+                  :default     => nil,
+                  :short_form  => '-l',
+                  :long_form   => '--label POLICY_LABEL',
+                  :description => 'A label to name this policy.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :model_uuid,
+                  :default     => nil,
+                  :short_form  => '-m',
+                  :long_form   => '--model-uuid MODEL_UUID',
+                  :description => 'The model to attach to the policy.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :broker_uuid,
+                  :default     => 'none',
+                  :short_form  => '-b',
+                  :long_form   => '--broker-uuid BROKER_UUID',
+                  :description => 'The broker to attach to the policy [default: none].',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                },
+                { :name        => :tags,
+                  :default     => nil,
+                  :short_form  => '-t',
+                  :long_form   => '--tags TAG{ ,TAG,TAG}',
+                  :description => 'Policy tags. Comma delimited.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :enabled,
+                  :default     => false,
+                  :short_form  => '-e',
+                  :long_form   => '--enabled ENABLED_FLAG',
+                  :description => 'Should policy be enabled (true|false) [default: false]?',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                },
+                { :name        => :maximum,
+                  :default     => '0',
+                  :short_form  => '-x',
+                  :long_form   => '--maximum MAXIMUM_COUNT',
+                  :description => 'Sets the policy maximum count for nodes [default: 0].',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                }
+            ],
+            :update  =>  [
+                { :name        => :label,
+                  :default     => nil,
+                  :short_form  => '-l',
+                  :long_form   => '--label POLICY_LABEL',
+                  :description => 'A label to name this policy.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :model_uuid,
+                  :default     => nil,
+                  :short_form  => '-m',
+                  :long_form   => '--model-uuid MODEL_UUID',
+                  :description => 'The model to attached to the policy.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :broker_uuid,
+                  :default     => nil,
+                  :short_form  => '-b',
+                  :long_form   => '--broker-uuid BROKER_UUID',
+                  :description => 'The broker attached to the policy [default: none].',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :tags,
+                  :default     => nil,
+                  :short_form  => '-t',
+                  :long_form   => '--tags TAG{ ,TAG,TAG}',
+                  :description => 'Policy tags. Comma delimited.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :enabled,
+                  :default     => nil,
+                  :short_form  => '-e',
+                  :long_form   => '--enabled ENABLED_FLAG',
+                  :description => 'Should policy be enabled (true|false) [default: false]?',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :maximum,
+                  :default     => nil,
+                  :short_form  => '-x',
+                  :long_form   => '--maximum MAXIMUM_COUNT',
+                  :description => 'Sets the policy maximum count for nodes [default: 0].',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :new_line_number,
+                  :default     => nil,
+                  :short_form  => '-n',
+                  :long_form   => '--new-line-number NEW_NUM',
+                  :description => 'Change policy rule number.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                }
+            ]
+        }.freeze
       end
 
       # Returns all policy instances
       def get_all_policies
         @command = :get_all_policies
-        # if it's a web command and the last argument wasn't the string "default" or "get", then a
-        # filter expression was included as part of the web command
-        @command_array.unshift(@prev_args.pop) if @web_command && @prev_args.peek(0) != "default" && @prev_args.peek(0) != "get"
-        # Get all policy instances and print/return
-        print_object_array get_object("policies", :policy), "Policies", :style => :table
+        raise ProjectRazor::Error::Slice::SliceCommandParsingFailed,
+              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
+        uri = URI.parse @uri_string
+        policy_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(policy_array, "Policies:", :style => :table)
       end
 
       # Returns the policy templates available
       def get_policy_templates
         @command = :get_policy_templates
-        if @web_command && @prev_args.peek(0) != "templates"
-          not_found_error = "(use of aliases not supported via REST; use '/policy/templates' not '/policy/#{@prev_args.peek(0)}')"
-          raise ProjectRazor::Error::Slice::NotFound, not_found_error
-        end
-        # We use the common method in Utility to fetch object templates by providing Namespace prefix
-        print_object_array get_child_templates(ProjectRazor::PolicyTemplate), "\nPolicy Templates:"
+        # get the list of policy templates nd print it
+        uri = URI.parse @uri_string + '/templates'
+        policy_templates = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        print_object_array(policy_templates, "Policy Templates:")
       end
 
       def get_policy_by_uuid
         @command = :get_policy_by_uuid
         # the UUID is the first element of the @command_array
         policy_uuid = @command_array.first
-        policy = get_object("get_policy_by_uuid", :policy, policy_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-        print_object_array [policy], "", :success_type => :generic
+        # setup the proper URI depending on the options passed in
+        uri = URI.parse(@uri_string + '/' + policy_uuid)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        # finally, based on the options selected, print the results
+        print_object_array(hash_array_to_obj_array([result]), "Policy:")
       end
 
       def add_policy
@@ -237,39 +242,28 @@ module ProjectRazor
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
-
         # check the values that were passed in
         policy = new_object_from_template_name(POLICY_PREFIX, options[:template])
-
         # assign default values for (missing) optional parameters
         options[:maximum] = "0" if !options[:maximum]
         options[:broker_uuid] = "none" if !options[:broker_uuid]
         options[:enabled] = "false" if !options[:enabled]
-
-        # check for errors in inputs
-        raise ProjectRazor::Error::Slice::InvalidPolicyTemplate, "Policy Template is not valid [#{options[:template]}]" unless policy
-        model = get_object("model_by_uuid", :model, options[:model_uuid])
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{options[:model_uuid]}]" unless model && (model.class != Array || model.length > 0)
-        raise ProjectRazor::Error::Slice::InvalidModel, "Invalid Model Type [#{model.template}] != [#{policy.template}]" unless policy.template.to_s == model.template.to_s
-        broker = get_object("broker_by_uuid", :broker, options[:broker_uuid])
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{options[:broker_uuid]}]" unless (broker && (broker.class != Array || broker.length > 0)) || options[:broker_uuid] == "none"
-        options[:tags] = options[:tags].split(",") unless options[:tags].class.to_s == "Array"
-        raise ProjectRazor::Error::Slice::MissingTags, "Must provide at least one tag [tags]" unless options[:tags].count > 0
-        raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless options[:maximum].to_i.to_s == options[:maximum]
-        raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be > 0" unless options[:maximum].to_i >= 0
-
-        # Flesh out the policy
-        policy.label         = options[:label]
-        policy.model         = model
-        policy.broker        = broker
-        policy.tags          = options[:tags]
-        policy.enabled       = options[:enabled]
-        policy.is_template   = false
-        policy.maximum_count = options[:maximum]
-        # Add policy
-        policy_rules         = ProjectRazor::Policies.instance
-        policy_rules.add(policy) ? print_object_array([policy], "Policy created", :success_type => :created) :
-            raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Policy")
+        # setup the POST (to create the requested policy) and return the results
+        uri = URI.parse @uri_string
+        json_data = {
+            "template" => options[:template],
+            "label" => options[:label],
+            "model_uuid" => options[:model_uuid],
+            "tags" => options[:tags],
+            "broker_uuid" => options[:broker_uuid],
+            "enabled" => options[:enabled],
+            "maximum" => options[:maximum]
+        }.to_json
+        result, response = rz_http_post_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        print_object_array(hash_array_to_obj_array([result]), "Policy Created:")
       end
 
       def update_policy
@@ -286,86 +280,42 @@ module ProjectRazor
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
-        policy = get_object("policy_with_uuid", :policy, policy_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Policy UUID [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-
-        # check the values that were passed in
-        if options[:tags]
-          options[:tags] = options[:tags].split(",") if options[:tags].is_a? String
-          raise ProjectRazor::Error::Slice::MissingArgument, "Policy Tags [tag(,tag)]" unless options[:tags].count > 0
+        # add properties passed in from command line to the json_data
+        # hash that we'll be passing in as the body of the request
+        body_hash = {}
+        body_hash["label"] = options[:label] if options[:label]
+        body_hash["model_uuid"] = options[:model_uuid] if options[:model_uuid]
+        body_hash["tags"] = options[:tags] if options[:tags]
+        body_hash["broker_uuid"] = options[:broker_uuid] if options[:broker_uuid]
+        body_hash["enabled"] = options[:enabled] if options[:enabled]
+        body_hash["maximum"] = options[:maximum] if options[:maximum]
+        body_hash["new_line_number"] = options[:new_line_number] if options[:new_line_number]
+        json_data = body_hash.to_json
+        # setup the PUT (to update the indicated policy) and return the results
+        uri = URI.parse @uri_string + "/#{policy_uuid}"
+        result, response = rz_http_put_json_data(uri, json_data, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        if options[:model_uuid]
-          model = get_object("model_by_uuid", :model, options[:model_uuid])
-          raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{options[:model_uuid]}]" unless model && (model.class != Array || model.length > 0)
-          raise ProjectRazor::Error::Slice::InvalidModel, "Invalid Model Type [#{model.label}]" unless policy.template == model.template
-        end
-        if options[:broker_uuid]
-          broker = get_object("broker_by_uuid", :broker, options[:broker_uuid])
-          raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{options[:broker_uuid]}]" unless (broker && (broker.class != Array || broker.length > 0)) || options[:broker_uuid] == "none"
-        end
-        new_line_number = (options[:new_line_number] ? options[:new_line_number].strip : nil)
-        raise ProjectRazor::Error::Slice::InputError, "New index '#{options[:new_line_number]}' is not an integer" if new_line_number && !/^[+-]?\d+$/.match(new_line_number)
-        if options[:enabled]
-          raise ProjectRazor::Error::Slice::InputError, "Enabled flag must have a value of 'true' or 'false'" if options[:enabled] != "true" && options[:enabled] != "false"
-        end
-        if options[:maximum]
-          raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless options[:maximum].to_i.to_s == options[:maximum]
-          raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be > 0" unless options[:maximum].to_i >= 0
-        end
-        # Update object properties
-        policy.label = options[:label] if options[:label]
-        policy.model = model if model
-        policy.broker = broker if broker
-        policy.tags = options[:tags] if options[:tags]
-        policy.enabled = options[:enabled] if options[:enabled]
-        policy.maximum_count = options[:maximum] if options[:maximum]
-        if new_line_number
-          policy_rules = ProjectRazor::Policies.instance
-          policy_rules.move_policy_to_idx(policy.uuid, new_line_number.to_i)
-        end
-        # Update object
-        raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless policy.update_self
-        print_object_array [policy], "", :success_type => :updated
+        print_object_array(hash_array_to_obj_array([result]), "Policy Updated:")
       end
 
       def remove_all_policies
         @command = :remove_all_policies
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove all Policies" unless @data.delete_all_objects(:policy)
-        slice_success("All policies removed", :success_type => :removed)
+        raise ProjectRazor::Error::Slice::MethodNotAllowed, "This method has been deprecated"
       end
 
       def remove_policy_by_uuid
         @command = :remove_policy_by_uuid
         # the UUID was the last "previous argument"
         policy_uuid = get_uuid_from_prev_args
-        policy = get_object("policy_with_uuid", :policy, policy_uuid)
-        raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-        raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove policy [#{policy.uuid}]" unless @data.delete_object(policy)
-        slice_success("Active policy [#{policy.uuid}] removed", :success_type => :removed)
-      end
-
-      def get_callback
-        @command           = :get_callback
-        @command_help_text = ""
-        active_model_uuid  = @command_array.shift
-        raise ProjectRazor::Error::Slice::MissingActiveModelUUID, "Missing active model uuid" unless validate_arg(active_model_uuid)
-        callback_namespace = @command_array.shift
-        raise ProjectRazor::Error::Slice::MissingCallbackNamespace, "Missing callback namespace" unless validate_arg(callback_namespace)
-        engine       = ProjectRazor::Engine.instance
-        active_model = nil
-        engine.get_active_models.each { |am| active_model = am if am.uuid == active_model_uuid }
-        raise ProjectRazor::Error::Slice::ActiveModelInvalid, "Active Model Invalid" unless active_model
-        logger.debug "Active bound policy found for callback: #{callback_namespace}"
-        make_callback(active_model, callback_namespace)
-      end
-
-      def make_callback(active_model, callback_namespace)
-        callback = active_model.model.callback[callback_namespace]
-        raise ProjectRazor::Error::Slice::NoCallbackFound, "Missing callback" unless callback
-        node            = @data.fetch_object_by_uuid(:node, active_model.node_uuid)
-        callback_return = active_model.model.callback_init(callback, @command_array, node, active_model.uuid, active_model.broker)
-        active_model.update_self
-        puts callback_return
+        # setup the DELETE (to update the remove the indicated policy) and return the results
+        uri = URI.parse @uri_string + "/#{policy_uuid}"
+        result, response = rz_http_delete(uri, true)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        slice_success(result, :success_type => :removed)
       end
 
     end
