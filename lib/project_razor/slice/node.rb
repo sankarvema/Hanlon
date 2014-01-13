@@ -94,10 +94,12 @@ module ProjectRazor
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + node_uuid)
         print_node_attributes = false
-        if /^(attrib|attributes)$/.match(selected_option)
-          print_node_attributes = true
-        elsif !/^(hardware|hardware_id|hardware_ids)$/.match(selected_option)
-          raise ProjectRazor::Error::Slice::InputError, "unrecognized fieldname '#{selected_option}'"
+        if selected_option
+          if /^(attrib|attributes)$/.match(selected_option)
+            print_node_attributes = true
+          elsif !/^(hardware|hardware_id|hardware_ids)$/.match(selected_option)
+            raise ProjectRazor::Error::Slice::InputError, "unrecognized fieldname '#{selected_option}'"
+          end
         end
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true

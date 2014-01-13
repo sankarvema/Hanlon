@@ -408,7 +408,6 @@ module ProjectRazor
         inverse = options[:inverse]
         # setup the PUT (to create the requested policy) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}"
-        puts uri.inspect
         # add properties passed in from command line to the json_data
         # hash that we'll be passing in as the body of the request
         body_hash = {}
@@ -421,7 +420,7 @@ module ProjectRazor
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Added:")
+        print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Updated:")
       end
 
       def remove_matcher
