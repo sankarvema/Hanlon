@@ -70,6 +70,7 @@ module Razor
           #         required:
           #           :hw_id      | String | The hardware ID for the node. |                   | Default: unavailable
           #           :dhcp_mac   | String | The MAC address the DHCP NIC. |                   | Default: unavailable
+          desc "Retrieve the iPXE-boot script (for a node)"
           before do
             # only allow access to this resource from the Razor subnet
             unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -78,8 +79,8 @@ module Razor
             end
           end
           params do
-            requires :hw_id, type: String
-            requires :dhcp_mac, type: String
+            requires :hw_id, type: String, desc: "The hardware ID for the node"
+            requires :dhcp_mac, type: String, desc: "The MAC address of the DHCP NIC"
           end
           get do
             hw_id = params[:hw_id].split("_")

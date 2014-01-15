@@ -71,6 +71,7 @@ module Razor
 
           # GET /model
           # Query for defined models.
+          desc "Retrieve a list of all model instances"
           get do
             models = SLICE_REF.get_object("models", :model)
             slice_success_object(SLICE_REF, :get_all_models, models, :success_type => :generic)
@@ -83,11 +84,12 @@ module Razor
           #     label             | String | The "label" to use for the new model    |         | Default: unavailable
           #     image_uuid        | String | The UUID of the image to use            |         | Default: unavailable
           #     req_metadata_hash | Hash   | The metadata to use for the new model   |         | Default: unavailable
+          desc "Create a new model instance"
           params do
-            requires "template", type: String
-            requires "label", type: String
-            requires "image_uuid", type: String
-            requires "req_metadata_hash", type: Hash
+            requires "template", type: String, desc: "The model template to use"
+            requires "label", type: String, desc: "The new model's label"
+            requires "image_uuid", type: String, desc: "The UUID of the image to use"
+            requires "req_metadata_hash", type: Hash, desc: "The (JSON) metadata hash"
           end
           post do
             template = params["template"]
@@ -118,6 +120,7 @@ module Razor
 
             # GET /model/templates
             # Query for available model templates
+            desc "Retrieve a list of available model templates"
             get do
               # get the model templates (as an array)
               model_templates = SLICE_REF.get_child_templates(ProjectRazor::ModelTemplate)
@@ -129,6 +132,10 @@ module Razor
 
               # GET /model/templates/{name}
               # Query for a specific model template (by name)
+              desc "Retrieve details for a specific model template (by name)"
+              params do
+                requires :name, type: String, desc: "The model template name"
+              end
               get do
                 # get the matching model template
                 model_template_name = params[:name]
@@ -147,8 +154,9 @@ module Razor
 
             # GET /model/{uuid}
             # Query for the state of a specific model.
+            desc "Retrieve details for a specific model instance (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The model's UUID"
             end
             get do
               model_uuid = params[:uuid]
@@ -165,11 +173,12 @@ module Razor
             #     label             | String | The "label" to use for the new model    |         | Default: unavailable
             #     image_uuid        | String | The UUID of the image to use            |         | Default: unavailable
             #     req_metadata_hash | Hash   | The metadata to use for the new model   |         | Default: unavailable
+            desc "Update a model instance (by UUID)"
             params do
-              requires :uuid, type: String
-              optional "label", type: String
-              optional "image_uuid", type: String
-              optional "req_metadata_hash", type: Hash
+              requires :uuid, type: String, desc: "The model's UUID"
+              optional "label", type: String, desc: "The model's new label"
+              optional "image_uuid", type: String, desc: "The new image (by UUID)"
+              optional "req_metadata_hash", type: Hash, desc: "The new metadata hash"
             end
             put do
               # get the input parameters that were passed in as part of the request
@@ -203,8 +212,9 @@ module Razor
 
             # DELETE /model/{uuid}
             # Remove a Razor model (by UUID)
+            desc "Remove a model instance (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The model's UUID", desc: "The model's UUID"
             end
             delete do
               model_uuid = params[:uuid]

@@ -71,6 +71,7 @@ module Razor
 
           # GET /node
           # Query registered nodes.
+          desc "Retrieve a list of all node instances"
           get do
             nodes = SLICE_REF.get_object("nodes", :node)
             slice_success_object(SLICE_REF, :get_all_nodes, nodes, :success_type => :generic)
@@ -91,10 +92,11 @@ module Razor
             #           :hw_id      | String | The hardware ID of the node.          |           | Default: unavailable
             #           :last_state | String | The "state" the node is currently in. |           | Default: unavailable
             params do
-              requires :hw_id, type: String
-              requires :last_state, type: String
-              optional :first_checkin, type: Boolean
+              requires :hw_id, type: String, desc: "The node's hardware ID"
+              requires :last_state, type: String, desc: "The last state received by the Microkernel"
+              optional :first_checkin, type: Boolean, desc: "Used to indicate if is first checkin (or not) by MK"
             end
+            desc "Handle a node checkin (by a Microkernel instance)"
             get do
               hw_id = params[:hw_id]
               last_state = params[:last_state]
@@ -135,10 +137,11 @@ module Razor
             #     hw_id           | String | The hardware ID of the node.          |           | Default: unavailable
             #     last_state      | String | The "state" the node is currently in. |           | Default: unavailable
             #     attributes_hash | Hash   | The attributes_hash of the node.      |           | Default: unavailable
+            desc "Handle a node registration request (by a Microkernel instance)"
             params do
-              requires "hw_id", type: String
-              requires "last_state", type: String
-              requires "attributes_hash", type: Hash
+              requires "hw_id", type: String, desc: "The node's hardware ID"
+              requires "last_state", type: String, desc: "The last state received by the Microkernel"
+              requires "attributes_hash", type: Hash, desc: "A hash of the node's attributes (from facter, lshw, etc.)"
             end
             post do
               hw_id = params["hw_id"]
@@ -175,9 +178,10 @@ module Razor
             #   parameters:
             #         optional:
             #           :field      | String | The field to return. |                           | Default: unavailable
+            desc "Get the details for a specific node (by UUID)"
             params do
-              requires :uuid, type: String
-              optional :field, type: String
+              requires :uuid, type: String, desc: "The node's UUID"
+              optional :field, type: String, desc: "Name of field to return ('attributes' or 'hardware_id')"
             end
             get do
               node_uuid = params[:uuid]

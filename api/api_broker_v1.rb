@@ -75,6 +75,7 @@ module Razor
 
           # GET /broker
           # Query for defined brokers.
+          desc "Retrieve a list of all broker instances"
           get do
             brokers = SLICE_REF.get_object("broker_instances", :broker)
             slice_success_object(SLICE_REF, :get_all_brokers, brokers, :success_type => :generic)
@@ -87,11 +88,12 @@ module Razor
           #     name              | String | The "name" to use for the new broker     |         | Default: unavailable
           #     description       | String | The description of the new broker        |         | Default: unavailable
           #     req_metadata_hash | Hash   | The metadata to use for the new broker   |         | Default: unavailable
+          desc "Create a new broker instance"
           params do
-            requires "plugin", type: String
-            requires "name", type: String
-            requires "description", type: String
-            requires "req_metadata_hash", type: Hash
+            requires "plugin", type: String, desc: "The broker plugin to use"
+            requires "name", type: String, desc: "The new broker's name"
+            requires "description", type: String, desc: "The new broker's description"
+            requires "req_metadata_hash", type: Hash, desc: "The metadata hash to use"
           end
           post do
             plugin = params["plugin"]
@@ -120,6 +122,7 @@ module Razor
 
             # GET /broker/plugins
             # Query for available broker plugins
+            desc "Retrieve a list of available broker plugins"
             get do
               # get the broker plugins (as an array)
               broker_plugins = SLICE_REF.get_child_templates(ProjectRazor::BrokerPlugin)
@@ -131,6 +134,10 @@ module Razor
 
               # GET /broker/plugins/{name}
               # Query for a specific broker plugin (by name)
+              desc "Retrieve details for a specific broker plugin (by name)"
+              params do
+                requires :name, type: String, desc: "The name of the plugin"
+              end
               get do
                 # get the matching broker plugin
                 broker_plugin_name = params[:name]
@@ -149,8 +156,9 @@ module Razor
 
             # GET /broker/{uuid}
             # Query for the state of a specific broker.
+            desc "Retrieve details for a specific broker instance (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The broker's UUID"
             end
             get do
               broker_uuid = params[:uuid]
@@ -167,11 +175,12 @@ module Razor
             #     name              | String | The "name" to use for the new broker     |         | Default: unavailable
             #     description       | String | The description of the new broker        |         | Default: unavailable
             #     req_metadata_hash | Hash   | The metadata to use for the new broker   |         | Default: unavailable
+            desc "Update a broker instance (by UUID)"
             params do
-              requires :uuid, type: String
-              optional "name", type: String
-              optional "description", type: String
-              optional "req_metadata_hash", type: Hash
+              requires :uuid, type: String, desc: "The broker's UUID"
+              optional "name", type: String, desc: "The broker's new name"
+              optional "description", type: String, desc: "The broker's new description"
+              optional "req_metadata_hash", type: Hash, desc: "The new metadata hash"
             end
             put do
               # get the input parameters that were passed in as part of the request
@@ -204,8 +213,9 @@ module Razor
 
             # DELETE /broker/{uuid}
             # Remove a Razor broker (by UUID)
+            desc "Remove a broker instance (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The broker's UUID"
             end
             delete do
               broker_uuid = params[:uuid]

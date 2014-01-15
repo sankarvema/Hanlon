@@ -92,6 +92,7 @@ module Razor
 
           # GET /policy
           # Query for defined policies.
+          desc "Retrieve a list of all policy instances"
           get do
             policies = SLICE_REF.get_object("policies", :policy)
             slice_success_object(SLICE_REF, :get_all_policies, policies, :success_type => :generic)
@@ -107,14 +108,15 @@ module Razor
           #     broker_uuid       | String | The UUID of the broker to use            |         | Default: "none"
           #     enabled           | String | A flag indicating if policy is enabled   |         | Default: "false"
           #     maximum           | String | The maximum_count for the policy         |         | Default: "0"
+          desc "Create a new policy instance"
           params do
-            requires "template", type: String
-            requires "label", type: String
-            requires "model_uuid", type: String
-            requires "tags", type: String
-            optional "broker_uuid", type: String, default:  "none"
-            optional "enabled", type: String, default: "false"
-            optional "maximum", type: String, default: "0"
+            requires "template", type: String, desc: "The policy template to use"
+            requires "label", type: String, desc: "The new policy's name"
+            requires "model_uuid", type: String, desc: "The model to use (by UUID)"
+            requires "tags", type: String, desc: "The tags to match against"
+            optional "broker_uuid", type: String, default: "none", desc: "The broker to use (by UUID)"
+            optional "enabled", type: String, default: "false", desc: "Enabled when created?"
+            optional "maximum", type: String, default: "0", desc: "Max. number to match against"
           end
           post do
             # grab values for required parameters
@@ -155,6 +157,7 @@ module Razor
 
             # GET /policy/templates
             # Query for available policy templates
+            desc "Retrieve a list of available policy templates"
             get do
               # get the policy templates (as an array)
               policy_templates = SLICE_REF.get_child_templates(ProjectRazor::PolicyTemplate)
@@ -166,6 +169,10 @@ module Razor
 
               # GET /policy/templates/{name}
               # Query for a specific policy template (by UUID)
+              desc "Retrieve details for a specific policy template (by name)"
+              params do
+                requires :name, type: String, desc: "The name of the template"
+              end
               get do
                 # get the matching policy template
                 policy_template_name = params[:name]
@@ -194,6 +201,7 @@ module Razor
 
                 # GET /policy/callback/{uuid}/{namespace_and_args}
                 # Make a callback "call" (used during the install/broker-handoff process to track progress)
+                desc "Used to handle callbacks (to active_model instances)"
                 before do
                   # only allow access to this resource from the Razor subnet
                   unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -202,8 +210,8 @@ module Razor
                   end
                 end
                 params do
-                  requires :uuid, type: String
-                  requires :namespace_and_args, type: String
+                  requires :uuid, type: String, desc: "The active_model's UUID"
+                  requires :namespace_and_args, type: String, desc: "The namespace and arguments for the callback"
                 end
                 get do
                   # get (and check) the required parameters
@@ -230,8 +238,9 @@ module Razor
 
             # GET /policy/{uuid}
             # Query for the state of a specific policy.
+            desc "Retrieve details for a specific policy instance (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The policy's UUID"
             end
             get do
               policy_uuid = params[:uuid]
@@ -252,15 +261,16 @@ module Razor
             #     new_line_number   | String | The new line number in the policy table  |         | Default: unavailable
             #     enabled           | String | A new "enabled flag" value               |         | Default: unavailable
             #     maximum           | String | The new maximum_count value              |         | Default: unavailable
+            desc "Update a policy instance (by UUID)"
             params do
-              requires :uuid, type: String
-              optional "label", type: String, default: nil
-              optional "model_uuid", type: String, default: nil
-              optional "tags", type: String, default: nil
-              optional "broker_uuid", type: String, default: nil
-              optional "new_line_number", type: String, default: nil
-              optional "enabled", type: String, default: nil
-              optional "maximum", type: String, default: nil
+              requires :uuid, type: String, desc: "The policy's UUID"
+              optional "label", type: String, default: nil, desc: "The policy's new label"
+              optional "model_uuid", type: String, default: nil, desc: "The new model (by UUID)"
+              optional "tags", type: String, default: nil, desc: "The new tags"
+              optional "broker_uuid", type: String, default: nil, desc: "The new broker (by UUID)"
+              optional "new_line_number", type: String, default: nil, desc: "Line number (in policy table)"
+              optional "enabled", type: String, default: nil, desc: "The new 'enabled' flag value"
+              optional "maximum", type: String, default: nil, desc: "Max. number to match against"
             end
             put do
               # get optional parameters
@@ -319,8 +329,9 @@ module Razor
 
             # DELETE /policy/{uuid}
             # Remove a Razor policy (by UUID)
+            desc "Remove a model instance (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The policy's UUID"
             end
             delete do
               policy_uuid = params[:uuid]

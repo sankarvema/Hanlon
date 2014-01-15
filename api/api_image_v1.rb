@@ -95,6 +95,7 @@ module Razor
 
           # GET /image
           # Query for images.
+          desc "Retrieve a list of all image instances"
           before do
             # only test if directly accessing the /config resource
             if env["PATH_INFO"].match(/image$/)
@@ -116,6 +117,7 @@ module Razor
           #     path      | String | The "path" to the image ISO                            |    | Default: unavailable
           #     name      | String | The logical name to use for the image (os images only) |    | Default: unavailable
           #     version   | String | The version to use for the image (os images only)      |    | Default: unavailable
+          desc "Create a new image instance (from an ISO file)"
           before do
             # only allow access to this resource from the Razor subnet
             unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -124,10 +126,10 @@ module Razor
             end
           end
           params do
-            requires "type", type: String
-            requires "path", type: String
-            optional "name", type: String
-            optional "version", type: String
+            requires "type", type: String, desc: "The image type ('mk' or 'os')"
+            requires "path", type: String, desc: "The path (absolute or relative) to the ISO"
+            optional "name", type: String, desc: "The image name (required for 'os' images)"
+            optional "version", type: String, desc: "The image version (required for 'os' images)"
           end
           post do
             image_type = params["type"]
@@ -159,6 +161,7 @@ module Razor
 
             # GET /image/{component}
             # Handles GET operations for images (by UUID) and files from an image (by path)
+            desc "retrieve details for an image (by UUID) or a file from an image (by path)"
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -167,7 +170,7 @@ module Razor
               end
             end
             params do
-              requires :component, type: String
+              requires :component, type: String, desc: "The image UUID or path to the file"
             end
             get do
               component = params[:component]
@@ -192,6 +195,7 @@ module Razor
 
             # DELETE /image/{component}
             # Handles DELETE operations for images (by UUID)
+            desc "Remove an image (by UUID) and it's components"
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -200,7 +204,7 @@ module Razor
               end
             end
             params do
-              requires :component, type: String
+              requires :component, type: String, desc: "The image's UUID"
             end
             delete do
               component = params[:component]

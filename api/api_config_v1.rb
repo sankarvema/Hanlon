@@ -76,6 +76,7 @@ module Razor
 
           # GET /config
           # Query for Razor server configuration
+          desc "Retrieve the current Razor configuration"
           before do
             # only test if directly accessing the /config resource
             if env["PATH_INFO"].match(/config$/)
@@ -91,7 +92,8 @@ module Razor
 
           resource :ipxe do
             # GET /config/ipxe
-            # Query for iPXE boot script to use (from Microkernel)
+            # Query for iPXE boot script to use (with Razor)
+            desc "Retrieve the iPXE-bootstrap script to use (with Razor)"
             before do
               # only allow access to configuration resource from the razor server
               unless request_is_from_razor_server(env['REMOTE_ADDR'])

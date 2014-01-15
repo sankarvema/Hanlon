@@ -121,6 +121,7 @@ module Razor
 
           # GET /active_model
           # Retrieve list of active_models.
+          desc "Retrieve a list of all active_model instances"
           get do
             active_models = SLICE_REF.get_object("active_models", :active)
             slice_success_object(SLICE_REF, :get_all_active_models, active_models, :success_type => :generic)
@@ -136,6 +137,7 @@ module Razor
 
             # GET /active_model
             # Retrieve all active_model logs.
+            desc "Returns the log entries for all active_model instances"
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_server(env['REMOTE_ADDR'])
@@ -156,8 +158,9 @@ module Razor
 
             # GET /active_model/{uuid}
             # Retrieve a specific active_model (by UUID).
+            desc "Return the details for a specific active_model instance"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The active_model's UUID"
             end
             get do
               uuid = params[:uuid]
@@ -168,6 +171,7 @@ module Razor
 
             # DELETE /active_model/{uuid}
             # Remove an active_model instance (by UUID)
+            desc "Remove an active_model instance"
             before do
               # only allow access to this resource from the Razor subnet
               unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
@@ -175,7 +179,7 @@ module Razor
               end
             end
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The active_model's UUID"
             end
             delete do
               active_model_uuid = params[:uuid]
@@ -195,6 +199,7 @@ module Razor
 
               # GET /active_model/{uuid}/logs
               # Retrieve the log for an active_model (by UUID).
+              desc "Returns the log entries for a specific active_model instance"
               before do
                 # only allow access to this resource from the Razor subnet
                 unless request_is_from_razor_server(env['REMOTE_ADDR'])
@@ -202,7 +207,7 @@ module Razor
                 end
               end
               params do
-                requires :uuid, type: String
+                requires :uuid, type: String, desc: "The active_model's UUID"
               end
               get do
                 uuid = params[:uuid]

@@ -89,6 +89,7 @@ module Razor
 
           # GET /tag
           # Query for defined tags.
+          desc "Retrieve a list of all tags"
           get do
             tagrules = SLICE_REF.get_object("tagrules", :tag)
             slice_success_object(SLICE_REF, :get_all_tagrules, tagrules, :success_type => :generic)
@@ -99,9 +100,10 @@ module Razor
           #   parameters:
           #     name            | String | The "name" to use for the new tag   |         | Default: unavailable
           #     tag             | String | The "tag" value                     |         | Default: unavailable
+          desc "Create a new tag"
           params do
-            requires "name", type: String
-            requires "tag", type: String
+            requires "name", type: String, desc: "The new tag's name"
+            requires "tag", type: String, desc: "The new tag's 'tag' value"
           end
           post do
             # create a new tag using the options that were passed into this subcommand,
@@ -116,8 +118,9 @@ module Razor
 
             # GET /tag/{uuid}
             # Query for the state of a specific tag.
+            desc "Retrieve details for a specific tag (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The tag's UUID"
             end
             get do
               tag_uuid = params[:uuid]
@@ -132,10 +135,11 @@ module Razor
             #   parameters:
             #     name            | String | The new "name" to assign to the tag      |         | Default: unavailable
             #     tag             | String | The new "tag" value to assign to the tag |         | Default: unavailable
+            desc "Update a specific tag (by UUID)"
             params do
-              requires :uuid, type: String
-              optional "name", type: String
-              optional "tag", type: String
+              requires :uuid, type: String, desc: "The tag's UUID"
+              optional "name", type: String, desc: "The tag's new name"
+              optional "tag", type: String, desc: "The tag's new 'tag' value"
             end
             put do
               # get the input parameters that were passed in as part of the request
@@ -158,8 +162,9 @@ module Razor
 
             # DELETE /tag/{uuid}
             # Remove a Razor tag (by UUID)
+            desc "Remove a specific tag (by UUID)"
             params do
-              requires :uuid, type: String
+              requires :uuid, type: String, desc: "The tag's UUID"
             end
             delete do
               tag_uuid = params[:uuid]
@@ -173,6 +178,10 @@ module Razor
 
               # GET /tag/{uuid}/matcher
               # Query for defined tag matchers (for a given tag).
+              desc "Retrieve a list of all tag matchers (for a given tag)"
+              params do
+                requires :uuid, type: String, desc: "The tag's UUID"
+              end
               get do
                 tag_uuid = params[:uuid]
                 matchers, tagrule = get_matchers(tag_uuid)
@@ -183,15 +192,17 @@ module Razor
               # POST /tag/{uuid}/matcher
               # Create a Razor tag matcher (and add to the given tag)
               #   parameters:
-              #     key             | String | The "name" to use for the new tag   |         | Default: unavailable
-              #     compare         | String | The "tag" value                     |         | Default: unavailable
-              #     value           | String | The "tag" value                     |         | Default: unavailable
-              #     inverse         | String | The "tag" value                     |         | Default: unavailable
+              #     key             | String | The "key" to use for the new tag matcher     |    | Default: unavailable
+              #     compare         | String | The comparison method to use (like or equal) |    | Default: unavailable
+              #     value           | String | The value to compare against                 |    | Default: unavailable
+              #     inverse         | String | Should the matcher invert the rule?          |    | Default: unavailable
+              desc "Create a new tag matcher (and add to the specified tag)"
               params do
-                requires "key", type: String
-                requires "compare", type: String
-                requires "value", type: String
-                optional "inverse", type: String
+                requires :uuid, desc: "The tag's UUID"
+                requires "key", type: String, desc: "The 'key' to use"
+                requires "compare", type: String, desc: "The comparison method"
+                requires "value", type: String, desc: "The 'value' to match"
+                optional "inverse", type: String, desc: "Invert the match?"
               end
               post do
                 tag_uuid = params[:uuid]
@@ -215,9 +226,10 @@ module Razor
 
                 # GET /tag/{uuid}/matcher/{matcher_uuid}
                 # Query for the state of a specific tag matcher (for a specific tag).
+                desc "Retrieve the details for a tag matcher (for the specified tag)"
                 params do
-                  requires :uuid, type: String
-                  requires :matcher_uuid, type: String
+                  requires :uuid, type: String, desc: "The tag's UUID"
+                  requires :matcher_uuid, type: String, desc: "The tag matcher's UUID"
                 end
                 get do
                   tag_uuid = params[:uuid]
@@ -235,13 +247,14 @@ module Razor
                 #     compare         | String | The "tag" value                     |         | Default: unavailable
                 #     value           | String | The "tag" value                     |         | Default: unavailable
                 #     inverse         | String | The "tag" value                     |         | Default: unavailable
+                desc "Update a tag matcher instance (for the specified tag)"
                 params do
-                  requires :uuid, type: String
-                  requires :matcher_uuid, type: String
-                  optional "key", type: String
-                  optional "compare", type: String
-                  optional "value", type: String
-                  optional "inverse", type: String
+                  requires :uuid, type: String, desc: "The tag's UUID"
+                  requires :matcher_uuid, type: String, desc: "The tag matcher's UUID"
+                  optional "key", type: String, desc: "The new 'key'"
+                  optional "compare", type: String, desc: "The new comparison method"
+                  optional "value", type: String, desc: "The new value to match against"
+                  optional "inverse", type: String, desc: "Should the match be inverted?"
                 end
                 put do
                   # get the input parameters that were passed in as part of the request
@@ -271,8 +284,10 @@ module Razor
 
                 # DELETE /tag/{uuid}/matcher/{matcher_uuid}
                 # Remove a Razor tag matcher (by UUID) from the specified Razor tag instance
+                desc "Remove a tag matcher instance (from the specified tag)"
                 params do
-                  requires :uuid, type: String
+                  requires :uuid, type: String, desc: "The tag's UUID"
+                  requires :matcher_uuid, type: String, desc: "The tag matcher's UUID"
                 end
                 delete do
                   tag_uuid = params[:uuid]
