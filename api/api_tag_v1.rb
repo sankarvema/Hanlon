@@ -12,7 +12,7 @@ module Razor
         version :v1, :using => :path, :vendor => "razor"
         format :json
         default_format :json
-        SLICE_REF = ProjectRazor::Slice::Broker.new([])
+        SLICE_REF = ProjectRazor::Slice::Tag.new([])
 
         rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
@@ -125,7 +125,7 @@ module Razor
             get do
               tag_uuid = params[:uuid]
               tagrule = SLICE_REF.get_object("tagrule_by_uuid", :tag, tag_uuid)
-              raise ProjectRazor::Error::Slice::NotFound, "Tag UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Tag UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
               slice_success_object(SLICE_REF, :get_tagrule_by_uuid, tagrule, :success_type => :generic)
             end     # end GET /tag/{uuid}
 

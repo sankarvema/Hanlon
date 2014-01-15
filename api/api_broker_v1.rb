@@ -163,7 +163,7 @@ module Razor
             get do
               broker_uuid = params[:uuid]
               broker = SLICE_REF.get_object("broker instances", :broker, broker_uuid)
-              raise ProjectRazor::Error::Slice::NotFound, "Broker Target UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Broker Target UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
               slice_success_object(SLICE_REF, :get_broker_by_uuid, broker, :success_type => :generic)
             end     # end GET /broker/{uuid}
 
