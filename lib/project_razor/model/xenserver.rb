@@ -299,7 +299,7 @@ module ProjectRazor
       end
 
       def image_svc_uri
-        "http://#{config.image_svc_host}:#{config.image_svc_port}/razor/image/xenserver"
+        "http://#{config.image_svc_host}:#{config.image_svc_port}#{RAZOR_URI_ROOT}/image/xenserver"
       end
 
       def api_svc_uri

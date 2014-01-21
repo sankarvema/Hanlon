@@ -143,7 +143,7 @@ module ProjectRazor
           'websvc_root'              => default_websvc_root,
           'admin_port'               => 8025,
           'api_port'                 => 8026,
-          'image_svc_port'           => 8027,
+          'image_svc_port'           => 8026,
           'mk_tce_mirror_port'       => 2157,
 
           'mk_checkin_interval'      => 60,
