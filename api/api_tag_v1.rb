@@ -68,15 +68,19 @@ module Razor
           def find_matcher_for_tag(tag_uuid, matcher_uuid)
             found_matcher = []
             tag = SLICE_REF.get_object("tag_with_uuid", :tag, tag_uuid)
+            raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag with UUID [#{tag_uuid}]" unless tag && (tag.class != Array || tag.length > 0)
             tag.tag_matchers.each { |matcher|
               found_matcher << [matcher, tag] if matcher.uuid.scan(matcher_uuid).count > 0
             }
+            # if it's still an empty array, fill it with something
+            found_matcher << [nil, tag] if found_matcher.empty? 
             found_matcher.count == 1 ? found_matcher.first : nil
           end
 
           def get_matchers(tag_uuid)
             matchers = []
             tag = SLICE_REF.get_object("tag_with_uuid", :tag, tag_uuid)
+            raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag with UUID [#{tag_uuid}]" unless tag && (tag.class != Array || tag.length > 0)
             tag.tag_matchers.each { |matcher|
               matchers << matcher
             }
@@ -125,7 +129,7 @@ module Razor
             get do
               tag_uuid = params[:uuid]
               tagrule = SLICE_REF.get_object("tagrule_by_uuid", :tag, tag_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Tag UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
+              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag with UUID [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
               slice_success_object(SLICE_REF, :get_tagrule_by_uuid, tagrule, :success_type => :generic)
             end     # end GET /tag/{uuid}
 
@@ -235,7 +239,7 @@ module Razor
                   tag_uuid = params[:uuid]
                   matcher_uuid = params[:matcher_uuid]
                   matcher, tagrule = find_matcher_for_tag(tag_uuid, matcher_uuid)
-                  raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag Matcher with UUID [#{matcher_uuid}] in Tag with UUID [#{tag_uuid}]" unless matcher
+                  raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot find Tag Matcher with UUID [#{matcher_uuid}] in Tag with UUID [#{tagrule.uuid}]" unless matcher
                   slice_success_object(SLICE_REF, :get_matcher_by_uuid, matcher, :success_type => :generic)
                 end     # end GET /tag/{uuid}/matcher/{matcher_uuid}
 

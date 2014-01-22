@@ -106,7 +106,7 @@ module Razor
             model.label = label
             model.image_uuid = image.uuid
             model.is_template = false
-            req_metadata_hash.each { |key, md_hash_value|
+            model.req_metadata_hash.each { |key, md_hash_value|
               value = params[key]
               model.set_metadata_value(key, value, md_hash_value[:validation])
             }
@@ -194,17 +194,15 @@ module Razor
               # the RESTful API, the req_metadata_hash should be used instead)
               model = SLICE_REF.get_object("model_with_uuid", :model, model_uuid)
               raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-              model.web_create_metadata(req_metadata_hash) if req_metadata_hash
               model.label = label if label
               image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true if image_uuid
               raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
               model.image_uuid = image.uuid if image
               if req_metadata_hash
-                req_metadata_hash.each { |key, md_hash_value|
-                  value = params[key]
-                  model.set_metadata_value(key, value, md_hash_value[:validation])
+                req_metadata_hash.each { |key, value|
+                  value = req_metadata_hash[key]
+                  model.req_metadata_hash[key] = value
                 }
-                model.req_metadata_hash = req_metadata_hash
               end
               raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Model [#{model.uuid}]" unless model.update_self
               slice_success_object(SLICE_REF, :update_model, model, :success_type => :updated)

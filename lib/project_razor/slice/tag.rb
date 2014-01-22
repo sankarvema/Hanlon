@@ -331,7 +331,12 @@ module ProjectRazor
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher")
         # get the tag matchers for the indicated tagrule (from the RESTful API) as an array of objects
-        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)), tagrule_uuid)
+        include_http_response = true
+        result, response = rz_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectRazor::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid)
         # and print the result
         print_object_array(result, "Tag Matchers:", :style => :table)
       end

@@ -180,6 +180,7 @@ module Razor
                 # it's a UUID, to retrieve the appropriate image and return it
                 image_uuid = component
                 image = SLICE_REF.get_object("images", :images, image_uuid)
+                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 slice_success_object(SLICE_REF, :get_image_by_uuid, image, :success_type => :generic)
               else
                 path = component
@@ -214,9 +215,7 @@ module Razor
                 # it's a UUID, to retrieve the appropriate image and return it
                 image_uuid = component
                 image = SLICE_REF.get_object("image_with_uuid", :images, image_uuid)
-                unless image && (image.class != Array || image.length > 0)
-                  raise ProjectRazor::Error::Slice::InvalidUUID, "invalid uuid [#{image_uuid.inspect}]"
-                end
+                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 # Use the Engine instance to remove the selected image from the database
                 engine = ProjectRazor::Engine.instance
                 return_status = false
