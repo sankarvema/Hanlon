@@ -18,6 +18,7 @@ gem 'grape'
 gem 'grape-swagger'
 gem 'atomic'
 gem 'facter'
+gem 'rufus-scheduler'
 
 group :test do
   gem 'rspec',              '>= 2.13.0'

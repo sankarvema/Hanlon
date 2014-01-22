@@ -83,7 +83,7 @@ module Razor
             node = get_data_ref.fetch_object_by_uuid(:node, active_model.node_uuid)
             callback_return = active_model.model.callback_init(callback, command_array, node, active_model.uuid, active_model.broker)
             active_model.update_self
-            puts callback_return
+            callback_return
           end
 
         end
@@ -217,15 +217,15 @@ module Razor
                   # get (and check) the required parameters
                   active_model_uuid  = params[:uuid]
                   raise ProjectRazor::Error::Slice::MissingActiveModelUUID, "Missing active model uuid" unless SLICE_REF.validate_arg(active_model_uuid)
-                  command_args = params[:namespace_and_args].split('/')
+                  namespace_and_args = params[:namespace_and_args].split('/')
                   callback_namespace = namespace_and_args.shift
                   raise ProjectRazor::Error::Slice::MissingCallbackNamespace, "Missing callback namespace" unless SLICE_REF.validate_arg(callback_namespace)
                   engine       = ProjectRazor::Engine.instance
                   active_model = nil
                   engine.get_active_models.each { |am| active_model = am if am.uuid == active_model_uuid }
-                  raise ProjectRazor::Error::Slice::ActiveModelInvalid, "Active Model Invalid" unless active_model
-                  logger.debug "Active bound policy found for callback: #{callback_namespace}"
-                  make_callback(active_model, callback_namespace, command_array)
+                  raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model
+                  env['api.format'] = :text
+                  make_callback(active_model, callback_namespace, namespace_and_args)
                 end     # end GET /policy/callback/{uuid}/{namespace_and_args}
 
               end     # end resource /policy/callback/:uuid/:namespace_and_args

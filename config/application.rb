@@ -1,5 +1,11 @@
 #
 
+# define an 'at_exit' handler; this handler is used to shut down the thread(s)
+# that are used to run periodic tasks when the server is shut down or restarted
+# (Note:  this handler needs to be defined here, before the "require 'grape'",
+# below, is used to draw in Grape and it's dependencies)
+at_exit { Razor::WebService::App.stop_periodic_tasks }
+
 require "rubygems"
 require "yaml"
 require "grape"
@@ -21,6 +27,14 @@ SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
 IPXE_ERB = File.join(PROJECT_ROOT, "lib/project_razor/slice/config/razor.ipxe.erb")
 IPXE_NIC_MAX = 7
 IPXE_TIMEOUT = 15
+
+# used in cases where the Razor server configuration does not have a
+# parameter value for the daemon_min_cycle_time (defaults to a minute)
+DEFAULT_MIN_CYCLE_TIME = 60
+
+# used in cases where the Razor server configuration does not have a
+# parameter value for the node_expire_timeout (uses a 10 minute default)
+DEFAULT_NODE_EXPIRE_TIMEOUT = 60 * 10
 
 require "monkey_patch"
 Dir.glob(File.join(PROJECT_ROOT, "/api/api_*.rb")) do |f|
