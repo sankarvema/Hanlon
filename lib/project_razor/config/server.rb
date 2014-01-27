@@ -151,7 +151,7 @@ module ProjectRazor
           'mk_register_path'         => "#{default_websvc_root}/node/register",
           'mk_checkin_path'          => "#{default_websvc_root}/node/checkin",
           'mk_fact_excl_pattern'     => [
-            "(^facter.*$)", "(^id$)", "(^kernel.*$)", "(^memoryfree$)",
+            "(^facter.*$)", "(^id$)", "(^kernel.*$)", "(^memoryfree$)","(^memoryfree_mb$)",
             "(^operating.*$)", "(^osfamily$)", "(^path$)", "(^ps$)",
             "(^ruby.*$)", "(^selinux$)", "(^ssh.*$)", "(^swap.*$)",
             "(^timezone$)", "(^uniqueid$)", "(^uptime.*$)","(.*json_str$)"
@@ -190,9 +190,8 @@ module ProjectRazor
         # default values.
         defaults['mk_uri'] =
           "http://#{defaults['image_svc_host']}:#{defaults['api_port']}"
-
         defaults['mk_tce_mirror_uri'] =
-          "http://localhost:#{@mk_tce_mirror_port}/tinycorelinux"
+          "http://localhost:#{defaults['mk_tce_mirror_port']}/tinycorelinux"
         defaults['mk_tce_install_list_uri'] =
           defaults['mk_tce_mirror_uri'] + "/tce-install-list"
         defaults['mk_kmod_install_list_uri'] =
