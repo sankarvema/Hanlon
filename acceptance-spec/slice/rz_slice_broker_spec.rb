@@ -44,7 +44,7 @@ describe "ProjectRazor::Slice::Broker" do
     end
 
     def create_broker_via_rest(hash)
-      http_post("/razor/api/broker/add", hash)
+      http_post("#{@config.websvc_root}/broker/add", hash)
     end
 
     let(:json_hash) do
@@ -59,7 +59,7 @@ describe "ProjectRazor::Slice::Broker" do
       }
     end
 
-    [ "/razor/api/broker/plugins", "/razor/api/broker/get/plugins" ].each do |path|
+    [ "#{@config.websvc_root}/broker/plugins", "#{@config.websvc_root}/broker/get/plugins" ].each do |path|
       it "GET #{path} lists all broker plugins" do
         res_hash = http_get(path)
         brokers_plugins = res_hash['response']
@@ -77,7 +77,7 @@ describe "ProjectRazor::Slice::Broker" do
         lcl_hash = {"plugin" => "puppet", "name" => "RSPECPuppetGET",
           "description" => "RSPECSystemInstanceGET", "req_metadata_hash" => {
             "server" => "rspecpuppet.example.org", "broker_version" => ""}}
-        uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/broker/add?" +
+        uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/broker/add?" +
           "json_hash=#{URI.encode(JSON.generate(lcl_hash))}"
         res = Net::HTTP.get(uri)
 
@@ -85,8 +85,8 @@ describe "ProjectRazor::Slice::Broker" do
         res_hash['result'].should_not == "Created"
       end
 
-      it "POST /razor/api/broker/add creates a broker target" do
-        res_hash = http_post("/razor/api/broker/add", json_hash)
+      it "POST #{@config.websvc_root}/broker/add creates a broker target" do
+        res_hash = http_post("#{@config.websvc_root}/broker/add", json_hash)
         res_hash['result'].should == "Created"
         broker = res_hash['response'].first
         broker['@name'].should eq("puppet_test")
@@ -104,7 +104,7 @@ describe "ProjectRazor::Slice::Broker" do
         @broker = res_hash['response'].first
       end
 
-      [ "/razor/api/broker", "/razor/api/broker/get" ].each do |path|
+      [ "#{@config.websvc_root}/broker", "#{@config.websvc_root}/broker/get" ].each do |path|
         it "GET #{path} lists all brokers targets" do
           res_hash = http_get(path)
           brokers_plugins = res_hash['response']
@@ -113,7 +113,7 @@ describe "ProjectRazor::Slice::Broker" do
         end
       end
 
-      [ "/razor/api/broker", "/razor/api/broker/get" ].each do |path|
+      [ "#{@config.websvc_root}/broker", "#{@config.websvc_root}/broker/get" ].each do |path|
         it "GET #{path}/<uuid> finds the specific broker target" do
           broker_uuid = @broker['@uuid']
           res_hash = http_get("#{path}/#{broker_uuid}")
@@ -143,7 +143,7 @@ describe "ProjectRazor::Slice::Broker" do
           lcl_hash = {"plugin" => "puppet", "name" => "RSPECPuppetBrokerPUT1",
             "description" => "RSPECPuppetBrokerInstancePUT1", "req_metadata_hash" => {
               "server" => "", "broker_version" => ""}}
-          res = http_put("/razor/api/broker/update/#{@broker['@uuid']}", lcl_hash)
+          res = http_put("#{@config.websvc_root}/broker/update/#{@broker['@uuid']}", lcl_hash)
           res['result'].should == "Updated"
         end
 
@@ -152,7 +152,7 @@ describe "ProjectRazor::Slice::Broker" do
           lcl_hash = {"plugin" => "puppet", "name" => "RSPECPuppetBrokerPUT1",
             "description" => "RSPECPuppetBrokerInstancePUT1", "req_metadata_hash" => {
               "server" => "puppet-local.localdomain.net", "broker_version" => "3.0.1_rc1"}}
-          res = http_put("/razor/api/broker/update/#{@broker['@uuid']}", lcl_hash)
+          res = http_put("#{@config.websvc_root}/broker/update/#{@broker['@uuid']}", lcl_hash)
           res['result'].should == "Updated"
           broker = res['response'].first
           broker['@server'].should == "puppet-local.localdomain.net"
@@ -164,7 +164,7 @@ describe "ProjectRazor::Slice::Broker" do
           lcl_hash = {"plugin" => "puppet", "name" => "RSPECPuppetBrokerPUT1",
             "description" => "RSPECPuppetBrokerInstancePUT1", "req_metadata_hash" => {
               "server" => "---invalid-hostname---", "broker_version" => ""}}
-          res = http_put("/razor/api/broker/update/#{@broker['@uuid']}", lcl_hash)
+          res = http_put("#{@config.websvc_root}/broker/update/#{@broker['@uuid']}", lcl_hash)
           res['result'].should_not == "Updated"
           res['http_err_code'].should == 400
           res['err_class'].should == "ProjectRazor::Error::Slice::InvalidBrokerMetadata"
@@ -175,7 +175,7 @@ describe "ProjectRazor::Slice::Broker" do
           lcl_hash = {"plugin" => "puppet", "name" => "RSPECPuppetBrokerPUT1",
             "description" => "RSPECPuppetBrokerInstancePUT1", "req_metadata_hash" => {
               "server" => "", "broker_version" => "this_is_not_a_valid_broker_version"}}
-          res = http_put("/razor/api/broker/update/#{@broker['@uuid']}", lcl_hash)
+          res = http_put("#{@config.websvc_root}/broker/update/#{@broker['@uuid']}", lcl_hash)
           res['result'].should_not == "Updated"
           res['http_err_code'].should == 400
           res['err_class'].should == "ProjectRazor::Error::Slice::InvalidBrokerMetadata"
@@ -186,21 +186,21 @@ describe "ProjectRazor::Slice::Broker" do
       it "GET /remove/api/broker/remove/<uuid> deletes specific broker target" do
         broker_uuid = @broker['@uuid']
 
-        res_hash = http_get("/razor/api/broker/remove/#{broker_uuid}")
+        res_hash = http_get("#{@config.websvc_root}/broker/remove/#{broker_uuid}")
         res_hash['result'].should == "Removed"
 
-        res_hash = http_get("/razor/api/broker/#{broker_uuid}")
+        res_hash = http_get("#{@config.websvc_root}/broker/#{broker_uuid}")
         res_hash['errcode'].should_not == 0
       end
 
-      it "DELETE /razor/api/broker/remove/all cannot delete all broker targets" do
-        uri = razor_uri("/razor/api/broker/remove/all")
+      it "DELETE #{@config.websvc_root}/broker/remove/all cannot delete all broker targets" do
+        uri = razor_uri("#{@config.websvc_root}/broker/remove/all")
         http = Net::HTTP.start(uri.host, uri.port)
         res = http.send_request('DELETE', uri.request_uri)
         res.class.should == Net::HTTPMethodNotAllowed
         res_hash = JSON.parse(res.body)
 
-        res_hash = http_get("/razor/api/broker")
+        res_hash = http_get("#{@config.websvc_root}/broker")
         brokers_get = res_hash['response']
         brokers_get.count.should == 1
       end

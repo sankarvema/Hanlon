@@ -27,7 +27,7 @@ class ProjectRazor::Slice < ProjectRazor::Object
     @web_command = false
     @prev_args = Stack.new
     @hidden = true
-    @uri_root = ProjectRazor.config.mk_uri + "/razor/api/v1/"
+    @uri_root = ProjectRazor.config.mk_uri + ProjectRazor.config.websvc_root
     @data = get_data
   end
 
@@ -626,9 +626,9 @@ class ProjectRazor::Slice < ProjectRazor::Object
   def add_uri_to_object_hash(object_hash, field_name="@uuid", additional_uri_path = nil)
     noun = object_hash["@noun"]
     if additional_uri_path
-      object_hash["@uri"] = "#@uri_root#{noun}/#{additional_uri_path}/#{object_hash[field_name]}"
+      object_hash["@uri"] = "#{@uri_root}/#{noun}/#{additional_uri_path}/#{object_hash[field_name]}"
     else
-      object_hash["@uri"] = "#@uri_root#{noun}/#{object_hash[field_name]}"
+      object_hash["@uri"] = "#{@uri_root}/#{noun}/#{object_hash[field_name]}"
     end
     object_hash.each do |k, v|
       if object_hash[k].class == Array

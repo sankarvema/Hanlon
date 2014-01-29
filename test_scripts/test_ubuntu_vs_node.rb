@@ -35,7 +35,7 @@ if node
 
   puts "...creating a tag rule"
   #### We create an empty tag rule with the tag: TEST_TAG
-  uri = URI "http://127.0.0.1:#{config.api_port}/razor/api/tag/rule/add"
+  uri = URI "http://127.0.0.1:#{config.api_port}#{config.websvc_root}/tag/rule/add"
   name = "live_test_tag_rule_for_engine"
   tag = "test"
   json_hash = {}
@@ -50,7 +50,7 @@ if node
 
   puts "...adding a tag matcher to tag rule to match 'hostname' => '#{node.attributes_hash['hostname']}'"
   # We add one tag matchers to it
-  uri = URI "http://127.0.0.1:#{config.api_port}/razor/api/tag/matcher/add/#{live_tag_rule_uuid}"
+  uri = URI "http://127.0.0.1:#{config.api_port}#{config.websvc_root}/tag/matcher/add/#{live_tag_rule_uuid}"
   json_hash = {}
   json_hash["@key"] = "hostname"
   json_hash["@value"] = node.attributes_hash['hostname'] # Match to our hostname

@@ -23,7 +23,7 @@ describe "ProjectRazor::Slice::Model" do
     end
 
     it "should be able to create a new Model from REST" do
-      #uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/new_model"
+      #uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/new_model"
       #
       #model_template = "test_tag_rule_web"
       #model_label = "testtag"

@@ -4,7 +4,7 @@
 <keymap>us</keymap>
 <hostname><%= hostname %></hostname>
 <root-password><%= @root_password %></root-password>
-<source type="url">http://<%= config.image_svc_host %>:<%= config.image_svc_port %>/razor/api/v1/image/xenserver/<%= @image_uuid %></source>
+<source type="url">http://<%= config.image_svc_host %>:<%= config.image_svc_port %><%= config.websvc_root %>/image/xenserver/<%= @image_uuid %></source>
 <admin-interface name="eth0" proto="static">
 <ip><%= node_ip_address %></ip>
 <subnet-mask><%= @ip_range_subnet %></subnet-mask>

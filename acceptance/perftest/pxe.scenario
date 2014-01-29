@@ -14,4 +14,4 @@ tftp://${target}/menu.c32
 tftp://${target}/pxelinux.cfg/default
 tftp://${target}/ipxe.lkrn
 tftp://${target}/razor.ipxe
-http://${target}:8026/razor/api/boot?hw_id=00%3A0c%3A29%3A33%3A83%3A6b_______
+http://${target}:8026/razor/api/v1/boot?hw_id=00%3A0c%3A29%3A33%3A83%3A6b_______

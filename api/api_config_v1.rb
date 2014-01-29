@@ -105,6 +105,7 @@ module Razor
               @ipxe_options = {}
               @ipxe_options[:style] = :new
               @ipxe_options[:uri] =  ProjectRazor.config.mk_uri
+              @ipxe_options[:websvc_root] =  ProjectRazor.config.websvc_root
               @ipxe_options[:timeout_sleep] = IPXE_TIMEOUT
               @ipxe_options[:nic_max] = IPXE_NIC_MAX
               env['api.format'] = :text

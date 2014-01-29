@@ -1,6 +1,7 @@
 require 'socket'
 require 'logger'
 require 'fcntl'
+require 'yaml'
 require 'project_razor'
 require 'project_razor/utility'
 require 'project_razor/logging'
@@ -62,6 +63,11 @@ module ProjectRazor
       attr_accessor :rz_mk_boot_kernel_args
 
       attr_reader   :noun
+
+      # get default values used to construct some of these configuration parameters
+      # from the 'service.yaml' file used to configure the Razor server instance
+      PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.parent.to_s
+      SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
 
       # Return a fully configured instance of the configuration data.
       #
@@ -130,7 +136,9 @@ module ProjectRazor
 
       # Obtain our defaults
       def defaults
-        default_websvc_root = '/razor/api/v1'
+        base_path = SERVICE_CONFIG[:config][:swagger_ui][:base_path]
+        api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
+        default_websvc_root = "#{base_path}/#{api_version}"
         defaults = {
           'image_svc_host'           => get_an_ip,
           'persist_mode'             => :mongo,
