@@ -1,17 +1,17 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "json"
 
-describe "ProjectRazor::Slice::Node" do
+describe "ProjectOccam::Slice::Node" do
 
   describe ".RESTful Interface" do
 
     before(:all) do
-      @data = ProjectRazor::Data.instance
+      @data = ProjectOccam::Data.instance
       @data.check_init
-      @config = ProjectRazor.config
+      @config = ProjectOccam.config
 
       @hw_id = "TEST#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}"
     end

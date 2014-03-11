@@ -1,16 +1,16 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 
 
 
-describe ProjectRazor::Engine do
+describe ProjectOccam::Engine do
 
   before (:all) do
-    @data = ProjectRazor::Data.instance
+    @data = ProjectOccam::Data.instance
     @data.check_init
-    @config = ProjectRazor.config
-    @engine = ProjectRazor::Engine.instance
+    @config = ProjectOccam.config
+    @engine = ProjectOccam::Engine.instance
     # Clean stuff out
     @data.delete_all_objects(:node)
   end
@@ -22,11 +22,11 @@ describe ProjectRazor::Engine do
 
   describe ".Node" do
     it "should be able to register a new node using hw_id" do
-      node = ProjectRazor::Node.new({})
+      node = ProjectOccam::Node.new({})
       node.hw_id << "AABBCCDDEEFF"
       node.hw_id << "112233445566"
       new_node = @engine.register_new_node_with_hw_id(node)
-      new_node.class.should == ProjectRazor::Node
+      new_node.class.should == ProjectOccam::Node
       new_node.hw_id.should == node.hw_id
       $node_uuid1 = new_node.uuid
       new_node.uuid.should == $node_uuid1
@@ -44,7 +44,7 @@ describe ProjectRazor::Engine do
     end
 
     it "should be not be able to register a new node with a conflicting hw_id" do
-      node = ProjectRazor::Node.new({})
+      node = ProjectOccam::Node.new({})
       node.hw_id << "1A2B3C4D5E6F"
       node.hw_id << "112233445566"
       new_node = @engine.register_new_node_with_hw_id(node)
@@ -54,7 +54,7 @@ describe ProjectRazor::Engine do
     it "should auto-resolve duplicate hw_id's and remove the hw_id from the all but oldest node" do
       @data.delete_all_objects(:node)
 
-      node3 = ProjectRazor::Node.new({})
+      node3 = ProjectOccam::Node.new({})
       node3.hw_id << "FAKE"
       node3.hw_id << "CONFLICT"
       node3.timestamp = Time.now.to_i
@@ -62,7 +62,7 @@ describe ProjectRazor::Engine do
       @data.persist_object(node3)
 
       sleep 1.5
-      node4 = ProjectRazor::Node.new({})
+      node4 = ProjectOccam::Node.new({})
       node4.hw_id << "HWID"
       node4.hw_id << "CONFLICT"
       node4.timestamp = Time.now.to_i
@@ -76,7 +76,7 @@ describe ProjectRazor::Engine do
       nodes[1].uuid.should == $node4_uuid
 
       sleep 1.5
-      node5 = ProjectRazor::Node.new({})
+      node5 = ProjectOccam::Node.new({})
       node5.hw_id << "TEST"
       node5.hw_id << "NODE"
       node5.timestamp = Time.now.to_i

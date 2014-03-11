@@ -98,6 +98,6 @@ fi
 
 install_puppet"
 
-create_remote_file hosts('razor-server'), "/tmp/install-puppet.sh", script
-on hosts('razor-server'), "/bin/bash /tmp/install-puppet.sh"
-on hosts('razor-server'), "/etc/init.d/puppet stop" # just in case...
+create_remote_file hosts('occam-server'), "/tmp/install-puppet.sh", script
+on hosts('occam-server'), "/bin/bash /tmp/install-puppet.sh"
+on hosts('occam-server'), "/etc/init.d/puppet stop" # just in case...

@@ -1,11 +1,11 @@
 #
-#require "project_razor"
+#require "project_occam"
 #require "rspec"
 #
-#describe ProjectRazor::ImageService do
+#describe ProjectOccam::ImageService do
 #
 #  before(:all) do
-#    @data = ProjectRazor::Data.instance
+#    @data = ProjectOccam::Data.instance
 #    @data.check_init
 #    @config = @data.config
 #  end
@@ -13,8 +13,8 @@
 #
 #  describe ".Microkernel" do
 #    it "should do something" do
-#      new_mk = ProjectRazor::ImageService::MicroKernel.new({})
-#      resp = new_mk.add("#{$razor_root}/rz_mk_dev-image.0.2.1.0.iso", @config.image_svc_path)
+#      new_mk = ProjectOccam::ImageService::MicroKernel.new({})
+#      resp = new_mk.add("#{$occam_root}/rz_mk_dev-image.0.2.1.0.iso", @config.image_svc_path)
 #      p resp
 #      p new_mk
 #

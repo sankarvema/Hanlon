@@ -3,28 +3,28 @@
 require 'json'
 require 'api_utils'
 
-module Razor
+module Occam
   module WebService
     module ActiveModel
 
       class APIv1 < Grape::API
 
-        version :v1, :using => :path, :vendor => "razor"
+        version :v1, :using => :path, :vendor => "occam"
         format :json
         default_format :json
-        SLICE_REF = ProjectRazor::Slice::ActiveModel.new([])
+        SLICE_REF = ProjectOccam::Slice::ActiveModel.new([])
 
-        rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectOccam::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
         end
 
-        rescue_from ProjectRazor::Error::Slice::MethodNotAllowed do |e|
+        rescue_from ProjectOccam::Error::Slice::MethodNotAllowed do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(403, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(403, e.class.name, e.message).to_json,
               403,
               { "Content-type" => "application/json" }
           )
@@ -32,7 +32,7 @@ module Razor
 
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -41,7 +41,7 @@ module Razor
         rescue_from :all do |e|
           raise e
           Rack::Response.new(
-              Razor::WebService::Response.new(500, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,
               { "Content-type" => "application/json" }
           )
@@ -62,20 +62,20 @@ module Razor
           end
 
           def get_data_ref
-            Razor::WebService::Utils::get_data
+            Occam::WebService::Utils::get_data
           end
 
-          def request_is_from_razor_server(ip_addr)
-            Razor::WebService::Utils::request_from_razor_server?(ip_addr)
+          def request_is_from_occam_server(ip_addr)
+            Occam::WebService::Utils::request_from_occam_server?(ip_addr)
           end
 
-          def request_is_from_razor_subnet(ip_addr)
-            Razor::WebService::Utils::request_from_razor_subnet?(ip_addr)
+          def request_is_from_occam_subnet(ip_addr)
+            Occam::WebService::Utils::request_from_occam_subnet?(ip_addr)
           end
 
           def get_active_model_by_uuid(uuid)
             active_model = SLICE_REF.get_object("active_model_instance", :active, uuid)
-            raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
+            raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
             active_model
           end
 
@@ -108,11 +108,11 @@ module Razor
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -129,7 +129,7 @@ module Razor
 
           # the following description hides this endpoint from the swagger-ui-based documentation
           # (since the functionality provided by this endpoint is not intended to be used off of
-          # the Razor server)
+          # the Occam server)
           desc 'Hide this endpoint', {
               :hidden => true
           }
@@ -139,9 +139,9 @@ module Razor
             # Retrieve all active_model logs.
             desc "Returns the log entries for all active_model instances"
             before do
-              # only allow access to this resource from the Razor subnet
-              unless request_is_from_razor_server(env['REMOTE_ADDR'])
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /active_model/logs resource is only allowed from Razor server"
+              # only allow access to this resource from the Occam subnet
+              unless request_is_from_occam_server(env['REMOTE_ADDR'])
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /active_model/logs resource is only allowed from Occam server"
               end
             end
             get do
@@ -173,9 +173,9 @@ module Razor
             # Remove an active_model instance (by UUID)
             desc "Remove an active_model instance"
             before do
-              # only allow access to this resource from the Razor subnet
-              unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /active_model/{uuid} resource is only allowed from Razor subnet"
+              # only allow access to this resource from the Occam subnet
+              unless request_is_from_occam_subnet(env['REMOTE_ADDR'])
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /active_model/{uuid} resource is only allowed from Occam subnet"
               end
             end
             params do
@@ -184,14 +184,14 @@ module Razor
             delete do
               active_model_uuid = params[:uuid]
               active_model = SLICE_REF.get_object("active_model_instance", :active, active_model_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
-              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Active Model [#{active_model.uuid}]" unless get_data_ref.delete_object(active_model)
+              raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
+              raise ProjectOccam::Error::Slice::CouldNotRemove, "Could not remove Active Model [#{active_model.uuid}]" unless get_data_ref.delete_object(active_model)
               slice_success_response(SLICE_REF, :remove_active_model_by_uuid, "Active Model [#{active_model.uuid}] removed", :success_type => :removed)
             end     # end DELETE /active_model/{uuid}
 
             # the following description hides this endpoint from the swagger-ui-based documentation
             # (since the functionality provided by this endpoint is not intended to be used off of
-            # the Razor server)
+            # the Occam server)
             desc 'Hide this endpoint', {
                 :hidden => true
             }
@@ -201,9 +201,9 @@ module Razor
               # Retrieve the log for an active_model (by UUID).
               desc "Returns the log entries for a specific active_model instance"
               before do
-                # only allow access to this resource from the Razor subnet
-                unless request_is_from_razor_server(env['REMOTE_ADDR'])
-                  raise ProjectRazor::Error::Slice::MethodNotAllowed, "Access to /active_model/{uuid}/logs resource is only allowed from Razor server"
+                # only allow access to this resource from the Occam subnet
+                unless request_is_from_occam_server(env['REMOTE_ADDR'])
+                  raise ProjectOccam::Error::Slice::MethodNotAllowed, "Access to /active_model/{uuid}/logs resource is only allowed from Occam server"
                 end
               end
               params do

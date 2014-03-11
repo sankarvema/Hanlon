@@ -1,5 +1,5 @@
 :service:
-  :name: :razor_websvc_resource_api
+  :name: :occam_websvc_resource_api
   :type: :web_service
 :config:
   :cache:
@@ -9,4 +9,4 @@
     :allow_access: true
     :mount_path: /docs
     :api_version: v1
-    :base_path: /razor/api
+    :base_path: /occam/api

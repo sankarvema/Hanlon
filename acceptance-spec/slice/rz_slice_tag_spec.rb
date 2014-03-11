@@ -1,5 +1,5 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "json"
@@ -7,14 +7,14 @@ require "json"
 
 
 
-describe "ProjectRazor::Slice::Tag" do
+describe "ProjectOccam::Slice::Tag" do
 
   describe ".RESTful Interface" do
 
     before(:all) do
-      @data = ProjectRazor::Data.instance
+      @data = ProjectOccam::Data.instance
       @data.check_init
-      @config = ProjectRazor.config
+      @config = ProjectOccam.config
       @data.delete_all_objects(:tag)
       @data.delete_all_objects(:node)
       @uuid = "TEST#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}"
@@ -88,7 +88,7 @@ describe "ProjectRazor::Slice::Tag" do
       res = Net::HTTP.get($tag_rule_uri01)
       res_hash = JSON.parse(res)
       res_hash['response'].first['@uuid'].should == $uuid01
-      tag_rule = ProjectRazor::Tagging::TagRule.new(res_hash['response'].first)
+      tag_rule = ProjectOccam::Tagging::TagRule.new(res_hash['response'].first)
       tag_rule.uuid.should == $uuid01
       tag_rule.tag_matchers.count.should == 0
       matcher_uri = "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/tag/#{tag_rule.uuid}/matcher"
@@ -107,7 +107,7 @@ describe "ProjectRazor::Slice::Tag" do
       uri.host = '127.0.0.1'
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)
-      matcher = ProjectRazor::Tagging::TagMatcher.new(response_hash['response'].first, tag_rule.uuid)
+      matcher = ProjectOccam::Tagging::TagMatcher.new(response_hash['response'].first, tag_rule.uuid)
       matcher.key.should == "hostname"
       matcher.value.should == "nick01"
       matcher.compare.should == "equal"
@@ -322,7 +322,7 @@ describe "ProjectRazor::Slice::Tag" do
       res = Net::HTTP.post_form(uri, 'json_hash' => json_string)
       response_hash = JSON.parse(res.body)
       response_hash['errcode'].should == 0
-      node = ProjectRazor::Node.new(response_hash['response'])
+      node = ProjectOccam::Node.new(response_hash['response'])
       node.tags.should == %W(RSPEC_ONE) # Only should be tagged with the first tag
 
       #### We register second node with specific attributes
@@ -340,7 +340,7 @@ describe "ProjectRazor::Slice::Tag" do
       res = Net::HTTP.post_form(uri, 'json_hash' => json_string)
       response_hash = JSON.parse(res.body)
       response_hash['errcode'].should == 0
-      node = ProjectRazor::Node.new(response_hash['response'])
+      node = ProjectOccam::Node.new(response_hash['response'])
       node.tags.should == %W(RSPEC_ONE RSPEC_TWO) # Should be tagged with both tags
 
       #### We register third node with specific attributes
@@ -358,7 +358,7 @@ describe "ProjectRazor::Slice::Tag" do
       res = Net::HTTP.post_form(uri, 'json_hash' => json_string)
       response_hash = JSON.parse(res.body)
       response_hash['errcode'].should == 0
-      node = ProjectRazor::Node.new(response_hash['response'])
+      node = ProjectOccam::Node.new(response_hash['response'])
       node.tags.should == %W(RSPEC_TWO) # Only should be tagged with the third tag
     end
 

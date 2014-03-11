@@ -4,7 +4,7 @@
 # that are used to run periodic tasks when the server is shut down or restarted
 # (Note:  this handler needs to be defined here, before the "require 'grape'",
 # below, is used to draw in Grape and it's dependencies)
-at_exit { Razor::WebService::App.stop_periodic_tasks }
+at_exit { Occam::WebService::App.stop_periodic_tasks }
 
 require "rubygems"
 require "yaml"
@@ -16,23 +16,23 @@ $LOAD_PATH.unshift(File.join(PROJECT_ROOT, "api"))
 $LOAD_PATH.unshift(File.join(PROJECT_ROOT, "app"))
 $LOAD_PATH.unshift(File.join(PROJECT_ROOT, "lib"))
 
-# razor dependencies
-require 'project_razor/object'
-require 'project_razor/slice'
+# occam dependencies
+require 'project_occam/object'
+require 'project_occam/slice'
 
 # Load service config
 SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
 
 # Define path to iPXE ERB file and a few iPXE-related parameters
-IPXE_ERB = File.join(PROJECT_ROOT, "lib/project_razor/slice/config/razor.ipxe.erb")
+IPXE_ERB = File.join(PROJECT_ROOT, "lib/project_occam/slice/config/occam.ipxe.erb")
 IPXE_NIC_MAX = 7
 IPXE_TIMEOUT = 15
 
-# used in cases where the Razor server configuration does not have a
+# used in cases where the Occam server configuration does not have a
 # parameter value for the daemon_min_cycle_time (defaults to a minute)
 DEFAULT_MIN_CYCLE_TIME = 60
 
-# used in cases where the Razor server configuration does not have a
+# used in cases where the Occam server configuration does not have a
 # parameter value for the node_expire_timeout (uses a 10 minute default)
 DEFAULT_NODE_EXPIRE_TIMEOUT = 60 * 10
 

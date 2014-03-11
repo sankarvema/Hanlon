@@ -2,7 +2,7 @@
 
 require 'json'
 
-module Razor
+module Occam
   module WebService
 
     class Swagger < Grape::API

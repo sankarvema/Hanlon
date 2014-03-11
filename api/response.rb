@@ -1,6 +1,6 @@
 #
 
-module Razor
+module Occam
   module WebService
     # Response class
     class Response

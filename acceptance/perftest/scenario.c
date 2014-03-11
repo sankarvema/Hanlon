@@ -17,13 +17,13 @@ static guint  virtual_per_physical     = 20;    /* VM multiplier */
 
 static GOptionEntry options[] = {
   { "target", 0, 0, G_OPTION_ARG_STRING, &target,
-    "The Razor server to run performance tests against", "HOST" },
+    "The Occam server to run performance tests against", "HOST" },
   { "esxi-uuid", 0, 0, G_OPTION_ARG_STRING, &esxi_uuid,
-    "The Razor ESXi OS image UUID", "UUID" },
+    "The Occam ESXi OS image UUID", "UUID" },
   { "ubuntu-uuid", 0, 0, G_OPTION_ARG_STRING, &ubuntu_uuid,
-    "The Razor Ubuntu OS image UUID", "UUID" },
+    "The Occam Ubuntu OS image UUID", "UUID" },
   { "mk-uuid", 0, 0, G_OPTION_ARG_STRING, &mk_uuid,
-    "The Razor MK image UUID", "UUID" },
+    "The Occam MK image UUID", "UUID" },
   { "max",  'm', 0, G_OPTION_ARG_INT, &max_cycles,
     "Maximum seconds runtime", "SECONDS" },
   { "load", 'l', 0, G_OPTION_ARG_INT, &load,
@@ -194,7 +194,7 @@ static void scenario_run_event(const Event* event, EventClosure* closure) {
 
 TestSuite* test_suite_setup(int* argc, char*** argv) {
   GError*         error   = NULL;
-  GOptionContext* context = g_option_context_new("- test Razor server performance");
+  GOptionContext* context = g_option_context_new("- test Occam server performance");
   g_option_context_add_main_entries(context, options, "perftest alpha");
   if (!g_option_context_parse(context, argc, argv, &error)) {
     g_print("error: %s\n", error->message);

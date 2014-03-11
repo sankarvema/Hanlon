@@ -1,19 +1,19 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "json"
 
-describe "ProjectRazor::Slice::Bmc" do
+describe "ProjectOccam::Slice::Bmc" do
 
   # {"00:15:17:FA:E0:36"=>"192.168.2.51", "00:15:17:FA:DE:66"=>"192.168.2.52",
   #  "00:15:17:FA:7B:0A"=>"192.168.2.53"}
   describe ".RESTful Interface" do
 
     before(:all) do
-      @data = ProjectRazor::Data.instance
+      @data = ProjectOccam::Data.instance
       @data.check_init
-      @config = ProjectRazor.config
+      @config = ProjectOccam.config
       @data.delete_all_objects(:bmc)
       @mac = ["00:15:17:FA:E0:36", "00:15:17:FA:DE:66"]
       @ip = ["192.168.2.51", "192.168.2.52"]

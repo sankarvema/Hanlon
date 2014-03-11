@@ -3,20 +3,20 @@
 require 'json'
 require 'api_utils'
 
-module Razor
+module Occam
   module WebService
     module Policy
 
       class APIv1 < Grape::API
 
-        version :v1, :using => :path, :vendor => "razor"
+        version :v1, :using => :path, :vendor => "occam"
         format :json
         default_format :json
-        SLICE_REF = ProjectRazor::Slice::Policy.new([])
+        SLICE_REF = ProjectOccam::Slice::Policy.new([])
 
-        rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectOccam::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -24,15 +24,15 @@ module Razor
 
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
         end
 
-        rescue_from ProjectRazor::Error::Slice::MethodNotAllowed do |e|
+        rescue_from ProjectOccam::Error::Slice::MethodNotAllowed do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(403, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(403, e.class.name, e.message).to_json,
               403,
               { "Content-type" => "application/json" }
           )
@@ -41,7 +41,7 @@ module Razor
         rescue_from :all do |e|
           raise e
           Rack::Response.new(
-              Razor::WebService::Response.new(500, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,
               { "Content-type" => "application/json" }
           )
@@ -61,25 +61,25 @@ module Razor
             string_ =~ /^[A-Za-z0-9]{1,22}$/
           end
 
-          def request_is_from_razor_subnet(ip_addr)
-            Razor::WebService::Utils::request_from_razor_subnet?(ip_addr)
+          def request_is_from_occam_subnet(ip_addr)
+            Occam::WebService::Utils::request_from_occam_subnet?(ip_addr)
           end
 
           def get_data_ref
-            Razor::WebService::Utils::get_data
+            Occam::WebService::Utils::get_data
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
           def make_callback(active_model, callback_namespace, command_array)
             callback = active_model.model.callback[callback_namespace]
-            raise ProjectRazor::Error::Slice::NoCallbackFound, "Missing callback" unless callback
+            raise ProjectOccam::Error::Slice::NoCallbackFound, "Missing callback" unless callback
             node = get_data_ref.fetch_object_by_uuid(:node, active_model.node_uuid)
             callback_return = active_model.model.callback_init(callback, command_array, node, active_model.uuid, active_model.broker)
             active_model.update_self
@@ -99,7 +99,7 @@ module Razor
           end     # end GET /policy
 
           # POST /policy
-          # Create a Razor policy
+          # Create a Occam policy
           #   parameters:
           #     template          | String | The "template" to use for the new policy |         | Default: unavailable
           #     label             | String | The "label" to use for the new policy    |         | Default: unavailable
@@ -129,16 +129,16 @@ module Razor
             maximum = params["maximum"]
             # check for errors in inputs
             policy = SLICE_REF.new_object_from_template_name(POLICY_PREFIX, policy_template)
-            raise ProjectRazor::Error::Slice::InvalidPolicyTemplate, "Policy Template is not valid [#{policy_template}]" unless policy
+            raise ProjectOccam::Error::Slice::InvalidPolicyTemplate, "Policy Template is not valid [#{policy_template}]" unless policy
             model = SLICE_REF.get_object("model_by_uuid", :model, model_uuid)
-            raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-            raise ProjectRazor::Error::Slice::InvalidModel, "Invalid Model Type [#{model.template}] != [#{policy.template}]" unless policy.template.to_s == model.template.to_s
+            raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
+            raise ProjectOccam::Error::Slice::InvalidModel, "Invalid Model Type [#{model.template}] != [#{policy.template}]" unless policy.template.to_s == model.template.to_s
             broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
-            raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
+            raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
             tags = tags.split(",") unless tags.class.to_s == "Array"
-            raise ProjectRazor::Error::Slice::MissingTags, "Must provide at least one tag ['tag(,tag)']" unless tags.count > 0
-            raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless maximum.to_i.to_s == maximum
-            raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be > 0" unless maximum.to_i >= 0
+            raise ProjectOccam::Error::Slice::MissingTags, "Must provide at least one tag ['tag(,tag)']" unless tags.count > 0
+            raise ProjectOccam::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless maximum.to_i.to_s == maximum
+            raise ProjectOccam::Error::Slice::InvalidMaximumCount, "Policy maximum count must be > 0" unless maximum.to_i >= 0
             # Flesh out the policy
             policy.label         = label
             policy.model         = model
@@ -148,8 +148,8 @@ module Razor
             policy.is_template   = false
             policy.maximum_count = maximum
             # Add policy
-            policy_rules         = ProjectRazor::Policies.instance
-            raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Policy") unless policy_rules.add(policy)
+            policy_rules         = ProjectOccam::Policies.instance
+            raise(ProjectOccam::Error::Slice::CouldNotCreate, "Could not create Policy") unless policy_rules.add(policy)
             slice_success_object(SLICE_REF, :create_policy, policy, :success_type => :created)
           end     # end POST /policy
 
@@ -160,7 +160,7 @@ module Razor
             desc "Retrieve a list of available policy templates"
             get do
               # get the policy templates (as an array)
-              policy_templates = SLICE_REF.get_child_templates(ProjectRazor::PolicyTemplate)
+              policy_templates = SLICE_REF.get_child_templates(ProjectOccam::PolicyTemplate)
               # then, construct the response
               slice_success_object(SLICE_REF, :get_policy_templates, policy_templates, :success_type => :generic)
             end     # end GET /policy/templates
@@ -176,9 +176,9 @@ module Razor
               get do
                 # get the matching policy template
                 policy_template_name = params[:name]
-                policy_templates = SLICE_REF.get_child_templates(ProjectRazor::PolicyTemplate)
+                policy_templates = SLICE_REF.get_child_templates(ProjectOccam::PolicyTemplate)
                 policy_template = policy_templates.select { |template| template.template.to_s == policy_template_name }
-                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy Template Named: [#{policy_template_name}]" unless policy_template && (policy_template.class != Array || policy_template.length > 0)
+                raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Policy Template Named: [#{policy_template_name}]" unless policy_template && (policy_template.class != Array || policy_template.length > 0)
                 # then, construct the response
                 slice_success_object(SLICE_REF, :get_policy_template_by_name, policy_template[0], :success_type => :generic)
               end     # end GET /policy/templates/{name}
@@ -189,7 +189,7 @@ module Razor
 
           # the following description hides this endpoint from the swagger-ui-based documentation
           # (since the functionality provided by this endpoint is not intended to be used off of
-          # the Razor server)
+          # the Occam server)
           desc 'Hide this endpoint', {
               :hidden => true
           }
@@ -203,10 +203,10 @@ module Razor
                 # Make a callback "call" (used during the install/broker-handoff process to track progress)
                 desc "Used to handle callbacks (to active_model instances)"
                 before do
-                  # only allow access to this resource from the Razor subnet
-                  unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
+                  # only allow access to this resource from the Occam subnet
+                  unless request_is_from_occam_subnet(env['REMOTE_ADDR'])
                     env['api.format'] = :text
-                    raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /policy/callback resource is not allowed from outside of the Razor subnet"
+                    raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /policy/callback resource is not allowed from outside of the Occam subnet"
                   end
                 end
                 params do
@@ -216,14 +216,14 @@ module Razor
                 get do
                   # get (and check) the required parameters
                   active_model_uuid  = params[:uuid]
-                  raise ProjectRazor::Error::Slice::MissingActiveModelUUID, "Missing active model uuid" unless SLICE_REF.validate_arg(active_model_uuid)
+                  raise ProjectOccam::Error::Slice::MissingActiveModelUUID, "Missing active model uuid" unless SLICE_REF.validate_arg(active_model_uuid)
                   namespace_and_args = params[:namespace_and_args].split('/')
                   callback_namespace = namespace_and_args.shift
-                  raise ProjectRazor::Error::Slice::MissingCallbackNamespace, "Missing callback namespace" unless SLICE_REF.validate_arg(callback_namespace)
-                  engine       = ProjectRazor::Engine.instance
+                  raise ProjectOccam::Error::Slice::MissingCallbackNamespace, "Missing callback namespace" unless SLICE_REF.validate_arg(callback_namespace)
+                  engine       = ProjectOccam::Engine.instance
                   active_model = nil
                   engine.get_active_models.each { |am| active_model = am if am.uuid == active_model_uuid }
-                  raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model
+                  raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model
                   env['api.format'] = :text
                   make_callback(active_model, callback_namespace, namespace_and_args)
                 end     # end GET /policy/callback/{uuid}/{namespace_and_args}
@@ -245,12 +245,12 @@ module Razor
             get do
               policy_uuid = params[:uuid]
               policy = SLICE_REF.get_object("get_policy_by_uuid", :policy, policy_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
+              raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
               slice_success_object(SLICE_REF, :get_policy_by_uuid, policy, :success_type => :generic)
             end     # end GET /policy/{uuid}
 
             # PUT /policy/{uuid}
-            # Update a Razor policy (any of the the label, image UUID, or req_metadata_hash
+            # Update a Occam policy (any of the the label, image UUID, or req_metadata_hash
             # can be updated using this endpoint; note that the policy template cannot be updated
             # once a policy is created
             #   parameters:
@@ -285,31 +285,31 @@ module Razor
               # and check the values that were passed in (skipping those that were not)
               policy_uuid = params[:uuid]
               policy = SLICE_REF.get_object("policy_with_uuid", :policy, policy_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Policy UUID [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
+              raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Policy UUID [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
 
               if tags
                 tags = tags.split(",") if tags.is_a? String
-                raise ProjectRazor::Error::Slice::MissingArgument, "Policy Tags ['tag(,tag)']" unless tags.count > 0
+                raise ProjectOccam::Error::Slice::MissingArgument, "Policy Tags ['tag(,tag)']" unless tags.count > 0
               end
               model = nil
               if model_uuid
                 model = SLICE_REF.get_object("model_by_uuid", :model, model_uuid)
-                raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-                raise ProjectRazor::Error::Slice::InvalidModel, "Invalid Model Type [#{model.label}]" unless policy.template == model.template
+                raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
+                raise ProjectOccam::Error::Slice::InvalidModel, "Invalid Model Type [#{model.label}]" unless policy.template == model.template
               end
               broker = nil
               if broker_uuid
                 broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
-                raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
+                raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
               end
               new_line_number = (new_line_number ? new_line_number.strip : nil)
-              raise ProjectRazor::Error::Slice::InputError, "New index '#{new_line_number}' is not an integer" if new_line_number && !/^[+-]?\d+$/.match(new_line_number)
+              raise ProjectOccam::Error::Slice::InputError, "New index '#{new_line_number}' is not an integer" if new_line_number && !/^[+-]?\d+$/.match(new_line_number)
               if enabled
-                raise ProjectRazor::Error::Slice::InputError, "Enabled flag must have a value of 'true' or 'false'" if enabled != "true" && enabled != "false"
+                raise ProjectOccam::Error::Slice::InputError, "Enabled flag must have a value of 'true' or 'false'" if enabled != "true" && enabled != "false"
               end
               if maximum
-                raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless maximum.to_i.to_s == maximum
-                raise ProjectRazor::Error::Slice::InvalidMaximumCount, "Policy maximum count must be > 0" unless maximum.to_i >= 0
+                raise ProjectOccam::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless maximum.to_i.to_s == maximum
+                raise ProjectOccam::Error::Slice::InvalidMaximumCount, "Policy maximum count must be > 0" unless maximum.to_i >= 0
               end
               # Update object properties
               policy.label = label if label
@@ -319,16 +319,16 @@ module Razor
               policy.enabled = enabled if enabled
               policy.maximum_count = maximum if maximum
               if new_line_number
-                policy_rules = ProjectRazor::Policies.instance
+                policy_rules = ProjectOccam::Policies.instance
                 policy_rules.move_policy_to_idx(policy.uuid, new_line_number.to_i)
               end
               # Update object
-              raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless policy.update_self
+              raise ProjectOccam::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless policy.update_self
               slice_success_object(SLICE_REF, :update_policy, policy, :success_type => :updated)
             end     # end PUT /policy/{uuid}
 
             # DELETE /policy/{uuid}
-            # Remove a Razor policy (by UUID)
+            # Remove a Occam policy (by UUID)
             desc "Remove a model instance (by UUID)"
             params do
               requires :uuid, type: String, desc: "The policy's UUID"
@@ -336,8 +336,8 @@ module Razor
             delete do
               policy_uuid = params[:uuid]
               policy = SLICE_REF.get_object("policy_with_uuid", :policy, policy_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
-              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Policy [#{policy.uuid}]" unless get_data_ref.delete_object(policy)
+              raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
+              raise ProjectOccam::Error::Slice::CouldNotRemove, "Could not remove Policy [#{policy.uuid}]" unless get_data_ref.delete_object(policy)
               slice_success_response(SLICE_REF, :remove_policy_by_uuid, "Policy [#{policy.uuid}] removed", :success_type => :removed)
             end     # end DELETE /policy/{uuid}
 

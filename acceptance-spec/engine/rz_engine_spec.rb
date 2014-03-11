@@ -1,17 +1,17 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "net/http"
 require "json"
 
-describe ProjectRazor::Engine do
+describe ProjectOccam::Engine do
 
   before (:all) do
-    @data = ProjectRazor::Data.instance
+    @data = ProjectOccam::Data.instance
     @data.check_init
-    @config = ProjectRazor.config
-    @engine = ProjectRazor::Engine.instance
+    @config = ProjectOccam.config
+    @engine = ProjectOccam::Engine.instance
 
     # Clean stuff out
     @data.delete_all_objects(:node)
@@ -107,9 +107,9 @@ describe ProjectRazor::Engine do
       node.tags.should == %W(RSPEC_ENGINE)
 
       # Create a new policy rule
-      new_policy = ProjectRazor::PolicyTemplate::LinuxDeploy.new({})
+      new_policy = ProjectOccam::PolicyTemplate::LinuxDeploy.new({})
       new_policy.label = "Base Swift Servers - Ubuntu 11.10"
-      new_policy.model = ProjectRazor::ModelTemplate::Base.new({})
+      new_policy.model = ProjectOccam::ModelTemplate::Base.new({})
       new_policy.enabled = true
       new_policy.tags << "RSPEC_ENGINE"
 

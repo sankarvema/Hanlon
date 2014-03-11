@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe "Puppet broker agent install script (ERB)" do
   let :content do
-    File.read(File.join(File.dirname(__FILE__), '../../../lib/project_razor/broker/puppet/agent_install.erb'))
+    File.read(File.join(File.dirname(__FILE__), '../../../lib/project_occam/broker/puppet/agent_install.erb'))
   end
 
   before :each do

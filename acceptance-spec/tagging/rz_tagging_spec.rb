@@ -1,13 +1,13 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 
-describe ProjectRazor::Tagging::TagRule do
+describe ProjectOccam::Tagging::TagRule do
 
   before (:all) do
-    @data = ProjectRazor::Data.instance
+    @data = ProjectOccam::Data.instance
     @data.check_init
-    @tag_rule = ProjectRazor::Tagging::TagRule.new({"@name" => "RSpec Tag Rule #1", "@tag" => "RSPEC", "@tag_matchers" => []})
+    @tag_rule = ProjectOccam::Tagging::TagRule.new({"@name" => "RSpec Tag Rule #1", "@tag" => "RSPEC", "@tag_matchers" => []})
   end
 
   after(:all) do

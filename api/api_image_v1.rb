@@ -4,28 +4,28 @@ require 'json'
 require 'uri'
 require 'api_utils'
 
-module Razor
+module Occam
   module WebService
     module Image
 
       class APIv1 < Grape::API
 
-        version :v1, :using => :path, :vendor => "razor"
+        version :v1, :using => :path, :vendor => "occam"
         format :json
         default_format :json
-        SLICE_REF = ProjectRazor::Slice::Image.new([])
+        SLICE_REF = ProjectOccam::Slice::Image.new([])
 
-        rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectOccam::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
         end
 
-        rescue_from ProjectRazor::Error::Slice::MethodNotAllowed do |e|
+        rescue_from ProjectOccam::Error::Slice::MethodNotAllowed do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(403, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(403, e.class.name, e.message).to_json,
               403,
               { "Content-type" => "application/json" }
           )
@@ -33,7 +33,7 @@ module Razor
 
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -42,7 +42,7 @@ module Razor
         rescue_from :all do |e|
           raise e
           Rack::Response.new(
-              Razor::WebService::Response.new(500, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,
               { "Content-type" => "application/json" }
           )
@@ -63,30 +63,30 @@ module Razor
           end
 
           def get_data_ref
-            Razor::WebService::Utils::get_data
+            Occam::WebService::Utils::get_data
           end
 
-          def request_is_from_razor_server(ip_addr)
-            Razor::WebService::Utils::request_from_razor_server?(ip_addr)
+          def request_is_from_occam_server(ip_addr)
+            Occam::WebService::Utils::request_from_occam_server?(ip_addr)
           end
 
-          def request_is_from_razor_subnet(ip_addr)
-            Razor::WebService::Utils::request_from_razor_subnet?(ip_addr)
+          def request_is_from_occam_subnet(ip_addr)
+            Occam::WebService::Utils::request_from_occam_subnet?(ip_addr)
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
 
         # the following description hides this endpoint from the swagger-ui-based documentation
         # (since the functionality provided by this endpoint is not intended to be used outside
-        # of the razor subnet, or in the case of a GET on the /image resource, off of the Razor
+        # of the occam subnet, or in the case of a GET on the /image resource, off of the Occam
         # server itself)
         desc 'Hide this endpoint', {
             :hidden => true
@@ -99,9 +99,9 @@ module Razor
           before do
             # only test if directly accessing the /config resource
             if env["PATH_INFO"].match(/image$/)
-              # only allow access to configuration resource from the razor server
-              unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is not allowed from outside of the Razor subnet"
+              # only allow access to configuration resource from the occam server
+              unless request_is_from_occam_subnet(env['REMOTE_ADDR'])
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is not allowed from outside of the Occam subnet"
               end
             end
           end
@@ -111,7 +111,7 @@ module Razor
           end     # end GET /image
 
           # POST /image
-          # Create a Razor model
+          # Create a Occam model
           #   parameters:
           #     type      | String | The "type" of image being added                        |    | Default: unavailable
           #     path      | String | The "path" to the image ISO                            |    | Default: unavailable
@@ -119,10 +119,10 @@ module Razor
           #     version   | String | The version to use for the image (os images only)      |    | Default: unavailable
           desc "Create a new image instance (from an ISO file)"
           before do
-            # only allow access to this resource from the Razor subnet
-            unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
+            # only allow access to this resource from the Occam subnet
+            unless request_is_from_occam_subnet(env['REMOTE_ADDR'])
               env['api.format'] = :text
-              raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is not allowed from outside of the Razor subnet"
+              raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is not allowed from outside of the Occam subnet"
             end
           end
           params do
@@ -137,23 +137,23 @@ module Razor
             os_name = params["name"]
             os_version = params["version"]
             unless ([image_type.to_sym] - SLICE_REF.image_types.keys).size == 0
-              raise ProjectRazor::Error::Slice::InvalidImageType, "Invalid Image Type '#{image_type}', valid types are: " +
+              raise ProjectOccam::Error::Slice::InvalidImageType, "Invalid Image Type '#{image_type}', valid types are: " +
                   SLICE_REF.image_types.keys.map { |k| k.to_s }.join(', ')
             end
-            raise ProjectRazor::Error::Slice::MissingArgument, '[/path/to/iso]' unless iso_path != nil && iso_path != ""
+            raise ProjectOccam::Error::Slice::MissingArgument, '[/path/to/iso]' unless iso_path != nil && iso_path != ""
             classname = SLICE_REF.image_types[image_type.to_sym][:classname]
             image = ::Object::full_const_get(classname).new({})
             # We send the new image object to the appropriate method
             res = []
             unless image_type == "os"
               res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
-                                   ProjectRazor.config.image_svc_path
+                                   ProjectOccam.config.image_svc_path
             else
               res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
-                                   ProjectRazor.config.image_svc_path, os_name, os_version
+                                   ProjectOccam.config.image_svc_path, os_name, os_version
             end
-            raise ProjectRazor::Error::Slice::InternalError, res[1] unless res[0]
-            raise ProjectRazor::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)
+            raise ProjectOccam::Error::Slice::InternalError, res[1] unless res[0]
+            raise ProjectOccam::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)
             slice_success_object(SLICE_REF, :create_image, image, :success_type => :created)
           end     # end POST /image
 
@@ -163,10 +163,10 @@ module Razor
             # Handles GET operations for images (by UUID) and files from an image (by path)
             desc "retrieve details for an image (by UUID) or a file from an image (by path)"
             before do
-              # only allow access to this resource from the Razor subnet
-              unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
+              # only allow access to this resource from the Occam subnet
+              unless request_is_from_occam_subnet(env['REMOTE_ADDR'])
                 env['api.format'] = :text
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image/{component} resource is not allowed from outside of the Razor subnet"
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image/{component} resource is not allowed from outside of the Occam subnet"
               end
             end
             params do
@@ -180,7 +180,7 @@ module Razor
                 # it's a UUID, to retrieve the appropriate image and return it
                 image_uuid = component
                 image = SLICE_REF.get_object("images", :images, image_uuid)
-                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
+                raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 slice_success_object(SLICE_REF, :get_image_by_uuid, image, :success_type => :generic)
               else
                 path = component
@@ -198,10 +198,10 @@ module Razor
             # Handles DELETE operations for images (by UUID)
             desc "Remove an image (by UUID) and it's components"
             before do
-              # only allow access to this resource from the Razor subnet
-              unless request_is_from_razor_subnet(env['REMOTE_ADDR'])
+              # only allow access to this resource from the Occam subnet
+              unless request_is_from_occam_subnet(env['REMOTE_ADDR'])
                 env['api.format'] = :text
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image/{component} resource is not allowed from outside of the Razor subnet"
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image/{component} resource is not allowed from outside of the Occam subnet"
               end
             end
             params do
@@ -215,21 +215,21 @@ module Razor
                 # it's a UUID, to retrieve the appropriate image and return it
                 image_uuid = component
                 image = SLICE_REF.get_object("image_with_uuid", :images, image_uuid)
-                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
+                raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 # Use the Engine instance to remove the selected image from the database
-                engine = ProjectRazor::Engine.instance
+                engine = ProjectOccam::Engine.instance
                 return_status = false
                 begin
                   return_status = engine.remove_image(image)
                 rescue RuntimeError => e
-                  raise ProjectRazor::Error::Slice::InternalError, e.message
+                  raise ProjectOccam::Error::Slice::InternalError, e.message
                 rescue Exception => e
                   # if got to here, then the Engine raised an exception
-                  raise ProjectRazor::Error::Slice::CouldNotRemove, e.message
+                  raise ProjectOccam::Error::Slice::CouldNotRemove, e.message
                 end
                 slice_success_response(SLICE_REF, :remove_image_by_uuid, "Image [#{image.uuid}] removed", :success_type => :removed)
               else
-                raise ProjectRazor::Error::Slice::MethodNotAllowed, "Deletion of components of an image via the RESTful API is no allowed"
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Deletion of components of an image via the RESTful API is no allowed"
               end
             end    # end DELETE /image/{component}
 

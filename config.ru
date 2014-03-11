@@ -1,3 +1,3 @@
 require './config/application'
 
-run Razor::WebService::App.new
+run Occam::WebService::App.new

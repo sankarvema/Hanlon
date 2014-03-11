@@ -3,24 +3,24 @@
 require 'json'
 require 'api_utils'
 
-module Razor
+module Occam
   module WebService
     module Broker
 
       class APIv1 < Grape::API
 
-        version :v1, :using => :path, :vendor => "razor"
+        version :v1, :using => :path, :vendor => "occam"
         format :json
         default_format :json
-        SLICE_REF = ProjectRazor::Slice::Broker.new([])
+        SLICE_REF = ProjectOccam::Slice::Broker.new([])
 
         # Root namespace for broker objects
         # used to find them in object space for plugin checking
-        BROKER_PREFIX = "ProjectRazor::BrokerPlugin::"
+        BROKER_PREFIX = "ProjectOccam::BrokerPlugin::"
 
-        rescue_from ProjectRazor::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectOccam::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -28,7 +28,7 @@ module Razor
 
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
-              Razor::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -37,7 +37,7 @@ module Razor
         rescue_from :all do |e|
           raise e
           Rack::Response.new(
-              Razor::WebService::Response.new(500, e.class.name, e.message).to_json,
+              Occam::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,
               { "Content-type" => "application/json" }
           )
@@ -58,15 +58,15 @@ module Razor
           end
 
           def get_data_ref
-            Razor::WebService::Utils::get_data
+            Occam::WebService::Utils::get_data
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Razor::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Occam::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -82,7 +82,7 @@ module Razor
           end     # end GET /broker
 
           # POST /broker
-          # Create a Razor broker
+          # Create a Occam broker
           #   parameters:
           #     plugin            | String | The "plugin" to use for the new broker   |         | Default: unavailable
           #     name              | String | The "name" to use for the new broker     |         | Default: unavailable
@@ -102,7 +102,7 @@ module Razor
             req_metadata_hash = params["req_metadata_hash"]
             # use the arguments passed in to create a new broker
             broker = SLICE_REF.new_object_from_template_name(BROKER_PREFIX, plugin)
-            raise ProjectRazor::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
+            raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
                 req_metadata_hash
             broker.name             = name
             broker.user_description = description
@@ -114,7 +114,7 @@ module Razor
             broker.req_metadata_hash = req_metadata_hash
             # persist that broker, and print the result (or raise an error if cannot persist it)
             get_data_ref.persist_object(broker)
-            raise(ProjectRazor::Error::Slice::CouldNotCreate, "Could not create Broker Target") unless broker
+            raise(ProjectOccam::Error::Slice::CouldNotCreate, "Could not create Broker Target") unless broker
             slice_success_object(SLICE_REF, :create_broker, broker, :success_type => :created)
           end     # end POST /broker
 
@@ -125,7 +125,7 @@ module Razor
             desc "Retrieve a list of available broker plugins"
             get do
               # get the broker plugins (as an array)
-              broker_plugins = SLICE_REF.get_child_templates(ProjectRazor::BrokerPlugin)
+              broker_plugins = SLICE_REF.get_child_templates(ProjectOccam::BrokerPlugin)
               # then, construct the response
               slice_success_object(SLICE_REF, :get_broker_plugins, broker_plugins, :success_type => :generic)
             end     # end GET /broker/plugins
@@ -141,9 +141,9 @@ module Razor
               get do
                 # get the matching broker plugin
                 broker_plugin_name = params[:name]
-                broker_plugins = SLICE_REF.get_child_templates(ProjectRazor::BrokerPlugin)
+                broker_plugins = SLICE_REF.get_child_templates(ProjectOccam::BrokerPlugin)
                 broker_plugin = broker_plugins.select { |plugin| plugin.plugin.to_s == broker_plugin_name }
-                raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Broker Plugin Named: [#{broker_plugin_name}]" unless broker_plugin && (broker_plugin.class != Array || broker_plugin.length > 0)
+                raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Broker Plugin Named: [#{broker_plugin_name}]" unless broker_plugin && (broker_plugin.class != Array || broker_plugin.length > 0)
                 # then, construct the response
                 slice_success_object(SLICE_REF, :get_broker_plugin_by_uuid, broker_plugin[0], :success_type => :generic)
               end     # end GET /broker/plugins/{uuid}
@@ -163,12 +163,12 @@ module Razor
             get do
               broker_uuid = params[:uuid]
               broker = SLICE_REF.get_object("broker instances", :broker, broker_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Broker Target UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
+              raise ProjectOccam::Error::Slice::InvalidUUID, "Broker Target UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
               slice_success_object(SLICE_REF, :get_broker_by_uuid, broker, :success_type => :generic)
             end     # end GET /broker/{uuid}
 
             # PUT /broker/{uuid}
-            # Update a Razor broker (any of the the name, description, or req_metadata_hash
+            # Update a Occam broker (any of the the name, description, or req_metadata_hash
             # can be updated using this endpoint; note that the broker plugin cannot be updated
             # once a broker is created
             #   parameters:
@@ -195,7 +195,7 @@ module Razor
               # command was invoked via the CLI...it's an error to use this flag via
               # the RESTful API, the req_metadata_hash should be used instead)
               broker = SLICE_REF.get_object("broker_with_uuid", :broker, broker_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
+              raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
               # fill in the fields with the new values that were passed in (if any)
               broker.name              = name if name
               broker.user_description  = description if description
@@ -207,12 +207,12 @@ module Razor
                 }
                 broker.req_metadata_hash = req_metadata_hash
               end
-              raise ProjectRazor::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless broker.update_self
+              raise ProjectOccam::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless broker.update_self
               slice_success_object(SLICE_REF, :update_broker, broker, :success_type => :updated)
             end     # end PUT /broker/{uuid}
 
             # DELETE /broker/{uuid}
-            # Remove a Razor broker (by UUID)
+            # Remove a Occam broker (by UUID)
             desc "Remove a broker instance (by UUID)"
             params do
               requires :uuid, type: String, desc: "The broker's UUID"
@@ -220,8 +220,8 @@ module Razor
             delete do
               broker_uuid = params[:uuid]
               broker = SLICE_REF.get_object("broker_with_uuid", :broker, broker_uuid)
-              raise ProjectRazor::Error::Slice::InvalidUUID, "Cannot Find Broker with UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
-              raise ProjectRazor::Error::Slice::CouldNotRemove, "Could not remove Broker [#{broker.uuid}]" unless get_data_ref.delete_object(broker)
+              raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Broker with UUID: [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
+              raise ProjectOccam::Error::Slice::CouldNotRemove, "Could not remove Broker [#{broker.uuid}]" unless get_data_ref.delete_object(broker)
               slice_success_response(SLICE_REF, :remove_broker_by_uuid, "Broker [#{broker.uuid}] removed", :success_type => :removed)
             end     # end DELETE /broker/{uuid}
 

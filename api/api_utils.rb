@@ -6,22 +6,22 @@ require 'facter'
 require 'facter/util/ip'
 require 'ipaddr'
 
-module Razor
+module Occam
   module WebService
     module Utils
 
-      def request_from_razor_subnet?(remote_addr)
-        # First, retrieve a couple of parameters (the Razor server's IP address
+      def request_from_occam_subnet?(remote_addr)
+        # First, retrieve a couple of parameters (the Occam server's IP address
         # and the array of interfaces on the local machine)
-        razor_server_ip = ProjectRazor.config.to_hash["@mk_uri"].match(/\/\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)[1]
+        occam_server_ip = ProjectOccam.config.to_hash["@mk_uri"].match(/\/\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)[1]
         interface_array = Facter::Util::IP.get_interfaces
         # then, test each interface to see if the subnet for that interface
         # includes the remote_addr IP address; return true if any of the interfaces
         # define a subnet that includes that IP address, false if none of them do
         interface_array.map { |val|
           ip_addr = Facter::Util::IP.get_interface_value(val,'ipaddress')
-          # skip to next unless looking at loopback interface or IP address is the same as the razor_server_ip
-          next unless val == "lo" || ip_addr == razor_server_ip
+          # skip to next unless looking at loopback interface or IP address is the same as the occam_server_ip
+          next unless val == "lo" || ip_addr == occam_server_ip
           netmask = Facter::Util::IP.get_interface_value(val,'netmask')
           # construct a new IPAddr object from the ip_addr and netmask we just
           # retrieved, then test to see if our remote_addr is in that same subnet
@@ -30,12 +30,12 @@ module Razor
           internal.include?(remote_addr) ? true : false
         }.include?(true)
       end
-      module_function :request_from_razor_subnet?
+      module_function :request_from_occam_subnet?
 
-      def request_from_razor_server?(remote_addr)
+      def request_from_occam_server?(remote_addr)
         Socket.ip_address_list.map{|val| val.ip_address}.include?(remote_addr)
       end
-      module_function :request_from_razor_server?
+      module_function :request_from_occam_server?
 
       # Checks to make sure an parameter is a format that supports a noun (uuid, etc))
       def validate_parameter(*param)
@@ -45,17 +45,17 @@ module Razor
       end
       module_function :validate_parameter
 
-      # gets a reference to the ProjectRazor::Data instance (and checks to make sure it
+      # gets a reference to the ProjectOccam::Data instance (and checks to make sure it
       # is working before returning the result)
       def get_data
-        data = ProjectRazor::Data.instance
+        data = ProjectOccam::Data.instance
         data.check_init
         data
       end
       module_function :get_data
 
       # used to construct a response to a RESTful request that is similar to the "slice_success"
-      # response used previously by Razor
+      # response used previously by Occam
       def rz_slice_success_response(slice, command, response, options = {})
         mk_response = options[:mk_response] ? options[:mk_response] : false
         type = options[:success_type] ? options[:success_type] : :generic
@@ -68,13 +68,13 @@ module Razor
         return_hash["http_err_code"] = slice.success_types[type][:http_code]
         return_hash["errcode"] = 0
         return_hash["response"] = response
-        return_hash["client_config"] = ProjectRazor.config.get_client_config_hash if mk_response
+        return_hash["client_config"] = ProjectOccam.config.get_client_config_hash if mk_response
         return_hash
       end
       module_function :rz_slice_success_response
 
       # a method similar rz_slice_success_response method (above) that properly returns
-      # a Razor object (or array of Razor objects) as part of the response
+      # a Occam object (or array of Occam objects) as part of the response
       def rz_slice_success_object(slice, command, rz_object, options = { })
         if rz_object.respond_to?(:collect)
           # if here, it's a collection
@@ -86,13 +86,13 @@ module Razor
               if element.respond_to?("is_template") && element.is_template
                 key_field = ""
                 additional_uri_str = ""
-                if slice.class.to_s == 'ProjectRazor::Slice::Broker'
+                if slice.class.to_s == 'ProjectOccam::Slice::Broker'
                   key_field = "@plugin"
                   additional_uri_str = "plugins"
-                elsif slice.class.to_s == 'ProjectRazor::Slice::Model'
+                elsif slice.class.to_s == 'ProjectOccam::Slice::Model'
                   key_field = "@name"
                   additional_uri_str = "templates"
-                elsif slice.class.to_s == 'ProjectRazor::Slice::Policy'
+                elsif slice.class.to_s == 'ProjectOccam::Slice::Policy'
                   key_field = "@template"
                   additional_uri_str = "templates"
                 end
