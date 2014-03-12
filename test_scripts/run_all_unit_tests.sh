@@ -1,5 +1,5 @@
 # Runs all unit tests
-echo "RAZOR HOME is: $RAZOR_HOME"
-cd $RAZOR_HOME
+echo "OCCAM HOME is: $OCCAM_HOME"
+cd $OCCAM_HOME
 
 rspec -c

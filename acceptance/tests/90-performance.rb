@@ -1,14 +1,14 @@
 require 'pathname'
 
-test_name "Razor Server Performance Testing"
+test_name "Occam Server Performance Testing"
 
-Razor = hosts('razor-server')
+Occam = hosts('occam-server')
 
-step "Flush the existing project_razor mongo database"
-on Razor, "mongo project_razor --eval 'db.dropDatabase()'"
+step "Flush the existing project_occam mongo database"
+on Occam, "mongo project_occam --eval 'db.dropDatabase()'"
 
-step "Restart the razor daemon"
-on Razor, "/opt/razor/bin/razor_daemon.rb restart"
+step "Restart the occam daemon"
+on Occam, "/opt/occam/bin/occam_daemon.rb restart"
 
 def add_image(args = {})
   what = args[:name] || args[:type]
@@ -18,28 +18,28 @@ def add_image(args = {})
   args = args.map{|k, v| "--#{k} '#{v}'"}.join(' ')
 
   step "Fetch the #{what} ISO"
-  on Razor, "curl -Lo #{iso} #{url}"
+  on Occam, "curl -Lo #{iso} #{url}"
 
   step "Install the #{what} image"
-  on Razor, "razor image add #{args} --path #{iso}" do
+  on Occam, "occam image add #{args} --path #{iso}" do
     match = /UUID => +([a-zA-Z0-9]+)$/.match(stdout) || []
     uuid  = match[1]
     if !uuid or uuid.length < 15
-      fail_test("unable to match the #{what} UUID from Razor:\nmatch: #{match.inspect}\nuuid:  #{uuid.inspect}\nout:\n#{stdout}")
+      fail_test("unable to match the #{what} UUID from Occam:\nmatch: #{match.inspect}\nuuid:  #{uuid.inspect}\nout:\n#{stdout}")
     end
   end
 
   step "Remove the ISO image"
-  on Razor, "rm -f #{iso}"
+  on Occam, "rm -f #{iso}"
 
   return uuid
 end
 
-step "Add OS images to Razor"
+step "Add OS images to Occam"
 mk_url = if ENV['INSTALL_MODE'] == 'internal-packages' then
-           "http://neptune.puppetlabs.lan/dev/razor/iso/#{ENV['isobuild'] || 'current'}/#{ENV['mkflavour'] || 'prod'}/razor-microkernel-latest.iso"
+           "http://neptune.puppetlabs.lan/dev/occam/iso/#{ENV['isobuild'] || 'current'}/#{ENV['mkflavour'] || 'prod'}/occam-microkernel-latest.iso"
          else
-           "https://downloads.puppetlabs.com/razor/builds/iso/#{ENV['mkflavour'] || 'prod'}/razor-microkernel-latest.iso"
+           "https://downloads.puppetlabs.com/occam/builds/iso/#{ENV['mkflavour'] || 'prod'}/occam-microkernel-latest.iso"
          end
 
 mk     = add_image(:type => 'mk', :url => mk_url)
@@ -54,11 +54,11 @@ ubuntu = add_image(:type => 'os', :name => 'ubuntu', :version => '1204', :url =>
 
 step "Upload the perftest tool source code"
 source = (Pathname.new(__FILE__).dirname + "../perftest").cleanpath.to_s
-on Razor, "rm -rf /tmp/perftest"
-scp_to(Razor, source, "/tmp")
+on Occam, "rm -rf /tmp/perftest"
+scp_to(Occam, source, "/tmp")
 
 step "Install required packages to build"
-on hosts('razor-server'), puppet_apply("--verbose"), :stdin => %q'
+on hosts('occam-server'), puppet_apply("--verbose"), :stdin => %q'
 package { "build-essential":     ensure => installed }
 package { "pkg-config":          ensure => installed }
 package { "libglib2.0-dev":      ensure => installed }
@@ -68,15 +68,15 @@ package { "make":                ensure => installed }
 '
 
 step "Build perftest"
-on Razor, "cd /tmp/perftest && make"
+on Occam, "cd /tmp/perftest && make"
 
-step "Ensure that Razor is running cleanly"
-on Razor, "/opt/razor/bin/razor_daemon.rb stop"
-on Razor, "/opt/razor/bin/razor_daemon.rb start"
-on Razor, "service xinetd restart"
+step "Ensure that Occam is running cleanly"
+on Occam, "/opt/occam/bin/occam_daemon.rb stop"
+on Occam, "/opt/occam/bin/occam_daemon.rb start"
+on Occam, "service xinetd restart"
 
 step "Running perftest suite"
-on Razor, "cd /tmp/perftest && " +
+on Occam, "cd /tmp/perftest && " +
   "./perftest --target=localhost " +
   "--esxi-uuid=#{esxi} --ubuntu-uuid=#{ubuntu} --mk-uuid=#{mk} " +
   "--load=10 --population=20000"
@@ -85,7 +85,7 @@ step "Fetch back performance results"
 perf = Pathname('../perf')
 perf.directory? and perf.rmtree
 
-Razor.each do |host|
+Occam.each do |host|
   dir = perf + host
   dir.mkpath
 

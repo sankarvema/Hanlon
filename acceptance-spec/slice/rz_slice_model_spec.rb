@@ -1,5 +1,5 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "json"
@@ -7,14 +7,14 @@ require "json"
 
 
 
-describe "ProjectRazor::Slice::Model" do
+describe "ProjectOccam::Slice::Model" do
 
   describe ".RESTful Interface" do
 
     before(:all) do
-      @data = ProjectRazor::Data.instance
+      @data = ProjectOccam::Data.instance
       @data.check_init
-      @config = ProjectRazor.config
+      @config = ProjectOccam.config
       @data.delete_all_objects(:model)
     end
 
@@ -23,7 +23,7 @@ describe "ProjectRazor::Slice::Model" do
     end
 
     it "should be able to create a new Model from REST" do
-      #uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/new_model"
+      #uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/new_model"
       #
       #model_template = "test_tag_rule_web"
       #model_label = "testtag"

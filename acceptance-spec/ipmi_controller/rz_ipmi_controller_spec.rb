@@ -1,20 +1,20 @@
 
-require "project_razor"
-require "project_razor/power_control/ipmi_controller"
+require "project_occam"
+require "project_occam/power_control/ipmi_controller"
 require "rspec"
 require "net/http"
 require "net/http"
 require "mocha/api"
 require "yaml"
 
-describe ProjectRazor::PowerControl::IpmiController do
+describe ProjectOccam::PowerControl::IpmiController do
 
   before (:all) do
-    @ipmi = ProjectRazor::PowerControl::IpmiController.instance
+    @ipmi = ProjectOccam::PowerControl::IpmiController.instance
     @mock_data_dir = File.expand_path(File.dirname(__FILE__)) + File::SEPARATOR + 'ipmitool-mock-files'
-    data = ProjectRazor::Data.instance
+    data = ProjectOccam::Data.instance
     data.check_init
-    config = ProjectRazor.config
+    config = ProjectOccam.config
     @ipmi_username = config.default_ipmi_username
     @ipmi_password = config.default_ipmi_password
     @ipmi_hostname = '192.168.2.51'

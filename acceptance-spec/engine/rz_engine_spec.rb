@@ -1,17 +1,17 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "net/http"
 require "json"
 
-describe ProjectRazor::Engine do
+describe ProjectOccam::Engine do
 
   before (:all) do
-    @data = ProjectRazor::Data.instance
+    @data = ProjectOccam::Data.instance
     @data.check_init
-    @config = ProjectRazor.config
-    @engine = ProjectRazor::Engine.instance
+    @config = ProjectOccam.config
+    @engine = ProjectOccam::Engine.instance
 
     # Clean stuff out
     @data.delete_all_objects(:node)
@@ -37,7 +37,7 @@ describe ProjectRazor::Engine do
     it "should tell a known node that has not checked-in within the register_timeout window to register" do
 
 
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/node/register" # root URI for node slice actions
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/node/register" # root URI for node slice actions
 
 
       state = "idle"
@@ -71,7 +71,7 @@ describe ProjectRazor::Engine do
       ### This test is rather complex - it is built off logic in slice_tag
 
       #### We create an empty tag rule with the tag: RSPEC_ENGINE
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/tag"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/tag"
       name = "live_test_tag_rule_for_engine"
       tag = "RSPEC_ENGINE"
       json_hash = {}
@@ -85,7 +85,7 @@ describe ProjectRazor::Engine do
 
 
       # We add one tag matchers to it
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/tag/#{live_tag_rule_uuid}/matcher"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/tag/#{live_tag_rule_uuid}/matcher"
       json_hash = {}
       json_hash["@tag_rule_uuid"] = live_tag_rule_uuid
       json_hash["@key"] = "hostname"
@@ -107,9 +107,9 @@ describe ProjectRazor::Engine do
       node.tags.should == %W(RSPEC_ENGINE)
 
       # Create a new policy rule
-      new_policy = ProjectRazor::PolicyTemplate::LinuxDeploy.new({})
+      new_policy = ProjectOccam::PolicyTemplate::LinuxDeploy.new({})
       new_policy.label = "Base Swift Servers - Ubuntu 11.10"
-      new_policy.model = ProjectRazor::ModelTemplate::Base.new({})
+      new_policy.model = ProjectOccam::ModelTemplate::Base.new({})
       new_policy.enabled = true
       new_policy.tags << "RSPEC_ENGINE"
 

@@ -36,7 +36,7 @@ if defined?(RSpec::Core::RakeTask)
 
   desc "Run all rspec tests with html output"
   RSpec::Core::RakeTask.new(:spec_html) do |t|
-    fpath = "#{ENV['RAZOR_RSPEC_WEBPATH']||'.'}/razor_tests.html"
+    fpath = "#{ENV['OCCAM_RSPEC_WEBPATH']||'.'}/occam_tests.html"
     t.rspec_opts = ['--color', '--format h', "--out #{fpath}"]
     # ignores fixtures directory.
     t.pattern = 'spec/**/*_spec.rb'

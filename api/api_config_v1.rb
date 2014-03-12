@@ -1,0 +1,125 @@
+#
+
+require 'json'
+require 'api_utils'
+
+module Occam
+  module WebService
+    module Config
+
+      class APIv1 < Grape::API
+
+        version :v1, :using => :path, :vendor => "occam"
+        format :json
+        default_format :json
+
+        rescue_from ProjectOccam::Error::Slice::InvalidUUID do |e|
+          Rack::Response.new(
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
+              400,
+              { "Content-type" => "application/json" }
+          )
+        end
+
+        rescue_from ProjectOccam::Error::Slice::MethodNotAllowed do |e|
+          Rack::Response.new(
+              Occam::WebService::Response.new(403, e.class.name, e.message).to_json,
+              403,
+              { "Content-type" => "application/json" }
+          )
+        end
+
+        rescue_from Grape::Exceptions::Validation do |e|
+          Rack::Response.new(
+              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
+              400,
+              { "Content-type" => "application/json" }
+          )
+        end
+
+        rescue_from :all do |e|
+          raise e
+          Rack::Response.new(
+              Occam::WebService::Response.new(500, e.class.name, e.message).to_json,
+              500,
+              { "Content-type" => "application/json" }
+          )
+        end
+
+        helpers do
+
+          def content_type_header
+            settings[:content_types][env['api.format']]
+          end
+
+          def api_format
+            env['api.format']
+          end
+
+          def is_uuid?(string_)
+            string_ =~ /^[A-Za-z0-9]{1,22}$/
+          end
+
+          def request_is_from_occam_server(ip_addr)
+            Occam::WebService::Utils::request_from_occam_server?(ip_addr)
+          end
+
+        end
+
+        # the following description hides this endpoint from the swagger-ui-based documentation
+        # (since the functionality provided by this endpoint is not intended to be used off of
+        # the Occam server)
+        desc 'Hide this endpoint', {
+            :hidden => true
+        }
+        resource :config do
+
+          # GET /config
+          # Query for Occam server configuration
+          desc "Retrieve the current Occam configuration"
+          before do
+            # only test if directly accessing the /config resource
+            if env["PATH_INFO"].match(/config$/)
+              # only allow access to configuration resource from the occam server
+              unless request_is_from_occam_server(env['REMOTE_ADDR'])
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config resource is only allowed from Occam server"
+              end
+            end
+          end
+          get do
+            JSON(ProjectOccam.config.to_hash.to_json)
+          end     # end GET /config
+
+          resource :ipxe do
+            # GET /config/ipxe
+            # Query for iPXE boot script to use (with Occam)
+            desc "Retrieve the iPXE-bootstrap script to use (with Occam)"
+            before do
+              # only allow access to configuration resource from the occam server
+              unless request_is_from_occam_server(env['REMOTE_ADDR'])
+                env['api.format'] = :text
+                raise ProjectOccam::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config/ipxe resource is only allowed from Occam server"
+              end
+            end
+            get do
+              @ipxe_options = {}
+              @ipxe_options[:style] = :new
+              @ipxe_options[:uri] =  ProjectOccam.config.mk_uri
+              @ipxe_options[:websvc_root] =  ProjectOccam.config.websvc_root
+              @ipxe_options[:timeout_sleep] = IPXE_TIMEOUT
+              @ipxe_options[:nic_max] = IPXE_NIC_MAX
+              env['api.format'] = :text
+              ERB.new(File.read(IPXE_ERB)).result(binding)
+            end     # end GET /config/ipxe
+
+          end     # end resource /config/ipxe
+
+        end     # end resource /config
+
+      end
+
+    end
+
+  end
+
+end

@@ -25,10 +25,10 @@ _yardoc
 doc/
 
 /.rvmrc
-/conf/razor_server.conf
+/conf/occam_server.conf
 /image
 /node_modules
-/razor_daemon.pid
+/occam_daemon.pid
 /Gemfile.lock
 
 /ext/packaging

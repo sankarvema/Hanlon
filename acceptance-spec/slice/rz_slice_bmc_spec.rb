@@ -1,19 +1,19 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "json"
 
-describe "ProjectRazor::Slice::Bmc" do
+describe "ProjectOccam::Slice::Bmc" do
 
   # {"00:15:17:FA:E0:36"=>"192.168.2.51", "00:15:17:FA:DE:66"=>"192.168.2.52",
   #  "00:15:17:FA:7B:0A"=>"192.168.2.53"}
   describe ".RESTful Interface" do
 
     before(:all) do
-      @data = ProjectRazor::Data.instance
+      @data = ProjectOccam::Data.instance
       @data.check_init
-      @config = ProjectRazor.config
+      @config = ProjectOccam.config
       @data.delete_all_objects(:bmc)
       @mac = ["00:15:17:FA:E0:36", "00:15:17:FA:DE:66"]
       @ip = ["192.168.2.51", "192.168.2.52"]
@@ -24,7 +24,7 @@ describe "ProjectRazor::Slice::Bmc" do
     end
 
     it "should be able to register a bmc object from REST" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/bmc/register"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/bmc/register"
 
       json_hash = {}
       json_hash["mac_address"] = @mac[0]
@@ -41,7 +41,7 @@ describe "ProjectRazor::Slice::Bmc" do
     end
 
     it "should be able to get one bmc 'node' from REST" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/bmc?@mac=#{@mac[0]}"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/bmc?@mac=#{@mac[0]}"
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)
       bmc_nodes = response_hash['response']
@@ -50,7 +50,7 @@ describe "ProjectRazor::Slice::Bmc" do
     end
 
     it "should be able to get all bmc 'nodes' from REST" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/bmc/register"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/bmc/register"
 
       len = @mac.length
       # for all indexes from 0 to the len-1, loop and register each BMC
@@ -73,7 +73,7 @@ describe "ProjectRazor::Slice::Bmc" do
 
       # now get all of them, and test the response length (should be the same as the
       # @mac array length, determined above)
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/bmc"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/bmc"
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)
       bmc_nodes = response_hash['response']
@@ -81,7 +81,7 @@ describe "ProjectRazor::Slice::Bmc" do
     end
 
     it "should be able to get all bmc 'nodes' that match attributes from REST" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/bmc?@ip=regex:192.168.2.5[1-2]"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/bmc?@ip=regex:192.168.2.5[1-2]"
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)
       bmc_nodes = response_hash['response']

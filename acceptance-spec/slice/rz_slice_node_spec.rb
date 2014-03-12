@@ -1,17 +1,17 @@
 
-require "project_razor"
+require "project_occam"
 require "rspec"
 require "net/http"
 require "json"
 
-describe "ProjectRazor::Slice::Node" do
+describe "ProjectOccam::Slice::Node" do
 
   describe ".RESTful Interface" do
 
     before(:all) do
-      @data = ProjectRazor::Data.instance
+      @data = ProjectOccam::Data.instance
       @data.check_init
-      @config = ProjectRazor.config
+      @config = ProjectOccam.config
 
       @hw_id = "TEST#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}"
     end
@@ -22,7 +22,7 @@ describe "ProjectRazor::Slice::Node" do
     end
 
     it "Should be able to register a node by uuid from REST" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/node/register" # root URI for node slice actions
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/node/register" # root URI for node slice actions
 
 
       state = "idle"
@@ -43,7 +43,7 @@ describe "ProjectRazor::Slice::Node" do
 
 
     it "Should be able to query a list of nodes from REST" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/node"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/node"
 
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)
@@ -58,7 +58,7 @@ describe "ProjectRazor::Slice::Node" do
     end
 
     it "Should be able to query a single node by uuid from REST" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/node/#{$node_uuid1}"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/node/#{$node_uuid1}"
 
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)
@@ -73,7 +73,7 @@ describe "ProjectRazor::Slice::Node" do
     end
 
     it "Should be able to checkin a node by uuid from REST and get back acknowledge" do
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/node/checkin?uuid=#{@hw_id}&last_state=idle_error"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/node/checkin?uuid=#{@hw_id}&last_state=idle_error"
 
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)
@@ -90,7 +90,7 @@ describe "ProjectRazor::Slice::Node" do
       node = @data.fetch_object_by_uuid(:node, $node_uuid1)
       node.timestamp = 0 # force node register timeout to have been expired
       node.update_self
-      uri = URI "http://127.0.0.1:#{@config.api_port}/razor/api/node/checkin?uuid=#{@hw_id}&last_state=idle"
+      uri = URI "http://127.0.0.1:#{@config.api_port}#{@config.websvc_root}/node/checkin?uuid=#{@hw_id}&last_state=idle"
 
       res = Net::HTTP.get(uri)
       response_hash = JSON.parse(res)

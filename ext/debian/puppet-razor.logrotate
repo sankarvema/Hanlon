@@ -1,4 +1,4 @@
-/opt/razor/log/*.log {
+/opt/occam/log/*.log {
 	weekly
 	rotate 3
 	compress
@@ -6,6 +6,6 @@
 	notifempty
 	missingok
         postrotate
-                /opt/razor/bin/razor_daemons.rb restart
+                /opt/occam/bin/occam_daemons.rb restart
         endscript
 }

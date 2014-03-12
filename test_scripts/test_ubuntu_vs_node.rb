@@ -2,7 +2,7 @@
 
 $lib_path = File.dirname(File.expand_path(__FILE__)).sub(/\/test_scripts$/,"/lib")
 $LOAD_PATH.unshift($lib_path)
-require "project_razor"
+require "project_occam"
 require "colored"
 require "net/http"
 
@@ -20,9 +20,9 @@ puts "\n\n"
 puts "** Please enter the UUID of the node to work with:"
 node_uuid = gets.strip
 
-data = ProjectRazor::Data.instance
+data = ProjectOccam::Data.instance
 data.check_init
-engine = ProjectRazor::Engine.instance
+engine = ProjectOccam::Engine.instance
 config  = data.config
 
 data.delete_all_objects(:tag)
@@ -35,7 +35,7 @@ if node
 
   puts "...creating a tag rule"
   #### We create an empty tag rule with the tag: TEST_TAG
-  uri = URI "http://127.0.0.1:#{config.api_port}/razor/api/tag/rule/add"
+  uri = URI "http://127.0.0.1:#{config.api_port}#{config.websvc_root}/tag/rule/add"
   name = "live_test_tag_rule_for_engine"
   tag = "test"
   json_hash = {}
@@ -50,7 +50,7 @@ if node
 
   puts "...adding a tag matcher to tag rule to match 'hostname' => '#{node.attributes_hash['hostname']}'"
   # We add one tag matchers to it
-  uri = URI "http://127.0.0.1:#{config.api_port}/razor/api/tag/matcher/add/#{live_tag_rule_uuid}"
+  uri = URI "http://127.0.0.1:#{config.api_port}#{config.websvc_root}/tag/matcher/add/#{live_tag_rule_uuid}"
   json_hash = {}
   json_hash["@key"] = "hostname"
   json_hash["@value"] = node.attributes_hash['hostname'] # Match to our hostname
@@ -62,10 +62,10 @@ if node
 
   #puts "...creating policy rule for TEST_TAG to bind LinuxDeploy policy"
   ## Create a new policy rule
-  #new_policy_rule = ProjectRazor::Policy::LinuxDeploy.new({})
+  #new_policy_rule = ProjectOccam::Policy::LinuxDeploy.new({})
   #new_policy_rule.name = "Rule for node:#{node.uuid}"
   #new_policy_rule.kernel_path = "test"
-  #new_policy_rule.model = ProjectRazor::Model::Base.new({})
+  #new_policy_rule.model = ProjectOccam::Model::Base.new({})
   #new_policy_rule.tags << "TEST_TAG"
 
 
@@ -78,7 +78,7 @@ if node
   sleep 4
 
 else
-  puts "Cannot find Node:#{node_uuid} - please make sure it is checking into Razor first"
+  puts "Cannot find Node:#{node_uuid} - please make sure it is checking into Occam first"
 
 
 end
