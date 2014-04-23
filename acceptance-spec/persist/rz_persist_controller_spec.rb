@@ -1,5 +1,5 @@
 
-require "project_occam"
+require "project_hanlon"
 require "rspec"
 require "rz_rspec_matchers"
 require "uuid"
@@ -12,9 +12,9 @@ RSpec.configure do |config|
   config.include(RZRSpecMatchers)
 end
 
-describe ProjectOccam::Persist::Controller do
+describe ProjectHanlon::Persist::Controller do
   before(:all) do
-    @persist = ProjectOccam::Persist::Controller.new
+    @persist = ProjectHanlon::Persist::Controller.new
   end
 
   after(:all) do
@@ -51,7 +51,7 @@ describe ProjectOccam::Persist::Controller do
     before(:each) do
       @persist.check_connection
     end
-    it "should select/connect/bind to ProjectOccam database within DatabaseEngine successfully" do
+    it "should select/connect/bind to ProjectHanlon database within DatabaseEngine successfully" do
       @persist.database.is_db_selected?.should == true
     end
   end
@@ -61,17 +61,17 @@ describe ProjectOccam::Persist::Controller do
       #create junk model with random updates
       (0..rand(10)).each do
         |x|
-        temp_model = ProjectOccam::ModelTemplate::Base.new({:@name => "rspec_junk#{x}", :@model_type => "base", :@values_hash => {"junk" => "1"}})
+        temp_model = ProjectHanlon::ModelTemplate::Base.new({:@name => "rspec_junk#{x}", :@model_type => "base", :@values_hash => {"junk" => "1"}})
         temp_model._persist_ctrl = @persist
         (0..rand(10)).each do
           @persist.object_hash_update(temp_model.to_hash, :model)
         end
       end
-      @model1 = ProjectOccam::ModelTemplate::Base.new({:@name => "rspec_modelname01", :@model_type => "base", :@values_hash => {"a" => "1"}})
+      @model1 = ProjectHanlon::ModelTemplate::Base.new({:@name => "rspec_modelname01", :@model_type => "base", :@values_hash => {"a" => "1"}})
       @model1._persist_ctrl = @persist
-      @model2 = ProjectOccam::ModelTemplate::Base.new({:@name => "rspec_modelname02", :@uuid => @model1.uuid , :@model_type => "base", :@values_hash => {"a" => "454"}})
+      @model2 = ProjectHanlon::ModelTemplate::Base.new({:@name => "rspec_modelname02", :@uuid => @model1.uuid , :@model_type => "base", :@values_hash => {"a" => "454"}})
       @model2._persist_ctrl = @persist
-      @model3 = ProjectOccam::ModelTemplate::Base.new({:@name => "rspec_modelname03", :@uuid => @model1.uuid , :@model_type => "base", :@values_hash => {"a" => "1000"}})
+      @model3 = ProjectHanlon::ModelTemplate::Base.new({:@name => "rspec_modelname03", :@uuid => @model1.uuid , :@model_type => "base", :@values_hash => {"a" => "1000"}})
       @model3._persist_ctrl = @persist
     end
 
@@ -113,20 +113,20 @@ describe ProjectOccam::Persist::Controller do
   #describe ".Policy" do
   #  before(:all) do
   #    #create junk policies with random updates
-  #    temp_model = ProjectOccam::Model::Base.new({:@name => "rspec_modelname01", :@model_type => "base", :@values_hash => {"a" => "1"}})
+  #    temp_model = ProjectHanlon::Model::Base.new({:@name => "rspec_modelname01", :@model_type => "base", :@values_hash => {"a" => "1"}})
   #    (0..rand(10)).each do
   #      |x|
-  #      temp_policy = ProjectOccam::Policy::Base.new({:@name => "rspec_policy_junk#{x}", :@model => temp_model.to_hash, :@policy_type => :unique})
+  #      temp_policy = ProjectHanlon::Policy::Base.new({:@name => "rspec_policy_junk#{x}", :@model => temp_model.to_hash, :@policy_type => :unique})
   #      temp_policy._persist_ctrl = @persist
   #      (0..rand(10)).each do
   #        @persist.object_hash_update(temp_policy.to_hash, :policy)
   #      end
   #    end
-  #    @policy1 = ProjectOccam::Policy::Base.new({:@name => "rspec_policy_name01", :@model => temp_model.to_hash, :@policy_type => :unique})
+  #    @policy1 = ProjectHanlon::Policy::Base.new({:@name => "rspec_policy_name01", :@model => temp_model.to_hash, :@policy_type => :unique})
   #    @policy1._persist_ctrl = @persist
-  #    @policy2 = ProjectOccam::Policy::Base.new({:@name => "rspec_policy_name02", :@uuid => @policy1.uuid , :@model => @policy1.model, :@policy_type => :unique})
+  #    @policy2 = ProjectHanlon::Policy::Base.new({:@name => "rspec_policy_name02", :@uuid => @policy1.uuid , :@model => @policy1.model, :@policy_type => :unique})
   #    @policy2._persist_ctrl = @persist
-  #    @policy3 = ProjectOccam::Policy::Base.new({:@name => "rspec_policy_name03", :@uuid => @policy1.uuid , :@model => @policy1.model, :@policy_type => :unique})
+  #    @policy3 = ProjectHanlon::Policy::Base.new({:@name => "rspec_policy_name03", :@uuid => @policy1.uuid , :@model => @policy1.model, :@policy_type => :unique})
   #    @policy3._persist_ctrl = @persist
   #  end
   #
@@ -169,17 +169,17 @@ describe ProjectOccam::Persist::Controller do
       #create junk nodes with random updates
       (0..rand(10)).each do
         |x|
-        temp_node = ProjectOccam::Node.new({:@name => "rspec_node_junk#{x}", :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
+        temp_node = ProjectHanlon::Node.new({:@name => "rspec_node_junk#{x}", :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
         temp_node._persist_ctrl = @persist
         (0..rand(10)).each do
           @persist.object_hash_update(temp_node.to_hash, :node)
         end
       end
-      @node1 = ProjectOccam::Node.new({:@name => "rspec_node_name01", :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
+      @node1 = ProjectHanlon::Node.new({:@name => "rspec_node_name01", :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
       @node1._persist_ctrl = @persist
-      @node2 = ProjectOccam::Node.new({:@name => "rspec_node_name02", :@uuid => @node1.uuid , :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
+      @node2 = ProjectHanlon::Node.new({:@name => "rspec_node_name02", :@uuid => @node1.uuid , :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
       @node2._persist_ctrl = @persist
-      @node3 = ProjectOccam::Node.new({:@name => "rspec_node_name03", :@uuid => @node1.uuid , :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
+      @node3 = ProjectHanlon::Node.new({:@name => "rspec_node_name03", :@uuid => @node1.uuid , :@last_state => :idle, :@current_state => :idle, :@next_state => :policy_applied})
       @node3._persist_ctrl = @persist
     end
 

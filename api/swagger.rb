@@ -2,7 +2,7 @@
 
 require 'json'
 
-module Occam
+module Hanlon
   module WebService
 
     class Swagger < Grape::API

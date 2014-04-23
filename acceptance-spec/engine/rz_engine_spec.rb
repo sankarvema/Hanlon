@@ -1,17 +1,17 @@
 
-require "project_occam"
+require "project_hanlon"
 require "rspec"
 require "net/http"
 require "net/http"
 require "json"
 
-describe ProjectOccam::Engine do
+describe ProjectHanlon::Engine do
 
   before (:all) do
-    @data = ProjectOccam::Data.instance
+    @data = ProjectHanlon::Data.instance
     @data.check_init
-    @config = ProjectOccam.config
-    @engine = ProjectOccam::Engine.instance
+    @config = ProjectHanlon.config
+    @engine = ProjectHanlon::Engine.instance
 
     # Clean stuff out
     @data.delete_all_objects(:node)
@@ -107,9 +107,9 @@ describe ProjectOccam::Engine do
       node.tags.should == %W(RSPEC_ENGINE)
 
       # Create a new policy rule
-      new_policy = ProjectOccam::PolicyTemplate::LinuxDeploy.new({})
+      new_policy = ProjectHanlon::PolicyTemplate::LinuxDeploy.new({})
       new_policy.label = "Base Swift Servers - Ubuntu 11.10"
-      new_policy.model = ProjectOccam::ModelTemplate::Base.new({})
+      new_policy.model = ProjectHanlon::ModelTemplate::Base.new({})
       new_policy.enabled = true
       new_policy.tags << "RSPEC_ENGINE"
 

@@ -1,8 +1,8 @@
 # How to contribute
 
-Occam is an open project, and community contributions are essential for
+Hanlon is an open project, and community contributions are essential for
 keeping it great.  We can't access the huge number of platforms and myriad of
-hardware, software, and deployment configurations that Occam is intended
+hardware, software, and deployment configurations that Hanlon is intended
 to serve.
 
 We want to keep it as easy as possible to contribute changes that get things
@@ -15,8 +15,8 @@ of things.
 
 * Make sure you have a [GitHub account](https://github.com/signup/free).
 * Submit a ticket for your issue, assuming one does not already exist.
-  * Occam tickets are filed on the GitHub project:
-    https://github.com/csc/occam/issues
+  * Hanlon tickets are filed on the GitHub project:
+    https://github.com/csc/hanlon/issues
   * Please try to clearly describe the issue, including the steps to reproduce
     any bug.
   * Please include the story of "why" you want to do something.
@@ -24,29 +24,29 @@ of things.
 * Glance at the [Git Best Practices][best-practice] document, even if you
   don't read it all yet.
 * If this is a new feature, make sure you discuss it on the
-  [puppet-occam mailing list][puppet-occam] before getting started on code.
+  [puppet-hanlon mailing list][puppet-hanlon] before getting started on code.
 
 
 ## How to Get Help
 
-We really want Occam to be simple to contribute to, and to ensure that you can
+We really want Hanlon to be simple to contribute to, and to ensure that you can
 get started quickly.  A big part of that is being available to help you figure
 out the right way to solve a problem, and to make sure you get up to
 speed quickly.
 
 You can always reach out and ask for help:
 
-* by email or through the web on the [puppet-occam@googlegroups.com][puppet-occam]
+* by email or through the web on the [puppet-hanlon@googlegroups.com][puppet-hanlon]
   mailing list (membership is required to post).
-* by IRC, through [#puppet-occam][irc] on [the FreeNode IRC network][freenode].
+* by IRC, through [#puppet-hanlon][irc] on [the FreeNode IRC network][freenode].
 
 
 ## Discuss Your Change
 
 You should start by discussing your change in public:
 * for small but clear changes, [open an issue describing the bug or feature][bugs].
-* for larger changes, send an email to puppet-occam@googlegroups.com or
-  [post through the web][puppet-occam] before creating the issue.
+* for larger changes, send an email to puppet-hanlon@googlegroups.com or
+  [post through the web][puppet-hanlon] before creating the issue.
 
 Once an issue exists for a bug or feature, all discussion should take place in
 the issue.  Any and all members of the community can respond to an issue, and
@@ -113,13 +113,13 @@ This gives three outcomes from the discussion:
 
 ## Branching, and Where Changes Go
 
-Until a stable version of Occam is shipped, there is only one branch:
+Until a stable version of Hanlon is shipped, there is only one branch:
 `master`.  All changes target that branch.
 
 ### Branch and Version Compatibility
 
-Any change to Occam branch should strive as much as possible to be compatible
-with all released versions of Occam.  We want to avoid multiple incompatible
+Any change to Hanlon branch should strive as much as possible to be compatible
+with all released versions of Hanlon.  We want to avoid multiple incompatible
 versions existing as much as possible.
 
 Until 1.0.0 we are willing to accept backward-incompatible changes if there is
@@ -215,9 +215,9 @@ this."  On the same side, a vote is never "silence is consent."
 
 ## Becoming a Committer
 
-Occam is an open project: any contributor can become a committer.  Being a
+Hanlon is an open project: any contributor can become a committer.  Being a
 committer comes with great responsibility: your decisions directly shape the
-community, and the effectiveness, of the Occam project.  You will probably
+community, and the effectiveness, of the Hanlon project.  You will probably
 invest more, and produce less, as a committer than a regular developer
 submitting pull requests.
 
@@ -264,10 +264,10 @@ or if they violate the community standards.  This is done by the project
 leader.  The details of why are private, and will not be shared.
 
 
-[bugs]:          https://github.com/csc/occam/issues
+[bugs]:          https://github.com/csc/hanlon/issues
 [best-practice]: http://sethrobertson.github.com/GitBestPractices/
-[puppet-occam]:  https://groups.google.com/forum/?fromgroups#!forum/puppet-occam
-[irc]:           https://webchat.freenode.net/?channels=puppet-occam
+[puppet-hanlon]:  https://groups.google.com/forum/?fromgroups#!forum/puppet-hanlon
+[irc]:           https://webchat.freenode.net/?channels=puppet-hanlon
 [freenode]:      http://freenode.net/
 [exemption]:     http://docs.puppetlabs.com/community/trivial_patch_exemption.html
 [cla]:           http://links.puppetlabs.com/cla

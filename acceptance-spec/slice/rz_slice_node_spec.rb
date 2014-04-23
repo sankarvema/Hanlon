@@ -1,17 +1,17 @@
 
-require "project_occam"
+require "project_hanlon"
 require "rspec"
 require "net/http"
 require "json"
 
-describe "ProjectOccam::Slice::Node" do
+describe "ProjectHanlon::Slice::Node" do
 
   describe ".RESTful Interface" do
 
     before(:all) do
-      @data = ProjectOccam::Data.instance
+      @data = ProjectHanlon::Data.instance
       @data.check_init
-      @config = ProjectOccam.config
+      @config = ProjectHanlon.config
 
       @hw_id = "TEST#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}"
     end

@@ -1,4 +1,4 @@
-/opt/occam/log/*.log {
+/opt/hanlon/log/*.log {
 	weekly
 	rotate 3
 	compress
@@ -6,6 +6,6 @@
 	notifempty
 	missingok
         postrotate
-                /opt/occam/bin/occam_daemons.rb restart
+                /opt/hanlon/bin/hanlon_daemons.rb restart
         endscript
 }

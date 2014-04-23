@@ -3,7 +3,7 @@
 require 'rufus-scheduler'
 require 'uri'
 
-module Occam
+module Hanlon
   module WebService
     class App
 
@@ -100,7 +100,7 @@ module Occam
 
         # if not, then load it via the api
         @@base_uri = env['SCRIPT_NAME']
-        Occam::WebService::API.call(env)
+        Hanlon::WebService::API.call(env)
       end
 
       def self.base_uri
@@ -111,8 +111,8 @@ module Occam
       # that might be running
       def self.stop_periodic_tasks
         # collect together the set of jobs we have running
-        jobs = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_occam_tasks')
-        jobs.push *(Rufus::Scheduler.singleton.jobs(:tag => 'track_occam_tasks'))
+        jobs = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_hanlon_tasks')
+        jobs.push *(Rufus::Scheduler.singleton.jobs(:tag => 'track_hanlon_tasks'))
         # and for each job, shut them down
         jobs.each { |job|
           puts "Shutting down job => #{job.id}"
@@ -123,43 +123,43 @@ module Occam
       private
 
       def start_scheduled_tasks
-        node_timeout = ProjectOccam.config.node_expire_timeout
+        node_timeout = ProjectHanlon.config.node_expire_timeout
         node_timeout ||= DEFAULT_NODE_EXPIRE_TIMEOUT
-        min_cycle_time = ProjectOccam.config.daemon_min_cycle_time
+        min_cycle_time = ProjectHanlon.config.daemon_min_cycle_time
         min_cycle_time ||= DEFAULT_MIN_CYCLE_TIME
         begin
-          # check to make sure there isn't already a set of 'periodic_occam_tasks'
+          # check to make sure there isn't already a set of 'periodic_hanlon_tasks'
           # running; if there is, then skip this step
-          if Rufus::Scheduler.singleton.jobs(:tag => 'periodic_occam_tasks')
+          if Rufus::Scheduler.singleton.jobs(:tag => 'periodic_hanlon_tasks')
             # start a thread that will remove any inactive nodes from the nodes list
             # (inactive nodes haven't checked in for a while and aren't bound to a model
             # via an active_model instance)
             puts ">> Starting new thread to remove inactive nodes; cycle time => #{min_cycle_time}, timeout => #{node_timeout}"
-            Rufus::Scheduler.singleton.every "#{min_cycle_time}s", :tag => 'periodic_occam_tasks' do
+            Rufus::Scheduler.singleton.every "#{min_cycle_time}s", :tag => 'periodic_hanlon_tasks' do
               begin
-                engine = ProjectOccam::Engine.instance
+                engine = ProjectHanlon::Engine.instance
                 engine.remove_expired_nodes(node_timeout)
               rescue java.lang.IllegalStateException => e
                 puts "At 1...#{e.message}"
               end
             end
           end
-          # check to make sure there isn't already a 'track_occam_tasks' thread
+          # check to make sure there isn't already a 'track_hanlon_tasks' thread
           # running; if there is, then skip this step
-          if Rufus::Scheduler.singleton.jobs(:tag => 'track_occam_tasks')
-            # start a thread to monitor the Occam-related tasks we just started (above)
-            puts ">> Starting new thread to print status of Occam-related jobs..."
-            Rufus::Scheduler.singleton.every "5m", :tag => 'track_occam_tasks' do
+          if Rufus::Scheduler.singleton.jobs(:tag => 'track_hanlon_tasks')
+            # start a thread to monitor the Hanlon-related tasks we just started (above)
+            puts ">> Starting new thread to print status of Hanlon-related jobs..."
+            Rufus::Scheduler.singleton.every "5m", :tag => 'track_hanlon_tasks' do
               begin
-                job_ids = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_occam_tasks').map{ |job| job.id }
-                puts "  >> At #{Time.now}; Occam-related jobs running => [#{job_ids.join(', ')}]"
+                job_ids = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_hanlon_tasks').map{ |job| job.id }
+                puts "  >> At #{Time.now}; Hanlon-related jobs running => [#{job_ids.join(', ')}]"
               rescue java.lang.IllegalStateException => e
                 puts "At 2...#{e.message}"
               end
             end
             # collect together jobs that are running and print out their IDs
-            job_ids = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_occam_tasks').map { |job| job.id }
-            job_ids.push *(Rufus::Scheduler.singleton.jobs(:tag => 'track_occam_tasks').map { |job| job.id })
+            job_ids = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_hanlon_tasks').map { |job| job.id }
+            job_ids.push *(Rufus::Scheduler.singleton.jobs(:tag => 'track_hanlon_tasks').map { |job| job.id })
             puts "  >> At #{Time.now}; All jobs running => [#{job_ids.join(', ')}]"
           end
         rescue java.lang.IllegalStateException => e

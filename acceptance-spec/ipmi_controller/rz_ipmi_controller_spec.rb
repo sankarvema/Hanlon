@@ -1,20 +1,20 @@
 
-require "project_occam"
-require "project_occam/power_control/ipmi_controller"
+require "project_hanlon"
+require "project_hanlon/power_control/ipmi_controller"
 require "rspec"
 require "net/http"
 require "net/http"
 require "mocha/api"
 require "yaml"
 
-describe ProjectOccam::PowerControl::IpmiController do
+describe ProjectHanlon::PowerControl::IpmiController do
 
   before (:all) do
-    @ipmi = ProjectOccam::PowerControl::IpmiController.instance
+    @ipmi = ProjectHanlon::PowerControl::IpmiController.instance
     @mock_data_dir = File.expand_path(File.dirname(__FILE__)) + File::SEPARATOR + 'ipmitool-mock-files'
-    data = ProjectOccam::Data.instance
+    data = ProjectHanlon::Data.instance
     data.check_init
-    config = ProjectOccam.config
+    config = ProjectHanlon.config
     @ipmi_username = config.default_ipmi_username
     @ipmi_password = config.default_ipmi_password
     @ipmi_hostname = '192.168.2.51'

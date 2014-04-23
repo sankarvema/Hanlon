@@ -3,20 +3,20 @@
 require 'json'
 require 'api_utils'
 
-module Occam
+module Hanlon
   module WebService
     module Model
 
       class APIv1 < Grape::API
 
-        version :v1, :using => :path, :vendor => "occam"
+        version :v1, :using => :path, :vendor => "hanlon"
         format :json
         default_format :json
-        SLICE_REF = ProjectOccam::Slice::Model.new([])
+        SLICE_REF = ProjectHanlon::Slice::Model.new([])
 
-        rescue_from ProjectOccam::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectHanlon::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
-              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -24,7 +24,7 @@ module Occam
 
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
-              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -33,7 +33,7 @@ module Occam
         rescue_from :all do |e|
           raise e
           Rack::Response.new(
-              Occam::WebService::Response.new(500, e.class.name, e.message).to_json,
+              Hanlon::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,
               { "Content-type" => "application/json" }
           )
@@ -54,15 +54,15 @@ module Occam
           end
 
           def get_data_ref
-            Occam::WebService::Utils::get_data
+            Hanlon::WebService::Utils::get_data
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Occam::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Hanlon::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Occam::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Hanlon::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -78,7 +78,7 @@ module Occam
           end     # end GET /model
 
           # POST /model
-          # Create a Occam model
+          # Create a Hanlon model
           #   parameters:
           #     template          | String | The "template" to use for the new model |         | Default: unavailable
           #     label             | String | The "label" to use for the new model    |         | Default: unavailable
@@ -98,11 +98,11 @@ module Occam
             req_metadata_hash = params["req_metadata_hash"]
             # check the values that were passed in
             model = SLICE_REF.get_model_using_template_name(template)
-            raise ProjectOccam::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
+            raise ProjectHanlon::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
             image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true
-            raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image
+            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image
             # use the arguments passed in (above) to create a new model
-            raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless req_metadata_hash
+            raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless req_metadata_hash
             model.label = label
             model.image_uuid = image.uuid
             model.is_template = false
@@ -112,7 +112,7 @@ module Occam
             }
             model.req_metadata_hash = req_metadata_hash
             get_data_ref.persist_object(model)
-            raise(ProjectOccam::Error::Slice::CouldNotCreate, "Could not create Model") unless model
+            raise(ProjectHanlon::Error::Slice::CouldNotCreate, "Could not create Model") unless model
             slice_success_object(SLICE_REF, :create_model, model, :success_type => :created)
           end     # end POST /model
 
@@ -123,7 +123,7 @@ module Occam
             desc "Retrieve a list of available model templates"
             get do
               # get the model templates (as an array)
-              model_templates = SLICE_REF.get_child_templates(ProjectOccam::ModelTemplate)
+              model_templates = SLICE_REF.get_child_templates(ProjectHanlon::ModelTemplate)
               # then, construct the response
               slice_success_object(SLICE_REF, :get_model_templates, model_templates, :success_type => :generic)
             end     # end GET /model/templates
@@ -139,9 +139,9 @@ module Occam
               get do
                 # get the matching model template
                 model_template_name = params[:name]
-                model_templates = SLICE_REF.get_child_templates(ProjectOccam::ModelTemplate)
+                model_templates = SLICE_REF.get_child_templates(ProjectHanlon::ModelTemplate)
                 model_template = model_templates.select { |template| template.name == model_template_name }
-                raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Model Template Named: [#{model_template_name}]" unless model_template && (model_template.class != Array || model_template.length > 0)
+                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Model Template Named: [#{model_template_name}]" unless model_template && (model_template.class != Array || model_template.length > 0)
                 # then, construct the response
                 slice_success_object(SLICE_REF, :get_model_template_by_uuid, model_template[0], :success_type => :generic)
               end     # end GET /model/templates/{uuid}
@@ -161,12 +161,12 @@ module Occam
             get do
               model_uuid = params[:uuid]
               model = SLICE_REF.get_object("get_model_by_uuid", :model, model_uuid)
-              raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
               slice_success_object(SLICE_REF, :get_model_by_uuid, model, :success_type => :generic)
             end     # end GET /model/{uuid}
 
             # PUT /model/{uuid}
-            # Update a Occam model (any of the the label, image UUID, or req_metadata_hash
+            # Update a Hanlon model (any of the the label, image UUID, or req_metadata_hash
             # can be updated using this endpoint; note that the model template cannot be updated
             # once a model is created
             #   parameters:
@@ -193,10 +193,10 @@ module Occam
               # command was invoked via the CLI...it's an error to use this flag via
               # the RESTful API, the req_metadata_hash should be used instead)
               model = SLICE_REF.get_object("model_with_uuid", :model, model_uuid)
-              raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
               model.label = label if label
               image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true if image_uuid
-              raise ProjectOccam::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
               model.image_uuid = image.uuid if image
               if req_metadata_hash
                 req_metadata_hash.each { |key, value|
@@ -204,12 +204,12 @@ module Occam
                   model.req_metadata_hash[key] = value
                 }
               end
-              raise ProjectOccam::Error::Slice::CouldNotUpdate, "Could not update Model [#{model.uuid}]" unless model.update_self
+              raise ProjectHanlon::Error::Slice::CouldNotUpdate, "Could not update Model [#{model.uuid}]" unless model.update_self
               slice_success_object(SLICE_REF, :update_model, model, :success_type => :updated)
             end     # end PUT /model/{uuid}
 
             # DELETE /model/{uuid}
-            # Remove a Occam model (by UUID)
+            # Remove a Hanlon model (by UUID)
             desc "Remove a model instance (by UUID)"
             params do
               requires :uuid, type: String, desc: "The model's UUID", desc: "The model's UUID"
@@ -217,8 +217,8 @@ module Occam
             delete do
               model_uuid = params[:uuid]
               model = SLICE_REF.get_object("model_with_uuid", :model, model_uuid)
-              raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-              raise ProjectOccam::Error::Slice::CouldNotRemove, "Could not remove Model [#{model.uuid}]" unless get_data_ref.delete_object(model)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
+              raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Model [#{model.uuid}]" unless get_data_ref.delete_object(model)
               slice_success_response(SLICE_REF, :remove_model_by_uuid, "Model [#{model.uuid}] removed", :success_type => :removed)
             end     # end DELETE /model/{uuid}
 
