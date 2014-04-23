@@ -1,13 +1,13 @@
 
-require "project_occam"
+require "project_hanlon"
 require "rspec"
 
-describe ProjectOccam::Tagging::TagRule do
+describe ProjectHanlon::Tagging::TagRule do
 
   before (:all) do
-    @data = ProjectOccam::Data.instance
+    @data = ProjectHanlon::Data.instance
     @data.check_init
-    @tag_rule = ProjectOccam::Tagging::TagRule.new({"@name" => "RSpec Tag Rule #1", "@tag" => "RSPEC", "@tag_matchers" => []})
+    @tag_rule = ProjectHanlon::Tagging::TagRule.new({"@name" => "RSpec Tag Rule #1", "@tag" => "RSPEC", "@tag_matchers" => []})
   end
 
   after(:all) do

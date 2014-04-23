@@ -1,8 +1,8 @@
 # Runs all unit tests with HTML output to WEBPATH specified
 # You must change webpath to match your
 
-echo "OCCAM_RSPEC_WEBPATH is: $OCCAM_RSPEC_WEBPATH"
-echo "OCCAM HOME is: $OCCAM_HOME"
-cd $OCCAM_HOME
+echo "HANLON_RSPEC_WEBPATH is: $HANLON_RSPEC_WEBPATH"
+echo "HANLON HOME is: $HANLON_HOME"
+cd $HANLON_HOME
 
-rspec -c -f h > $OCCAM_RSPEC_WEBPATH/occam_tests.html
+rspec -c -f h > $HANLON_RSPEC_WEBPATH/hanlon_tests.html

@@ -1,6 +1,6 @@
 #
 
-module Occam
+module Hanlon
   module WebService
     # Response class
     class Response

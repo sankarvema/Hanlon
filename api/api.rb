@@ -2,18 +2,18 @@
 
 require 'grape-swagger'
 
-module Occam
+module Hanlon
   module WebService
     class API < Grape::API
-      mount ::Occam::WebService::Config::APIv1
-      mount ::Occam::WebService::Boot::APIv1
-      mount ::Occam::WebService::Image::APIv1
-      mount ::Occam::WebService::Node::APIv1
-      mount ::Occam::WebService::Model::APIv1
-      mount ::Occam::WebService::Tag::APIv1
-      mount ::Occam::WebService::Policy::APIv1
-      mount ::Occam::WebService::Broker::APIv1
-      mount ::Occam::WebService::ActiveModel::APIv1
+      mount ::Hanlon::WebService::Config::APIv1
+      mount ::Hanlon::WebService::Boot::APIv1
+      mount ::Hanlon::WebService::Image::APIv1
+      mount ::Hanlon::WebService::Node::APIv1
+      mount ::Hanlon::WebService::Model::APIv1
+      mount ::Hanlon::WebService::Tag::APIv1
+      mount ::Hanlon::WebService::Policy::APIv1
+      mount ::Hanlon::WebService::Broker::APIv1
+      mount ::Hanlon::WebService::ActiveModel::APIv1
       #if the service.yaml file includes the necessary configuration parameter (and it's
       # set to true), then make the swagger-ui-based documentation available as part of
       # the UI
@@ -31,7 +31,7 @@ module Occam
         # for whether or not access to the swagger-ui-based documentation is allowed so
         # that this endpoint won't even appear in the UI unless the swagger documentation
         # is enabled)
-        mount ::Occam::WebService::Swagger
+        mount ::Hanlon::WebService::Swagger
       end
     end
   end

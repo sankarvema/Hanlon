@@ -1,5 +1,5 @@
 # Runs all unit tests
-echo "OCCAM HOME is: $OCCAM_HOME"
-cd $OCCAM_HOME
+echo "HANLON HOME is: $HANLON_HOME"
+cd $HANLON_HOME
 
 rspec -c

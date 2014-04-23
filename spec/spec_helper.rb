@@ -8,7 +8,7 @@ require 'rspec/expectations'
 require 'stringio'
 require 'tmpdir'
 
-require 'project_occam'
+require 'project_hanlon'
 
 module SpecHelpers
   # Capture and control stdout, stderr, and stdin of some code; used for
@@ -39,17 +39,17 @@ RSpec.configure do |config|
   # Try and use a custom temporary environment for our work, to reduce the
   # odds that we suffer some sort of race or other attack in our
   # scratch space.
-  ENV['TMPDIR'] = ENV['TMP'] = Dir.mktmpdir("occam-rspec-tmp")
+  ENV['TMPDIR'] = ENV['TMP'] = Dir.mktmpdir("hanlon-rspec-tmp")
 
   # Make my helper code globally accessible.
   config.include SpecHelpers
 
   config.before :each do
     # Use the in-memory configuration store, by default.
-    ProjectOccam.config['persist_mode'] = :memory
+    ProjectHanlon.config['persist_mode'] = :memory
   end
 
   config.after :each do
-    defined?(ProjectOccam::Data) and ProjectOccam::Data.instance.teardown
+    defined?(ProjectHanlon::Data) and ProjectHanlon::Data.instance.teardown
   end
 end

@@ -1,16 +1,16 @@
-require "project_occam"
+require "project_hanlon"
 require "rspec"
 require "net/http"
 require "json"
 
-describe "ProjectOccam::Slice::Broker" do
+describe "ProjectHanlon::Slice::Broker" do
 
   describe ".RESTful Interface" do
 
     before(:each) do
-      @data = ProjectOccam::Data.instance
+      @data = ProjectHanlon::Data.instance
       @data.check_init
-      @config = ProjectOccam.config
+      @config = ProjectHanlon.config
       @data.delete_all_objects(:broker)
     end
 
@@ -18,25 +18,25 @@ describe "ProjectOccam::Slice::Broker" do
       @data.delete_all_objects(:broker)
     end
 
-    def occam_uri(path, json_hash = nil)
+    def hanlon_uri(path, json_hash = nil)
       return URI("http://127.0.0.1:#{@config.api_port}/#{path.sub(%r{^/}, '')}") unless json_hash
       json_hash_str = URI.encode(JSON.generate(json_hash))
       URI("http://127.0.0.1:#{@config.api_port}/#{path.sub(%r{^/}, '')}?json_hash=#{json_hash_str}")
     end
 
     def http_get(path)
-      response = Net::HTTP.get(occam_uri(path))
+      response = Net::HTTP.get(hanlon_uri(path))
       JSON.parse(response)
     end
 
     def http_post(path, hash)
-      uri = occam_uri(path)
+      uri = hanlon_uri(path)
       response = Net::HTTP.post_form(uri, 'json_hash' => JSON.generate(hash))
       JSON.parse(response.body)
     end
 
     def http_put(path, hash)
-      uri = occam_uri(path, hash)
+      uri = hanlon_uri(path, hash)
       Net::HTTP.start(uri.host, uri.port) do |http|
         response = http.send_request('PUT', uri.request_uri)
         JSON.parse(response.body)
@@ -167,7 +167,7 @@ describe "ProjectOccam::Slice::Broker" do
           res = http_put("#{@config.websvc_root}/broker/update/#{@broker['@uuid']}", lcl_hash)
           res['result'].should_not == "Updated"
           res['http_err_code'].should == 400
-          res['err_class'].should == "ProjectOccam::Error::Slice::InvalidBrokerMetadata"
+          res['err_class'].should == "ProjectHanlon::Error::Slice::InvalidBrokerMetadata"
         end
 
         it "PUT /#{path}/#{@uuid}?json_hash=<json_str> should fail to update a broker with an invalid version" do
@@ -178,7 +178,7 @@ describe "ProjectOccam::Slice::Broker" do
           res = http_put("#{@config.websvc_root}/broker/update/#{@broker['@uuid']}", lcl_hash)
           res['result'].should_not == "Updated"
           res['http_err_code'].should == 400
-          res['err_class'].should == "ProjectOccam::Error::Slice::InvalidBrokerMetadata"
+          res['err_class'].should == "ProjectHanlon::Error::Slice::InvalidBrokerMetadata"
         end
 
       end
@@ -194,7 +194,7 @@ describe "ProjectOccam::Slice::Broker" do
       end
 
       it "DELETE #{@config.websvc_root}/broker/remove/all cannot delete all broker targets" do
-        uri = occam_uri("#{@config.websvc_root}/broker/remove/all")
+        uri = hanlon_uri("#{@config.websvc_root}/broker/remove/all")
         http = Net::HTTP.start(uri.host, uri.port)
         res = http.send_request('DELETE', uri.request_uri)
         res.class.should == Net::HTTPMethodNotAllowed

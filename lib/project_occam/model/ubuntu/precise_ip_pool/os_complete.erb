@@ -1,7 +1,0 @@
-#!/bin/bash
-echo Occam policy successfully applied > /tmp/occam_complete.log
-echo Model <%= @label %> - <%= @description %> >> /tmp/occam_complete.log
-echo Image UUID <%= @image_uuid %> >> /tmp/occam_complete.log
-echo Node UUID: <%= @node.uuid %> >> /tmp/occam_complete.log
-
-sed -i '/occam_postinstall/d' /etc/rc.local

@@ -3,20 +3,20 @@
 require 'json'
 require 'api_utils'
 
-module Occam
+module Hanlon
   module WebService
     module Node
 
       class APIv1 < Grape::API
 
-        version :v1, :using => :path, :vendor => "occam"
+        version :v1, :using => :path, :vendor => "hanlon"
         format :json
         default_format :json
-        SLICE_REF = ProjectOccam::Slice::Node.new([])
+        SLICE_REF = ProjectHanlon::Slice::Node.new([])
 
-        rescue_from ProjectOccam::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectHanlon::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
-              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -24,7 +24,7 @@ module Occam
 
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
-              Occam::WebService::Response.new(400, e.class.name, e.message).to_json,
+              Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
               { "Content-type" => "application/json" }
           )
@@ -33,7 +33,7 @@ module Occam
         rescue_from :all do |e|
           raise e
           Rack::Response.new(
-              Occam::WebService::Response.new(500, e.class.name, e.message).to_json,
+              Hanlon::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,
               { "Content-type" => "application/json" }
           )
@@ -54,15 +54,15 @@ module Occam
           end
 
           def validate_param(param)
-            Occam::WebService::Utils::validate_parameter(param)
+            Hanlon::WebService::Utils::validate_parameter(param)
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Occam::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Hanlon::WebService::Utils::rz_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Occam::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Hanlon::WebService::Utils::rz_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -79,14 +79,14 @@ module Occam
 
           # the following description hides this endpoint from the swagger-ui-based documentation
           # (since the functionality provided by this endpoint is not intended to be used off of
-          # the Occam server)
+          # the Hanlon server)
           desc 'Hide this endpoint', {
               :hidden => true
           }
           resource :checkin do
 
             # GET /node/checkin
-            # handle a node checkin (from a Occam Microkernel instance)
+            # handle a node checkin (from a Hanlon Microkernel instance)
             #   parameters:
             #         required:
             #           :hw_id      | String | The hardware ID of the node.          |           | Default: unavailable
@@ -102,12 +102,12 @@ module Occam
               last_state = params[:last_state]
               first_checkin = params[:first_checkin]
               # Validate our args are here
-              raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
-              raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
+              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
+              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
               hw_id = hw_id.split("_") unless hw_id.is_a? Array
-              raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
+              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
               # grab a couple of references we need
-              engine = ProjectOccam::Engine.instance
+              engine = ProjectHanlon::Engine.instance
               # if it's not the first node, check to see if the node exists
               unless first_checkin
                 new_node = engine.lookup_node_by_hw_id(:hw_id => hw_id)
@@ -132,7 +132,7 @@ module Occam
           resource :register do
 
             # POST /node/register
-            # register a node with Occam
+            # register a node with Hanlon
             #   parameters:
             #     hw_id           | String | The hardware ID of the node.          |           | Default: unavailable
             #     last_state      | String | The "state" the node is currently in. |           | Default: unavailable
@@ -148,25 +148,25 @@ module Occam
               last_state = params["last_state"]
               attributes_hash = params["attributes_hash"]
               # Validate our args are here
-              raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
-              raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
-              raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide Attributes Hash[attributes_hash]" unless attributes_hash.is_a? Hash and attributes_hash.size > 0
+              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
+              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
+              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Attributes Hash[attributes_hash]" unless attributes_hash.is_a? Hash and attributes_hash.size > 0
               hw_id = hw_id.split("_") if hw_id.is_a? String
-              raise ProjectOccam::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
-              engine = ProjectOccam::Engine.instance
+              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
+              engine = ProjectHanlon::Engine.instance
               new_node = engine.lookup_node_by_hw_id(:hw_id => hw_id)
               if new_node
                 new_node.hw_id = new_node.hw_id | hw_id
               else
-                shell_node = ProjectOccam::Node.new({})
+                shell_node = ProjectHanlon::Node.new({})
                 shell_node.hw_id = hw_id
                 new_node = engine.register_new_node_with_hw_id(shell_node)
-                raise ProjectOccam::Error::Slice::CouldNotRegisterNode, "Could not register new node" unless new_node
+                raise ProjectHanlon::Error::Slice::CouldNotRegisterNode, "Could not register new node" unless new_node
               end
               new_node.timestamp = Time.now.to_i
               new_node.attributes_hash = attributes_hash
               new_node.last_state = last_state
-              raise ProjectOccam::Error::Slice::CouldNotRegisterNode, "Could not register node" unless new_node.update_self
+              raise ProjectHanlon::Error::Slice::CouldNotRegisterNode, "Could not register node" unless new_node.update_self
               slice_success_response(SLICE_REF, :register_node, new_node.to_hash, :mk_response => true)
             end     # end POST /node/register
 
@@ -186,7 +186,7 @@ module Occam
             get do
               node_uuid = params[:uuid]
               node = SLICE_REF.get_object("node_with_uuid", :node, node_uuid)
-              raise ProjectOccam::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
               selected_option = params[:field]
               # if no params were passed in, then just return a summary for the specified node
               unless selected_option
@@ -197,7 +197,7 @@ module Occam
                 elsif /^(hardware|hardware_id|hardware_ids)$/.match(selected_option)
                   slice_success_response(SLICE_REF, :get_node_hardware_ids, {"hw_id" => node.hw_id}, :success_type => :generic)
                 else
-                  raise ProjectOccam::Error::Slice::InputError, "unrecognized fieldname '#{selected_option}'"
+                  raise ProjectHanlon::Error::Slice::InputError, "unrecognized fieldname '#{selected_option}'"
                 end
               end
             end     # end GET /node/{uuid}

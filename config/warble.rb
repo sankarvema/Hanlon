@@ -6,5 +6,5 @@ Warbler::Config.new do |config|
   end
   config.features += ['compiled','gemjar']
   config.dirs += ['api']
-  config.jar_name = "occam"
+  config.jar_name = "hanlon"
 end

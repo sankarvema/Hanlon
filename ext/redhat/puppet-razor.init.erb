@@ -7,7 +7,7 @@
 #              a backslash>
 
 ### BEGIN INIT INFO
-# Provides:          puppet-occam
+# Provides:          puppet-hanlon
 # Required-Start:    $network $named $remote_fs $syslog
 # Required-Stop:     $network $named $remote_fs $syslog
 # Should-Start:      
@@ -18,10 +18,10 @@
 <%= desc.map {|x| "#     " + x }.join("\n") %>
 ### END INIT INFO
 
-PATH=/opt/occam/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/opt/hanlon/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
 
-DAEMON=/opt/occam/bin/occam_daemon.rb
+DAEMON=/opt/hanlon/bin/hanlon_daemon.rb
 
 test -x $DAEMON || exit 0
 

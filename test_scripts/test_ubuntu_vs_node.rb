@@ -2,7 +2,7 @@
 
 $lib_path = File.dirname(File.expand_path(__FILE__)).sub(/\/test_scripts$/,"/lib")
 $LOAD_PATH.unshift($lib_path)
-require "project_occam"
+require "project_hanlon"
 require "colored"
 require "net/http"
 
@@ -20,9 +20,9 @@ puts "\n\n"
 puts "** Please enter the UUID of the node to work with:"
 node_uuid = gets.strip
 
-data = ProjectOccam::Data.instance
+data = ProjectHanlon::Data.instance
 data.check_init
-engine = ProjectOccam::Engine.instance
+engine = ProjectHanlon::Engine.instance
 config  = data.config
 
 data.delete_all_objects(:tag)
@@ -62,10 +62,10 @@ if node
 
   #puts "...creating policy rule for TEST_TAG to bind LinuxDeploy policy"
   ## Create a new policy rule
-  #new_policy_rule = ProjectOccam::Policy::LinuxDeploy.new({})
+  #new_policy_rule = ProjectHanlon::Policy::LinuxDeploy.new({})
   #new_policy_rule.name = "Rule for node:#{node.uuid}"
   #new_policy_rule.kernel_path = "test"
-  #new_policy_rule.model = ProjectOccam::Model::Base.new({})
+  #new_policy_rule.model = ProjectHanlon::Model::Base.new({})
   #new_policy_rule.tags << "TEST_TAG"
 
 
@@ -78,7 +78,7 @@ if node
   sleep 4
 
 else
-  puts "Cannot find Node:#{node_uuid} - please make sure it is checking into Occam first"
+  puts "Cannot find Node:#{node_uuid} - please make sure it is checking into Hanlon first"
 
 
 end
