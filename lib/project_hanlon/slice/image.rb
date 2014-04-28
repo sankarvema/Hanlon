@@ -19,7 +19,7 @@ module ProjectHanlon
       def initialize(args)
         super(args)
         @hidden = false
-        @uri_string = ProjectHanlon.config.mk_uri + HANLON_URI_ROOT + '/image'
+        @uri_string = ProjectHanlon.config.mk_uri + ProjectHanlon.config.websvc_root + '/image'
         # get the available image types (input type must match one of these)
         @image_types = {
             :mk =>       {
