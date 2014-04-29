@@ -8,44 +8,44 @@ describe "ProjectHanlon::NodeJS::API" do
   describe ".Image Service" do
 
     it "should return the README file" do
-      uri = URI "http://127.0.0.1:#{config.image_svc_port}#{ProjectHanlon.config.websvc_root}/image/README"
+      uri = URI "http://127.0.0.1:#{config.api_port}#{ProjectHanlon.config.websvc_root}/image/README"
       res = Net::HTTP.get_response(uri)
       res.code.should == '200'
       res.body.should =~ /Hanlon images/
     end
 
     it "should bail on 404 when presented with URI encoded directory traversal using ..%2F" do
-      uri = URI "http://127.0.0.1:#{config.image_svc_port}#{ProjectHanlon.config.websvc_root}/image/..%2FGemfile"
+      uri = URI "http://127.0.0.1:#{config.api_port}#{ProjectHanlon.config.websvc_root}/image/..%2FGemfile"
       res = Net::HTTP.get_response(uri)
       res.code.should == '404'
     end
 
     it "should bail on 404 when presented with URI encoded directory traversal using %2E%2E%2F" do
-      uri = URI "http://127.0.0.1:#{config.image_svc_port}#{ProjectHanlon.config.websvc_root}/image/%2E%2E%2FGemfile"
+      uri = URI "http://127.0.0.1:#{config.api_port}#{ProjectHanlon.config.websvc_root}/image/%2E%2E%2FGemfile"
       res = Net::HTTP.get_response(uri)
       res.code.should == '404'
     end
 
     it "should bail on 404 when presented with URI encoded directory traversal using %2E%2E%5C" do
-      uri = URI "http://127.0.0.1:#{config.image_svc_port}#{ProjectHanlon.config.websvc_root}/image/%2E%2E%5CGemfile"
+      uri = URI "http://127.0.0.1:#{config.api_port}#{ProjectHanlon.config.websvc_root}/image/%2E%2E%5CGemfile"
       res = Net::HTTP.get_response(uri)
       res.code.should == '404'
     end
 
     it "should bail on 404 when presented with binary zero in path" do
-      uri = URI "http://127.0.0.1:#{config.image_svc_port}#{ProjectHanlon.config.websvc_root}/image/%00%2Fetc%2Fpassword"
+      uri = URI "http://127.0.0.1:#{config.api_port}#{ProjectHanlon.config.websvc_root}/image/%00%2Fetc%2Fpassword"
       res = Net::HTTP.get_response(uri)
       res.code.should == '404'
     end
 
     it "should bail on 500 when presented with UTF-8 encoded directory traversal %C0%AF" do
-      uri = URI "http://127.0.0.1:#{config.image_svc_port}#{ProjectHanlon.config.websvc_root}/image/..%C0%AFGemfile"
+      uri = URI "http://127.0.0.1:#{config.api_port}#{ProjectHanlon.config.websvc_root}/image/..%C0%AFGemfile"
       res = Net::HTTP.get_response(uri)
       res.code.should == '500'
     end
 
     it "should bail on 500 when presented with UTF-8 encoded directory traversal %C1%1C" do
-      uri = URI "http://127.0.0.1:#{config.image_svc_port}#{ProjectHanlon.config.websvc_root}/image/..%C1%1CGemfile"
+      uri = URI "http://127.0.0.1:#{config.api_port}#{ProjectHanlon.config.websvc_root}/image/..%C1%1CGemfile"
       res = Net::HTTP.get_response(uri)
       res.code.should == '500'
     end

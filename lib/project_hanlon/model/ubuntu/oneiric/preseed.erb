@@ -6,7 +6,7 @@ d-i netcfg/get_domain string hanlonlab.local
 d-i netcfg/no_default_route boolean true
 d-i mirror/protocol string http
 d-i mirror/country string manual
-d-i mirror/http/hostname string <%= config.image_svc_host %>:<%= config.image_svc_port %>
+d-i mirror/http/hostname string <%= config.hanlon_server %>:<%= config.api_port %>
 d-i mirror/http/directory string <%= config.websvc_root %>/image/os/<%= @image_uuid %>
 d-i mirror/http/proxy string
 d-i clock-setup/utc boolean true

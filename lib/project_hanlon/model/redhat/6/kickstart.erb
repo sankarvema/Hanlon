@@ -3,7 +3,7 @@
 # see: http://docs.redhat.com/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Installation_Guide/s1-kickstart2-options.html
 
 install
-url --url=http://<%= config.image_svc_host %>:<%= config.image_svc_port %><%= config.websvc_root %>/image/os/<%= @image_uuid %>
+url --url=http://<%= config.hanlon_server %>:<%= config.api_port %><%= config.websvc_root %>/image/os/<%= @image_uuid %>
 text
 lang en_US.UTF-8
 keyboard us
