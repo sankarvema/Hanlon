@@ -43,7 +43,6 @@ require "project_hanlon/model"
 require "project_hanlon/tagging"
 require "project_hanlon/policies"
 require "project_hanlon/image_service"
-require "project_hanlon/power_control"
 require "project_hanlon/broker"
 
 

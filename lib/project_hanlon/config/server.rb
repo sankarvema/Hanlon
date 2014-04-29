@@ -38,9 +38,9 @@ module ProjectHanlon
       # mk_log_level should be 'Logger::FATAL', 'Logger::ERROR', 'Logger::WARN',
       # 'Logger::INFO', or 'Logger::DEBUG' (default is 'Logger::ERROR')
       attr_accessor :mk_log_level
-      attr_accessor :mk_tce_mirror_uri
-      attr_accessor :mk_tce_install_list
-      attr_accessor :mk_kmod_install_list
+      attr_accessor :mk_tce_mirror
+      attr_accessor :mk_tce_install_list_uri
+      attr_accessor :mk_kmod_install_list_uri
       attr_accessor :mk_gem_mirror
       attr_accessor :mk_gemlist_uri
 
@@ -197,15 +197,15 @@ EOT
 
       # reader methods for a few derived parameters are defined here
       def mk_uri
-        "http://#{config['hanlon_server']}:#{config['api_port']}"
+        "http://#{hanlon_server}:#{api_port}"
       end
 
       def mk_register_path
-        "#{config['websvc_root']}/node/register"
+        "#{websvc_root}/node/register"
       end
 
       def mk_checkin_path
-        "#{config['websvc_root']}/node/checkin"
+        "#{websvc_root}/node/checkin"
       end
 
       # Save the current configuration instance as YAML to disk.
