@@ -154,9 +154,9 @@ module ProjectHanlon
           'mk_log_level'             => "Logger::ERROR",
           'mk_gem_mirror'            => "http://localhost:2158/gem-mirror",
           'mk_gemlist_uri'           => "/gems/gem.list",
-          'mk_tce_mirror'            => "http://localhost:2157",
-          'mk_tce_install_list_uri'  => "/tinycorelinux/tce-install-list",
-          'mk_kmod_install_list_uri' => "/tinycorelinux/kmod-install-list",
+          'mk_tce_mirror'            => "http://localhost:2157/tinycorelinux",
+          'mk_tce_install_list_uri'  => "/tce-install-list",
+          'mk_kmod_install_list_uri' => "/kmod-install-list",
 
           'image_path'               => $img_svc_path,
 
