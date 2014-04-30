@@ -18,7 +18,7 @@ module ProjectHanlon
       def initialize(args)
         super(args)
         @hidden          = false
-        @uri_string = ProjectHanlon.config.mk_uri + ProjectHanlon.config.websvc_root + '/broker'
+        @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/broker'
       end
 
       def slice_commands

@@ -22,7 +22,7 @@ module ProjectHanlon
         super(args)
         @hidden     = false
         @policies   = ProjectHanlon::Policies.instance
-        @uri_string = ProjectHanlon.config.mk_uri + ProjectHanlon.config.websvc_root + '/policy'
+        @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/policy'
       end
 
       def slice_commands

@@ -24,7 +24,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     @web_command = false
     @prev_args = Stack.new
     @hidden = true
-    @uri_root = ProjectHanlon.config.mk_uri + ProjectHanlon.config.websvc_root
+    @uri_root = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
     @data = get_data
   end
 

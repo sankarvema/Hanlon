@@ -13,7 +13,7 @@ module Hanlon
       def request_from_hanlon_subnet?(remote_addr)
         # First, retrieve a couple of parameters (the Hanlon server's IP address
         # and the array of interfaces on the local machine)
-        hanlon_server_ip = ProjectHanlon.config.mk_uri.match(/\/\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)[1]
+        hanlon_server_ip = ProjectHanlon.config.hanlon_server
         interface_array = Facter::Util::IP.get_interfaces
         # then, test each interface to see if the subnet for that interface
         # includes the remote_addr IP address; return true if any of the interfaces

@@ -11,7 +11,7 @@ module ProjectHanlon
       def initialize(args)
         super(args)
         @hidden = false
-        @uri_string = ProjectHanlon.config.mk_uri + ProjectHanlon.config.websvc_root + '/tag'
+        @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/tag'
       end
 
       def slice_commands

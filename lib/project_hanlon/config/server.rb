@@ -16,6 +16,7 @@ module ProjectHanlon
       extend  ProjectHanlon::Logging
 
       attr_accessor :hanlon_server
+      attr_reader   :hanlon_uri
 
       attr_accessor :persist_mode
       attr_accessor :persist_host
@@ -30,7 +31,6 @@ module ProjectHanlon
 
       attr_accessor :mk_checkin_interval
       attr_accessor :mk_checkin_skew
-      attr_reader   :mk_uri
       attr_accessor :mk_fact_excl_pattern
       attr_reader   :mk_register_path       # register: /hanlon/api/v1/node/register
       attr_reader   :mk_checkin_path        # checkin:  /hanlon/api/v1/node/checkin
@@ -196,7 +196,7 @@ module ProjectHanlon
 EOT
 
       # reader methods for a few derived parameters are defined here
-      def mk_uri
+      def hanlon_uri
         "http://#{hanlon_server}:#{api_port}"
       end
 
