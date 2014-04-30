@@ -32,8 +32,6 @@ module ProjectHanlon
       attr_accessor :mk_checkin_interval
       attr_accessor :mk_checkin_skew
       attr_accessor :mk_fact_excl_pattern
-      attr_reader   :mk_register_path       # register: /hanlon/api/v1/node/register
-      attr_reader   :mk_checkin_path        # checkin:  /hanlon/api/v1/node/checkin
 
       # mk_log_level should be 'Logger::FATAL', 'Logger::ERROR', 'Logger::WARN',
       # 'Logger::INFO', or 'Logger::DEBUG' (default is 'Logger::ERROR')
@@ -195,17 +193,9 @@ module ProjectHanlon
 #
 EOT
 
-      # reader methods for a few derived parameters are defined here
+      # reader methods for derived parameters are defined here
       def hanlon_uri
         "http://#{hanlon_server}:#{api_port}"
-      end
-
-      def mk_register_path
-        "#{websvc_root}/node/register"
-      end
-
-      def mk_checkin_path
-        "#{websvc_root}/node/checkin"
       end
 
       # Save the current configuration instance as YAML to disk.
