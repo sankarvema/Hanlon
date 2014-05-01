@@ -1,12 +1,15 @@
 # Project Hanlon
 
-[![Build Status](https://jenkins.puppetlabs.com/job/hanlon-acceptance-matrix/badge/icon)
-
 ## Introduction
 
 Project Hanlon is a power control, provisioning, and management application
 designed to deploy both bare-metal and virtual computer resources. Hanlon
 provides broker plugins for integration with third party such as Puppet.
+
+Hanlon started its life as Razor so you may encounter links to original created-for-Razor content.  The following links, for example, provide a background info about the project:
+
+* Razor Overview: [Nickapedia.com](http://nickapedia.com/2012/05/21/lex-parsimoniae-cloud-provisioning-with-a-razor)
+* Razor Session from PuppetConf 2012: [Youtube](http://www.youtube.com/watch?v=cR1bOg0IU5U)
 
 This is a 0.x release, so the CLI and API is still in flux and may
 change. Make sure you __read the release notes before upgrading__
@@ -41,14 +44,10 @@ input about your experiences with Project Hanlon, and provisioning in general,
 on the mailing list as we discuss how the project should solve problems.
 
 
-## Installation
+## Installation  
 
-* Razor Overview: [Nickapedia.com](http://nickapedia.com/2012/05/21/lex-parsimoniae-cloud-provisioning-with-a-razor)
-* Razor Session from PuppetConf 2012: [Youtube](http://www.youtube.com/watch?v=cR1bOg0IU5U)
+Follow wiki documentation for [Installation Overview](https://github.com/csc/Hanlon/wiki/Installation-%28Overview%29)
 
-Follow wiki documentation for installation process:
-
-https://github.com/csc/Hanlon/wiki/installation
 
 ## Project Committers
 
@@ -72,8 +71,8 @@ into any errors or omissions in that list.
 ## Hanlon MicroKernel
 * The Hanlon MicroKernel project:
 [https://github.com/csc/Hanlon-Microkernel](https://github.com/csc/Hanlon-Microkernel)
-* The Hanlon MK images are officially available at:
-[https://downloads.puppetlabs.com/hanlon/](https://downloads.puppetlabs.com/hanlon/)
+* The Razor images are officially available at:
+[https://downloads.puppetlabs.com/razor/](https://downloads.puppetlabs.com/razor/)
 
 ## Environment Variables
 * $HANLON\_HOME: Hanlon installation root directory.
@@ -102,8 +101,8 @@ See [the LICENSE file][license] for full details.
 
 ## Reference
 
-* Hanlon Overview: [Nickapedia.com](http://nickapedia.com/2012/05/21/lex-parsimoniae-cloud-provisioning-with-a-hanlon)
-* Puppet Labs Hanlon Module:[Puppetlabs.com](http://puppetlabs.com/blog/introducing-hanlon-a-next-generation-provisioning-solution/)
+* Razor Overview: [Nickapedia.com](http://nickapedia.com/2012/05/21/lex-parsimoniae-cloud-provisioning-with-a-razor)
+* Puppet Labs Razor Module:[Puppetlabs.com](http://puppetlabs.com/blog/introducing-razor-a-next-generation-provisioning-solution/)
 
 
 [puppet-hanlon]: https://groups.google.com/forum/?fromgroups#!forum/puppet-hanlon
