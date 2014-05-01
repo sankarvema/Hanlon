@@ -19,7 +19,7 @@ module ProjectHanlon
       def initialize(args)
         super(args)
         @hidden = false
-        @uri_string = ProjectHanlon.config.mk_uri + HANLON_URI_ROOT + '/image'
+        @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/image'
         # get the available image types (input type must match one of these)
         @image_types = {
             :mk =>       {
@@ -197,24 +197,24 @@ module ProjectHanlon
 
       # utility methods (used to add various types of images)
 
-      def add_mk(new_image, iso_path, image_svc_path)
-        new_image.add(iso_path, image_svc_path, nil)
+      def add_mk(new_image, iso_path, image_path)
+        new_image.add(iso_path, image_path, nil)
       end
 
-      def add_esxi(new_image, iso_path, image_svc_path)
-        new_image.add(iso_path, image_svc_path, nil)
+      def add_esxi(new_image, iso_path, image_path)
+        new_image.add(iso_path, image_path, nil)
       end
 
-      def add_xenserver(new_image, iso_path, image_svc_path)
-        new_image.add(iso_path, image_svc_path, nil)
+      def add_xenserver(new_image, iso_path, image_path)
+        new_image.add(iso_path, image_path, nil)
       end
 
-      def add_os(new_image, iso_path, image_svc_path, os_name, os_version)
+      def add_os(new_image, iso_path, image_path, os_name, os_version)
         raise ProjectHanlon::Error::Slice::MissingArgument,
               'image name must be included for OS images' unless os_name && os_name != ""
         raise ProjectHanlon::Error::Slice::MissingArgument,
               'image version must be included for OS images' unless os_version && os_version != ""
-        new_image.add(iso_path, image_svc_path, {:os_version => os_version, :os_name => os_name})
+        new_image.add(iso_path, image_path, {:os_version => os_version, :os_name => os_name})
       end
 
       def insert_image(image_obj)

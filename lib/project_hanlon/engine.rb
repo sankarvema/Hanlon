@@ -29,7 +29,7 @@ module ProjectHanlon
 
     def default_mk
       mk_images = []
-      get_data.fetch_all_objects(:images).each { |i| mk_images << i if i.path_prefix == "mk" && i.verify(ProjectHanlon.config.image_svc_path) == true }
+      get_data.fetch_all_objects(:images).each { |i| mk_images << i if i.path_prefix == "mk" && i.verify(ProjectHanlon.config.image_path) == true }
 
       if mk_images.count > 0
         mk_image = nil
@@ -417,9 +417,9 @@ module ProjectHanlon
         end
       }
       data = get_data
-      unless image.remove(ProjectHanlon.config.image_svc_path)
-        logger.error 'attempt to remove image from image_svc_path failed'
-        raise RuntimeError, "Attempt to remove image '#{image.uuid}' from the image_svc_path failed"
+      unless image.remove(ProjectHanlon.config.image_path)
+        logger.error 'attempt to remove image from image_path failed'
+        raise RuntimeError, "Attempt to remove image '#{image.uuid}' from the image_path failed"
       end
       return data.delete_object(image)
     end

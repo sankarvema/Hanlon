@@ -26,14 +26,14 @@ module ProjectHanlon
         from_hash(hash) unless hash == nil
       end
 
-      def set_image_svc_path(image_svc_path)
-        @_image_svc_path = image_svc_path + "/" + @path_prefix
+      def set_lcl_image_path(lcl_image_path)
+        @_lcl_image_path = lcl_image_path + "/" + @path_prefix
       end
 
       # Used to add an image to the service
       # Within each child class the methods are overridden for that child template
-      def add(src_image_path, image_svc_path, extra)
-        set_image_svc_path(image_svc_path)
+      def add(src_image_path, lcl_image_path, extra)
+        set_lcl_image_path(lcl_image_path)
 
         begin
           # Get full path
@@ -95,21 +95,21 @@ module ProjectHanlon
 
       # Used to remove an image to the service
       # Within each child class the methods are overridden for that child template
-      def remove(image_svc_path)
-        set_image_svc_path(image_svc_path) unless @_image_svc_path != nil
+      def remove(lcl_image_path)
+        set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
         cleanup([false ,""])
         !File.directory?(image_path)
       end
 
       # Used to verify an image within the filesystem (local/remote/possible Glance)
       # Within each child class the methods are overridden for that child emplate
-      def verify(image_svc_path)
-        set_image_svc_path(image_svc_path) unless @_image_svc_path != nil
+      def verify(lcl_image_path)
+        set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
         get_dir_hash(image_path) == @verification_hash
       end
 
       def image_path
-        @_image_svc_path + "/" + @uuid
+        @_lcl_image_path + "/" + @uuid
       end
 
       def is_mounted?(src_image_path)
@@ -193,8 +193,8 @@ module ProjectHanlon
       end
 
       def print_items
-        set_image_svc_path(ProjectHanlon.config.image_svc_path)
-        return @uuid, @description, @filename, image_path.to_s, "#{verify(@_image_svc_path) ? "Valid".green : "Broken/Missing".red}"
+        set_lcl_image_path(ProjectHanlon.config.image_path)
+        return @uuid, @description, @filename, image_path.to_s, "#{verify(@_lcl_image_path) ? "Valid".green : "Broken/Missing".red}"
       end
 
       def print_item_header
@@ -202,8 +202,8 @@ module ProjectHanlon
       end
 
       def print_item
-        set_image_svc_path(ProjectHanlon.config.image_svc_path)
-        return @uuid, @description, @filename, image_path.to_s, "#{verify(@_image_svc_path) ? "Valid".green : "Broken/Missing".red}"
+        set_lcl_image_path(ProjectHanlon.config.image_path)
+        return @uuid, @description, @filename, image_path.to_s, "#{verify(@_lcl_image_path) ? "Valid".green : "Broken/Missing".red}"
       end
 
       def line_color

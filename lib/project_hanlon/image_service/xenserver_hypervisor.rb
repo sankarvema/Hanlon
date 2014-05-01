@@ -13,11 +13,11 @@ module ProjectHanlon
         from_hash(hash) unless hash == nil
       end
 
-      def add(src_image_path, image_svc_path, extra)
+      def add(src_image_path, lcl_image_path, extra)
         begin
-          resp = super(src_image_path, image_svc_path, extra)
+          resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
-            unless verify(image_svc_path)
+            unless verify(lcl_image_path)
               logger.error "Missing metadata"
               return [false, "Missing metadata"]
             end
@@ -31,8 +31,8 @@ module ProjectHanlon
         end
       end
 
-      def verify(image_svc_path)
-        unless super(image_svc_path)
+      def verify(lcl_image_path)
+        unless super(lcl_image_path)
           logger.error "File structure is invalid"
           return false
         end
@@ -57,8 +57,8 @@ module ProjectHanlon
         end
       end
 
-      def print_image_info(image_svc_path)
-        super(image_svc_path)
+      def print_image_info(lcl_image_path)
+        super(lcl_image_path)
         print "\tVersion: "
         print "#{@xenserver_version}  \n".green
       end

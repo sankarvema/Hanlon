@@ -23,7 +23,7 @@ module ProjectHanlon
       # TODO - add logging ability from iPXE back to Hanlon for detecting node errors
 
       def get_boot_script(default_mk)
-        image_svc_uri = "http://#{@config.image_svc_host}:#{@config.image_svc_port}#{@config.websvc_root}/image/mk/#{default_mk.uuid}"
+        image_svc_uri = "http://#{@config.hanlon_server}:#{@config.api_port}#{@config.websvc_root}/image/mk/#{default_mk.uuid}"
         rz_mk_boot_debug_level = @config.rz_mk_boot_debug_level
         rz_mk_boot_kernel_args = @config.rz_mk_boot_kernel_args
         # only allow values of 'quiet' or 'debug' for this parameter; if it's anything else set it

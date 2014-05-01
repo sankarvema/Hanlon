@@ -15,7 +15,8 @@ module ProjectHanlon
       include ProjectHanlon::Logging
       extend  ProjectHanlon::Logging
 
-      attr_accessor :image_svc_host
+      attr_accessor :hanlon_server
+      attr_reader   :hanlon_uri
 
       attr_accessor :persist_mode
       attr_accessor :persist_host
@@ -27,33 +28,24 @@ module ProjectHanlon
       attr_accessor :websvc_root
       attr_accessor :admin_port
       attr_accessor :api_port
-      attr_accessor :image_svc_port
-      attr_accessor :mk_tce_mirror_port
 
       attr_accessor :mk_checkin_interval
       attr_accessor :mk_checkin_skew
-      attr_accessor :mk_uri
       attr_accessor :mk_fact_excl_pattern
-      attr_accessor :mk_register_path # : /project_hanlon/api/v1/node/register
-      attr_accessor :mk_checkin_path # checkin: /project_hanlon/api/v1/node/checkin
 
       # mk_log_level should be 'Logger::FATAL', 'Logger::ERROR', 'Logger::WARN',
       # 'Logger::INFO', or 'Logger::DEBUG' (default is 'Logger::ERROR')
       attr_accessor :mk_log_level
-      attr_accessor :mk_tce_mirror_uri
+      attr_accessor :mk_tce_mirror
       attr_accessor :mk_tce_install_list_uri
       attr_accessor :mk_kmod_install_list_uri
-      attr_accessor :mk_gem_mirror_uri
+      attr_accessor :mk_gem_mirror
       attr_accessor :mk_gemlist_uri
 
-      attr_accessor :image_svc_path
+      attr_accessor :image_path
 
       attr_accessor :register_timeout
       attr_accessor :force_mk_uuid
-
-      attr_accessor :default_ipmi_power_state
-      attr_accessor :default_ipmi_username
-      attr_accessor :default_ipmi_password
 
       attr_accessor :daemon_min_cycle_time
 
@@ -108,7 +100,6 @@ module ProjectHanlon
           # including rewriting the configuration file iff it does not exist.
           unless config
             config = ProjectHanlon::Config::Server.new
-
             # @todo danielp 2013-03-13: ...the rewrite.  This is probably a
             # terrible idea, even without the original TOCTOU race on
             # the file.
@@ -140,7 +131,7 @@ module ProjectHanlon
         api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
         default_websvc_root = "#{base_path}/#{api_version}"
         defaults = {
-          'image_svc_host'           => get_an_ip,
+          'hanlon_server'            => get_an_ip,
           'persist_mode'             => :mongo,
           'persist_host'             => "127.0.0.1",
           'persist_port'             => 27017,
@@ -151,13 +142,9 @@ module ProjectHanlon
           'websvc_root'              => default_websvc_root,
           'admin_port'               => 8025,
           'api_port'                 => 8026,
-          'image_svc_port'           => 8026,
-          'mk_tce_mirror_port'       => 2157,
 
           'mk_checkin_interval'      => 60,
           'mk_checkin_skew'          => 5,
-          'mk_register_path'         => "#{default_websvc_root}/node/register",
-          'mk_checkin_path'          => "#{default_websvc_root}/node/checkin",
           'mk_fact_excl_pattern'     => [
             "(^facter.*$)", "(^id$)", "(^kernel.*$)", "(^memoryfree$)","(^memoryfree_mb$)",
             "(^operating.*$)", "(^osfamily$)", "(^path$)", "(^ps$)",
@@ -165,17 +152,16 @@ module ProjectHanlon
             "(^timezone$)", "(^uniqueid$)", "(^uptime.*$)","(.*json_str$)"
           ].join("|"),
           'mk_log_level'             => "Logger::ERROR",
-          'mk_gem_mirror_uri'        => "http://localhost:2158/gem-mirror",
-          'mk_gemlist_uri'           => "http://localhost:2158/gem-mirror/gems/gem.list",
+          'mk_gem_mirror'            => "http://localhost:2158/gem-mirror",
+          'mk_gemlist_uri'           => "/gems/gem.list",
+          'mk_tce_mirror'            => "http://localhost:2157/tinycorelinux",
+          'mk_tce_install_list_uri'  => "/tce-install-list",
+          'mk_kmod_install_list_uri' => "/kmod-install-list",
 
-          'image_svc_path'           => $img_svc_path,
+          'image_path'               => $img_svc_path,
 
           'register_timeout'         => 120,
           'force_mk_uuid'            => "",
-
-          'default_ipmi_power_state' => 'off',
-          'default_ipmi_username'    => 'ipmi_user',
-          'default_ipmi_password'    => 'ipmi_password',
 
           'daemon_min_cycle_time'    => 30,
 
@@ -194,17 +180,6 @@ module ProjectHanlon
           'rz_mk_boot_kernel_args'   => ""
         }
 
-        # A handful of calculated default values that depend on pre-existing
-        # default values.
-        defaults['mk_uri'] =
-          "http://#{defaults['image_svc_host']}:#{defaults['api_port']}"
-        defaults['mk_tce_mirror_uri'] =
-          "http://localhost:#{defaults['mk_tce_mirror_port']}/tinycorelinux"
-        defaults['mk_tce_install_list_uri'] =
-          defaults['mk_tce_mirror_uri'] + "/tce-install-list"
-        defaults['mk_kmod_install_list_uri'] =
-          defaults['mk_tce_mirror_uri'] + "/kmod-install-list"
-
         return defaults
       end
 
@@ -217,6 +192,11 @@ module ProjectHanlon
 #
 #
 EOT
+
+      # reader methods for derived parameters are defined here
+      def hanlon_uri
+        "http://#{hanlon_server}:#{api_port}"
+      end
 
       # Save the current configuration instance as YAML to disk.
       #

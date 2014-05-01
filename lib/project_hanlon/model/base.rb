@@ -219,11 +219,11 @@ module ProjectHanlon
       end
 
       def image_svc_uri
-        "http://#{config.image_svc_host}:#{config.image_svc_port}#{config.websvc_root}/image/#{@image_prefix}"
+        "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}/image/#{@image_prefix}"
       end
 
       def api_svc_uri
-        "http://#{config.image_svc_host}:#{config.api_port}#{config.websvc_root}"
+        "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}"
       end
 
       def web_create_metadata(provided_metadata)

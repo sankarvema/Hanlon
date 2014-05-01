@@ -147,10 +147,10 @@ module Hanlon
             res = []
             unless image_type == "os"
               res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
-                                   ProjectHanlon.config.image_svc_path
+                                   ProjectHanlon.config.image_path
             else
               res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
-                                   ProjectHanlon.config.image_svc_path, os_name, os_version
+                                   ProjectHanlon.config.image_path, os_name, os_version
             end
             raise ProjectHanlon::Error::Slice::InternalError, res[1] unless res[0]
             raise ProjectHanlon::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)

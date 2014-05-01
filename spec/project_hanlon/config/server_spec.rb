@@ -87,14 +87,14 @@ describe ProjectHanlon::Config::Server do
       Tempfile.open('this-config-file-has-missing-values') do |file|
         file.puts <<YAML
 --- !ruby/object:ProjectHanlon::Config::Server
-image_svc_host: 8.8.8.8
+hanlon_server: 8.8.8.8
 YAML
         file.flush
         file.fsync rescue nil   # can't do much if this fails
 
         $config_server_path = file.path
         config = ProjectHanlon::Config::Server.instance
-        config.image_svc_host.should == '8.8.8.8' # present, and...
+        config.hanlon_server.should == '8.8.8.8' # present, and...
         config.persist_port.should   == 27017     # ...missing
       end
     end
@@ -116,10 +116,10 @@ YAML
   describe "defaults" do
     subject('defaults') { ProjectHanlon::Config::Server.instance.defaults }
     it { should be_an_instance_of Hash }
-    it { should include 'image_svc_host' }
+    it { should include 'hanlon_server' }
 
-    it "should get the local IP for the default image_svc_host" do
-      defaults['image_svc_host'].
+    it "should get the local IP for the default hanlon_server" do
+      defaults['hanlon_server'].
         should == ProjectHanlon::Config::Server.instance.get_an_ip
     end
 

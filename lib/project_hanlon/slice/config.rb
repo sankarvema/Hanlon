@@ -16,7 +16,7 @@ module ProjectHanlon
         super(args)
         @hidden = true
         @engine = ProjectHanlon::Engine.instance
-        @uri_string = ProjectHanlon.config.mk_uri + HANLON_URI_ROOT + '/config'
+        @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/config'
       end
 
       def slice_commands

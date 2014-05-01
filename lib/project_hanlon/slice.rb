@@ -14,9 +14,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # Load service config
   PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.to_s
   SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
-  # and initialize a constant pointing to the root of all Hanlon URIs
-  HANLON_URI_ROOT = SERVICE_CONFIG[:config][:swagger_ui][:base_path] + '/' +
-      SERVICE_CONFIG[:config][:swagger_ui][:api_version]
 
   # Initializes the Slice Base
   # @param [Array] args
@@ -27,7 +24,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     @web_command = false
     @prev_args = Stack.new
     @hidden = true
-    @uri_root = ProjectHanlon.config.mk_uri + ProjectHanlon.config.websvc_root
+    @uri_root = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
     @data = get_data
   end
 

@@ -17,7 +17,7 @@ module ProjectHanlon
       def initialize(args)
         super(args)
         @hidden = false
-        @uri_string = ProjectHanlon.config.mk_uri + HANLON_URI_ROOT + '/model'
+        @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/model'
       end
 
       def slice_commands
@@ -267,7 +267,7 @@ module ProjectHanlon
       end
 
       def verify_image(model, image_uuid)
-        uri = URI.parse ProjectHanlon.config.mk_uri + HANLON_URI_ROOT + "/image/#{image_uuid}"
+        uri = URI.parse ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + "/image/#{image_uuid}"
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
         result, response = rz_http_get(uri, include_http_response)

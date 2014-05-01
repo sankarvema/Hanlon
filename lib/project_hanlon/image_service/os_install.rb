@@ -14,9 +14,9 @@ module ProjectHanlon
         from_hash(hash) unless hash == nil
       end
 
-      def add(src_image_path, image_svc_path, extra)
+      def add(src_image_path, lcl_image_path, extra)
         begin
-          resp = super(src_image_path, image_svc_path, extra)
+          resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
             @os_name = extra[:os_name]
             @os_version = extra[:os_version]
@@ -29,8 +29,8 @@ module ProjectHanlon
         end
       end
 
-      def verify(image_svc_path)
-        super(image_svc_path)
+      def verify(lcl_image_path)
+        super(lcl_image_path)
       end
 
       def print_item_header

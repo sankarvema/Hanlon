@@ -299,11 +299,11 @@ module ProjectHanlon
       end
 
       def image_svc_uri
-        "http://#{config.image_svc_host}:#{config.image_svc_port}#{config.websvc_root}/image/xenserver"
+        "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}/image/xenserver"
       end
 
       def api_svc_uri
-        "http://#{config.image_svc_host}:#{config.api_port}#{config.websvc_root}"
+        "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}"
       end
 
       # ERB.result(binding) is failing in Ruby 1.9.2 and 1.9.3 so template is processed in the def block.
