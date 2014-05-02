@@ -27,12 +27,9 @@ get started quickly.  A big part of that is being available to help you figure
 out the right way to solve a problem, and to make sure you get up to
 speed quickly.
 
-You can always reach out and ask for help:
-
-* by email or through the web on the [hanlon-project@googlegroups.com][hanlon-project]
-  mailing list.  (membership is required to post.)
-* by IRC, through [#hanlon-project][irc] on [freenode][freenode].
-
+You can always reach out and ask for help by email or through the web on the [hanlon-project@googlegroups.com][hanlon-project]
+  mailing list.  (membership is required to post.)  
+  
 If you want to help improve Hanlon directly we have a
 [fairly detailed CONTRIBUTING guide in the repository][contrib] that you can
 use to understand how code gets in to the system, how the project runs, and
