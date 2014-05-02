@@ -29,9 +29,9 @@ speed quickly.
 
 You can always reach out and ask for help:
 
-* by email or through the web on the [puppet-hanlon@googlegroups.com][puppet-hanlon]
+* by email or through the web on the [hanlon-project@googlegroups.com][hanlon-project]
   mailing list.  (membership is required to post.)
-* by IRC, through [#puppet-hanlon][irc] on [freenode][freenode].
+* by IRC, through [#hanlon-project][irc] on [freenode][freenode].
 
 If you want to help improve Hanlon directly we have a
 [fairly detailed CONTRIBUTING guide in the repository][contrib] that you can
@@ -105,8 +105,8 @@ See [the LICENSE file][license] for full details.
 * Puppet Labs Razor Module:[Puppetlabs.com](http://puppetlabs.com/blog/introducing-razor-a-next-generation-provisioning-solution/)
 
 
-[puppet-hanlon]: https://groups.google.com/forum/?fromgroups#!forum/puppet-hanlon
-[irc]:          https://webchat.freenode.net/?channels=puppet-hanlon
+[puppet-hanlon]: https://groups.google.com/d/forum/hanlon-project
+[irc]:          https://webchat.freenode.net/?channels=hanlon-project
 [freenode]:     http://freenode.net/
 [contrib]:      https://github.com/csc/Hanlon/blob/master/CONTRIBUTING.md
 [license]:      https://github.com/csc/Hanlon/blob/master/LICENSE
