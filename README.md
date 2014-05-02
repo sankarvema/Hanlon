@@ -105,7 +105,7 @@ See [the LICENSE file][license] for full details.
 * Puppet Labs Razor Module:[Puppetlabs.com](http://puppetlabs.com/blog/introducing-razor-a-next-generation-provisioning-solution/)
 
 
-[puppet-hanlon]: https://groups.google.com/d/forum/hanlon-project
+[hanlon-project]: https://groups.google.com/d/forum/hanlon-project
 [irc]:          https://webchat.freenode.net/?channels=hanlon-project
 [freenode]:     http://freenode.net/
 [contrib]:      https://github.com/csc/Hanlon/blob/master/CONTRIBUTING.md
