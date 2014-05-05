@@ -17,6 +17,7 @@ module Hanlon
       #if the service.yaml file includes the necessary configuration parameter (and it's
       # set to true), then make the swagger-ui-based documentation available as part of
       # the UI
+      puts "calling api"
       if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
         # first, grab a few parameters we'll need from the service.yaml file
         mount_path = SERVICE_CONFIG[:config][:swagger_ui][:mount_path]
