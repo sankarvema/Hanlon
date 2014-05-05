@@ -13,6 +13,7 @@ class ProjectHanlon::CLI
   def initialize
     @obj = ProjectHanlon::Object.new
     @logger = @obj.get_logger
+
   end
 
   # Run a single invocation of a command line from Hanlon; this translates the
