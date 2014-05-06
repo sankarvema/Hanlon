@@ -4,6 +4,7 @@
 .buildpath
 .config
 .project
+.idea
 coverage
 InstalledFiles
 lib/bundler/man
@@ -15,6 +16,7 @@ test/version_tmp
 tmp
 nohup.out
 log/*.log
+scripts
 
 # Sublime Text artifacts
 *.sublime*
@@ -25,10 +27,10 @@ _yardoc
 doc/
 
 /.rvmrc
-/conf/occam_server.conf
+/conf/hanlon_server.conf
 /image
 /node_modules
-/occam_daemon.pid
+/hanlon_daemon.pid
 /Gemfile.lock
 
 /ext/packaging
