@@ -6,38 +6,54 @@ calling api
 Initiatlizing hanlon::web services
 >> Starting new thread to remove inactive nodes; cycle time => 30, timeout => 180
 >> Starting new thread to print status of Hanlon-related jobs...
-  >> At 2014-05-05 09:11:16 -0400; All jobs running => [every_1399295476.023_1734429650, every_1399295476.027_368220038]
+  >> At 2014-05-06 01:57:41 -0400; All jobs running => [every_1399355861.597_2106606726, every_1399355861.606_1506351718]
 added application to pool, size now = 1
-  >> At 2014-05-05 09:11:16 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
 Starting ProtocolHandler ["http-bio-192.168.109.5-8026"]
+  >> At 2014-05-06 01:57:41 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
 the base uri>>> /hanlon/api
 hanlon:api:v1:config before do
 hanlon:api:v1:config get do
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-  >> At 2014-05-05 09:34:45 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
-  >> At 2014-05-05 12:30:22 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
-  >> At 2014-05-05 12:35:22 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
-  >> At 2014-05-05 12:40:23 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
+  >> At 2014-05-06 02:02:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
 the base uri>>> /hanlon/api
 hanlon:api:v1:config before do
-  >> At 2014-05-05 12:45:23 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
+hanlon:api:v1:config get do
+  >> At 2014-05-06 02:07:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
 the base uri>>> /hanlon/api
 hanlon:api:v1:config before do
-the base uri>>> /hanlon/api
-hanlon:api:v1:config before do
-  >> At 2014-05-05 12:50:23 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-the base uri>>> /hanlon/api
-  >> At 2014-05-05 12:55:23 -0400; Hanlon-related jobs running => [every_1399295476.023_1734429650]
+hanlon:api:v1:config get do
+  >> At 2014-05-06 02:12:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:17:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:22:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:27:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:32:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:37:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:42:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:47:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:52:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 02:57:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:02:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:07:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:12:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:17:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:22:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:27:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:32:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:37:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:42:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:47:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:52:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 03:57:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:02:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:07:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:12:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:17:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:22:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:27:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:32:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:37:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:42:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:47:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:52:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 04:57:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 05:02:48 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
+  >> At 2014-05-06 05:07:48 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]

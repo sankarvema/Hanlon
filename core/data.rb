@@ -1,6 +1,6 @@
-require 'project_hanlon/utility'
-require 'project_hanlon/logging'
-require 'project_hanlon/persist/controller'
+require 'utility'
+require 'logging'
+require 'persist/controller'
 
 require "yaml"
 require "singleton"

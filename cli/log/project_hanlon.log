@@ -1,0 +1,1 @@
+E, [2014-05-06T05:08:01.656000 #5194] ERROR -- ProjectHanlon::Object#get_logger: Hanlon slice error: uninitialized constant ProjectHanlon::Slice

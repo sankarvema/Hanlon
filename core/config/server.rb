@@ -3,8 +3,8 @@ require 'logger'
 require 'fcntl'
 require 'yaml'
 require 'project_hanlon'
-require 'project_hanlon/utility'
-require 'project_hanlon/logging'
+require 'utility'
+require 'logging'
 
 # This class represents the ProjectHanlon configuration. It is stored persistently in
 # './conf/hanlon_server.conf' and editing by the user
@@ -58,8 +58,9 @@ module ProjectHanlon
 
       # get default values used to construct some of these configuration parameters
       # from the 'service.yaml' file used to configure the Hanlon server instance
-      PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.parent.to_s
-      SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
+      #PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.parent.to_s
+      #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
+      SERVICE_CONFIG = YAML.load_file("conf/service.yaml")
 
       # Return a fully configured instance of the configuration data.
       #

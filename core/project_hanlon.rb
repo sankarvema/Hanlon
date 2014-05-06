@@ -1,8 +1,15 @@
-$hanlon_root = File.dirname(__FILE__).sub(/\/lib$/,"")
-$config_server_path = "#{$hanlon_root}/conf/hanlon_server.conf"
-$img_svc_path = "#{$hanlon_root}/image"
-$logging_path = "#{$hanlon_root}/log/project_hanlon.log"
-$temp_path = "#{$hanlon_root}/tmp"
+#$hanlon_root = File.dirname(__FILE__).sub(/\/lib$/,"")
+#$config_server_path = "#{$hanlon_root}/conf/hanlon_server.conf"
+#$img_svc_path = "#{$hanlon_root}/image"
+#$logging_path = "#{$hanlon_root}/log/project_hanlon.log"
+#$temp_path = "#{$hanlon_root}/tmp"
+
+puts "running with $app_root #{$app_root}"
+
+$config_server_path = "#{$app_root}/conf/hanlon_server.conf"
+$img_svc_path = "#{$app_root}/image"
+$logging_path = "#{$app_root}/log/project_hanlon.log"
+$temp_path = "#{$app_root}/tmp"
 
 # In order to work correctly, we need to ensure that ENV['HOME'] has a
 # sensible and correct value.  At least the Net::SSH gem will file if this is
@@ -27,23 +34,23 @@ end
 
 
 require 'set'
-require "project_hanlon/version"
-require "project_hanlon/object"
-require "project_hanlon/utility"
-require "project_hanlon/logging"
-require "project_hanlon/error"
-require "project_hanlon/data"
-require "project_hanlon/config"
-require "project_hanlon/node"
-require "project_hanlon/policy"
-require "project_hanlon/engine"
-require "project_hanlon/slice"
-require "project_hanlon/persist"
-require "project_hanlon/model"
-require "project_hanlon/tagging"
-require "project_hanlon/policies"
-require "project_hanlon/image_service"
-require "project_hanlon/broker"
+require "version"
+require "object"
+require "utility"
+require "logging"
+require "error"
+require "data"
+require "config"
+#require "project_hanlon/node"
+#require "project_hanlon/policy"
+#require "project_hanlon/engine"
+#require "project_hanlon/slice"
+#require "project_hanlon/persist"
+#require "project_hanlon/model"
+#require "project_hanlon/tagging"
+#require "project_hanlon/policies"
+#require "project_hanlon/image_service"
+#require "project_hanlon/broker"
 
 
 # Root ProjectHanlon namespace

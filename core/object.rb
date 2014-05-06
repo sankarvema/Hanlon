@@ -1,8 +1,8 @@
 require "uuid"
 require "base62"
 require "colored"
-require "project_hanlon/utility"
-require "project_hanlon/logging"
+require "utility"
+require "logging"
 
 # Common object for all base ProjectHanlon objects
 # @abstract

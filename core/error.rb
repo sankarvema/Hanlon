@@ -1,6 +1,6 @@
 $std_counter = 0
 
-require "project_hanlon/error/generic"
+require "error/generic"
 require "require_all"
 
 module ProjectHanlon
