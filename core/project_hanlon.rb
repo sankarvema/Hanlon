@@ -37,7 +37,7 @@ require 'set'
 require "version"
 require "object"
 require "utility"
-require "logging"
+require "logging/logger"
 require "error"
 require "data"
 require "config"

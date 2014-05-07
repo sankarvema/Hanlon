@@ -1,7 +1,12 @@
-require 'project_hanlon/object'
+# ToDo::Sankar::Refactor - rename this to api_proxy or slice_proxy
+# this module invokes slices from CLI, ideally it should be a restful proxy
+# change log to act as a restful proxy under util/api_proxy
+
+require 'object'
 
 require 'forwardable'
 require 'require_all'
+#require 'error/slice'
 
 # @todo danielp 2012-10-24: this shouldn't include the database tooling.
 class ProjectHanlon::Slice < ProjectHanlon::Object
@@ -12,8 +17,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   attr_accessor :debug
 
   # Load service config
-  PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.to_s
-  SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
+  #PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.to_s
+  #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
+  SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
 
   # Initializes the Slice Base
   # @param [Array] args
@@ -51,6 +57,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # Parses the #command_array and determines the action based on slice_commands for child object
   def slice_call
     begin
+      puts slice_commands
       eval_command(slice_commands)
     rescue => e
       if @debug
@@ -815,5 +822,7 @@ def class_from_string(str)
   end
 end
 
+# ToDo::Sankar::Refactor - remove _rel loading
+
 # Finally, ensure that all our slices are loaded.
-require_rel "slice/"
+require_rel "./slice/"

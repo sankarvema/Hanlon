@@ -2,7 +2,7 @@ require "uuid"
 require "base62"
 require "colored"
 require "utility"
-require "logging"
+require "logging/logger"
 
 # Common object for all base ProjectHanlon objects
 # @abstract
@@ -52,6 +52,7 @@ class ProjectHanlon::Object
     true
   end
 
+  # ToDo::Sankar::Refactor - remove references to this method
   # Get logger object
   def get_logger
     logger

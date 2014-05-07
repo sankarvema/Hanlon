@@ -1,5 +1,5 @@
 require "json"
-require "project_hanlon/policy/base"
+require "policy/base"
 
 
 # Root ProjectHanlon namespace

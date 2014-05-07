@@ -1,4 +1,6 @@
-require_rel "slice/"
+# ToDo::Sankar::Refactor - remove _rel loading
+
+require_rel "../slice/"
 
 module ProjectHanlon
   module Error

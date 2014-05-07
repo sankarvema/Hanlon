@@ -1,5 +1,6 @@
 require "mongo"
 require "set"
+require "persist/plugin_interface"
 
 module ProjectHanlon
   module Persist

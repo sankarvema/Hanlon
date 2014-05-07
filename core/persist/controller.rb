@@ -22,15 +22,21 @@ module ProjectHanlon
         # init correct database object
         if (config.persist_mode == :mongo)
           logger.debug "Using Mongo plugin"
-          require "project_hanlon/persist/mongo_plugin" unless ProjectHanlon::Persist.const_defined?(:MongoPlugin)
+          # ToDo::Sankar::Clean junk code
+          #require "project_hanlon/persist/mongo_plugin" unless ProjectHanlon::Persist.const_defined?(:MongoPlugin)
+          require "persist/mongo_plugin" unless ProjectHanlon::Persist.const_defined?(:MongoPlugin)
           @database = ProjectHanlon::Persist::MongoPlugin.new
         elsif (config.persist_mode == :postgres)
           logger.debug "Using Postgres plugin"
-          require "project_hanlon/persist/postgres_plugin" unless ProjectHanlon::Persist.const_defined?(:PostgresPlugin)
+          # ToDo::Sankar::Clean junk code
+          #require "project_hanlon/persist/postgres_plugin" unless ProjectHanlon::Persist.const_defined?(:PostgresPlugin)
+          require "postgres_plugin" unless ProjectHanlon::Persist.const_defined?(:PostgresPlugin)
           @database = ProjectHanlon::Persist::PostgresPlugin.new
         elsif (config.persist_mode == :memory)
           logger.debug "Using in-memory plugin"
-          require "project_hanlon/persist/memory_plugin" unless ProjectHanlon::Persist.const_defined?(:MemoryPlugin)
+          # ToDo::Sankar::Clean junk code
+          #require "project_hanlon/persist/memory_plugin" unless ProjectHanlon::Persist.const_defined?(:MemoryPlugin)
+          require "memory_plugin" unless ProjectHanlon::Persist.const_defined?(:MemoryPlugin)
           @database = ProjectHanlon::Persist::MemoryPlugin.new
         else
           logger.error "Invalid Database plugin(#{config.persist_mode})"

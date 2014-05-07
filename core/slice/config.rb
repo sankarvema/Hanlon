@@ -15,7 +15,7 @@ module ProjectHanlon
       def initialize(args)
         super(args)
         @hidden = true
-        @engine = ProjectHanlon::Engine.instance
+        #@engine = ProjectHanlon::Engine.instance
         @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/config'
       end
 

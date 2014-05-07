@@ -1,8 +1,11 @@
 require "logging/new_logger"
+# ToDo::Sankar::Refactor
+# refactor this file to logging/logger_proxy
 
 # ToDo::Sankar::Implement log level hardcoded for time being
 # this should come from config parameter {hanlon_log_level}
-LOG_LEVEL = Logger::DEBUG
+
+LOG_LEVEL = Logger::ERROR
 LOG_MAX_SIZE = 10048576
 LOG_MAX_FILES = 10
 

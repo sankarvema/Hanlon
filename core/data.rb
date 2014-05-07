@@ -1,5 +1,5 @@
 require 'utility'
-require 'logging'
+require 'logging/logger'
 require 'persist/controller'
 
 require "yaml"

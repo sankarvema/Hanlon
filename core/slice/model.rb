@@ -1,5 +1,5 @@
 require 'json'
-require 'project_hanlon/model/base'
+require 'model/base'
 
 # Root ProjectHanlon namespace
 module ProjectHanlon

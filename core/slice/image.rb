@@ -1,6 +1,6 @@
 require "json"
 require "yaml"
-require "project_hanlon/image_service/base"
+require "image_service/base"
 
 # Root ProjectHanlon namespace
 module ProjectHanlon

@@ -1,10 +1,14 @@
-require 'project_hanlon'
+#require 'project_hanlon'
 
 require 'json'
 require 'colored'
 require 'optparse'
+require 'slice'
+require 'logging/logger'
+require 'slice/config'
 
 class ProjectHanlon::CLI
+  include(ProjectHanlon::Logging)
   # We set a constant for our Slice root Namespace. We use this to pull the
   # slice names back out from objectspace
   SLICE_PREFIX = "ProjectHanlon::Slice::"
@@ -27,6 +31,8 @@ class ProjectHanlon::CLI
     first_args.size.times {argv.shift}
     @options = {}
     optparse = get_optparse
+    puts "says ... it is too fatal"
+    logger.fatal "it is too fatal"
     begin
       optparse.parse(first_args)
     rescue OptionParser::InvalidOption => e
@@ -95,6 +101,9 @@ class ProjectHanlon::CLI
   rescue => e
     unless e.to_s =~ /uninitialized constant ProjectHanlon::Slice::/
       @logger.error "Hanlon slice error: #{e.message}"
+      logger.error "Hanlon slice error occured: #{e.message}"
+      logger.log_exception(e)
+
       print "\n [#{raw_name}] ".red
       print "<- #{e.message} \n".yellow
     end

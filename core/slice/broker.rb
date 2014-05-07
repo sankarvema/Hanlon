@@ -1,5 +1,5 @@
 require "json"
-require "project_hanlon/broker/base"
+require "broker/base"
 
 # Root ProjectHanlon namespace
 module ProjectHanlon

@@ -2,58 +2,177 @@ Deploying from /home/user/Hanlon/Hanlon as /hanlon/api
 Initializing ProtocolHandler ["http-bio-192.168.109.5-8026"]
 jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
 using 1:5 runtime pool with acquire timeout of 5.0 seconds
-calling api
-Initiatlizing hanlon::web services
->> Starting new thread to remove inactive nodes; cycle time => 30, timeout => 180
->> Starting new thread to print status of Hanlon-related jobs...
-  >> At 2014-05-06 01:57:41 -0400; All jobs running => [every_1399355861.597_2106606726, every_1399355861.606_1506351718]
+An exception happened during JRuby-Rack startup
+no such file to load -- project_hanlon/object
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-06 08:35:29 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- project_hanlon/object
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/config/application.rb:20
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@f8092b
+equals = <error: >
+err = java.io.PrintStream@6921e0
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@8788e4
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@16daee9
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@14a8eb5
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/lib
+/home/user/Hanlon/Hanlon/app
+/home/user/Hanlon/Hanlon/api
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- project_hanlon/object
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/config/application.rb:20)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
 added application to pool, size now = 1
+Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- project_hanlon/object
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/config/application.rb:20:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- project_hanlon/object
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/config/application.rb:20)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+Error listenerStart
+Context [default] startup failed due to previous errors
+The web application [default] appears to have started a thread named [Ruby-1-JIT-1] but has failed to stop it. This is very likely to create a memory leak.
+The web application [default] appears to have started a thread named [Ruby-1-JIT-2] but has failed to stop it. This is very likely to create a memory leak.
 Starting ProtocolHandler ["http-bio-192.168.109.5-8026"]
-  >> At 2014-05-06 01:57:41 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-the base uri>>> /hanlon/api
-hanlon:api:v1:config before do
-hanlon:api:v1:config get do
-  >> At 2014-05-06 02:02:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-the base uri>>> /hanlon/api
-hanlon:api:v1:config before do
-hanlon:api:v1:config get do
-  >> At 2014-05-06 02:07:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-the base uri>>> /hanlon/api
-hanlon:api:v1:config before do
-hanlon:api:v1:config get do
-  >> At 2014-05-06 02:12:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:17:42 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:22:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:27:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:32:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:37:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:42:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:47:43 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:52:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 02:57:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:02:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:07:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:12:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:17:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:22:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:27:44 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:32:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:37:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:42:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:47:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:52:45 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 03:57:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:02:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:07:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:12:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:17:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:22:46 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:27:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:32:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:37:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:42:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:47:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:52:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 04:57:47 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 05:02:48 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]
-  >> At 2014-05-06 05:07:48 -0400; Hanlon-related jobs running => [every_1399355861.597_2106606726]

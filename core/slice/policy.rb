@@ -1,6 +1,6 @@
-require 'project_hanlon/slice'
-require 'project_hanlon/data'
-require 'project_hanlon/utility'
+#require 'slice_proxy'
+require 'data'
+require 'utility'
 
 require "json"
 
