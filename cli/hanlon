@@ -17,11 +17,7 @@ $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + '../util').cleanpath.t
 #$app_root = File.dirname(__FILE__).expand_path
 $app_root = Pathname(__FILE__).realpath.dirname.to_s
 
-puts "running with $app_root #{$app_root}"
-
 require 'rubygems' if RUBY_VERSION < '1.9'
 require 'main/cli'
-
-
 
 exit ProjectHanlon::CLI.new.run(*ARGV)

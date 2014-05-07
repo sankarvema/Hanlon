@@ -2,113 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ebdfb336-41a5-4be0-a67f-f12ccec6a72a" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/cli/main/slice.rb" afterPath="$PROJECT_DIR$/core/slice.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/broker/base.rb" afterPath="$PROJECT_DIR$/core/broker/base.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/broker/chef.rb" afterPath="$PROJECT_DIR$/core/broker/chef.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/broker/chef/chef_bootstrap.erb" afterPath="$PROJECT_DIR$/core/broker/chef/chef_bootstrap.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/broker/puppet.rb" afterPath="$PROJECT_DIR$/core/broker/puppet.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/broker/puppet/agent_install.erb" afterPath="$PROJECT_DIR$/core/broker/puppet/agent_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/broker/script.rb" afterPath="$PROJECT_DIR$/core/broker/script.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/error/slice.rb" afterPath="$PROJECT_DIR$/core/error/slice.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/error/slice/generic.rb" afterPath="$PROJECT_DIR$/core/error/slice/generic.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/image_service/base.rb" afterPath="$PROJECT_DIR$/core/image_service/base.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/image_service/microkernel.rb" afterPath="$PROJECT_DIR$/core/image_service/microkernel.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/image_service/os_install.rb" afterPath="$PROJECT_DIR$/core/image_service/os_install.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/image_service/vmware_hypervisor.rb" afterPath="$PROJECT_DIR$/core/image_service/vmware_hypervisor.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/image_service/xenserver_hypervisor.rb" afterPath="$PROJECT_DIR$/core/image_service/xenserver_hypervisor.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/base.rb" afterPath="$PROJECT_DIR$/core/model/base.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/centos_6.rb" afterPath="$PROJECT_DIR$/core/model/centos_6.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian.rb" afterPath="$PROJECT_DIR$/core/model/debian.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian/wheezy/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/debian/wheezy/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian/wheezy/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/debian/wheezy/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian/wheezy/kernel_args.erb" afterPath="$PROJECT_DIR$/core/model/debian/wheezy/kernel_args.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian/wheezy/os_boot.erb" afterPath="$PROJECT_DIR$/core/model/debian/wheezy/os_boot.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian/wheezy/os_complete.erb" afterPath="$PROJECT_DIR$/core/model/debian/wheezy/os_complete.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian/wheezy/preseed.erb" afterPath="$PROJECT_DIR$/core/model/debian/wheezy/preseed.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/debian_wheezy.rb" afterPath="$PROJECT_DIR$/core/model/debian_wheezy.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/esxi/5/kickstart.erb" afterPath="$PROJECT_DIR$/core/model/esxi/5/kickstart.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/opensuse_12.rb" afterPath="$PROJECT_DIR$/core/model/opensuse_12.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/oraclelinux_6.rb" afterPath="$PROJECT_DIR$/core/model/oraclelinux_6.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat.rb" afterPath="$PROJECT_DIR$/core/model/redhat.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat/6/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/redhat/6/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat/6/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/redhat/6/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat/6/kernel_args.erb" afterPath="$PROJECT_DIR$/core/model/redhat/6/kernel_args.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat/6/kickstart.erb" afterPath="$PROJECT_DIR$/core/model/redhat/6/kickstart.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat/6/os_boot.erb" afterPath="$PROJECT_DIR$/core/model/redhat/6/os_boot.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat/6/os_complete.erb" afterPath="$PROJECT_DIR$/core/model/redhat/6/os_complete.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/redhat_6.rb" afterPath="$PROJECT_DIR$/core/model/redhat_6.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/sles_11.rb" afterPath="$PROJECT_DIR$/core/model/sles_11.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/11/autoyast.erb" afterPath="$PROJECT_DIR$/core/model/suse/11/autoyast.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/11/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/suse/11/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/11/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/suse/11/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/11/kernel_args.erb" afterPath="$PROJECT_DIR$/core/model/suse/11/kernel_args.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/12/autoyast.erb" afterPath="$PROJECT_DIR$/core/model/suse/12/autoyast.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/12/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/suse/12/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/12/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/suse/12/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/suse/12/kernel_args.erb" afterPath="$PROJECT_DIR$/core/model/suse/12/kernel_args.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu.rb" afterPath="$PROJECT_DIR$/core/model/ubuntu.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/oneiric/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/oneiric/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/oneiric/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/oneiric/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/oneiric/kernel_args.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/oneiric/kernel_args.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/oneiric/os_boot.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/oneiric/os_boot.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/oneiric/os_complete.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/oneiric/os_complete.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/oneiric/preseed.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/oneiric/preseed.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise/kernel_args.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise/kernel_args.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise/os_boot.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise/os_boot.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise/os_complete.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise/os_complete.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise/preseed.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise/preseed.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise_ip_pool/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise_ip_pool/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise_ip_pool/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise_ip_pool/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise_ip_pool/kernel_args.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise_ip_pool/kernel_args.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise_ip_pool/os_boot.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise_ip_pool/os_boot.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise_ip_pool/os_complete.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise_ip_pool/os_complete.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu/precise_ip_pool/preseed.erb" afterPath="$PROJECT_DIR$/core/model/ubuntu/precise_ip_pool/preseed.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu_oneiric.rb" afterPath="$PROJECT_DIR$/core/model/ubuntu_oneiric.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu_precise.rb" afterPath="$PROJECT_DIR$/core/model/ubuntu_precise.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/ubuntu_precise_ip_pool.rb" afterPath="$PROJECT_DIR$/core/model/ubuntu_precise_ip_pool.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/vmware_esxi.rb" afterPath="$PROJECT_DIR$/core/model/vmware_esxi.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/vmware_esxi_5.rb" afterPath="$PROJECT_DIR$/core/model/vmware_esxi_5.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver.rb" afterPath="$PROJECT_DIR$/core/model/xenserver.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/boston/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/boston/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/boston/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/boston/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/boston/isolinux_cfg.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/boston/isolinux_cfg.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/boston/os_boot.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/boston/os_boot.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/boston/postinstall.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/boston/postinstall.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/boston/xenserverinstall_xml.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/boston/xenserverinstall_xml.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/tampa/boot_install.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/tampa/boot_install.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/tampa/boot_local.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/tampa/boot_local.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/tampa/isolinux_cfg.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/tampa/isolinux_cfg.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/tampa/os_boot.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/tampa/os_boot.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/tampa/postinstall.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/tampa/postinstall.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver/tampa/xenserverinstall_xml.erb" afterPath="$PROJECT_DIR$/core/model/xenserver/tampa/xenserverinstall_xml.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver_boston.rb" afterPath="$PROJECT_DIR$/core/model/xenserver_boston.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/model/xenserver_tampa.rb" afterPath="$PROJECT_DIR$/core/model/xenserver_tampa.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/policy/base.rb" afterPath="$PROJECT_DIR$/core/policy/base.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/policy/boot_mk.rb" afterPath="$PROJECT_DIR$/core/policy/boot_mk.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/policy/linux_deploy.rb" afterPath="$PROJECT_DIR$/core/policy/linux_deploy.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/policy/vmware_hypervisor.rb" afterPath="$PROJECT_DIR$/core/policy/vmware_hypervisor.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/project_hanlon/policy/xenserver_hypervisor.rb" afterPath="$PROJECT_DIR$/core/policy/xenserver_hypervisor.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/active_model.rb" afterPath="$PROJECT_DIR$/core/slice/active_model.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/broker.rb" afterPath="$PROJECT_DIR$/core/slice/broker.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cli/main/cli.rb" afterPath="$PROJECT_DIR$/cli/main/cli.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/config.rb" afterPath="$PROJECT_DIR$/core/slice/config.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/persist/controller.rb" afterPath="$PROJECT_DIR$/core/persist/controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/data.rb" afterPath="$PROJECT_DIR$/core/data.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cli/hanlon" afterPath="$PROJECT_DIR$/cli/hanlon" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conf/hanlon_server.conf" afterPath="$PROJECT_DIR$/conf/hanlon_server.conf" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/image.rb" afterPath="$PROJECT_DIR$/core/slice/image.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/util/logging/logger.rb" afterPath="$PROJECT_DIR$/util/logging/logger.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/model.rb" afterPath="$PROJECT_DIR$/core/slice/model.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/persist/mongo_plugin.rb" afterPath="$PROJECT_DIR$/core/persist/mongo_plugin.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/object.rb" afterPath="$PROJECT_DIR$/core/object.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/policy.rb" afterPath="$PROJECT_DIR$/core/slice/policy.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cli/log/project_hanlon.log" afterPath="$PROJECT_DIR$/cli/log/project_hanlon.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/project_hanlon.rb" afterPath="$PROJECT_DIR$/core/project_hanlon.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/config/server.rb" afterPath="$PROJECT_DIR$/core/config/server.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/trinidad.log" afterPath="$PROJECT_DIR$/scripts/trinidad.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice.rb" afterPath="$PROJECT_DIR$/core/slice.rb" />
     </list>
     <ignored path="Hanlon.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -133,16 +32,61 @@
       <file leaf-file-name="hanlon" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cli/hanlon">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="9" selection-start="721" selection-end="730" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
+            <state line="21" column="0" selection-start="837" selection-end="837" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="435">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cli.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="cli.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cli/main/cli.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="22" selection-start="142" selection-end="142" vertical-scroll-proportion="0.18584071" vertical-offset="0" max-vertical-offset="3150">
+            <state line="33" column="0" selection-start="982" selection-end="982" vertical-scroll-proportion="0.0" vertical-offset="585" max-vertical-offset="3150">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="slice.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/slice.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="445" column="44" selection-start="15927" selection-end="15927" vertical-scroll-proportion="0.33333334" vertical-offset="6491" max-vertical-offset="12585">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="image.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/slice/image.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="123" column="0" selection-start="4560" selection-end="4560" vertical-scroll-proportion="0.0" vertical-offset="1672" max-vertical-offset="3525">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="project_hanlon.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/project_hanlon.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="25" column="70" selection-start="1173" selection-end="1173" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2745">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="microkernel.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/image_service/microkernel.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="21" selection-start="135" selection-end="146" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2955">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="base.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3360">
               <folding />
             </state>
           </provider>
@@ -168,8 +112,6 @@
         <option value="$PROJECT_DIR$/scripts/run-tri.sh" />
         <option value="$PROJECT_DIR$/core/error.rb" />
         <option value="$PROJECT_DIR$/core/config.rb" />
-        <option value="$PROJECT_DIR$/cli/hanlon" />
-        <option value="$PROJECT_DIR$/core/project_hanlon.rb" />
         <option value="$PROJECT_DIR$/core/data.rb" />
         <option value="$PROJECT_DIR$/core/object.rb" />
         <option value="$PROJECT_DIR$/core/persist/controller.rb" />
@@ -183,12 +125,14 @@
         <option value="$PROJECT_DIR$/core/slice/active_model.rb" />
         <option value="$PROJECT_DIR$/core/policy/base.rb" />
         <option value="$PROJECT_DIR$/core/slice/broker.rb" />
-        <option value="$PROJECT_DIR$/core/slice/image.rb" />
         <option value="$PROJECT_DIR$/core/slice/model.rb" />
         <option value="$PROJECT_DIR$/core/slice/policy.rb" />
-        <option value="$PROJECT_DIR$/cli/main/cli.rb" />
-        <option value="$PROJECT_DIR$/core/slice.rb" />
         <option value="$PROJECT_DIR$/core/error/slice.rb" />
+        <option value="$PROJECT_DIR$/core/slice.rb" />
+        <option value="$PROJECT_DIR$/core/slice/image.rb" />
+        <option value="$PROJECT_DIR$/cli/main/cli.rb" />
+        <option value="$PROJECT_DIR$/core/project_hanlon.rb" />
+        <option value="$PROJECT_DIR$/cli/hanlon" />
       </list>
     </option>
   </component>
@@ -251,24 +195,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logging" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -288,50 +214,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="slice" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="slice" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="for_removal" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="slice" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -367,7 +249,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
+              <option name="myItemId" value="error" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -381,7 +263,15 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="error" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="slice" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -392,56 +282,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="conf" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cli" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cli" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cli" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -652,16 +492,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/app.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="34" selection-start="4002" selection-end="4002" vertical-scroll-proportion="0.0" vertical-offset="2135" max-vertical-offset="2700" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="23" selection-start="732" selection-end="732" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="675" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/api_config_v1.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="89" column="16" selection-start="2804" selection-end="2804" vertical-scroll-proportion="0.0" vertical-offset="1335" max-vertical-offset="2025">
@@ -787,13 +617,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/conf/hanlon_server.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="16" selection-start="271" selection-end="287" vertical-scroll-proportion="0.19924098" vertical-offset="30" max-vertical-offset="645">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/persist/controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="81" column="13" selection-start="3494" selection-end="3496" vertical-scroll-proportion="-45.0" vertical-offset="0" max-vertical-offset="1935">
@@ -871,13 +694,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/slice/image.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="9" selection-start="39" selection-end="39" vertical-scroll-proportion="0.053097345" vertical-offset="0" max-vertical-offset="3495">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/slice/broker.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="19" column="32" selection-start="612" selection-end="612" vertical-scroll-proportion="0.50442475" vertical-offset="0" max-vertical-offset="4545">
@@ -906,13 +722,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/error/slice/generic.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="5" selection-start="256" selection-end="256" vertical-scroll-proportion="0.39823008" vertical-offset="0" max-vertical-offset="565">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/error/generic.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1380">
@@ -934,30 +743,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cli/hanlon">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="9" selection-start="721" selection-end="730" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/config/server.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="0" selection-start="274" selection-end="274" vertical-scroll-proportion="0.26548672" vertical-offset="0" max-vertical-offset="4590">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3360">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/project_hanlon.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="57" selection-start="794" selection-end="794" vertical-scroll-proportion="0.8490566" vertical-offset="0" max-vertical-offset="2775">
           <folding />
         </state>
       </provider>
@@ -969,16 +757,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/slice.rb">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="824" column="0" selection-start="29537" selection-end="29583" vertical-scroll-proportion="0.5081967" vertical-offset="12205" max-vertical-offset="12510">
+        <state line="16" column="9" selection-start="155" selection-end="155" vertical-scroll-proportion="0.42477876" vertical-offset="0" max-vertical-offset="630">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3360">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/error/slice/generic.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="5" selection-start="256" selection-end="256" vertical-scroll-proportion="0.39823008" vertical-offset="0" max-vertical-offset="565">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/image_service/microkernel.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="21" selection-start="135" selection-end="146" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2955">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cli/main/cli.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="22" selection-start="142" selection-end="142" vertical-scroll-proportion="0.18584071" vertical-offset="0" max-vertical-offset="3150">
+        <state line="33" column="0" selection-start="982" selection-end="982" vertical-scroll-proportion="0.0" vertical-offset="585" max-vertical-offset="3150">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/slice/image.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="123" column="0" selection-start="4560" selection-end="4560" vertical-scroll-proportion="0.0" vertical-offset="1672" max-vertical-offset="3525">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/project_hanlon.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="70" selection-start="1173" selection-end="1173" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2745">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conf/hanlon_server.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="30" selection-start="796" selection-end="796" vertical-scroll-proportion="0.512334" vertical-offset="30" max-vertical-offset="645">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cli/hanlon">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="0" selection-start="837" selection-end="837" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="435">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/slice.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="445" column="44" selection-start="15927" selection-end="15927" vertical-scroll-proportion="0.33333334" vertical-offset="6491" max-vertical-offset="12585">
           <folding />
         </state>
       </provider>

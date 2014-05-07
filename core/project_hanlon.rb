@@ -4,8 +4,6 @@
 #$logging_path = "#{$hanlon_root}/log/project_hanlon.log"
 #$temp_path = "#{$hanlon_root}/tmp"
 
-puts "running with $app_root #{$app_root}"
-
 $config_server_path = "#{$app_root}/conf/hanlon_server.conf"
 $img_svc_path = "#{$app_root}/image"
 $logging_path = "#{$app_root}/log/project_hanlon.log"

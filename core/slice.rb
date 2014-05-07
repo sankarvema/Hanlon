@@ -57,7 +57,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # Parses the #command_array and determines the action based on slice_commands for child object
   def slice_call
     begin
-      puts slice_commands
+      #puts slice_commands
       eval_command(slice_commands)
     rescue => e
       if @debug
@@ -716,8 +716,10 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     # setup the request
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Get.new(uri.request_uri)
+
     # make the request
     response = http.request(request)
+
     # and return the result
     return [JSON.parse(response.body)["response"], response] if include_http_response
     JSON.parse(response.body)["response"]
@@ -796,6 +798,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
         http = Net::HTTP.new(uri.host, uri.port)
         request = Net::HTTP::Get.new(uri.request_uri)
         response = http.request(request)
+
         JSON.parse(response.body)["response"]
       else
         response_elem
@@ -826,3 +829,5 @@ end
 
 # Finally, ensure that all our slices are loaded.
 require_rel "./slice/"
+
+require "image_service/microkernel"

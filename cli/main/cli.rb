@@ -31,7 +31,7 @@ class ProjectHanlon::CLI
     first_args.size.times {argv.shift}
     @options = {}
     optparse = get_optparse
-    puts "says ... it is too fatal"
+
     logger.fatal "it is too fatal"
     begin
       optparse.parse(first_args)
