@@ -2,6 +2,7 @@
 
 require 'rufus-scheduler'
 require 'uri'
+require 'api'
 
 module Hanlon
   module WebService

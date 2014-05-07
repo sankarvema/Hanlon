@@ -1,0 +1,3 @@
+# Logfile created on 2014-05-07 09:12:05 -0400 by logger.rb/v1.2.7
+E, [2014-05-07T09:12:05.312000 #13338] ERROR -- /home/user/Hanlon/Hanlon/core/config/server.rb:219:in `save_as_yaml'>>ProjectHanlon::Config::Server#save_as_yaml: Could not save config to (/home/user/Hanlon/Hanlon/web/conf/hanlon_server.conf)
+E, [2014-05-07T09:14:48.556000 #13412] ERROR -- /home/user/Hanlon/Hanlon/core/config/server.rb:219:in `save_as_yaml'>>ProjectHanlon::Config::Server#save_as_yaml: Could not save config to (/home/user/Hanlon/Hanlon/web/conf/hanlon_server.conf)

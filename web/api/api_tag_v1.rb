@@ -2,6 +2,7 @@
 
 require 'json'
 require 'api_utils'
+require 'slice'
 
 module Hanlon
   module WebService

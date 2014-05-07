@@ -5,9 +5,9 @@
 #$temp_path = "#{$hanlon_root}/tmp"
 
 $config_server_path = "#{$app_root}/conf/hanlon_server.conf"
-$img_svc_path = "#{$app_root}/image"
+#$img_svc_path = "#{$app_root}/image"
 $logging_path = "#{$app_root}/log/project_hanlon.log"
-$temp_path = "#{$app_root}/tmp"
+#$temp_path = "#{$app_root}/tmp"
 
 # In order to work correctly, we need to ensure that ENV['HOME'] has a
 # sensible and correct value.  At least the Net::SSH gem will file if this is

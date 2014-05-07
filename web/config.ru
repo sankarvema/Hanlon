@@ -1,3 +1,3 @@
-require './config/application'
+require './application'
 
 run Hanlon::WebService::App.new

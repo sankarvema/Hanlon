@@ -1,0 +1,3147 @@
+2014-05-07 07:38:55 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 07:38:55 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 07:38:56 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- ./config/application
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 07:38:56 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- ./config/application
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@28a2
+equals = <error: >
+err = java.io.PrintStream@1ac1b8f
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@a0432
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@160f3d
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@45e9f3
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 07:38:56 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- ./config/application
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 07:38:56 -0400 INFO: added application to pool, size now = 1
+2014-05-07 07:38:56 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- ./config/application
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- ./config/application
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 07:46:45 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 07:46:45 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 07:46:50 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- project_hanlon/object
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 07:46:50 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- project_hanlon/object
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/config/application.rb:20
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@7bfdaf
+equals = <error: >
+err = java.io.PrintStream@1e3bf5f
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@cbacd5
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@795c6b
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@12b8a17
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/web/lib
+/home/user/Hanlon/Hanlon/web/app
+/home/user/Hanlon/Hanlon/web/api
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 07:46:50 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- project_hanlon/object
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config/application.rb:20)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 07:46:50 -0400 INFO: added application to pool, size now = 1
+2014-05-07 07:46:50 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- project_hanlon/object
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/config/application.rb:20:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- project_hanlon/object
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config/application.rb:20)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 07:55:41 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 07:55:41 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 07:55:42 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- application
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 07:55:42 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- application
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@5a720e
+equals = <error: >
+err = java.io.PrintStream@160f3d
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@1540b48
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@114a47
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@b82491
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 07:55:42 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- application
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 07:55:42 -0400 INFO: added application to pool, size now = 1
+2014-05-07 07:55:42 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- application
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- application
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 07:56:14 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 07:56:14 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 07:56:15 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- application
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 07:56:15 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- application
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@1540b48
+equals = <error: >
+err = java.io.PrintStream@795c6b
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@e45d86
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@2434e7
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@c2539f
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 07:56:15 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- application
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 07:56:15 -0400 INFO: added application to pool, size now = 1
+2014-05-07 07:56:15 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- application
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- application
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 07:57:39 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 07:57:39 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 07:57:46 -0400 INFO: An exception happened during JRuby-Rack startup
+No such file or directory - /home/user/Hanlon/Hanlon/web/application.rb/conf/service.yaml
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 07:57:46 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+Errno::ENOENT: No such file or directory - /home/user/Hanlon/Hanlon/web/application.rb/conf/service.yaml
+     initialize at org/jruby/RubyFile.java:361
+           open at org/jruby/RubyIO.java:1178
+      load_file at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:32
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@2cb2b0
+equals = <error: 0>
+err = java.io.PrintStream@13c2a08
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@1e94663
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@122adee
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@1b9d5b7
+throw_init_exception = true
+2014-05-07 07:57:46 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (Errno::ENOENT) /home/user/Hanlon/Hanlon/web/application.rb/conf/service.yaml
+	at org.jruby.RubyFile.initialize(org/jruby/RubyFile.java:361)
+	at org.jruby.RubyIO.open(org/jruby/RubyIO.java:1178)
+	at RUBY.load_file(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:32)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 07:57:46 -0400 INFO: added application to pool, size now = 1
+2014-05-07 07:57:46 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: No such file or directory - /home/user/Hanlon/Hanlon/web/application.rb/conf/service.yaml
+	from org/jruby/RubyFile.java:361:in `initialize'
+	from org/jruby/RubyIO.java:1178:in `open'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299:in `load_file'
+	from /home/user/Hanlon/Hanlon/web/application.rb:32:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (Errno::ENOENT) /home/user/Hanlon/Hanlon/web/application.rb/conf/service.yaml
+	at org.jruby.RubyFile.initialize(org/jruby/RubyFile.java:361)
+	at org.jruby.RubyIO.open(org/jruby/RubyIO.java:1178)
+	at RUBY.load_file(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:32)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 07:58:56 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 07:58:56 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 07:59:03 -0400 INFO: An exception happened during JRuby-Rack startup
+No such file or directory - /home/user/Hanlon/Hanlon/web/conf/service.yaml
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 07:59:03 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+Errno::ENOENT: No such file or directory - /home/user/Hanlon/Hanlon/web/conf/service.yaml
+     initialize at org/jruby/RubyFile.java:361
+           open at org/jruby/RubyIO.java:1178
+      load_file at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:32
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@14823c6
+equals = <error: 0>
+err = java.io.PrintStream@124dd30
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@eed0a3
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@1e1e5
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@1079383
+throw_init_exception = true
+2014-05-07 07:59:03 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (Errno::ENOENT) /home/user/Hanlon/Hanlon/web/conf/service.yaml
+	at org.jruby.RubyFile.initialize(org/jruby/RubyFile.java:361)
+	at org.jruby.RubyIO.open(org/jruby/RubyIO.java:1178)
+	at RUBY.load_file(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:32)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 07:59:03 -0400 INFO: added application to pool, size now = 1
+2014-05-07 07:59:03 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: No such file or directory - /home/user/Hanlon/Hanlon/web/conf/service.yaml
+	from org/jruby/RubyFile.java:361:in `initialize'
+	from org/jruby/RubyIO.java:1178:in `open'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299:in `load_file'
+	from /home/user/Hanlon/Hanlon/web/application.rb:32:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (Errno::ENOENT) /home/user/Hanlon/Hanlon/web/conf/service.yaml
+	at org.jruby.RubyFile.initialize(org/jruby/RubyFile.java:361)
+	at org.jruby.RubyIO.open(org/jruby/RubyIO.java:1178)
+	at RUBY.load_file(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/psych.rb:299)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:32)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:01:06 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:01:06 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:01:14 -0400 INFO: An exception happened during JRuby-Rack startup
+uninitialized constant PROJECT_ROOT
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:01:14 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+NameError: uninitialized constant PROJECT_ROOT
+  const_missing at org/jruby/RubyModule.java:2690
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:35
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@1e7c884
+equals = <error: 0>
+err = java.io.PrintStream@6a338e
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@13cef28
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@909918
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@5d2e19
+throw_init_exception = true
+2014-05-07 08:01:14 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (NameError) uninitialized constant PROJECT_ROOT
+	at org.jruby.RubyModule.const_missing(org/jruby/RubyModule.java:2690)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:35)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:01:14 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:01:14 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: uninitialized constant PROJECT_ROOT
+	from org/jruby/RubyModule.java:2690:in `const_missing'
+	from /home/user/Hanlon/Hanlon/web/application.rb:35:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (NameError) uninitialized constant PROJECT_ROOT
+	at org.jruby.RubyModule.const_missing(org/jruby/RubyModule.java:2690)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:35)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:02:21 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:02:21 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:02:27 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- monkey_patch
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:02:27 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- monkey_patch
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:47
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@9c019f
+equals = <error: 0>
+err = java.io.PrintStream@1a42eb8
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@a57725
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@ac0acb
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@15fbbc8
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:02:27 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- monkey_patch
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:47)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:02:27 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:02:27 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- monkey_patch
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:47:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- monkey_patch
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:47)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:06:21 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:06:21 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:06:28 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- api/monkey_patch
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:06:28 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- api/monkey_patch
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:47
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@7755da
+equals = <error: 0>
+err = java.io.PrintStream@193ae09
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@1b76a97
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@2ab68e
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@ec2666
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:06:28 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api/monkey_patch
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:47)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:06:28 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:06:28 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- api/monkey_patch
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:47:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api/monkey_patch
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:47)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:08:18 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:08:18 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:08:24 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- api_tag_v1
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:08:24 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- api_tag_v1
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:50
+           glob at org/jruby/RubyDir.java:233
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:48
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@97e9a6
+equals = <error: 0>
+err = java.io.PrintStream@ac0acb
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@12c1f91
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@191a3ed
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@69bdbf
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:08:24 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:50)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:08:24 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:08:24 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- api_tag_v1
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:50:in `(root)'
+	from org/jruby/RubyDir.java:233:in `glob'
+	from /home/user/Hanlon/Hanlon/web/application.rb:48:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:50)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:11:44 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:11:44 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:11:50 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- api_tag_v1
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:11:50 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- api_tag_v1
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:50
+           glob at org/jruby/RubyDir.java:233
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:48
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@1cca8ca
+equals = <error: 0>
+err = java.io.PrintStream@1292a3b
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@69bdbf
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@1a299f9
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@1a72cb3
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:11:50 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:50)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:11:50 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:11:50 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- api_tag_v1
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:50:in `(root)'
+	from org/jruby/RubyDir.java:233:in `glob'
+	from /home/user/Hanlon/Hanlon/web/application.rb:48:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:50)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:18:46 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:18:46 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:18:51 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- api_tag_v1
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:18:51 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- api_tag_v1
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:50
+           glob at org/jruby/RubyDir.java:233
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:48
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@4cb52a
+equals = <error: 0>
+err = java.io.PrintStream@13c2a08
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@6faf76
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@122adee
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@177d276
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:18:51 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:50)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:18:51 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:18:51 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- api_tag_v1
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:50:in `(root)'
+	from org/jruby/RubyDir.java:233:in `glob'
+	from /home/user/Hanlon/Hanlon/web/application.rb:48:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:50)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:21:50 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:21:50 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:21:56 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- ./api/
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:21:56 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- ./api/
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:60
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+  rufus-scheduler-3.0.7
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@1a21fce
+equals = <error: 0>
+err = java.io.PrintStream@1a299f9
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@16d50a6
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@10d3719
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@12fc3fe
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rufus-scheduler-3.0.7/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:21:56 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- ./api/
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:60)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:21:56 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:21:56 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- ./api/
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:60:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- ./api/
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:60)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:23:04 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:23:04 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:23:12 -0400 INFO: An exception happened during JRuby-Rack startup
+undefined method `require_rel' for main:Object
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:23:12 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+NoMethodError: undefined method `require_rel' for main:Object
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:60
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+  rufus-scheduler-3.0.7
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@b39d11
+equals = <error: 0>
+err = java.io.PrintStream@1db0032
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@cd7466
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@153406
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@1ab770c
+throw_init_exception = true
+2014-05-07 08:23:12 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (NoMethodError) undefined method `require_rel' for main:Object
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:60)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:23:12 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:23:12 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: undefined method `require_rel' for main:Object
+	from /home/user/Hanlon/Hanlon/web/application.rb:60:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (NoMethodError) undefined method `require_rel' for main:Object
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:60)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:26:59 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:26:59 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:27:05 -0400 INFO: An exception happened during JRuby-Rack startup
+undefined method `require_rel' for main:Object
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:27:05 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+NoMethodError: undefined method `require_rel' for main:Object
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:60
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+  rufus-scheduler-3.0.7
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@14b5af
+equals = <error: 0>
+err = java.io.PrintStream@1f76837
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@1fad24e
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@f8b48b
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@29be28
+throw_init_exception = true
+2014-05-07 08:27:05 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (NoMethodError) undefined method `require_rel' for main:Object
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:60)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:27:05 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:27:05 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: undefined method `require_rel' for main:Object
+	from /home/user/Hanlon/Hanlon/web/application.rb:60:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (NoMethodError) undefined method `require_rel' for main:Object
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:60)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:32:38 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:32:38 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:32:44 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- api_tag_v1
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:32:43 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- api_tag_v1
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:51
+           glob at org/jruby/RubyDir.java:233
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:48
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@1a60461
+equals = <error: 0>
+err = java.io.PrintStream@1357dfa
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@25724
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@1958a9f
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@174be3f
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:32:44 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:51)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:32:44 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:32:44 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- api_tag_v1
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:51:in `(root)'
+	from org/jruby/RubyDir.java:233:in `glob'
+	from /home/user/Hanlon/Hanlon/web/application.rb:48:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:51)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:33:53 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:33:53 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:33:59 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- api_tag_v1
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:33:59 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- api_tag_v1
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:51
+           glob at org/jruby/RubyDir.java:233
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:48
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+     initialize at /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@15b64a3
+equals = <error: 0>
+err = java.io.PrintStream@2ab68e
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@d7e3b3
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@9c6aa5
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@920aca
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:33:59 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:51)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:33:59 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:33:59 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- api_tag_v1
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:51:in `(root)'
+	from org/jruby/RubyDir.java:233:in `glob'
+	from /home/user/Hanlon/Hanlon/web/application.rb:48:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+	from /home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55:in `initialize'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_tag_v1
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:51)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+	at RUBY.initialize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:55)
+
+2014-05-07 08:34:49 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:34:49 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:34:55 -0400 INFO: An exception happened during JRuby-Rack startup
+no such file to load -- api_utils
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:34:55 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+LoadError: no such file to load -- api_utils
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:4
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:1
+           glob at org/jruby/RubyDir.java:233
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:51
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:48
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+  json-1.8.1-java
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@312cbb
+equals = <error: 0>
+err = java.io.PrintStream@193ae09
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@d03c4d
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@2ab68e
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@e37030
+throw_init_exception = true
+
+--- $LOAD_PATH:
+/home/user/Hanlon/Hanlon/core
+/home/user/Hanlon/Hanlon/util
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/rack-accept-0.4.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_xml-0.5.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/hashie-2.0.5/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/descendants_tracker-0.0.3/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/equalizer-0.0.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/coercible-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/ice_nine-0.11.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/thread_safe-0.1.3-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/axiom-types-0.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/virtus-1.0.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/i18n-0.6.9/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/tzinfo-1.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/minitest-5.3.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/activesupport-4.1.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/multi_json-1.9.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/systemu-2.6.4/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/macaddr-1.6.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/uuid-2.3.7/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/base62-1.0.0/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/colored-1.2/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/bson-1.9.2-java/lib
+/home/user/.rvm/gems/jruby-1.7.11/gems/json-1.8.1-java/lib
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9/site_ruby
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared
+/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/1.9
+2014-05-07 08:34:55 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_utils
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:4)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:1)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:51)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 08:34:55 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:34:55 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: no such file to load -- api_utils
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:4:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:1:in `(root)'
+	from org/jruby/RubyDir.java:233:in `glob'
+	from /home/user/Hanlon/Hanlon/web/application.rb:51:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:48:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) no such file to load -- api_utils
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:4)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:1)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:51)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:48)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 08:37:15 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 08:37:15 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 08:37:24 -0400 INFO: An exception happened during JRuby-Rack startup
+uninitialized constant ProjectHanlon::Slice
+--- System
+jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+Time: 2014-05-07 08:37:24 -0400
+Server: Apache Tomcat/7.0.47
+jruby.home: /home/user/.rvm/rubies/jruby-1.7.11
+
+--- Context Init Parameters:
+app.root = /home/user/Hanlon/Hanlon/web
+jruby.compat.version = 1.9.3
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+jruby.rack.error = false
+jruby.rack.layout_class = JRuby::Rack::FileSystemLayout
+jruby.rack.logging = JUL
+jruby.rack.logging.name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+jruby.runtime.acquire.timeout = 5.0
+public.root = public
+rack.env = development
+rackup.path = config.ru
+
+--- Backtrace
+NameError: uninitialized constant ProjectHanlon::Slice
+  const_missing at org/jruby/RubyModule.java:2690
+          APIv1 at /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:15
+            Tag at /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:10
+     WebService at /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:8
+         Hanlon at /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:7
+         (root) at /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:6
+        require at org/jruby/RubyKernel.java:1085
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:1
+           glob at org/jruby/RubyDir.java:233
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:52
+        require at org/jruby/RubyKernel.java:1085
+         (root) at /home/user/Hanlon/Hanlon/web/application.rb:49
+         (root) at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1
+  instance_eval at org/jruby/RubyBasicObject.java:1536
+        require at /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55
+         (root) at /home/user/Hanlon/Hanlon/web/config.ru:1
+
+--- RubyGems
+Gem.dir: /home/user/.rvm/gems/jruby-1.7.11
+Gem.path:
+/home/user/.rvm/gems/jruby-1.7.11
+/home/user/.rvm/gems/jruby-1.7.11@global
+Activated gems:
+  rack-1.5.2
+  rack-mount-0.8.3
+  rack-accept-0.4.5
+  multi_xml-0.5.5
+  hashie-2.0.5
+  descendants_tracker-0.0.3
+  equalizer-0.0.9
+  coercible-1.0.0
+  ice_nine-0.11.0
+  thread_safe-0.1.3-java
+  axiom-types-0.1.0
+  virtus-1.0.2
+  grape-0.6.1
+  i18n-0.6.9
+  tzinfo-1.1.0
+  minitest-5.3.2
+  activesupport-4.1.0
+  multi_json-1.9.2
+  systemu-2.6.4
+  macaddr-1.6.7
+  uuid-2.3.7
+  base62-1.0.0
+  colored-1.2
+  bson-1.9.2-java
+  json-1.8.1-java
+  facter-1.7.5
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+compat_version = RUBY1_9
+default_logger = org.jruby.rack.logging.StandardOutLogger@1975da5
+equals = <error: 0>
+err = java.io.PrintStream@4d36a8
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_memory_buffer_size = 
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.JulLogger@16a20a
+logger_class_name = JUL
+logger_name = org.apache.catalina.core.ContainerBase.[Tomcat].[192.168.109.5].[default]
+maximum_memory_buffer_size = 
+maximum_runtimes = 5
+num_initializer_threads = 
+out = java.io.PrintStream@1a75fd0
+rackup = 
+rackup_path = config.ru
+rewindable = true
+runtime_arguments = 
+runtime_environment = 
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@7bd28d
+throw_init_exception = true
+2014-05-07 08:37:24 -0400 SEVERE: unable to initialize application
+org.jruby.exceptions.RaiseException: (NameError) uninitialized constant ProjectHanlon::Slice
+	at org.jruby.RubyModule.const_missing(org/jruby/RubyModule.java:2690)
+	at RUBY.APIv1(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:15)
+	at RUBY.Tag(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:10)
+	at RUBY.WebService(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:8)
+	at RUBY.Hanlon(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:7)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:6)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:1)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:52)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:49)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 08:37:24 -0400 INFO: added application to pool, size now = 1
+2014-05-07 08:37:24 -0400 SEVERE: Exception sending context initialized event to listener instance of class org.jruby.rack.RackServletContextListener
+org.jruby.rack.RackInitializationException: uninitialized constant ProjectHanlon::Slice
+	from org/jruby/RubyModule.java:2690:in `const_missing'
+	from /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:15:in `APIv1'
+	from /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:10:in `Tag'
+	from /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:8:in `WebService'
+	from /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:7:in `Hanlon'
+	from /home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:6:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126:in `require'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:1:in `(root)'
+	from org/jruby/RubyDir.java:233:in `glob'
+	from /home/user/Hanlon/Hanlon/web/application.rb:52:in `(root)'
+	from org/jruby/RubyKernel.java:1085:in `require'
+	from /home/user/Hanlon/Hanlon/web/application.rb:49:in `(root)'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1:in `(root)'
+	from org/jruby/RubyBasicObject.java:1536:in `instance_eval'
+	from /home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /home/user/Hanlon/Hanlon/web/config.ru:1:in `(root)'
+
+	at org.jruby.rack.RackInitializationException.wrap(RackInitializationException.java:29)
+	at org.jruby.rack.RackApplicationFactoryDecorator.init(RackApplicationFactoryDecorator.java:104)
+	at org.jruby.rack.RackServletContextListener.contextInitialized(RackServletContextListener.java:50)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4939)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5434)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1559)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1549)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: org.jruby.exceptions.RaiseException: (NameError) uninitialized constant ProjectHanlon::Slice
+	at org.jruby.RubyModule.const_missing(org/jruby/RubyModule.java:2690)
+	at RUBY.APIv1(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:15)
+	at RUBY.Tag(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:10)
+	at RUBY.WebService(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:8)
+	at RUBY.Hanlon(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:7)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/api/api_tag_v1.rb:6)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:126)
+	at Kernel.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:124)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:1)
+	at org.jruby.RubyDir.glob(org/jruby/RubyDir.java:233)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:52)
+	at org.jruby.RubyKernel.require(org/jruby/RubyKernel.java:1085)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/application.rb:49)
+	at RUBY.(root)(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:1)
+	at org.jruby.RubyBasicObject.instance_eval(org/jruby/RubyBasicObject.java:1536)
+	at RUBY.require(/home/user/.rvm/rubies/jruby-1.7.11/lib/ruby/shared/rubygems/core_ext/kernel_require.rb:55)
+	at RUBY.(root)(/home/user/Hanlon/Hanlon/web/config.ru:1)
+
+2014-05-07 09:11:50 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 09:11:50 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 09:12:06 -0400 INFO: added application to pool, size now = 1
+2014-05-07 09:14:34 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-07 09:14:34 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-07 09:14:51 -0400 INFO: added application to pool, size now = 1
