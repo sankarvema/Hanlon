@@ -1,6 +1,7 @@
 #require 'slice_proxy'
 require 'data'
 require 'utility'
+require 'policies'
 
 require "json"
 

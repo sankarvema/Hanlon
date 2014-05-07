@@ -1,4 +1,4 @@
-require "project_hanlon/object"
+require "object"
 
 module ProjectHanlon
   module Tagging

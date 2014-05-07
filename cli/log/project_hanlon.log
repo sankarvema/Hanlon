@@ -9,3 +9,33 @@ E, [2014-05-07T06:48:30.178000 #10141] ERROR -- /home/user/Hanlon/Hanlon/cli/mai
 F, [2014-05-07T06:49:35.086000 #10182] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
 F, [2014-05-07T06:49:52.939000 #10220] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
 F, [2014-05-07T06:51:53.697000 #10320] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T06:55:44.591000 #10466] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T06:55:57.765000 #10501] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T06:56:11.831000 #10539] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+E, [2014-05-07T06:56:13.708000 #10539] ERROR -- /home/user/Hanlon/Hanlon/core/object.rb:58:in `get_logger'>>ProjectHanlon::Object#get_logger: Hanlon slice error: uninitialized constant ProjectHanlon::Policies
+E, [2014-05-07T06:56:13.710000 #10539] ERROR -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:104:in `call_hanlon_slice'>>ProjectHanlon::CLI#call_hanlon_slice: Hanlon slice error occured: uninitialized constant ProjectHanlon::Policies
+E, [2014-05-07T06:56:13.711000 #10539] ERROR -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:105:in `call_hanlon_slice'>>ProjectHanlon::CLI#call_hanlon_slice: exception occured uninitialized constant ProjectHanlon::Policies
+E, [2014-05-07T06:56:13.712000 #10539] ERROR -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:105:in `call_hanlon_slice'>>ProjectHanlon::CLI#call_hanlon_slice: ["org/jruby/RubyModule.java:2690:in `const_missing'", "/home/user/Hanlon/Hanlon/core/slice/policy.rb:24:in `initialize'", "/home/user/Hanlon/Hanlon/cli/main/cli.rb:95:in `call_hanlon_slice'", "/home/user/Hanlon/Hanlon/cli/main/cli.rb:71:in `run'", "./hanlon:23:in `(root)'"]
+F, [2014-05-07T06:56:33.300000 #10578] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+E, [2014-05-07T06:56:35.192000 #10578] ERROR -- /home/user/Hanlon/Hanlon/core/object.rb:58:in `get_logger'>>ProjectHanlon::Object#get_logger: Hanlon slice error: uninitialized constant ProjectHanlon::Policies
+E, [2014-05-07T06:56:35.193000 #10578] ERROR -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:104:in `call_hanlon_slice'>>ProjectHanlon::CLI#call_hanlon_slice: Hanlon slice error occured: uninitialized constant ProjectHanlon::Policies
+E, [2014-05-07T06:56:35.195000 #10578] ERROR -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:105:in `call_hanlon_slice'>>ProjectHanlon::CLI#call_hanlon_slice: exception occured uninitialized constant ProjectHanlon::Policies
+E, [2014-05-07T06:56:35.195000 #10578] ERROR -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:105:in `call_hanlon_slice'>>ProjectHanlon::CLI#call_hanlon_slice: ["org/jruby/RubyModule.java:2690:in `const_missing'", "/home/user/Hanlon/Hanlon/core/slice/policy.rb:24:in `initialize'", "/home/user/Hanlon/Hanlon/cli/main/cli.rb:95:in `call_hanlon_slice'", "/home/user/Hanlon/Hanlon/cli/main/cli.rb:71:in `run'", "./hanlon:23:in `(root)'"]
+F, [2014-05-07T07:01:00.674000 #10651] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:01:17.248000 #10690] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:03:48.950000 #10752] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:06:44.392000 #10869] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:14:59.194000 #11114] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:15:12.647000 #11152] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:15:27.007000 #11191] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:15:42.815000 #11320] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:15:55.918000 #11358] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:16:08.264000 #11396] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:16:42.583000 #11438] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:18:56.762000 #11541] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:19:09.375000 #11577] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:19:22.210000 #11614] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:19:33.813000 #11650] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:19:45.714000 #11686] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:19:59.858000 #11813] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal
+F, [2014-05-07T07:20:11.813000 #11849] FATAL -- /home/user/Hanlon/Hanlon/cli/main/cli.rb:35:in `run'>>ProjectHanlon::CLI#run: it is too fatal

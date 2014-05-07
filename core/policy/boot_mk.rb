@@ -1,4 +1,4 @@
-require 'project_hanlon/policy/base'
+require 'policy/base'
 
 module ProjectHanlon
   module PolicyTemplate
