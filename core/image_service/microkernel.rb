@@ -24,7 +24,9 @@ module ProjectHanlon
 
       def add(src_image_path, lcl_image_path, extra)
         # Add the iso to the image svc storage
+
         begin
+          puts "inside image service mk #{src_image_path}:::#{lcl_image_path}:::#{extra}"
           resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
 
@@ -37,7 +39,8 @@ module ProjectHanlon
             resp
           end
           rescue => e
-            logger.error e.message
+            #logger.error e.message
+            logger.log_exception e
             raise ProjectHanlon::Error::Slice::InternalError, e.message
         end
       end

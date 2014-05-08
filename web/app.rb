@@ -59,7 +59,7 @@ module Hanlon
 
         matches_image = /^(\/v1)(\/image\/.*)$/.match(URI.unescape(request_path))
         if matches_image
-          file = File.join(PROJECT_ROOT, matches_image[2])
+          file = File.join($app_root, matches_image[2])
           if File.exists?(file) && File.file?(file)
             response = Rack::Response.new
             if /\.rpm$/.match(file)

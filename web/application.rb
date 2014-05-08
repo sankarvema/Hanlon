@@ -33,9 +33,11 @@ require 'object'
 SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
 
 # Define path to iPXE ERB file and a few iPXE-related parameters
-#IPXE_ERB = File.join(PROJECT_ROOT, "lib/project_hanlon/slice/config/hanlon.ipxe.erb")
-#IPXE_NIC_MAX = 7
-#IPXE_TIMEOUT = 15
+# ToDo::Sankar::Refactor IPXE_ERB value to be changed to work on app servers
+
+IPXE_ERB = File.join($app_root, "../core/slice/config/hanlon.ipxe.erb")
+IPXE_NIC_MAX = 7
+IPXE_TIMEOUT = 15
 
 # used in cases where the Hanlon server configuration does not have a
 # parameter value for the daemon_min_cycle_time (defaults to a minute)
@@ -48,7 +50,6 @@ DEFAULT_NODE_EXPIRE_TIMEOUT = 60 * 10
 require "./api/monkey_patch"
 Dir.glob(File.join($app_root, "/api/api_*.rb")) do |f|
   next if f == "." || f == ".." || /\/api_utils.rb$/.match(f)
-  puts f + "--" + File.basename(f)
   require "./api/" + File.basename(f)
 end
 

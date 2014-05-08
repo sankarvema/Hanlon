@@ -6,7 +6,19 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/trinidad.log" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/web/config/service.yaml" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/web/config/warble.rb" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/api/api_image_v1.rb" afterPath="$PROJECT_DIR$/web/api/api_image_v1.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/app.rb" afterPath="$PROJECT_DIR$/web/app.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/application.rb" afterPath="$PROJECT_DIR$/web/application.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/image_service/base.rb" afterPath="$PROJECT_DIR$/core/image_service/base.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/log/development.log" afterPath="$PROJECT_DIR$/web/log/development.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/image.rb" afterPath="$PROJECT_DIR$/core/slice/image.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/util/logging/logger.rb" afterPath="$PROJECT_DIR$/util/logging/logger.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/image_service/microkernel.rb" afterPath="$PROJECT_DIR$/core/image_service/microkernel.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cli/log/project_hanlon.log" afterPath="$PROJECT_DIR$/cli/log/project_hanlon.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/log/project_hanlon.log" afterPath="$PROJECT_DIR$/web/log/project_hanlon.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/project_hanlon.rb" afterPath="$PROJECT_DIR$/core/project_hanlon.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/trinidad.log" afterPath="$PROJECT_DIR$/scripts/trinidad.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Hanlon.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,34 +47,16 @@
       <file leaf-file-name="config.ru" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/config.ru">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="0" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="135">
+            <state line="3" column="0" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="135">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="application.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/application.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="84" selection-start="587" selection-end="587" vertical-scroll-proportion="0.8018868" vertical-offset="0" max-vertical-offset="1050">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="slice.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/slice.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="831" column="0" selection-start="29662" selection-end="29662" vertical-scroll-proportion="0.0" vertical-offset="12033" max-vertical-offset="12585">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_tag_v1.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/api/api_tag_v1.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="14" selection-start="17" selection-end="17" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4920">
+            <state line="21" column="65" selection-start="818" selection-end="822" vertical-scroll-proportion="0.0" vertical-offset="200" max-vertical-offset="1065">
               <folding />
             </state>
           </provider>
@@ -71,7 +65,43 @@
       <file leaf-file-name="app.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/app.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="13" selection-start="42" selection-end="42" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2715">
+            <state line="70" column="47" selection-start="2683" selection-end="2683" vertical-scroll-proportion="0.0" vertical-offset="727" max-vertical-offset="2715">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="slice.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/slice.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="756" column="6" selection-start="27236" selection-end="27236" vertical-scroll-proportion="0.0" vertical-offset="9018" max-vertical-offset="12585">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_image_v1.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web/api/api_image_v1.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="201" column="17" selection-start="9236" selection-end="9236" vertical-scroll-proportion="0.767507" vertical-offset="2741" max-vertical-offset="3900">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="base.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="159" column="14" selection-start="5099" selection-end="5099" vertical-scroll-proportion="0.0" vertical-offset="2279" max-vertical-offset="3375">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_config_v1.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/api/api_config_v1.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="112" column="29" selection-start="3897" selection-end="3897" vertical-scroll-proportion="0.0" vertical-offset="1473" max-vertical-offset="2025">
               <folding />
             </state>
           </provider>
@@ -102,7 +132,6 @@
         <option value="$PROJECT_DIR$/core/persist/mongo_plugin.rb" />
         <option value="$PROJECT_DIR$/conf/hanlon_server.conf" />
         <option value="$PROJECT_DIR$/util/logging/new_logger.rb" />
-        <option value="$PROJECT_DIR$/util/logging/logger.rb" />
         <option value="$PROJECT_DIR$/core/config/server.rb" />
         <option value="$PROJECT_DIR$/core/slice/config.rb" />
         <option value="$PROJECT_DIR$/cli/main/slice.rb" />
@@ -112,7 +141,6 @@
         <option value="$PROJECT_DIR$/core/slice/model.rb" />
         <option value="$PROJECT_DIR$/core/error/slice.rb" />
         <option value="$PROJECT_DIR$/core/slice.rb" />
-        <option value="$PROJECT_DIR$/core/slice/image.rb" />
         <option value="$PROJECT_DIR$/cli/main/cli.rb" />
         <option value="$PROJECT_DIR$/cli/hanlon" />
         <option value="$PROJECT_DIR$/core/slice/policy.rb" />
@@ -123,13 +151,18 @@
         <option value="$PROJECT_DIR$/core/image_service.rb" />
         <option value="$PROJECT_DIR$/core/policy/boot_mk.rb" />
         <option value="$PROJECT_DIR$/core/policy/linux_deploy.rb" />
-        <option value="$PROJECT_DIR$/core/project_hanlon.rb" />
         <option value="$PROJECT_DIR$/scripts/run-tri.sh" />
         <option value="$PROJECT_DIR$/web/config.ru" />
-        <option value="$PROJECT_DIR$/web/application.rb" />
         <option value="$PROJECT_DIR$/web/api/api_tag_v1.rb" />
-        <option value="$PROJECT_DIR$/web/app.rb" />
         <option value="$PROJECT_DIR$/trinidad.log" />
+        <option value="$PROJECT_DIR$/web/app.rb" />
+        <option value="$PROJECT_DIR$/core/slice/image.rb" />
+        <option value="$PROJECT_DIR$/core/image_service/microkernel.rb" />
+        <option value="$PROJECT_DIR$/util/logging/logger.rb" />
+        <option value="$PROJECT_DIR$/core/image_service/base.rb" />
+        <option value="$PROJECT_DIR$/core/project_hanlon.rb" />
+        <option value="$PROJECT_DIR$/web/application.rb" />
+        <option value="$PROJECT_DIR$/web/api/api_image_v1.rb" />
       </list>
     </option>
   </component>
@@ -164,6 +197,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -182,9 +216,162 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="conf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logging" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="slice" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="slice" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hanlon" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cli" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -195,9 +382,11 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/web" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
+    <property name="FullScreen" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/web/conf" />
       <recent name="$PROJECT_DIR$/cli/conf" />
       <recent name="$PROJECT_DIR$/conf" />
     </key>
@@ -349,6 +538,23 @@
     </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="all">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="ebdfb336-41a5-4be0-a67f-f12ccec6a72a" name="Default" comment="" />
@@ -357,14 +563,34 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
     <frame x="0" y="26" width="1366" height="668" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41722974" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3293919" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41722974" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -418,74 +644,14 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/node.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-1.8396226" vertical-offset="585" max-vertical-offset="2295">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/persist.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="9" selection-start="62" selection-end="62" vertical-scroll-proportion="0.094339624" vertical-offset="0" max-vertical-offset="318">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/policy.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="3" selection-start="198" selection-end="198" vertical-scroll-proportion="0.4716981" vertical-offset="0" max-vertical-offset="318">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/policy/boot_mk.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="9" selection-start="9" selection-end="9" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/persist/memory_plugin.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2115">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/persist/postgres_plugin.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6060">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/persist/plugin_interface.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1710">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/persist/mongo_plugin.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="235" column="15" selection-start="9091" selection-end="9096" vertical-scroll-proportion="6.4917126" vertical-offset="0" max-vertical-offset="3750">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/persist/error.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/persist/controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="13" selection-start="3494" selection-end="3496" vertical-scroll-proportion="2.201087" vertical-offset="0" max-vertical-offset="1935">
-          <folding />
-        </state>
+        <state line="81" column="13" selection-start="3494" selection-end="3496" vertical-scroll-proportion="2.201087" vertical-offset="0" max-vertical-offset="1935" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/policy/linux_deploy.rb">
@@ -511,23 +677,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/policy/base.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="25" selection-start="326" selection-end="326" vertical-scroll-proportion="0.35326087" vertical-offset="0" max-vertical-offset="4335">
-          <folding />
-        </state>
+        <state line="13" column="25" selection-start="326" selection-end="326" vertical-scroll-proportion="0.35326087" vertical-offset="0" max-vertical-offset="4335" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/base.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5100">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5100" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/centos_6.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/debian.rb">
@@ -539,9 +699,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/debian_wheezy.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="570">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="570" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/opensuse_12.rb">
@@ -553,9 +711,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/oraclelinux_6.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/redhat.rb">
@@ -567,23 +723,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/redhat_6.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="543">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="543" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/xenserver_tampa.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="478" selection-end="478" vertical-scroll-proportion="0.5524862" vertical-offset="0" max-vertical-offset="543">
-          <folding />
-        </state>
+        <state line="20" column="0" selection-start="478" selection-end="478" vertical-scroll-proportion="0.5524862" vertical-offset="0" max-vertical-offset="543" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/xenserver_boston.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="543">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="543" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/xenserver.rb">
@@ -595,9 +745,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/vmware_esxi_5.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="543">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="543" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/vmware_esxi.rb">
@@ -609,23 +757,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/ubuntu_precise_ip_pool.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1485">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1485" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/ubuntu_precise.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/ubuntu_oneiric.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="645">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="645" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/model/ubuntu.rb">
@@ -642,95 +784,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/project_hanlon.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="34" selection-start="282" selection-end="291" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2745">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-tri.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="97" selection-end="97" vertical-scroll-proportion="0.055555556" vertical-offset="0" max-vertical-offset="540">
-          <folding />
-        </state>
+        <state line="2" column="0" selection-start="97" selection-end="97" vertical-scroll-proportion="0.055555556" vertical-offset="0" max-vertical-offset="540" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/api/swagger.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/api/monkey_patch.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cli/hanlon">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="721" selection-end="773" vertical-scroll-proportion="0.45132744" vertical-offset="0" max-vertical-offset="565">
-          <folding />
-        </state>
+        <state line="17" column="0" selection-start="721" selection-end="773" vertical-scroll-proportion="0.45132744" vertical-offset="0" max-vertical-offset="565" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/tmp/restart.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="329">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="329" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/CONTRIBUTING.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="30" selection-start="287" selection-end="287" vertical-scroll-proportion="-13.020618" vertical-offset="3894" max-vertical-offset="4185">
-          <folding />
-        </state>
+        <state line="7" column="30" selection-start="287" selection-end="287" vertical-scroll-proportion="-13.020618" vertical-offset="3894" max-vertical-offset="4185" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Gemfile.lock">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1770">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1770" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/LICENSE">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Rakefile">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="250" selection-end="250" vertical-scroll-proportion="0.6840391" vertical-offset="0" max-vertical-offset="1140">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/slice.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="831" column="0" selection-start="29662" selection-end="29662" vertical-scroll-proportion="0.0" vertical-offset="12033" max-vertical-offset="12585">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/api/api_tag_v1.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="14" selection-start="17" selection-end="17" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4920">
-          <folding />
-        </state>
+        <state line="14" column="0" selection-start="250" selection-end="250" vertical-scroll-proportion="0.6840391" vertical-offset="0" max-vertical-offset="1140" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/api/api.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="675">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="675" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project_hanlon.gemspec">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="307" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TESTING.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="765" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/api/api_tag_v1.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="14" selection-start="17" selection-end="17" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4920" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/conf/hanlon_server.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/config.ru">
@@ -740,30 +861,84 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/util/logging/logger.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="25" selection-start="247" selection-end="247" vertical-scroll-proportion="0.19337016" vertical-offset="0" max-vertical-offset="990">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/project_hanlon.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="25" selection-start="468" selection-end="468" vertical-scroll-proportion="0.16574585" vertical-offset="75" max-vertical-offset="2745" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/image_service/microkernel.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="0" selection-start="929" selection-end="929" vertical-scroll-proportion="0.26548672" vertical-offset="315" max-vertical-offset="3000">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/slice/image.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="185" column="38" selection-start="7560" selection-end="7582" vertical-scroll-proportion="0.7079646" vertical-offset="2375" max-vertical-offset="3630">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/slice.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="756" column="6" selection-start="27236" selection-end="27236" vertical-scroll-proportion="0.0" vertical-offset="9018" max-vertical-offset="12585">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/app.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="13" selection-start="42" selection-end="42" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2715">
+        <state line="70" column="47" selection-start="2683" selection-end="2683" vertical-scroll-proportion="0.0" vertical-offset="727" max-vertical-offset="2715">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/project_hanlon.gemspec">
+    <entry file="file://$PROJECT_DIR$/core/slice/config/hanlon.ipxe.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="307">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="552">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TESTING.md">
+    <entry file="file://$PROJECT_DIR$/cli/log/project_hanlon.log">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="765">
+        <state line="42" column="331" selection-start="8764" selection-end="8764" vertical-scroll-proportion="0.33114755" vertical-offset="529" max-vertical-offset="15270">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/application.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="84" selection-start="587" selection-end="587" vertical-scroll-proportion="0.8018868" vertical-offset="0" max-vertical-offset="1050">
+        <state line="21" column="65" selection-start="818" selection-end="822" vertical-scroll-proportion="0.0" vertical-offset="200" max-vertical-offset="1065">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="159" column="14" selection-start="5099" selection-end="5099" vertical-scroll-proportion="0.0" vertical-offset="2279" max-vertical-offset="3375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/api/api_config_v1.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="112" column="29" selection-start="3897" selection-end="3897" vertical-scroll-proportion="0.0" vertical-offset="1473" max-vertical-offset="2025">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/api/api_image_v1.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="201" column="17" selection-start="9236" selection-end="9236" vertical-scroll-proportion="0.767507" vertical-offset="2741" max-vertical-offset="3900">
           <folding />
         </state>
       </provider>

@@ -167,8 +167,11 @@ module ProjectHanlon
         iso_path = File.expand_path(options[:path], Dir.pwd)
         os_name = options[:name]
         os_version = options[:version]
+
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
+        puts "image access url #{@uri_string}"
+
         body_hash = {
             "type" => image_type,
             "path" => iso_path
@@ -177,7 +180,11 @@ module ProjectHanlon
         body_hash["version"] = os_version if os_version
         json_data = body_hash.to_json
         puts "Attempting to add, please wait...".green
+        puts "uri: #{uri.to_s}"
+        puts "json: #{json_data}"
+
         result, response = rz_http_post_json_data(uri, json_data, true)
+        puts "#{result} ::: #{response }"
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end

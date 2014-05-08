@@ -119,11 +119,14 @@ module Hanlon
           #     version   | String | The version to use for the image (os images only)      |    | Default: unavailable
           desc "Create a new image instance (from an ISO file)"
           before do
+            # ToDo::Sankar::Suppressed - validation suppressed due to security issues
+
             # only allow access to this resource from the Hanlon subnet
-            unless request_is_from_hanlon_subnet(env['REMOTE_ADDR'])
-              env['api.format'] = :text
-              raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is not allowed from outside of the Hanlon subnet"
-            end
+            #puts "env['REMOTE_ADDR'] value is #{env['REMOTE_ADDR']}"
+            #unless request_is_from_hanlon_subnet(env['REMOTE_ADDR'])
+            #  env['api.format'] = :text
+            #  raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /image resource is not allowed from outside of the Hanlon subnet"
+            #end
           end
           params do
             requires "type", type: String, desc: "The image type ('mk' or 'os')"
@@ -136,6 +139,7 @@ module Hanlon
             iso_path = params["path"]
             os_name = params["name"]
             os_version = params["version"]
+
             unless ([image_type.to_sym] - SLICE_REF.image_types.keys).size == 0
               raise ProjectHanlon::Error::Slice::InvalidImageType, "Invalid Image Type '#{image_type}', valid types are: " +
                   SLICE_REF.image_types.keys.map { |k| k.to_s }.join(', ')
@@ -152,6 +156,7 @@ module Hanlon
               res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
                                    ProjectHanlon.config.image_path, os_name, os_version
             end
+            puts "#{res}"
             raise ProjectHanlon::Error::Slice::InternalError, res[1] unless res[0]
             raise ProjectHanlon::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)
             slice_success_object(SLICE_REF, :create_image, image, :success_type => :created)
@@ -190,7 +195,10 @@ module Hanlon
                 #content_type "application/octet-stream"
                 header['Content-Disposition'] = "attachment; filename=#{filename}"
                 env['api.format'] = :binary
-                File.read(File.join(PROJECT_ROOT, "image", path))
+                # ToDo::Sankar::Error - using project_root or app_root, should be image path
+                puts "is this the path #{path}"
+                #File.read(File.join($app_root, "image", path))
+                File.read(File.join("/home/user/Hanlon/Images/", path))
               end
             end    # end GET /image/{component}
 
