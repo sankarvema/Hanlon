@@ -6,17 +6,15 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/trinidad.log" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/web/config/service.yaml" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/web/config/warble.rb" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/api/api.rb" afterPath="$PROJECT_DIR$/web/api/api.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/api/api_image_v1.rb" afterPath="$PROJECT_DIR$/web/api/api_image_v1.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/app.rb" afterPath="$PROJECT_DIR$/web/app.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/application.rb" afterPath="$PROJECT_DIR$/web/application.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/image_service/base.rb" afterPath="$PROJECT_DIR$/core/image_service/base.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cli/main/cli.rb" afterPath="$PROJECT_DIR$/cli/main/cli.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/log/development.log" afterPath="$PROJECT_DIR$/web/log/development.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/slice/image.rb" afterPath="$PROJECT_DIR$/core/slice/image.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/util/logging/logger.rb" afterPath="$PROJECT_DIR$/util/logging/logger.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/image_service/microkernel.rb" afterPath="$PROJECT_DIR$/core/image_service/microkernel.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cli/log/project_hanlon.log" afterPath="$PROJECT_DIR$/cli/log/project_hanlon.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/log/project_hanlon.log" afterPath="$PROJECT_DIR$/web/log/project_hanlon.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/project_hanlon.rb" afterPath="$PROJECT_DIR$/core/project_hanlon.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/trinidad.log" afterPath="$PROJECT_DIR$/scripts/trinidad.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -44,10 +42,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="config.ru" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="config.ru" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/config.ru">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="0" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="135">
+            <state line="3" column="0" selection-start="57" selection-end="57" vertical-scroll-proportion="0.14150943" vertical-offset="0" max-vertical-offset="318">
               <folding />
             </state>
           </provider>
@@ -56,7 +54,7 @@
       <file leaf-file-name="application.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/application.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="65" selection-start="818" selection-end="822" vertical-scroll-proportion="0.0" vertical-offset="200" max-vertical-offset="1065">
+            <state line="21" column="65" selection-start="818" selection-end="822" vertical-scroll-proportion="0.0" vertical-offset="315" max-vertical-offset="1065">
               <folding />
             </state>
           </provider>
@@ -65,25 +63,43 @@
       <file leaf-file-name="app.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/app.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="70" column="47" selection-start="2683" selection-end="2683" vertical-scroll-proportion="0.0" vertical-offset="727" max-vertical-offset="2715">
+            <state line="13" column="0" selection-start="154" selection-end="154" vertical-scroll-proportion="0.0" vertical-offset="89" max-vertical-offset="2715">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="slice.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/slice.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="756" column="6" selection-start="27236" selection-end="27236" vertical-scroll-proportion="0.0" vertical-offset="9018" max-vertical-offset="12585">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_image_v1.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="api_image_v1.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/api/api_image_v1.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="201" column="17" selection-start="9236" selection-end="9236" vertical-scroll-proportion="0.767507" vertical-offset="2741" max-vertical-offset="3900">
+            <state line="194" column="63" selection-start="8727" selection-end="8727" vertical-scroll-proportion="0.0" vertical-offset="2336" max-vertical-offset="4050">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="image.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/slice/image.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="180" column="54" selection-start="7418" selection-end="7418" vertical-scroll-proportion="0.0" vertical-offset="2549" max-vertical-offset="3585">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="trinidad.log" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/trinidad.log">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="0" selection-start="120" selection-end="120" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="logger.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/util/logging/logger.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="25" selection-start="247" selection-end="247" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="990">
               <folding />
             </state>
           </provider>
@@ -92,16 +108,16 @@
       <file leaf-file-name="base.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="159" column="14" selection-start="5099" selection-end="5099" vertical-scroll-proportion="0.0" vertical-offset="2279" max-vertical-offset="3375">
+            <state line="138" column="49" selection-start="4602" selection-end="4602" vertical-scroll-proportion="0.0" vertical-offset="1919" max-vertical-offset="3375">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_config_v1.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/api/api_config_v1.rb">
+      <file leaf-file-name="api.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/api/api.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="112" column="29" selection-start="3897" selection-end="3897" vertical-scroll-proportion="0.0" vertical-offset="1473" max-vertical-offset="2025">
+            <state line="23" column="72" selection-start="1031" selection-end="1031" vertical-scroll-proportion="0.0" vertical-offset="110" max-vertical-offset="675">
               <folding />
             </state>
           </provider>
@@ -141,7 +157,6 @@
         <option value="$PROJECT_DIR$/core/slice/model.rb" />
         <option value="$PROJECT_DIR$/core/error/slice.rb" />
         <option value="$PROJECT_DIR$/core/slice.rb" />
-        <option value="$PROJECT_DIR$/cli/main/cli.rb" />
         <option value="$PROJECT_DIR$/cli/hanlon" />
         <option value="$PROJECT_DIR$/core/slice/policy.rb" />
         <option value="$PROJECT_DIR$/core/tagging.rb" />
@@ -155,14 +170,16 @@
         <option value="$PROJECT_DIR$/web/config.ru" />
         <option value="$PROJECT_DIR$/web/api/api_tag_v1.rb" />
         <option value="$PROJECT_DIR$/trinidad.log" />
-        <option value="$PROJECT_DIR$/web/app.rb" />
-        <option value="$PROJECT_DIR$/core/slice/image.rb" />
         <option value="$PROJECT_DIR$/core/image_service/microkernel.rb" />
-        <option value="$PROJECT_DIR$/util/logging/logger.rb" />
         <option value="$PROJECT_DIR$/core/image_service/base.rb" />
         <option value="$PROJECT_DIR$/core/project_hanlon.rb" />
         <option value="$PROJECT_DIR$/web/application.rb" />
         <option value="$PROJECT_DIR$/web/api/api_image_v1.rb" />
+        <option value="$PROJECT_DIR$/util/logging/logger.rb" />
+        <option value="$PROJECT_DIR$/core/slice/image.rb" />
+        <option value="$PROJECT_DIR$/web/api/api.rb" />
+        <option value="$PROJECT_DIR$/web/app.rb" />
+        <option value="$PROJECT_DIR$/cli/main/cli.rb" />
       </list>
     </option>
   </component>
@@ -197,7 +214,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -258,101 +274,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="util" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="logging" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="slice" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="slice" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Hanlon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -372,6 +298,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -589,11 +516,11 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3293919" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41722974" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293919" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41722974" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17668621" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39864865" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -603,8 +530,8 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -622,9 +549,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -644,16 +571,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/persist/error.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="565" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/persist/controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="13" selection-start="3494" selection-end="3496" vertical-scroll-proportion="2.201087" vertical-offset="0" max-vertical-offset="1935" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/policy/linux_deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="9" selection-start="59" selection-end="59" vertical-scroll-proportion="0.053097345" vertical-offset="0" max-vertical-offset="570">
@@ -829,11 +746,6 @@
         <state line="14" column="0" selection-start="250" selection-end="250" vertical-scroll-proportion="0.6840391" vertical-offset="0" max-vertical-offset="1140" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/api/api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="675" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/project_hanlon.gemspec">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="307" />
@@ -854,20 +766,6 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/config.ru">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="135">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/util/logging/logger.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="25" selection-start="247" selection-end="247" vertical-scroll-proportion="0.19337016" vertical-offset="0" max-vertical-offset="990">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/project_hanlon.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="11" column="25" selection-start="468" selection-end="468" vertical-scroll-proportion="0.16574585" vertical-offset="75" max-vertical-offset="2745" />
@@ -880,13 +778,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/slice/image.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="185" column="38" selection-start="7560" selection-end="7582" vertical-scroll-proportion="0.7079646" vertical-offset="2375" max-vertical-offset="3630">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/slice.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="756" column="6" selection-start="27236" selection-end="27236" vertical-scroll-proportion="0.0" vertical-offset="9018" max-vertical-offset="12585">
@@ -894,18 +785,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/app.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="70" column="47" selection-start="2683" selection-end="2683" vertical-scroll-proportion="0.0" vertical-offset="727" max-vertical-offset="2715">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/slice/config/hanlon.ipxe.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="552">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="552" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cli/log/project_hanlon.log">
@@ -922,23 +804,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
+    <entry file="file://$PROJECT_DIR$/web/api/api_config_v1.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="159" column="14" selection-start="5099" selection-end="5099" vertical-scroll-proportion="0.0" vertical-offset="2279" max-vertical-offset="3375">
+        <state line="112" column="29" selection-start="3897" selection-end="3897" vertical-scroll-proportion="0.375" vertical-offset="1473" max-vertical-offset="2025">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/api/api_config_v1.rb">
+    <entry file="file://$PROJECT_DIR$/util/logging/logger.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="112" column="29" selection-start="3897" selection-end="3897" vertical-scroll-proportion="0.0" vertical-offset="1473" max-vertical-offset="2025">
+        <state line="7" column="25" selection-start="247" selection-end="247" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="990">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/api/api_image_v1.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="17" selection-start="9236" selection-end="9236" vertical-scroll-proportion="0.767507" vertical-offset="2741" max-vertical-offset="3900">
+        <state line="194" column="63" selection-start="8727" selection-end="8727" vertical-scroll-proportion="0.0" vertical-offset="2336" max-vertical-offset="4050">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/slice/image.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="180" column="54" selection-start="7418" selection-end="7418" vertical-scroll-proportion="0.0" vertical-offset="2549" max-vertical-offset="3585">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/trinidad.log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="0" selection-start="120" selection-end="120" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/image_service/base.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="138" column="49" selection-start="4602" selection-end="4602" vertical-scroll-proportion="0.0" vertical-offset="1919" max-vertical-offset="3375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/api/api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="72" selection-start="1031" selection-end="1031" vertical-scroll-proportion="0.0" vertical-offset="110" max-vertical-offset="675">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/app.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="0" selection-start="154" selection-end="154" vertical-scroll-proportion="0.0" vertical-offset="89" max-vertical-offset="2715">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cli/main/cli.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="17" selection-start="971" selection-end="971" vertical-scroll-proportion="-0.13836478" vertical-offset="524" max-vertical-offset="3135">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/config.ru">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="0" selection-start="57" selection-end="57" vertical-scroll-proportion="0.14150943" vertical-offset="0" max-vertical-offset="318">
           <folding />
         </state>
       </provider>

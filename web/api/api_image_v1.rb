@@ -188,17 +188,27 @@ module Hanlon
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 slice_success_object(SLICE_REF, :get_image_by_uuid, image, :success_type => :generic)
               else
-                path = component
-                # it's not a UUID, so treat it as a path to a file and return the component
-                # of the image that the user is interested in
-                filename = path.split(File::SEPARATOR)[-1]
-                #content_type "application/octet-stream"
-                header['Content-Disposition'] = "attachment; filename=#{filename}"
-                env['api.format'] = :binary
-                # ToDo::Sankar::Error - using project_root or app_root, should be image path
-                puts "is this the path #{path}"
-                #File.read(File.join($app_root, "image", path))
-                File.read(File.join("/home/user/Hanlon/Images/", path))
+                begin
+
+                  path = component
+                  # it's not a UUID, so treat it as a path to a file and return the component
+                  # of the image that the user is interested in
+                  filename = path.split(File::SEPARATOR)[-1]
+                  #content_type "application/octet-stream"
+                  header['Content-Disposition'] = "attachment; filename=#{filename}"
+                  env['api.format'] = :binary
+                  # ToDo::Sankar::Error - using project_root or app_root, should be image path
+
+                  #File.read(File.join($app_root, "image", path))
+                  filepath = File.join("/home/user/Hanlon/Images/", path)
+                  puts "is this the path #{filepath}"
+                  File.read(filepath)
+
+                rescue Exception => e
+                  puts "An exception occuring serving image path #{filepath}"
+                  logger.log_exception e
+                end
+
               end
             end    # end GET /image/{component}
 

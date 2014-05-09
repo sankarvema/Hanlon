@@ -32,7 +32,6 @@ class ProjectHanlon::CLI
     @options = {}
     optparse = get_optparse
 
-    logger.fatal "it is too fatal"
     begin
       optparse.parse(first_args)
     rescue OptionParser::InvalidOption => e

@@ -11,7 +11,7 @@ module Hanlon
       CHUNK_SIZE = 2**20
 
       def initialize
-        puts "Initiatlizing hanlon::web services"
+
         if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
           @filenames = [ '', '.html', 'index.html', '/index.html' ]
           @rack_static = ::Rack::Static.new(
@@ -102,7 +102,7 @@ module Hanlon
 
         # if not, then load it via the api
         @@base_uri = env['SCRIPT_NAME']
-        puts "the base uri>>> #{@@base_uri}"
+
         Hanlon::WebService::API.call(env)
       end
 
