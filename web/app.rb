@@ -58,8 +58,15 @@ module Hanlon
         end
 
         matches_image = /^(\/v1)(\/image\/.*)$/.match(URI.unescape(request_path))
+        puts "image path #{ProjectHanlon.config.image_path}"
+
+        #matches_image.each { |a| puts ">>>#{a} " }
+
         if matches_image
-          file = File.join($app_root, matches_image[2])
+          # ToDo::Sankar::Error - using project_root or app_root, should be image path
+          #file = File.join($app_root, matches_image[2])
+          file = File.join("/home/user/Hanlon/Images/", matches_image[3])
+
           if File.exists?(file) && File.file?(file)
             response = Rack::Response.new
             if /\.rpm$/.match(file)
