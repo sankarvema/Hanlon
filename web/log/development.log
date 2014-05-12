@@ -1,0 +1,12 @@
+2014-05-12 04:55:55 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-12 04:55:55 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-12 04:56:21 -0400 INFO: added application to pool, size now = 1
+2014-05-12 04:58:44 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-12 04:58:44 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-12 04:59:01 -0400 INFO: added application to pool, size now = 1
+2014-05-12 05:00:02 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-12 05:00:02 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-12 05:00:17 -0400 INFO: added application to pool, size now = 1
+2014-05-12 05:11:36 -0400 INFO: jruby 1.7.11 (1.9.3p392) 2014-03-17 86339bb on OpenJDK Client VM 1.7.0_51-b00 [linux-i386]
+2014-05-12 05:11:36 -0400 INFO: using 1:5 runtime pool with acquire timeout of 5.0 seconds
+2014-05-12 05:12:11 -0400 INFO: added application to pool, size now = 1

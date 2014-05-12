@@ -1,0 +1,2 @@
+# Logfile created on 2014-05-12 04:56:16 -0400 by logger.rb/v1.2.7
+E, [2014-05-12T05:29:57.069000 #2864] ERROR -- /home/user/Hanlon/Hanlon/core/model/base.rb:121:in `broker_check'>>ProjectHanlon::ModelTemplate::Centos6#broker_check: No broker defined

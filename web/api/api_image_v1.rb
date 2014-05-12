@@ -197,11 +197,8 @@ module Hanlon
                   #content_type "application/octet-stream"
                   header['Content-Disposition'] = "attachment; filename=#{filename}"
                   env['api.format'] = :binary
-                  # ToDo::Sankar::Error - using project_root or app_root, should be image path
 
-                  #File.read(File.join($app_root, "image", path))
-                  filepath = File.join("/home/user/Hanlon/Images/", path)
-                  puts "is this the path #{filepath}"
+                  filepath = File.join(ProjectHanlon.config.image_path, path)
                   File.read(filepath)
 
                 rescue Exception => e
