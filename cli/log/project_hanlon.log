@@ -1,49 +1,6 @@
-# Logfile created on 2014-05-09 06:24:52 -0400 by logger.rb/v1.2.7
-E, [2014-05-09T06:27:15.807000 #8590] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:201:in `slice_error'>>ProjectHanlon::Slice::Model#slice_error: Slice error: {"std_err_code"=>1, "result"=>#<JSON::ParserError: unexpected token at 'org.jruby.exceptions.RaiseException: (NameError) uninitialized constant Hanlon::WebService::Response
-	at org.jruby.RubyModule.const_missing(org/jruby/RubyModule.java:2690)
-	at RUBY.APIv1(/home/user/Hanlon/Hanlon/web/api/api_model_v1.rb:18)
-	at org.jruby.RubyBasicObject.instance_exec(org/jruby/RubyBasicObject.java:1565)
-	at RUBY.exec_handler(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/middleware/error.rb:49)
-	at RUBY.call!(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/middleware/error.rb:37)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/middleware/base.rb:18)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/head.rb:11)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:138)
-	at RUBY.call!(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/endpoint.rb:155)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/endpoint.rb:145)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/route_set.rb:152)
-	at RUBY.recognize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/code_generation.rb:114)
-	at RUBY.optimized_each(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/code_generation.rb:73)
-	at RUBY.recognize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/code_generation.rb:113)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/route_set.rb:141)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/api.rb:525)
-	at RUBY.call!(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/api.rb:42)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/api.rb:38)
-	at RUBY.call(/home/user/Hanlon/Hanlon/web/app.rb:106)
-	at RUBY.call(file:/home/user/.rvm/gems/jruby-1.7.11/gems/jruby-rack-1.1.14/lib/jruby-rack-1.1.14.jar!/rack/handler/servlet.rb:22)
-
-'>}
-E, [2014-05-09T06:27:15.826000 #8590] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:214:in `slice_error'>>ProjectHanlon::Slice::Model#slice_error: Slice Error: unexpected token at 'org.jruby.exceptions.RaiseException: (NameError) uninitialized constant Hanlon::WebService::Response
-	at org.jruby.RubyModule.const_missing(org/jruby/RubyModule.java:2690)
-	at RUBY.APIv1(/home/user/Hanlon/Hanlon/web/api/api_model_v1.rb:18)
-	at org.jruby.RubyBasicObject.instance_exec(org/jruby/RubyBasicObject.java:1565)
-	at RUBY.exec_handler(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/middleware/error.rb:49)
-	at RUBY.call!(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/middleware/error.rb:37)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/middleware/base.rb:18)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/head.rb:11)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-1.5.2/lib/rack/builder.rb:138)
-	at RUBY.call!(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/endpoint.rb:155)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/endpoint.rb:145)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/route_set.rb:152)
-	at RUBY.recognize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/code_generation.rb:114)
-	at RUBY.optimized_each(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/code_generation.rb:73)
-	at RUBY.recognize(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/code_generation.rb:113)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/rack-mount-0.8.3/lib/rack/mount/route_set.rb:141)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/api.rb:525)
-	at RUBY.call!(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/api.rb:42)
-	at RUBY.call(/home/user/.rvm/gems/jruby-1.7.11/gems/grape-0.6.1/lib/grape/api.rb:38)
-	at RUBY.call(/home/user/Hanlon/Hanlon/web/app.rb:106)
-	at RUBY.call(file:/home/user/.rvm/gems/jruby-1.7.11/gems/jruby-rack-1.1.14/lib/jruby-rack-1.1.14.jar!/rack/handler/servlet.rb:22)
-
-'
-E, [2014-05-09T06:53:37.384000 #9330] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:214:in `slice_error'>>ProjectHanlon::Slice::Policy#slice_error: Slice Error: Must provide one option from [:label, :model_uuid, :broker_uuid, :tags, :enabled, :maximum, :new_line_number].
-E, [2014-05-09T07:24:33.131000 #9483] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:214:in `slice_error'>>ProjectHanlon::Slice::Policy#slice_error: Slice Error: Must provide one option from [:label, :model_uuid, :broker_uuid, :tags, :enabled, :maximum, :new_line_number].
+E, [2014-05-14T06:41:26.651000 #4601] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:205:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice error: {"std_err_code"=>1, "result"=>#<Errno::ECONNREFUSED: Connection refused - Connection refused>}
+E, [2014-05-14T06:41:26.683000 #4601] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:218:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice Error: Connection refused - Connection refused
+E, [2014-05-14T06:43:50.993000 #4661] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:205:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice error: {"std_err_code"=>1, "result"=>#<Errno::ECONNREFUSED: Connection refused - Connection refused>}
+E, [2014-05-14T06:43:51.006000 #4661] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:218:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice Error: Connection refused - Connection refused
+E, [2014-05-14T06:47:41.897000 #4811] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:205:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice error: {"std_err_code"=>1, "result"=>#<Errno::ECONNREFUSED: Connection refused - Connection refused>}
+E, [2014-05-14T06:47:41.923000 #4811] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:218:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice Error: Connection refused - Connection refused

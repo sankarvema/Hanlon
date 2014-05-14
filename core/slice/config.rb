@@ -36,7 +36,7 @@ module ProjectHanlon
 
       def read_config
         uri = URI.parse @uri_string
-        config = rz_http_get_hash_response(uri)
+        config = hnl_http_get_hash_response(uri)
         puts "ProjectHanlon Config:"
         config.each { |key,val|
             print "\t#{key.sub("@","")}: ".white
@@ -46,7 +46,7 @@ module ProjectHanlon
 
       def generate_ipxe_script
         uri = URI.parse @uri_string + '/ipxe'
-        ipxe_script = rz_http_get_text(uri)
+        ipxe_script = hnl_http_get_text(uri)
         puts ipxe_script
       end
 

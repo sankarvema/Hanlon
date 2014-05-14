@@ -61,7 +61,7 @@ module ProjectHanlon
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
         uri = URI.parse @uri_string
-        active_model_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        active_model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(active_model_array, "Active Models:", :style => :table)
       end
 
@@ -73,7 +73,7 @@ module ProjectHanlon
         uri = URI.parse(@uri_string + '/' + uuid)
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
-        result, response = rz_http_get(uri, include_http_response)
+        result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -89,7 +89,7 @@ module ProjectHanlon
         uri = URI.parse(@uri_string + '/' + uuid)
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
-        result, response = rz_http_get(uri, include_http_response)
+        result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -110,7 +110,7 @@ module ProjectHanlon
         uuid = get_uuid_from_prev_args
         # setup the DELETE (to update the remove the indicated active_model) and return the results
         uri = URI.parse @uri_string + "/#{uuid}"
-        result, response = rz_http_delete(uri, true)
+        result, response = hnl_http_delete(uri, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -122,7 +122,7 @@ module ProjectHanlon
         uri = URI.parse(@uri_string + '/logs')
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
-        result, response = rz_http_get(uri, include_http_response)
+        result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end

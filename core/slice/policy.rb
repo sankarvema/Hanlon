@@ -200,7 +200,7 @@ module ProjectHanlon
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
         uri = URI.parse @uri_string
-        policy_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        policy_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(policy_array, "Policies:", :style => :table)
       end
 
@@ -209,7 +209,7 @@ module ProjectHanlon
         @command = :get_policy_templates
         # get the list of policy templates nd print it
         uri = URI.parse @uri_string + '/templates'
-        policy_templates = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        policy_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(policy_templates, "Policy Templates:")
       end
 
@@ -221,7 +221,7 @@ module ProjectHanlon
         uri = URI.parse(@uri_string + '/' + policy_uuid)
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
-        result, response = rz_http_get(uri, include_http_response)
+        result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -260,7 +260,7 @@ module ProjectHanlon
             "enabled" => options[:enabled],
             "maximum" => options[:maximum]
         }.to_json
-        result, response = rz_http_post_json_data(uri, json_data, true)
+        result, response = hnl_http_post_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -294,7 +294,7 @@ module ProjectHanlon
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
-        result, response = rz_http_put_json_data(uri, json_data, true)
+        result, response = hnl_http_put_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -312,7 +312,7 @@ module ProjectHanlon
         policy_uuid = get_uuid_from_prev_args
         # setup the DELETE (to update the remove the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
-        result, response = rz_http_delete(uri, true)
+        result, response = hnl_http_delete(uri, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
