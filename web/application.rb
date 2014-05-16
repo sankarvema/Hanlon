@@ -26,7 +26,7 @@ $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './api').cleanpath.to_
 
 # hanlon dependencies
 require 'object'
-#require 'slice'
+require 'slice'
 
 # Load service config
 #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))

@@ -10,14 +10,16 @@ require 'pathname'
 
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + '../core').cleanpath.to_s)
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + '../util').cleanpath.to_s)
+$LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname))
 
 # app_root designates the path of application startup file.
 # app_root is different for each of the applications cli, admin, api etc.,
 # app config, logging etc., would be relative to app_root
-#$app_root = File.dirname(__FILE__).expand_path
 $app_root = Pathname(__FILE__).realpath.dirname.to_s
 
 require 'rubygems' if RUBY_VERSION < '1.9'
+#require 'require_all'
+#require_rel 'main/cli'
 require 'main/cli'
 
 exit ProjectHanlon::CLI.new.run(*ARGV)
