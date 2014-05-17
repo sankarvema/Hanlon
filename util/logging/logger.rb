@@ -48,11 +48,29 @@ module ProjectHanlon::Logging
           @loggers[classname] ||= configure_logger_for(classname, methodname)
         end
 
+        require 'fileutils'
         # Creates a logger instance
         def configure_logger_for(classname, methodname)
+          init_log
           logger = CustomLogger.new(get_log_path, shift_age = LOG_MAX_FILES, shift_size = LOG_MAX_SIZE)
           logger.level = get_log_level
           logger
+        end
+
+        #ToDo::Sankar::Workaround - this should be part of custom logger
+        def init_log
+
+          begin
+            if !File.file?(get_log_path)
+
+              FileUtils.mkdir_p(File.dirname(get_log_path))
+              File.open(get_log_path, 'w') { |file| file.write("Log file initialized...") }
+
+            end
+          rescue Exception => e
+            puts "exception occured \n" + e.message.to_s + "\nTrace...\n" + e.backtrace.to_s
+          end
+
         end
 
       end

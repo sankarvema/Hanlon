@@ -8,6 +8,8 @@ class CustomLogger < Logger
   #  "#{msg}\n"
   #end
 
+
+
   def log_exception(ex)
     self.error "exception occured #{ex.message}"
     self.error "#{ex.backtrace}"
