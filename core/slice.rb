@@ -7,8 +7,6 @@ require 'object'
 
 require 'forwardable'
 require 'require_all'
-#require 'error/slice'
-#require 'logging/logger'
 require "helpers/http_helper"
 
 # @todo danielp 2012-10-24: this shouldn't include the database tooling.

@@ -1,6 +1,0 @@
-E, [2014-05-14T06:41:26.651000 #4601] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:205:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice error: {"std_err_code"=>1, "result"=>#<Errno::ECONNREFUSED: Connection refused - Connection refused>}
-E, [2014-05-14T06:41:26.683000 #4601] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:218:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice Error: Connection refused - Connection refused
-E, [2014-05-14T06:43:50.993000 #4661] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:205:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice error: {"std_err_code"=>1, "result"=>#<Errno::ECONNREFUSED: Connection refused - Connection refused>}
-E, [2014-05-14T06:43:51.006000 #4661] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:218:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice Error: Connection refused - Connection refused
-E, [2014-05-14T06:47:41.897000 #4811] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:205:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice error: {"std_err_code"=>1, "result"=>#<Errno::ECONNREFUSED: Connection refused - Connection refused>}
-E, [2014-05-14T06:47:41.923000 #4811] ERROR -- /home/user/Hanlon/Hanlon/core/slice.rb:218:in `slice_error'>>ProjectHanlon::Slice::Node#slice_error: Slice Error: Connection refused - Connection refused

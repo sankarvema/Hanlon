@@ -61,7 +61,7 @@ module ProjectHanlon
       # from the 'service.yaml' file used to configure the Hanlon server instance
       #PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.parent.to_s
       #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
-      SERVICE_CONFIG = YAML.load_file("conf/service.yaml")
+      SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
 
       # Return a fully configured instance of the configuration data.
       #
