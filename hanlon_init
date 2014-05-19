@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+#
+# Hanlon application initialization script
+#
+#
+
+require 'pathname'
+$LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './core').cleanpath.to_s)
+$LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './util').cleanpath.to_s)
+$app_root = Pathname(__FILE__).realpath.dirname.to_s
+
+require 'config/server'
+
+module ProjectHanlon
+  class Init
+
+    def initialize
+      create_hanlon_config_file
+      validate_hanlon_struct
+    end
+
+    def create_hanlon_config_file
+
+      web_config_path = File.join($app_root, "web/conf/hanlon_server.conf")
+      config = ProjectHanlon::Config::Server.new
+      config.save_as_yaml(web_config_path)
+
+    end
+
+    def validate_hanlon_struct
+
+      #ensure log directories
+      FileUtils.mkdir_p("cli/log")
+      FileUtils.mkdir_p("web/log")
+
+    end
+
+  end
+end
+
+exit ProjectHanlon::Init.new
