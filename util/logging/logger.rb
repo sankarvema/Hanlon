@@ -32,7 +32,13 @@ module ProjectHanlon::Logging
       class << self
 
         def get_log_path
-          $logging_path
+
+          if $logging_path.nil?
+            "hanlon.log"
+          else
+            $logging_path
+          end
+
         end
 
         # ToDo::Sankar::Fix - ENV['HANLON_LOG_LEVEL'] to be replace with config parameter {hanlon_log_level}
@@ -40,7 +46,7 @@ module ProjectHanlon::Logging
           if ENV['HANLON_LOG_LEVEL'] == nil
             return LOG_LEVEL
           end
-          ENV['HANLON_LOG_LEVEL'].to_i
+            ENV['HANLON_LOG_LEVEL'].to_i
         end
 
         # Returns specific logger instance from loggers[Hash] or creates one if it doesn't exist
@@ -61,6 +67,7 @@ module ProjectHanlon::Logging
         def init_log
 
           begin
+            puts "log path #{get_log_path}"
             if !File.file?(get_log_path)
 
               FileUtils.mkdir_p(File.dirname(get_log_path))
@@ -68,7 +75,7 @@ module ProjectHanlon::Logging
 
             end
           rescue Exception => e
-            puts "exception occured \n" + e.message.to_s + "\nTrace...\n" + e.backtrace.to_s
+            puts "exception occured @ logger.rb::init_log\n" + e.message.to_s + "\nException Stack Trace...\n" + e.backtrace.to_s
           end
 
         end

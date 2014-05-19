@@ -12,6 +12,11 @@ module Hanlon
 
       def initialize
 
+        config = ProjectHanlon::Config::Server.instance
+        if config.nil?
+          abort("Aborting hanlon server")
+        end
+        
         if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
           @filenames = [ '', '.html', 'index.html', '/index.html' ]
           @rack_static = ::Rack::Static.new(
@@ -27,7 +32,7 @@ module Hanlon
         end
         # starts up a set of tasks (using the rufus-scheduler gem) that will maintain
         # (and monitor) the system
-        start_scheduled_tasks
+        #start_scheduled_tasks
       end
 
       def call(env)
