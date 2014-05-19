@@ -1,13 +1,11 @@
 require 'socket'
-#require 'logger'
 require 'fcntl'
 require 'yaml'
-#require 'project_hanlon'
 require 'utility'
 require 'logging/logger'
 
 # This class represents the ProjectHanlon configuration. It is stored persistently in
-# './conf/hanlon_server.conf' and editing by the user
+# './web/conf/hanlon_server.conf' and editing by the user
 
 module ProjectHanlon
   module Config

@@ -43,10 +43,7 @@ module ProjectHanlon::Logging
 
         # ToDo::Sankar::Fix - ENV['HANLON_LOG_LEVEL'] to be replace with config parameter {hanlon_log_level}
         def get_log_level
-          if ENV['HANLON_LOG_LEVEL'] == nil
-            return LOG_LEVEL
-          end
-            ENV['HANLON_LOG_LEVEL'].to_i
+          return LOG_LEVEL
         end
 
         # Returns specific logger instance from loggers[Hash] or creates one if it doesn't exist
@@ -67,7 +64,7 @@ module ProjectHanlon::Logging
         def init_log
 
           begin
-            puts "log path #{get_log_path}"
+
             if !File.file?(get_log_path)
 
               FileUtils.mkdir_p(File.dirname(get_log_path))
