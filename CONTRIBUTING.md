@@ -24,7 +24,7 @@ of things.
 * Glance at the [Git Best Practices][best-practice] document, even if you
   don't read it all yet.
 * If this is a new feature, make sure you discuss it on the
-  [puppet-hanlon mailing list][puppet-hanlon] before getting started on code.
+  [hanlon-project][hanlon-project] mailing list before getting started on code.
 
 
 ## How to Get Help
@@ -36,17 +36,15 @@ speed quickly.
 
 You can always reach out and ask for help:
 
-* by email or through the web on the [puppet-hanlon@googlegroups.com][puppet-hanlon]
+* by email or through the web on the [hanlon-project]
   mailing list (membership is required to post).
-* by IRC, through [#puppet-hanlon][irc] on [the FreeNode IRC network][freenode].
-
 
 ## Discuss Your Change
 
 You should start by discussing your change in public:
 * for small but clear changes, [open an issue describing the bug or feature][bugs].
-* for larger changes, send an email to puppet-hanlon@googlegroups.com or
-  [post through the web][puppet-hanlon] before creating the issue.
+* for larger changes, send an email to hanlon-project@googlegroups.com or
+  [post through the web][hanlon-project] before creating the issue.
 
 Once an issue exists for a bug or feature, all discussion should take place in
 the issue.  Any and all members of the community can respond to an issue, and
@@ -132,7 +130,7 @@ Right now any change committed to `master` must be considered "live".
 ## Submitting Changes
 
 * Unless your contribution is [trivial][exemption], ensure you have signed the
-  [Contributor License Agreement][cla] (requires a [Redmine account][redmine]).
+  [Contributor License Agreement][cla].
 * Push your changes to a topic branch in your fork of the repository.
 * Submit a pull request to the repository in the csc organization.
 * Update your ticket to mark that you have submitted code and are ready to be
@@ -264,10 +262,8 @@ or if they violate the community standards.  This is done by the project
 leader.  The details of why are private, and will not be shared.
 
 
-[bugs]:          https://github.com/csc/hanlon/issues
-[best-practice]: http://sethrobertson.github.com/GitBestPractices/
-[puppet-hanlon]:  https://groups.google.com/forum/?fromgroups#!forum/puppet-hanlon
-[irc]:           https://webchat.freenode.net/?channels=puppet-hanlon
-[freenode]:      http://freenode.net/
-[exemption]:     http://docs.puppetlabs.com/community/trivial_patch_exemption.html
-[cla]:           http://links.puppetlabs.com/cla
+[bugs]:            https://github.com/csc/hanlon/issues
+[best-practice]:   http://sethrobertson.github.com/GitBestPractices/
+[hanlon-project]:  https://groups.google.com/forum/#!forum/hanlon-project
+[exemption]:       http://docs.csc.com/community/trivial_patch_exemption.html
+[cla]:             http://links.csc.com/cla
