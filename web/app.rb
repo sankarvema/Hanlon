@@ -32,7 +32,7 @@ module Hanlon
         end
         # starts up a set of tasks (using the rufus-scheduler gem) that will maintain
         # (and monitor) the system
-        #start_scheduled_tasks
+        start_scheduled_tasks
       end
 
       def call(env)
