@@ -41,8 +41,10 @@ module ProjectHanlon
 
       puts "Creating server configuration file"
       web_config_path = File.join($app_root, "web/conf/hanlon_server.conf")
+      cli_config_path = File.join($app_root, "cli/conf/hanlon_server.conf")
       config = ProjectHanlon::Config::Server.new
       config.save_as_yaml(web_config_path)
+      config.save_as_yaml(cli_config_path)
       puts "   default configuration available at #{web_config_path}"
       puts "   edit configuration parameters as needed before starting #{ProjectHanlon::Properties.app_name} server"
 
