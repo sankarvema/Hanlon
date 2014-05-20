@@ -124,7 +124,7 @@ module ProjectHanlon
         #api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
         #default_websvc_root = "#{base_path}/#{api_version}"
         default_websvc_root = "/hanlon/api/v1"
-        default_image_path  = "/root/hanlon/images"
+        default_image_path  = "#{$hanlon_root}/image"
         defaults = {
           'hanlon_server'            => get_an_ip,
           'persist_mode'             => :mongo,

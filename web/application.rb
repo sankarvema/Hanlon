@@ -14,6 +14,7 @@ require "grape"
 require 'pathname'
 
 $app_root = Pathname(__FILE__).realpath.dirname.to_s
+$hanlon_root = Pathname(__FILE__).parent.realpath.dirname.to_s
 $app_type = "server"
 
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + '../util').cleanpath.to_s)
