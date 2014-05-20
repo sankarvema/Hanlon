@@ -60,7 +60,7 @@ module ProjectHanlon
   # configuration object by coincidence, navigating through the
   # data abstraction.
   def self.config
-    ProjectHanlon::Config::Server.instance
+    config = ProjectHanlon::Config::Server.instance
   end
 end
 

@@ -127,7 +127,7 @@ module ProjectHanlon
       def get_all_models
         @command = :get_all_models
         uri = URI.parse @uri_string
-        model_array = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(model_array, "Models:", :style => :table)
       end
 
@@ -139,7 +139,7 @@ module ProjectHanlon
         uri = URI.parse(@uri_string + '/' + model_uuid)
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
-        result, response = rz_http_get(uri, include_http_response)
+        result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -151,7 +151,7 @@ module ProjectHanlon
         @command = :get_all_templates
         # get the list of model templates nd print it
         uri = URI.parse @uri_string + '/templates'
-        model_templates = hash_array_to_obj_array(expand_response_with_uris(rz_http_get(uri)))
+        model_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(model_templates, "Model Templates:")
       end
 
@@ -188,7 +188,7 @@ module ProjectHanlon
           body_hash[key] = value
         }
         json_data = body_hash.to_json
-        result, response = rz_http_post_json_data(uri, json_data, true)
+        result, response = hnl_http_post_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -216,7 +216,7 @@ module ProjectHanlon
         uri = URI.parse(@uri_string + '/' + model_uuid)
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
-        result, response = rz_http_get(uri, include_http_response)
+        result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -241,7 +241,7 @@ module ProjectHanlon
         end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated policy) and return the results
-        result, response = rz_http_put_json_data(uri, json_data, true)
+        result, response = hnl_http_put_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -259,7 +259,7 @@ module ProjectHanlon
         model_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{model_uuid}"
-        result, response = rz_http_delete(uri, true)
+        result, response = hnl_http_delete(uri, true)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
@@ -270,7 +270,7 @@ module ProjectHanlon
         uri = URI.parse ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + "/image/#{image_uuid}"
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
-        result, response = rz_http_get(uri, include_http_response)
+        result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end

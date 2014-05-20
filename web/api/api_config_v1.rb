@@ -78,7 +78,6 @@ module Hanlon
           # Query for Hanlon server configuration
           desc "Retrieve the current Hanlon configuration"
           before do
-            #puts "hanlon:api:v1:config before do"
             # only test if directly accessing the /config resource
             if env["PATH_INFO"].match(/config$/)
               # only allow access to configuration resource from the hanlon server
@@ -88,10 +87,7 @@ module Hanlon
             end
           end
           get do
-            #logger.debug "Logging data"
-            #puts "hanlon:api:v1:config get do"
             JSON(ProjectHanlon.config.to_hash.to_json)
-            #{hello: "world"}
           end     # end GET /config
 
           resource :ipxe do

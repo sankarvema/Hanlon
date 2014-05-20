@@ -12,6 +12,11 @@ module Hanlon
 
       def initialize
 
+        config = ProjectHanlon::Config::Server.instance
+        if config.nil?
+          abort("Aborting hanlon server")
+        end
+        
         if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
           @filenames = [ '', '.html', 'index.html', '/index.html' ]
           @rack_static = ::Rack::Static.new(

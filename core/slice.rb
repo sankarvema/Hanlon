@@ -1,3 +1,4 @@
+
 # ToDo::Sankar::Refactor - rename this to api_proxy or slice_proxy
 # this module invokes slices from CLI, ideally it should be a restful proxy
 # change log to act as a restful proxy under util/api_proxy
@@ -6,10 +7,11 @@ require 'object'
 
 require 'forwardable'
 require 'require_all'
-#require 'error/slice'
+require "helpers/http_helper"
 
 # @todo danielp 2012-10-24: this shouldn't include the database tooling.
 class ProjectHanlon::Slice < ProjectHanlon::Object
+  include ProjectHanlon::HttpHelper
   include ProjectHanlon::Logging
 
   attr_accessor :web_command, :uri_root, :hidden
@@ -705,91 +707,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
       table << line_string + "\n"
     end
     table
-  end
-
-  # used to retrieve a result when the endpoint is expected
-  # to return a JSON version of a hash map in the response body
-  # that includes the actual response in the "response" field
-  # of that hash map (requiring a JSON.parse call followed by
-  # retrieval of the response field to get the response to return
-  # to the user)
-  def rz_http_get(uri, include_http_response = false)
-    # setup the request
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Get.new(uri.request_uri)
-
-    # make the request
-    response = http.request(request)
-
-    # and return the result
-    return [JSON.parse(response.body)["response"], response] if include_http_response
-    JSON.parse(response.body)["response"]
-  end
-
-  # used to retrieve a result when the endpoint is expected
-  # to return a plain-text response (in which case the response
-  # body contains the response, not a JSON version of the response)
-  def rz_http_get_text(uri, include_http_response = false)
-    # setup the request
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Get.new(uri.request_uri)
-    # make the request
-    response = http.request(request)
-    # and return the result
-    return [response.body, response] if include_http_response
-    response.body
-  end
-
-  # used to retrieve a result when the endpoint is expected to return
-  # a JSON hash containing the results as the response (this is used
-  # in the config slice, for example, who's endpoint returns the configuration
-  # as a JSON hash in the response body)
-  def rz_http_get_hash_response(uri, include_http_response = false)
-    # setup the request
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Get.new(uri.request_uri)
-    # make the request
-    response = http.request(request)
-    # and return the result
-    return [JSON.parse(response.body), response] if include_http_response
-    JSON.parse(response.body)
-  end
-
-  def rz_http_post_json_data(uri, json_data, include_http_response = false)
-    # setup the request
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = json_data
-    request["Content-Type"] = "application/json"
-    # make the request
-    response = http.request(request)
-    # and return the result
-    return [JSON.parse(response.body)["response"], response] if include_http_response
-    JSON.parse(response.body)["response"]
-  end
-
-  def rz_http_put_json_data(uri, json_data, include_http_response = false)
-    # setup the request
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Put.new(uri.request_uri)
-    request.body = json_data
-    request["Content-Type"] = "application/json"
-    # make the request
-    response = http.request(request)
-    # and return the result
-    return [JSON.parse(response.body)["response"], response] if include_http_response
-    JSON.parse(response.body)["response"]
-  end
-
-  def rz_http_delete(uri, include_http_response = false)
-    # setup the request
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Delete.new(uri.request_uri)
-    # make the request
-    response = http.request(request)
-    # and return the result
-    return [JSON.parse(response.body)["response"], response] if include_http_response
-    JSON.parse(response.body)["response"]
   end
 
   def expand_response_with_uris(http_response)

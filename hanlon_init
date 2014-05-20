@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+#
+# Hanlon application initialization script
+#
+#
+
+require 'pathname'
+require 'colored'
+
+$LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './core').cleanpath.to_s)
+$LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './util').cleanpath.to_s)
+$app_root = Pathname(__FILE__).realpath.dirname.to_s
+$hanlon_root = Pathname(__FILE__).realpath.dirname.to_s
+
+require 'config/server'
+require 'properties'
+
+module ProjectHanlon
+  class Init
+
+    def initialize
+      nil
+    end
+
+    def run(*argv)
+      puts
+      puts "#{ProjectHanlon::Properties.app_name} (ver #{ProjectHanlon::Properties.app_build_version})".green
+      puts ProjectHanlon::Properties.app_copy_right.red
+      puts
+      puts "Setting initial environment for #{ProjectHanlon::Properties.app_name}"
+
+      validate_hanlon_struct
+      create_hanlon_config_file
+
+      "Setting up #{ProjectHanlon::Properties.app_name} environment complete"
+      puts
+
+      return 0
+    end
+
+    def create_hanlon_config_file
+
+      puts "Creating server configuration file"
+      web_config_path = File.join($app_root, "web/conf/hanlon_server.conf")
+      cli_config_path = File.join($app_root, "cli/conf/hanlon_server.conf")
+      config = ProjectHanlon::Config::Server.new
+      config.save_as_yaml(web_config_path)
+      config.save_as_yaml(cli_config_path)
+      puts "   default configuration available at #{web_config_path}"
+      puts "   edit configuration parameters as needed before starting #{ProjectHanlon::Properties.app_name} server"
+
+    end
+
+    def validate_hanlon_struct
+
+      #ensure log directories
+      FileUtils.mkdir_p("cli/log")
+      FileUtils.mkdir_p("web/log")
+      "#{ProjectHanlon::Properties.app_name} log files initialized"
+    end
+
+  end
+end
+
+exit ProjectHanlon::Init.new.run(*ARGV)
