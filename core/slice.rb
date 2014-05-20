@@ -21,6 +21,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # Load service config
   #PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.to_s
   #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
+  #puts "service.yaml...#{File.join($app_root, "conf/service.yaml")}"
   SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
 
   # Initializes the Slice Base

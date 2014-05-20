@@ -15,7 +15,14 @@ test/tmp
 test/version_tmp
 tmp
 nohup.out
-log/*.log
+/log/*.log
+/cli/log/*.log
+/web/log/*.log
+
+/conf/*.conf
+/cli/conf/*.conf
+/web/conf/*.conf
+
 scripts
 
 # Sublime Text artifacts
