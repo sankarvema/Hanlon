@@ -13,9 +13,9 @@ end
 
 def write_config(config)
   # First delete any existing default config
-  File.delete($config_server_path) if File.exists?($config_server_path)
+  File.delete($config_file_path) if File.exists?($config_file_path)
   # Now write out the default config above
-  f = File.open($config_server_path, 'w+')
+  f = File.open($config_file_path, 'w+')
   f.write(YAML.dump(config))
   f.close
 end

@@ -4,8 +4,7 @@
 #$logging_path = "#{$hanlon_root}/log/project_hanlon.log"
 #$temp_path = "#{$hanlon_root}/tmp"
 
-$config_server_path = "#{$app_root}/conf/hanlon_server.conf"
-#$img_svc_path = "#{$app_root}/image"
+$config_file_path = "#{$app_root}/conf/hanlon_#{$app_type}.conf"
 $logging_path = "#{$app_root}/log/project_hanlon.log"
 $temp_path = "#{$app_root}/tmp"
 
@@ -49,7 +48,8 @@ require "tagging"
 require "policies"
 require "image_service"
 require "broker"
-
+require "config/server"
+require "config/client"
 
 # Root ProjectHanlon namespace
 module ProjectHanlon
@@ -60,7 +60,11 @@ module ProjectHanlon
   # configuration object by coincidence, navigating through the
   # data abstraction.
   def self.config
-    config = ProjectHanlon::Config::Server.instance
+    if($app_type == "server")
+      config = ProjectHanlon::Config::Server.instance
+    else
+      config = ProjectHanlon::Config::Client.instance
+    end
   end
 end
 

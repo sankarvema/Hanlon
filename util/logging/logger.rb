@@ -2,9 +2,6 @@ require "logging/new_logger"
 # ToDo::Sankar::Refactor
 # refactor this file to logging/logger_proxy
 
-# ToDo::Sankar::Implement log level hardcoded for time being
-# this should come from config parameter {hanlon_log_level}
-
 LOG_LEVEL = Logger::ERROR
 LOG_MAX_SIZE = 10048576
 LOG_MAX_FILES = 10
@@ -41,9 +38,34 @@ module ProjectHanlon::Logging
 
         end
 
-        # ToDo::Sankar::Fix - ENV['HANLON_LOG_LEVEL'] to be replace with config parameter {hanlon_log_level}
         def get_log_level
-          return LOG_LEVEL
+
+          if($app_type == "server")
+            config = ProjectHanlon::Config::Server.instance
+          else
+            config = ProjectHanlon::Config::Client.instance
+          end
+
+          #puts "log level Logger::UNKNOWN is #{Logger::UNKNOWN}"
+          #puts "log level Logger::FATAL is #{Logger::FATAL}"
+          #puts "log level Logger::ERROR is #{Logger::ERROR}"
+          #puts "log level Logger::WARN is #{Logger::WARN}"
+          #puts "log level Logger::INFO is #{Logger::INFO}"
+          #puts "log level Logger::DEBUG is #{Logger::DEBUG}"
+
+          #ToDo::Sankar::Implement - convert this logic to custom logger
+
+          case config.hanlon_log_level
+              when "Logger::UNKNOWN" then 5
+              when "Logger::FATAL" then 4
+              when "Logger::ERROR" then 3
+              when "Logger::WARN" then 2
+              when "Logger::INFO" then 1
+              when "Logger::DEBUG" then 0
+              else
+                3
+          end
+
         end
 
         # Returns specific logger instance from loggers[Hash] or creates one if it doesn't exist
@@ -68,7 +90,7 @@ module ProjectHanlon::Logging
             if !File.file?(get_log_path)
 
               FileUtils.mkdir_p(File.dirname(get_log_path))
-              File.open(get_log_path, 'w') { |file| file.write("Log file initialized...") }
+              File.open(get_log_path, 'w') { |file| file.write("Log file initialized...\n") }
 
             end
           rescue Exception => e

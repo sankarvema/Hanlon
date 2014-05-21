@@ -1,6 +1,7 @@
 #
 
 require 'grape-swagger'
+require 'helper/swagger'
 
 module Hanlon
   module WebService
@@ -18,11 +19,16 @@ module Hanlon
       # set to true), then make the swagger-ui-based documentation available as part of
       # the UI
 
-      if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
+      #if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
+      if ProjectHanlon::Helper::Swagger.allow_swagger_access
         # first, grab a few parameters we'll need from the service.yaml file
-        mount_path = SERVICE_CONFIG[:config][:swagger_ui][:mount_path]
-        api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
-        # then make the call that retrieves the documentation and adds it to the UI
+        #mount_path = SERVICE_CONFIG[:config][:swagger_ui][:mount_path]
+        #api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
+        config = ProjectHanlon::Config::Server.instance
+        mount_path = config.sui_mount_path
+        api_version = config.api_version
+
+            # then make the call that retrieves the documentation and adds it to the UI
         add_swagger_documentation({ :mount_path => mount_path,
                                     :api_version => api_version,
                                     :hide_documentation_path => true,

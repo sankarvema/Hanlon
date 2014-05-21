@@ -203,6 +203,7 @@ module Hanlon
 
                 rescue Exception => e
                   puts "An exception occuring serving image path #{filepath}"
+                  puts $!, $@
                   logger.log_exception e
                 end
 

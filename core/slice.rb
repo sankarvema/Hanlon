@@ -19,10 +19,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   attr_accessor :debug
 
   # Load service config
-  #PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.to_s
-  #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
-  #puts "service.yaml...#{File.join($app_root, "conf/service.yaml")}"
-  SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
+  #SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
 
   # Initializes the Slice Base
   # @param [Array] args
@@ -34,7 +31,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     @prev_args = Stack.new
     @hidden = true
     @uri_root = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
+
     @data = get_data
+
   end
 
   # Return the name of this slice - essentially, the final classname without
@@ -711,7 +710,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
 
   def expand_response_with_uris(http_response)
     http_response.map { |response_elem|
+
       if response_elem.has_key?("@uri")
+
         uri = URI.parse response_elem["@uri"]
         http = Net::HTTP.new(uri.host, uri.port)
         request = Net::HTTP::Get.new(uri.request_uri)
