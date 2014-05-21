@@ -1,13 +1,11 @@
 require 'socket'
-require 'logger'
 require 'fcntl'
 require 'yaml'
-require 'project_hanlon'
 require 'utility'
 require 'logging/logger'
 
 # This class represents the ProjectHanlon configuration. It is stored persistently in
-# './conf/hanlon_server.conf' and editing by the user
+# './web/conf/hanlon_server.conf' and editing by the user
 
 module ProjectHanlon
   module Config
@@ -57,24 +55,10 @@ module ProjectHanlon
 
       attr_reader   :noun
 
-      # get default values used to construct some of these configuration parameters
-      # from the 'service.yaml' file used to configure the Hanlon server instance
-      #PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.parent.parent.to_s
-      #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
-      #puts "service.yaml...#{File.join($app_root, "conf/service.yaml")}"
-      SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
-
-      #SERVICE_CONFIG = YAML.load_file("conf/service.yaml")
-
       # Return a fully configured instance of the configuration data.
       #
       # If a configuration file exists on disk, it is loaded and validated.
-      # If it works, because of the awesome choice of using YAML with fully
-      # tagged objects, we have an instance to use.
-      #
-      # If it doesn't, or doesn't validate, we create a new instance, try to
-      # save it to disk (without the TOCTOU race from the original), and use
-      # that instead.
+      #    else returns a nil file which needs to be validated
       #
       # @todo danielp 2013-03-13: this still doesn't address the race where a
       # *different* configuration is written to the default - in that case we
@@ -84,7 +68,7 @@ module ProjectHanlon
       # model entirely.
       def self.instance
         unless @_instance
-          logger.debug "Trying to loading config from (#{$config_server_path}"
+
           config = begin
                      YAML.load_file($config_server_path)
                    rescue StandardError, SyntaxError # thanks, Psych, for the later
@@ -93,23 +77,27 @@ module ProjectHanlon
 
           # OK, the first round of validation that this is a good config; this
           # also handles upgrading the schema stored in the YAML file, if needed.
+          # ToDo::Sankar::Implement - improve configuration file validation
+          #    return proper error messages on failed validation keys
+
           if config.is_a? ProjectHanlon::Config::Server
             config.defaults.each_pair {|key, value| config[key] ||= value }
           else
-            logger.warn "Configuration validation failed loading (#{$config_server_path})"
-            logger.warn "Resetting (#{$config_server_path}) and using default config"
+            logger.error "Configuration validation failed loading (#{$config_server_path})"
+            logger.error "Resetting (#{$config_server_path}) and using default config"
             config = nil
+            #raise "Valid configuration file not found at #{$config_server_path}"
           end
 
-          # If we got here without a config object we should perform a reset,
-          # including rewriting the configuration file iff it does not exist.
-          unless config
-            config = ProjectHanlon::Config::Server.new
-            # @todo danielp 2013-03-13: ...the rewrite.  This is probably a
-            # terrible idea, even without the original TOCTOU race on
-            # the file.
-            config.save_as_yaml($config_server_path)
-          end
+          ## If we got here without a config object we should perform a reset,
+          ## including rewriting the configuration file iff it does not exist.
+          #unless config
+          #  config = ProjectHanlon::Config::Server.new
+          #  # @todo danielp 2013-03-13: ...the rewrite.  This is probably a
+          #  # terrible idea, even without the original TOCTOU race on
+          #  # the file.
+          #  config.save_as_yaml($config_server_path)
+          #end
 
           # ...but if we got here without error, we have our instance.
           @_instance = config
@@ -132,9 +120,11 @@ module ProjectHanlon
 
       # Obtain our defaults
       def defaults
-        base_path = SERVICE_CONFIG[:config][:swagger_ui][:base_path]
-        api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
-        default_websvc_root = "#{base_path}/#{api_version}"
+        #base_path = SERVICE_CONFIG[:config][:swagger_ui][:base_path]
+        #api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
+        #default_websvc_root = "#{base_path}/#{api_version}"
+        default_websvc_root = "/hanlon/api/v1"
+        default_image_path  = "#{$hanlon_root}/image"
         defaults = {
           'hanlon_server'            => get_an_ip,
           'persist_mode'             => :mongo,
@@ -163,7 +153,7 @@ module ProjectHanlon
           'mk_tce_install_list_uri'  => "/tce-install-list",
           'mk_kmod_install_list_uri' => "/kmod-install-list",
 
-          'image_path'               => $img_svc_path,
+          'image_path'               => default_image_path,
 
           'register_timeout'         => 120,
           'force_mk_uuid'            => "",
@@ -178,7 +168,7 @@ module ProjectHanlon
           # DEPRECATED: use rz_mk_boot_kernel_args instead!
           # used to set the Microkernel boot debug level; valid values are
           # either the empty string (the default), "debug", or "quiet"
-          'rz_mk_boot_debug_level'   => "",
+          'rz_mk_boot_debug_level'   => "Logger::ERROR",
 
           # used to pass arguments to the Microkernel's linux kernel;
           # e.g. "console=ttyS0" or "hanlon.ip=1.2.3.4"
@@ -205,21 +195,26 @@ EOT
 
       # Save the current configuration instance as YAML to disk.
       #
-      # This tries reasonably hard to be secure against TOCTOU
-      # vulnerabilities, which is why we end up with the nasty sysopen calls.
-      # Thanks, Ruby, that makes my week. --daniel 2013-03-13
-      def save_as_yaml(filename)
+      def save_as_yaml(conf_file_path)
         begin
-          fd = IO.sysopen(filename, Fcntl::O_WRONLY|Fcntl::O_CREAT|Fcntl::O_EXCL, 0600)
-          IO.open(fd, 'wb') {|fh| fh.puts ConfigHeader, YAML.dump(self) }
-        rescue
+          #fd = IO.sysopen(filename, Fcntl::O_WRONLY|Fcntl::O_CREAT|Fcntl::O_EXCL, 0600)
+          #IO.open(fd, 'wb') {|fh| fh.puts ConfigHeader, YAML.dump(self) }
+
+          if !File.file?(conf_file_path)
+
+            FileUtils.mkdir_p(File.dirname(conf_file_path))
+            File.open(conf_file_path, 'w') { |file| file.puts ConfigHeader, YAML.dump(self) }
+
+          end
+        rescue Exception => e
           # As per the original code, we treat any sort of failure as an
           # indication that we should just not give a damn about failures.
           #
           # If the file already existed, we will get here with Errno::E_EXISTS
           # as our exception.  If we want to handle that differently, that is
           # the path right there.
-          logger.error "Could not save config to (#{filename})"
+          logger.error "Could not save config to (#{conf_file_path})"
+          logger.log_exception e
         end
 
         return self

@@ -71,26 +71,6 @@ into any errors or omissions in that list.
 * The Razor images are officially available at:
 [https://downloads.puppetlabs.com/razor/](https://downloads.puppetlabs.com/razor/)
 
-## Environment Variables
-* $HANLON\_HOME: Hanlon installation root directory.
-* $HANLON\_RSPEC\_WEBPATH: _optional_ rspec HTML output path.
-* $HANLON\_LOG\_PATH: _optional_ Hanlon log directory (default: ${HANLON_HOME}/log).
-* $HANLON\_LOG\_LEVEL: _optional_ Hanlon log output verbosity level:
-
-        0 = Debug
-        1 = Info
-        2 = Warn
-        3 = Error (default)
-        4 = Fatal
-        5 = Unknown
-
-## Starting services
-
-Start Hanlon API with:
-
-    cd $HANLON_HOME/bin
-    ./hanlon_daemon.rb start
-
 ## License
 
 Project Hanlon is distributed under the Apache 2.0 license.
@@ -98,12 +78,24 @@ See [the LICENSE file][license] for full details.
 
 ## Reference
 
+The following links contain useful information on the Hanlon (and Hanlon-Microkernel) projects as well as information on the new CSC Open Source Program:
+
+* Tom McSweeney's blog entry on the availability of this project: [Announcing Hanlon and the Hanlon-Microkernel](http://osclouds.wordpress.com/?p=2)
+* Dan Hushon's blog entry on the new CSC Open Source Program: [Finding Value in Open Source](www.vdatacloud.com/blogs/2014/05/14/finding-value-in-opensource)
+
+This set of links, on the other hand, provide an introduction to the original Razor project (and, as such, may be of interest to those new to the Razor/Hanlon community):
+
 * Razor Overview: [Nickapedia.com](http://nickapedia.com/2012/05/21/lex-parsimoniae-cloud-provisioning-with-a-razor)
-* Puppet Labs Razor Module:[Puppetlabs.com](http://puppetlabs.com/blog/introducing-razor-a-next-generation-provisioning-solution/)
+* Nick Weaver's Razor Session from PuppetConf 2012: [Youtube](http://www.youtube.com/watch?v=cR1bOg0IU5U)
+
+Finally, this link provides information on the Puppet Labs Module that was written to manage the deployment and configuration of Razor by Puppet.
+
+* The Puppet Labs Razor Module:[Puppetlabs.com](http://puppetlabs.com/blog/introducing-razor-a-next-generation-provisioning-solution/)
+
+Even though it doesn't support Hanlon, the information in that blog may provide useful to those who would like to develop a corresponding Hanlon module since the Hanlon is firmly rooted in the original Razor project.
 
 
 [hanlon-project]: https://groups.google.com/d/forum/hanlon-project
-[freenode]:     http://freenode.net/
 [contrib]:      https://github.com/csc/Hanlon/blob/master/CONTRIBUTING.md
 [license]:      https://github.com/csc/Hanlon/blob/master/LICENSE
 [semver]:       http://semver.org/
