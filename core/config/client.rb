@@ -32,6 +32,8 @@ module ProjectHanlon
       attr_accessor :persist_password
       attr_accessor :persist_timeout
 
+      attr_accessor :hanlon_log_level
+
 
       def self.instance
         unless @_instance
@@ -86,7 +88,7 @@ module ProjectHanlon
           'api_port'                 => 8026,
 
           'image_path'               => default_image_path,
-
+          'hanlon_log_level'   => "Logger::ERROR",
           'persist_mode'             => :mongo,
           'persist_host'             => "127.0.0.1",
           'persist_port'             => 27017,

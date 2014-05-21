@@ -43,7 +43,15 @@ module ProjectHanlon::Logging
 
         # ToDo::Sankar::Fix - ENV['HANLON_LOG_LEVEL'] to be replace with config parameter {hanlon_log_level}
         def get_log_level
-          return LOG_LEVEL
+
+          #if($app_type == "server")
+          #  config = ProjectHanlon::Config::Server.instance
+          #else
+          #  config = ProjectHanlon::Config::Client.instance
+          #end
+
+          #return config.hanlon_log_level
+          return Logger::DEBUG
         end
 
         # Returns specific logger instance from loggers[Hash] or creates one if it doesn't exist
@@ -68,7 +76,7 @@ module ProjectHanlon::Logging
             if !File.file?(get_log_path)
 
               FileUtils.mkdir_p(File.dirname(get_log_path))
-              File.open(get_log_path, 'w') { |file| file.write("Log file initialized...") }
+              File.open(get_log_path, 'w') { |file| file.write("Log file initialized...\n") }
 
             end
           rescue Exception => e

@@ -31,6 +31,7 @@ module ProjectHanlon
       attr_accessor :api_version
       attr_accessor :admin_port
       attr_accessor :api_port
+      attr_accessor :hanlon_log_level
 
       attr_accessor :mk_checkin_interval
       attr_accessor :mk_checkin_skew
@@ -164,6 +165,7 @@ module ProjectHanlon
           # used to set the Microkernel boot debug level; valid values are
           # either the empty string (the default), "debug", or "quiet"
           'rz_mk_boot_debug_level'   => "Logger::ERROR",
+          'hanlon_log_level'   => "Logger::ERROR",
 
           # used to pass arguments to the Microkernel's linux kernel;
           # e.g. "console=ttyS0" or "hanlon.ip=1.2.3.4"

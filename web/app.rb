@@ -9,6 +9,7 @@ require 'helper/swagger'
 module Hanlon
   module WebService
     class App
+      include ProjectHanlon::Logging
 
       CHUNK_SIZE = 2**20
 
@@ -25,8 +26,8 @@ module Hanlon
         if ProjectHanlon::Helper::Swagger.allow_swagger_access
           @filenames = [ '', '.html', 'index.html', '/index.html' ]
           @rack_static = ::Rack::Static.new(
-              lambda { [404, {}, []] }, {
-              :root => File.expand_path('./public', __FILE__),
+              lambda { [404, {}, ['http error 404 - file not found']] }, {
+              :root => File.expand_path('../../public', __FILE__),
               :urls => %w[/]
           })
           @image_static = ::Rack::Static.new(
@@ -152,36 +153,48 @@ module Hanlon
             # start a thread that will remove any inactive nodes from the nodes list
             # (inactive nodes haven't checked in for a while and aren't bound to a model
             # via an active_model instance)
+
             puts ">> Starting new thread to remove inactive nodes; cycle time => #{min_cycle_time}, timeout => #{node_timeout}"
+            logger.debug ">> Starting new thread to remove inactive nodes; cycle time => #{min_cycle_time}, timeout => #{node_timeout}"
+
             Rufus::Scheduler.singleton.every "#{min_cycle_time}s", :tag => 'periodic_hanlon_tasks' do
               begin
                 engine = ProjectHanlon::Engine.instance
                 engine.remove_expired_nodes(node_timeout)
               rescue java.lang.IllegalStateException => e
-                puts "At 1...#{e.message}"
+                #puts "At 1...#{e.message}"
+                logger.error "At 1...#{e.message}"
               end
             end
           end
+
           # check to make sure there isn't already a 'track_hanlon_tasks' thread
           # running; if there is, then skip this step
           if Rufus::Scheduler.singleton.jobs(:tag => 'track_hanlon_tasks')
             # start a thread to monitor the Hanlon-related tasks we just started (above)
             puts ">> Starting new thread to print status of Hanlon-related jobs..."
+            logger.debug ">> Starting new thread to print status of Hanlon-related jobs..."
+
             Rufus::Scheduler.singleton.every "5m", :tag => 'track_hanlon_tasks' do
               begin
                 job_ids = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_hanlon_tasks').map{ |job| job.id }
                 puts "  >> At #{Time.now}; Hanlon-related jobs running => [#{job_ids.join(', ')}]"
+                logger.debug "  >> At #{Time.now}; Hanlon-related jobs running => [#{job_ids.join(', ')}]"
               rescue java.lang.IllegalStateException => e
-                puts "At 2...#{e.message}"
+                #puts "At 2...#{e.message}"
+                logger.error "At 2...#{e.message}"
               end
             end
+
             # collect together jobs that are running and print out their IDs
             job_ids = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_hanlon_tasks').map { |job| job.id }
             job_ids.push *(Rufus::Scheduler.singleton.jobs(:tag => 'track_hanlon_tasks').map { |job| job.id })
             puts "  >> At #{Time.now}; All jobs running => [#{job_ids.join(', ')}]"
+            logger.debug "  >> At #{Time.now}; All jobs running => [#{job_ids.join(', ')}]"
           end
         rescue java.lang.IllegalStateException => e
-          puts "At 3...#{e.message}"
+          #puts "At 3...#{e.message}"
+          logger.error "At 3...#{e.message}"
         end
       end
 
