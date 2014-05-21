@@ -4,68 +4,23 @@ require 'yaml'
 require 'utility'
 require 'logging/logger'
 
-# This class represents the ProjectHanlon configuration. It is stored persistently in
-# './web/conf/hanlon_server.conf' and editing by the user
+# This class represents the ProjectHanlon cli configuration. It is stored persistently in
+# './cli/conf/hanlon_client.conf' and editing by the user
 
 module ProjectHanlon
   module Config
-    class Server
+    class Client
       include ProjectHanlon::Utility
       include ProjectHanlon::Logging
       extend  ProjectHanlon::Logging
 
-      attr_accessor :hanlon_server
       attr_reader   :hanlon_uri
 
-      attr_accessor :persist_mode
-      attr_accessor :persist_host
-      attr_accessor :persist_port
-      attr_accessor :persist_username
-      attr_accessor :persist_password
-      attr_accessor :persist_timeout
-
+      attr_accessor :hanlon_server
       attr_accessor :websvc_root
-      attr_accessor :admin_port
       attr_accessor :api_port
+      attr_accessor :admin_port
 
-      attr_accessor :mk_checkin_interval
-      attr_accessor :mk_checkin_skew
-      attr_accessor :mk_fact_excl_pattern
-
-      # mk_log_level should be 'Logger::FATAL', 'Logger::ERROR', 'Logger::WARN',
-      # 'Logger::INFO', or 'Logger::DEBUG' (default is 'Logger::ERROR')
-      attr_accessor :mk_log_level
-      attr_accessor :mk_tce_mirror
-      attr_accessor :mk_tce_install_list_uri
-      attr_accessor :mk_kmod_install_list_uri
-      attr_accessor :mk_gem_mirror
-      attr_accessor :mk_gemlist_uri
-
-      attr_accessor :image_path
-
-      attr_accessor :register_timeout
-      attr_accessor :force_mk_uuid
-
-      attr_accessor :daemon_min_cycle_time
-
-      attr_accessor :node_expire_timeout
-
-      attr_accessor :rz_mk_boot_debug_level
-      attr_accessor :rz_mk_boot_kernel_args
-
-      attr_reader   :noun
-
-      # Return a fully configured instance of the configuration data.
-      #
-      # If a configuration file exists on disk, it is loaded and validated.
-      #    else returns a nil file which needs to be validated
-      #
-      # @todo danielp 2013-03-13: this still doesn't address the race where a
-      # *different* configuration is written to the default - in that case we
-      # would totally just use the defaults rather than what was written.
-      # If the original authors didn't care, though, I doubt that I should
-      # care more deeply, rather than just delaying it until I replace the
-      # model entirely.
       def self.instance
         unless @_instance
 
@@ -119,59 +74,14 @@ module ProjectHanlon
 
       # Obtain our defaults
       def defaults
-        #base_path = SERVICE_CONFIG[:config][:swagger_ui][:base_path]
-        #api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
-        #default_websvc_root = "#{base_path}/#{api_version}"
+
         default_websvc_root = "/hanlon/api/v1"
-        default_image_path  = "#{$hanlon_root}/image"
+
         defaults = {
           'hanlon_server'            => get_an_ip,
-          'persist_mode'             => :mongo,
-          'persist_host'             => "127.0.0.1",
-          'persist_port'             => 27017,
-          'persist_username'         => '',
-          'persist_password'         => '',
-          'persist_timeout'          => 10,
-
           'websvc_root'              => default_websvc_root,
           'admin_port'               => 8025,
-          'api_port'                 => 8026,
-
-          'mk_checkin_interval'      => 60,
-          'mk_checkin_skew'          => 5,
-          'mk_fact_excl_pattern'     => [
-            "(^facter.*$)", "(^id$)", "(^kernel.*$)", "(^memoryfree$)","(^memoryfree_mb$)",
-            "(^operating.*$)", "(^osfamily$)", "(^path$)", "(^ps$)",
-            "(^ruby.*$)", "(^selinux$)", "(^ssh.*$)", "(^swap.*$)",
-            "(^timezone$)", "(^uniqueid$)", "(^uptime.*$)","(.*json_str$)"
-          ].join("|"),
-          'mk_log_level'             => "Logger::ERROR",
-          'mk_gem_mirror'            => "http://localhost:2158/gem-mirror",
-          'mk_gemlist_uri'           => "/gems/gem.list",
-          'mk_tce_mirror'            => "http://localhost:2157/tinycorelinux",
-          'mk_tce_install_list_uri'  => "/tce-install-list",
-          'mk_kmod_install_list_uri' => "/kmod-install-list",
-
-          'image_path'               => default_image_path,
-
-          'register_timeout'         => 120,
-          'force_mk_uuid'            => "",
-
-          'daemon_min_cycle_time'    => 30,
-
-          # this is the default value for the amount of time (in seconds) that
-          # is allowed to pass before a node is removed from the system.  If the
-          # node has not checked in for this long, it'll be removed
-          'node_expire_timeout'      => 300,
-
-          # DEPRECATED: use rz_mk_boot_kernel_args instead!
-          # used to set the Microkernel boot debug level; valid values are
-          # either the empty string (the default), "debug", or "quiet"
-          'rz_mk_boot_debug_level'   => "Logger::ERROR",
-
-          # used to pass arguments to the Microkernel's linux kernel;
-          # e.g. "console=ttyS0" or "hanlon.ip=1.2.3.4"
-          'rz_mk_boot_kernel_args'   => ""
+          'api_port'                 => 8026
         }
 
         return defaults
@@ -180,7 +90,7 @@ module ProjectHanlon
       # The fixed header injected at the top of any configuration file we write.
       ConfigHeader = <<EOT
 #
-# This file is the main configuration for ProjectHanlon
+# This file is the client configuration for ProjectHanlon
 #
 # -- this was system generated --
 #

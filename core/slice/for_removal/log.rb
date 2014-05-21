@@ -248,7 +248,7 @@ module ProjectHanlon
       # ${HANLON_HOME}/log directory (which is where the logfiles for Hanlon are located)
       def get_logfile_path
         # split the path into an array using the File::SEPARATOR as the separator
-        conf_dir_parts =  $config_server_path.split(File::SEPARATOR)
+        conf_dir_parts =  $config_file_path.split(File::SEPARATOR)
         # and extract all but the last two pieces (which will contain the configuration
         # directory name and the name of the configuration file)
         logfile_path_parts = conf_dir_parts[0...-2]

@@ -9,9 +9,9 @@ describe ProjectHanlon::Config::Server do
   # global variable to manage the filename.  That shouldn't persist, but it
   # does, and so here we are.
   before :each do
-    @saved_config_server_path = $config_server_path
+    @saved_config_server_path = $config_file_path
     # Since we only run on Unix, this should be portable enough.
-    $config_server_path = '/dev/empty'
+    $config_file_path = '/dev/empty'
 
     # This runs *after* the global configuration, which resets our state to
     # "blank" and allows our tests to function.  This comment, my friends,
@@ -20,7 +20,7 @@ describe ProjectHanlon::Config::Server do
   end
 
   after :each do
-    $config_server_path = @saved_config_server_path
+    $config_file_path = @saved_config_server_path
     @saved_config_server_path = nil
 
     ProjectHanlon::Config::Server._reset_instance
@@ -41,8 +41,8 @@ describe ProjectHanlon::Config::Server do
       unexists = Tempfile.new('this-file-does-not-exist')
       File.unlink(unexists.path) # whee
 
-      $config_server_path = unexists.path
-      File.should_not exist $config_server_path # belt
+      $config_file_path = unexists.path
+      File.should_not exist $config_file_path # belt
       ProjectHanlon::Config::Server.instance.    # ...and britches
         should be_an_instance_of ProjectHanlon::Config::Server
     end
@@ -64,7 +64,7 @@ describe ProjectHanlon::Config::Server do
         file.flush
         file.fsync rescue nil   # can't do much if this fails
 
-        $config_server_path = file.path
+        $config_file_path = file.path
         ProjectHanlon::Config::Server.instance.
           should be_an_instance_of ProjectHanlon::Config::Server
       end
@@ -76,7 +76,7 @@ describe ProjectHanlon::Config::Server do
         file.flush
         file.fsync rescue nil   # can't do much if this fails
 
-        $config_server_path = file.path
+        $config_file_path = file.path
         ProjectHanlon::Config::Server.instance.
           should be_an_instance_of ProjectHanlon::Config::Server
       end
@@ -92,7 +92,7 @@ YAML
         file.flush
         file.fsync rescue nil   # can't do much if this fails
 
-        $config_server_path = file.path
+        $config_file_path = file.path
         config = ProjectHanlon::Config::Server.instance
         config.hanlon_server.should == '8.8.8.8' # present, and...
         config.persist_port.should   == 27017     # ...missing
@@ -105,8 +105,8 @@ YAML
       unexists = Tempfile.new('this-file-does-not-exist')
       File.unlink(unexists.path) # whee
 
-      $config_server_path = unexists.path
-      File.should_not exist $config_server_path # belt
+      $config_file_path = unexists.path
+      File.should_not exist $config_file_path # belt
       ProjectHanlon::Config::Server.instance.    # ...and britches
         should be_an_instance_of ProjectHanlon::Config::Server
       File.should exist unexists.path
@@ -134,7 +134,7 @@ YAML
       # didn't already exist.  That probably isn't wise, long term.
       unexists = Tempfile.new('this-file-does-not-exist')
       File.unlink(unexists.path) # whee
-      $config_server_path = unexists.path
+      $config_file_path = unexists.path
       ProjectHanlon::Config::Server.instance.should be
       File.should exist unexists.path
 
