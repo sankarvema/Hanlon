@@ -26,7 +26,7 @@ module Hanlon
           @filenames = [ '', '.html', 'index.html', '/index.html' ]
           @rack_static = ::Rack::Static.new(
               lambda { [404, {}, []] }, {
-              :root => File.expand_path('../../public', __FILE__),
+              :root => File.expand_path('./public', __FILE__),
               :urls => %w[/]
           })
           @image_static = ::Rack::Static.new(
