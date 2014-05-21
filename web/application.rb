@@ -32,7 +32,7 @@ require 'slice'
 
 # Load service config
 #SERVICE_CONFIG = YAML.load_file(File.join(PROJECT_ROOT, "config/service.yaml"))
-SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
+#SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
 
 # Define path to iPXE ERB file and a few iPXE-related parameters
 # ToDo::Sankar::Refactor IPXE_ERB value to be changed to work on app servers
@@ -55,6 +55,7 @@ Dir.glob(File.join($app_root, "/api/api_*.rb")) do |f|
   require "./api/" + File.basename(f)
 end
 
+#ToDo::Sankar::Commented to check if it is really needed
 Dir.glob(File.join($app_root, "/api/swagger*.rb")) do |f|
   next if f == "." || f == ".."
   require File.basename(f)
@@ -62,6 +63,3 @@ end
 
 require "./app"
 
-#require_rel "./api/"
-#require "./api/api"
-#require "./api/response"

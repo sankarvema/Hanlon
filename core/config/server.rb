@@ -14,8 +14,11 @@ module ProjectHanlon
       include ProjectHanlon::Logging
       extend  ProjectHanlon::Logging
 
-      attr_accessor :hanlon_server
+
       attr_reader   :hanlon_uri
+      attr_reader   :websvc_root
+
+      attr_accessor :hanlon_server
 
       attr_accessor :persist_mode
       attr_accessor :persist_host
@@ -24,7 +27,8 @@ module ProjectHanlon
       attr_accessor :persist_password
       attr_accessor :persist_timeout
 
-      attr_accessor :websvc_root
+      attr_accessor :base_path
+      attr_accessor :api_version
       attr_accessor :admin_port
       attr_accessor :api_port
 
@@ -53,6 +57,9 @@ module ProjectHanlon
       attr_accessor :rz_mk_boot_debug_level
       attr_accessor :rz_mk_boot_kernel_args
 
+      attr_accessor :sui_mount_path
+      attr_accessor :sui_allow_access
+
       attr_reader   :noun
 
       # Return a fully configured instance of the configuration data.
@@ -69,11 +76,11 @@ module ProjectHanlon
       def self.instance
         unless @_instance
 
-          config = begin
-                     YAML.load_file($config_file_path)
-                   rescue StandardError, SyntaxError # thanks, Psych, for the later
-                     nil
-                   end
+          if(File.exist?($config_file_path))
+            config = YAML.load_file($config_file_path)
+          else
+            raise "Configuration file missing at #{$config_file_path}"
+          end
 
           # OK, the first round of validation that this is a good config; this
           # also handles upgrading the schema stored in the YAML file, if needed.
@@ -83,22 +90,10 @@ module ProjectHanlon
           if config.is_a? ProjectHanlon::Config::Server
             config.defaults.each_pair {|key, value| config[key] ||= value }
           else
-            logger.error "Configuration validation failed loading (#{$config_file_path})"
-            logger.error "Resetting (#{$config_file_path}) and using default config"
+            raise "Invalid configuration file (#{$config_file_path})"
             config = nil
           end
 
-          ## If we got here without a config object we should perform a reset,
-          ## including rewriting the configuration file iff it does not exist.
-          #unless config
-          #  config = ProjectHanlon::Config::Server.new
-          #  # @todo danielp 2013-03-13: ...the rewrite.  This is probably a
-          #  # terrible idea, even without the original TOCTOU race on
-          #  # the file.
-          #  config.save_as_yaml($config_file_path)
-          #end
-
-          # ...but if we got here without error, we have our instance.
           @_instance = config
         end
 
@@ -122,7 +117,7 @@ module ProjectHanlon
         #base_path = SERVICE_CONFIG[:config][:swagger_ui][:base_path]
         #api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
         #default_websvc_root = "#{base_path}/#{api_version}"
-        default_websvc_root = "/hanlon/api/v1"
+        default_base_path = "/hanlon/api"
         default_image_path  = "#{$hanlon_root}/image"
         defaults = {
           'hanlon_server'            => get_an_ip,
@@ -133,7 +128,8 @@ module ProjectHanlon
           'persist_password'         => '',
           'persist_timeout'          => 10,
 
-          'websvc_root'              => default_websvc_root,
+          'base_path'                => default_base_path,
+          'api_version'              => 'v1',
           'admin_port'               => 8025,
           'api_port'                 => 8026,
 
@@ -171,7 +167,11 @@ module ProjectHanlon
 
           # used to pass arguments to the Microkernel's linux kernel;
           # e.g. "console=ttyS0" or "hanlon.ip=1.2.3.4"
-          'rz_mk_boot_kernel_args'   => ""
+          'rz_mk_boot_kernel_args'   => "",
+
+          # config parameters for swagger_ui management (prefix::sui)
+          'sui_mount_path'   => "/docs",
+          'sui_allow_access'   => "true"
         }
 
         return defaults
@@ -190,6 +190,10 @@ EOT
       # reader methods for derived parameters are defined here
       def hanlon_uri
         "http://#{hanlon_server}:#{api_port}"
+      end
+
+      def websvc_root
+        "#{base_path}/#{api_version}"
       end
 
       # Save the current configuration instance as YAML to disk.

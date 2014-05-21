@@ -4,6 +4,8 @@ require 'rufus-scheduler'
 require 'uri'
 require 'api'
 
+require 'helper/swagger'
+
 module Hanlon
   module WebService
     class App
@@ -16,8 +18,11 @@ module Hanlon
         if config.nil?
           abort("Aborting hanlon server")
         end
-        
-        if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
+
+        #ToDo::Sankar:Implement - this logic should be generic to allow static html pages and through http error pages
+        #if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
+
+        if ProjectHanlon::Helper::Swagger.allow_swagger_access
           @filenames = [ '', '.html', 'index.html', '/index.html' ]
           @rack_static = ::Rack::Static.new(
               lambda { [404, {}, []] }, {
@@ -39,8 +44,9 @@ module Hanlon
 
         request_path = env['PATH_INFO']
 
-        if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
+        #if SERVICE_CONFIG[:config][:swagger_ui] && SERVICE_CONFIG[:config][:swagger_ui][:allow_access]
 
+        if ProjectHanlon::Helper::Swagger.allow_swagger_access
           # in cases where the URL entered by the user ended with a slash,
           # the paths can have a duplicate first directory in the front of
           # the request path.  The following is a hack to deal with that

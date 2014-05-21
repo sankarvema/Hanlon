@@ -15,45 +15,45 @@ module ProjectHanlon
       extend  ProjectHanlon::Logging
 
       attr_reader   :hanlon_uri
+      attr_reader   :websvc_root
 
       attr_accessor :hanlon_server
-      attr_accessor :websvc_root
+      attr_accessor :base_path
+      attr_accessor :api_version
       attr_accessor :api_port
       attr_accessor :admin_port
+
+      attr_accessor :image_path
+
+      attr_accessor :persist_mode
+      attr_accessor :persist_host
+      attr_accessor :persist_port
+      attr_accessor :persist_username
+      attr_accessor :persist_password
+      attr_accessor :persist_timeout
+
 
       def self.instance
         unless @_instance
 
-          config = begin
-                     YAML.load_file($config_file_path)
-                   rescue StandardError, SyntaxError # thanks, Psych, for the later
-                     nil
-                   end
+          if(File.exist?($config_file_path))
+            config = YAML.load_file($config_file_path)
+          else
+            raise "Configuration file missing at #{$config_file_path}"
+          end
 
           # OK, the first round of validation that this is a good config; this
           # also handles upgrading the schema stored in the YAML file, if needed.
           # ToDo::Sankar::Implement - improve configuration file validation
           #    return proper error messages on failed validation keys
 
-          if config.is_a? ProjectHanlon::Config::Server
+          if config.is_a? ProjectHanlon::Config::Client
             config.defaults.each_pair {|key, value| config[key] ||= value }
           else
-            logger.error "Configuration validation failed loading (#{$config_file_path})"
-            logger.error "Resetting (#{$config_file_path}) and using default config"
+            raise "Invalid configuration file (#{$config_file_path})"
             config = nil
           end
 
-          ## If we got here without a config object we should perform a reset,
-          ## including rewriting the configuration file iff it does not exist.
-          #unless config
-          #  config = ProjectHanlon::Config::Server.new
-          #  # @todo danielp 2013-03-13: ...the rewrite.  This is probably a
-          #  # terrible idea, even without the original TOCTOU race on
-          #  # the file.
-          #  config.save_as_yaml($config_file_path)
-          #end
-
-          # ...but if we got here without error, we have our instance.
           @_instance = config
         end
 
@@ -75,13 +75,24 @@ module ProjectHanlon
       # Obtain our defaults
       def defaults
 
-        default_websvc_root = "/hanlon/api/v1"
+        default_base_path = "/hanlon/api"
+        default_image_path  = "#{$hanlon_root}/image"
 
         defaults = {
           'hanlon_server'            => get_an_ip,
-          'websvc_root'              => default_websvc_root,
+          'base_path'                => default_base_path,
+          'api_version'              => 'v1',
           'admin_port'               => 8025,
-          'api_port'                 => 8026
+          'api_port'                 => 8026,
+
+          'image_path'               => default_image_path,
+
+          'persist_mode'             => :mongo,
+          'persist_host'             => "127.0.0.1",
+          'persist_port'             => 27017,
+          'persist_username'         => '',
+          'persist_password'         => '',
+          'persist_timeout'          => 10
         }
 
         return defaults
@@ -102,6 +113,9 @@ EOT
         "http://#{hanlon_server}:#{api_port}"
       end
 
+      def websvc_root
+        "#{base_path}/#{api_version}"
+      end
       # Save the current configuration instance as YAML to disk.
       #
       def save_as_yaml(conf_file_path)

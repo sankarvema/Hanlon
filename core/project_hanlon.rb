@@ -48,7 +48,8 @@ require "tagging"
 require "policies"
 require "image_service"
 require "broker"
-
+require "config/server"
+require "config/client"
 
 # Root ProjectHanlon namespace
 module ProjectHanlon
@@ -59,7 +60,11 @@ module ProjectHanlon
   # configuration object by coincidence, navigating through the
   # data abstraction.
   def self.config
-    config = ProjectHanlon::Config::Server.instance
+    if($app_type == "server")
+      config = ProjectHanlon::Config::Server.instance
+    else
+      config = ProjectHanlon::Config::Client.instance
+    end
   end
 end
 

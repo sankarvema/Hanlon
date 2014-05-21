@@ -16,6 +16,8 @@ require 'config/server'
 require 'config/client'
 require 'properties'
 
+require 'helper/swagger'
+
 module ProjectHanlon
   class Init
 
