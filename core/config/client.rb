@@ -22,6 +22,7 @@ module ProjectHanlon
       attr_accessor :api_version
       attr_accessor :api_port
       attr_accessor :admin_port
+      attr_accessor :register_timeout
 
       attr_accessor :image_path
 
@@ -87,8 +88,10 @@ module ProjectHanlon
           'admin_port'               => 8025,
           'api_port'                 => 8026,
 
+          'register_timeout'         => 120,
+
           'image_path'               => default_image_path,
-          'hanlon_log_level'   => "Logger::ERROR",
+          'hanlon_log_level'        => "Logger::ERROR",
           'persist_mode'             => :mongo,
           'persist_host'             => "127.0.0.1",
           'persist_port'             => 27017,
