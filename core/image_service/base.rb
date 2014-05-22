@@ -157,7 +157,6 @@ module ProjectHanlon
       end
 
       def mount_path
-        puts "this must be the reason #{$temp_path}/#{@uuid}"
         "#{$temp_path}/#{@uuid}"
       end
 

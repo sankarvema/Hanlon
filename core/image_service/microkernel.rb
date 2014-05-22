@@ -26,7 +26,6 @@ module ProjectHanlon
         # Add the iso to the image svc storage
 
         begin
-          puts "inside image service mk #{src_image_path}:::#{lcl_image_path}:::#{extra}"
           resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
 
