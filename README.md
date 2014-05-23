@@ -81,7 +81,7 @@ See [the LICENSE file][license] for full details.
 The following links contain useful information on the Hanlon (and Hanlon-Microkernel) projects as well as information on the new CSC Open Source Program:
 
 * Tom McSweeney's blog entry on the availability of this project: [Announcing Hanlon and the Hanlon-Microkernel](http://osclouds.wordpress.com/?p=2)
-* Dan Hushon's blog entry on the new CSC Open Source Program: [Finding Value in Open Source](www.vdatacloud.com/blogs/2014/05/14/finding-value-in-opensource)
+* Dan Hushon's blog entry on the new CSC Open Source Program: [Finding Value in Open Source](http://www.vdatacloud.com/blogs/2014/05/22/finding-value-in-opensource/)
 
 This set of links, on the other hand, provide an introduction to the original Razor project (and, as such, may be of interest to those new to the Razor/Hanlon community):
 
