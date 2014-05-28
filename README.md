@@ -138,6 +138,6 @@ original Razor project.
 
 
 [hanlon-project]: https://groups.google.com/d/forum/hanlon-project
-[contrib]:      https://github.com/csc/Hanlon/blob/master/CONTRIBUTING.md
-[license]:      https://github.com/csc/Hanlon/blob/master/LICENSE
+[contrib]:      CONTRIBUTING.md
+[license]:      LICENSE.md
 [semver]:       http://semver.org/
