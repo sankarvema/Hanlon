@@ -139,5 +139,5 @@ original Razor project.
 
 [hanlon-project]: https://groups.google.com/d/forum/hanlon-project
 [contrib]:      CONTRIBUTING.md
-[license]:      LICENSE.md
+[license]:      LICENSE
 [semver]:       http://semver.org/
