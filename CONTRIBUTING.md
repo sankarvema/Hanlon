@@ -265,5 +265,5 @@ leader.  The details of why are private, and will not be shared.
 [bugs]:            https://github.com/csc/hanlon/issues
 [best-practice]:   http://sethrobertson.github.com/GitBestPractices/
 [hanlon-project]:  https://groups.google.com/forum/#!forum/hanlon-project
-[exemption]:       http://docs.csc.com/community/trivial_patch_exemption.html
-[cla]:             http://links.csc.com/cla
+[exemption]:       http://c.mobileins.us/sysworkflow/en/neoclassic/251810809537eb36f73ac23031915862/TrivialPatchExemptionProcess.php
+[cla]:             http://c.mobileins.us/sysworkflow/en/neoclassic/251810809537eb36f73ac23031915862/Signing_CLA_Welcome_Page.php
