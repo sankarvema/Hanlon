@@ -113,12 +113,17 @@ class ProjectHanlon::CLI
   def print_available_slices
     print "\n", "Available slices\n\t".yellow
     x = 1
-    slice_path = File.expand_path(File.join(File.dirname(__FILE__), 'slice', '*.rb'))
-    slices = Dir.glob(slice_path).map {|f| file2const(File.basename(f,File.extname(f))) }
-    slices.sort.uniq.each do |slice|
-      slice_obj = ::Object.full_const_get(SLICE_PREFIX + slice).new([])
+    # first, find all slices that extend the ProjectHanlon::Slice class
+    slices = ObjectSpace.each_object(Class).select { |klass| klass < ProjectHanlon::Slice }
+    # then construct a hash containing those slices (or slice classes); the key for
+    # this hash is the slice name
+    slices_hash = Hash[slices.map { |a| [a.new([]).slice_name, a] }]
+    # finally, output the list of slice names (sorted by name) for all
+    # of the "non-hidden" slices
+    slices_hash.keys.sort.each do |slice_name|
+      slice_obj = slices_hash[slice_name].new([])
       unless slice_obj.hidden
-        print "[#{const2file(slice)}] ".white
+        print "[#{slice_name}] ".white
         if x > 5
           print "\n\t"
           x = 0
