@@ -87,7 +87,7 @@ module Hanlon
             end
           end
           get do
-            JSON(ProjectHanlon.config.to_hash.to_json)
+            JSON(ProjectHanlon.config.to_json)
           end     # end GET /config
 
           resource :ipxe do

@@ -56,6 +56,12 @@ module ProjectHanlon
       end
     end
 
+    def to_json
+      # sorts based on the key value and removes the "@noun" key from the
+      # configuration hashmap (it's really just for internal use)
+      Hash[*(to_hash.reject{ |k| k == "@noun" }).sort.flatten].to_json
+    end
+
     def new_object_from_template_name(namespace_prefix, object_template_name)
       get_child_types(namespace_prefix).each do
       |template|
