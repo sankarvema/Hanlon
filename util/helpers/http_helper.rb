@@ -5,7 +5,12 @@ module ProjectHanlon
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Delete.new(uri.request_uri)
     # make the request
-    response = http.request(request)
+    response = nil
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+    end
     # and return the result
     return [JSON.parse(response.body)["response"], response] if include_http_response
     JSON.parse(response.body)["response"]
@@ -18,7 +23,12 @@ module ProjectHanlon
     request.body = json_data
     request["Content-Type"] = "application/json"
     # make the request
-    response = http.request(request)
+    response = nil
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+    end
     # and return the result
     return [JSON.parse(response.body)["response"], response] if include_http_response
     JSON.parse(response.body)["response"]
@@ -31,7 +41,12 @@ module ProjectHanlon
     request.body = json_data
     request["Content-Type"] = "application/json"
     # make the request
-    response = http.request(request)
+    response = nil
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+    end
     # and return the result
     return [JSON.parse(response.body)["response"], response] if include_http_response
     JSON.parse(response.body)["response"]
@@ -46,7 +61,12 @@ module ProjectHanlon
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Get.new(uri.request_uri)
     # make the request
-    response = http.request(request)
+    response = nil
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+    end
     # and return the result
     return [JSON.parse(response.body), response] if include_http_response
     JSON.parse(response.body)
@@ -60,7 +80,12 @@ module ProjectHanlon
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Get.new(uri.request_uri)
     # make the request
-    response = http.request(request)
+    response = nil
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+    end
     # and return the result
     return [response.body, response] if include_http_response
     response.body
@@ -76,10 +101,13 @@ module ProjectHanlon
     # setup the request
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Get.new(uri.request_uri)
-
     # make the request
-    response = http.request(request)
-
+    response = nil
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+    end
     # and return the result
     return [JSON.parse(response.body)["response"], response] if include_http_response
     JSON.parse(response.body)["response"]
