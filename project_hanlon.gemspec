@@ -8,5 +8,5 @@ Gem::Specification.new do |s|
   s.email       = ['nicholas.weaver@emc.com','tom.mcweeney@emc.com']
   s.files       = ["core/project_hanlon.rb"]
   s.homepage    =
-      'https://forge.puppetlabs.com/puppetlabs/hanlon'
+      'https://github.com/csc/Hanlon/blob/master/README.md'
 end
