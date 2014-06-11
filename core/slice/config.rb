@@ -20,13 +20,40 @@ module ProjectHanlon
       end
 
       def slice_commands
-        # Here we create a hash of the command string to the method it
-        # corresponds to for routing.
-        { :read    => "read_config",
-          :dbcheck => "db_check",
-          :ipxe    => "generate_ipxe_script",
-          :default => :read,
-          :else    => :read }
+        # get the slice commands map for this slice (start with a
+        # template that is based on the set of commands that are
+        # typical for most slices)
+        commands = get_command_map(
+            "config_help",
+            "read_config",
+            nil,
+            nil,
+            nil,
+            nil,
+            nil)
+        # then add a couple of additional methods (that are
+        # specific to this slice)
+        commands[:db_check] = "db_check"
+        commands[:ipxe] = "generate_ipxe_script"
+        commands
+      end
+
+      def config_help
+        if @prev_args.length > 1
+          command = @prev_args.peek(1)
+          begin
+            # load the option items for this command (if they exist) and print them
+            option_items = command_option_data(command)
+            print_command_help(command, option_items)
+            return
+          rescue
+          end
+        end
+        puts "Config Slice: used to view/check config.".red
+        puts "Config Commands:".yellow
+        puts "\thanlon config [get]      " + "View the current Hanlon configuration".yellow
+        puts "\thanlon config db_check   " + "Check the Hanlon database connection".yellow
+        puts "\thanlon config ipxe       " + "Generate an iPXE script (for use with TFTP)".yellow
       end
 
       def db_check
