@@ -266,6 +266,28 @@ EOT
         client_config_hash
       end
 
+      # override the standard "to_yaml" method so that these configurations
+      # are saved in a sorted order (sorted by key)
+      def to_yaml (opts = { })
+        YAML::quick_emit(object_id, opts) do |out|
+          out.map(taguri, to_yaml_style) do |map|
+            sorted_keys = keys
+            sorted_keys = begin
+              sorted_keys.sort
+            rescue
+              sorted_keys.sort_by { |k| k.to_s } rescue sorted_keys
+            end
+
+            map.add("noun", self["noun"])
+            sorted_keys.each do |k|
+              next if k == "taguri" || k == "to_yaml_style"  || k == "noun"
+              map.add(k, self[k])
+            end
+
+          end
+        end
+      end
+
       # uses the  UDPSocket class to determine the list of IP addresses that are
       # valid for this server (used in the "get_an_ip" method, below, to pick an IP
       # address to use when constructing the Hanlon configuration file)
