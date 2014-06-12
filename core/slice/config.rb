@@ -57,11 +57,13 @@ module ProjectHanlon
       end
 
       def db_check
+        @command = :db_check
         raise ProjectHanlon::Error::Slice::MethodNotAllowed, "This method cannot be invoked via REST" if @web_command
         puts get_data.persist_ctrl.is_connected?
       end
 
       def read_config
+        @command = :read_config
         uri = URI.parse @uri_string
         config = hnl_http_get_hash_response(uri)
         puts "ProjectHanlon Config:"
@@ -72,6 +74,7 @@ module ProjectHanlon
       end
 
       def generate_ipxe_script
+        @command = :generate_ipxe_script
         uri = URI.parse @uri_string + '/ipxe'
         ipxe_script = hnl_http_get_text(uri)
         puts ipxe_script
