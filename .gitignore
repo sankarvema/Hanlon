@@ -15,11 +15,10 @@ test/tmp
 test/version_tmp
 tmp
 nohup.out
-/log/*.log
+
 /cli/log/*.log
 /web/log/*.log
 
-/conf/*.conf
 /cli/conf/*.conf
 /web/conf/*.conf
 
@@ -34,7 +33,6 @@ _yardoc
 doc/
 
 /.rvmrc
-/conf/hanlon_server.conf
 /image
 /node_modules
 /hanlon_daemon.pid
