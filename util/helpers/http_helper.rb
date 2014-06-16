@@ -6,7 +6,7 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Delete.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -18,7 +18,7 @@ module ProjectHanlon
       request.body = json_data
       request["Content-Type"] = "application/json"
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -30,7 +30,7 @@ module ProjectHanlon
       request.body = json_data
       request["Content-Type"] = "application/json"
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -44,7 +44,7 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -57,7 +57,7 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -73,14 +73,14 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
 
     private
 
-    def make_http_request(http_client, request)
+    def make_http_request(uri, http_client, request)
       begin
         response = http_client.request(request)
       rescue Errno::ECONNREFUSED
