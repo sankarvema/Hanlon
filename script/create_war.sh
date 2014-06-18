@@ -37,6 +37,7 @@ do
 done
 
 mv hanlon.core.jar ../script
+rm hanlon.core.README
 
 echo
 printf "${blue_text}Compiling directory core to hanlon.util.jar${normal_text}\n"
@@ -68,6 +69,7 @@ do
 done
 
 mv hanlon.util.jar ../script
+rm hanlon.util.README
 
 cd $script_dir
 
