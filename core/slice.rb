@@ -3,11 +3,11 @@
 # this module invokes slices from CLI, ideally it should be a restful proxy
 # change log to act as a restful proxy under util/api_proxy
 
-require 'object'
-
 require 'forwardable'
 require 'require_all'
-require "helpers/http_helper"
+require 'helpers/http_helper'
+
+puts "running at slice...."
 
 # @todo danielp 2012-10-24: this shouldn't include the database tooling.
 class ProjectHanlon::Slice < ProjectHanlon::Object
@@ -30,7 +30,18 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     @web_command = false
     @prev_args = Stack.new
     @hidden = true
-    @uri_root = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
+
+    Diagnostics::Tracer.watch_object($config)
+
+    this_config = ProjectHanlon.config
+    Diagnostics::Tracer.watch_object(this_config)
+
+
+    puts "Config @slice #{$config.hanlon_uri + $config.websvc_root}"
+    @uri_root = $config.hanlon_uri + $config.websvc_root
+
+    #puts "Config @slice  #{this_config.hanlon_uri + this_config.websvc_root}"
+    #@uri_root = this_config.hanlon_uri + this_config.websvc_root
 
     @data = get_data
 
@@ -747,6 +758,11 @@ end
 # ToDo::Sankar::Refactor - remove _rel loading
 
 # Finally, ensure that all our slices are loaded.
-require_rel "./slice/"
+#require_all "./slice/"
+
+#Dir[File.dirname(__FILE__) + "/slice/**/*.rb"].each do |file|
+#  require file
+#end
+require "slice/slice_dep"
 
 require "image_service/microkernel"

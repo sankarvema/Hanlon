@@ -3,6 +3,7 @@ require "base62"
 require "colored"
 require "utility"
 require "logging/logger"
+require "data"
 
 # Common object for all base ProjectHanlon objects
 # @abstract

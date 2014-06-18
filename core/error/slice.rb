@@ -1,6 +1,7 @@
 # ToDo::Sankar::Refactor - remove _rel loading
 
-require_rel "../slice/"
+#require_rel "../slice/"
+#require 'error/slice/generic'
 
 module ProjectHanlon
   module Error
@@ -42,7 +43,7 @@ module ProjectHanlon
           [ 'MissingBrokerMetadata'     , 162 , {'@http_err'=> :bad_request}            , ''          , 'ProjectHanlon::Error::Slice::Generic' ],
           [ 'InvalidBrokerMetadata'     , 163 , {'@http_err'=> :bad_request}            , ''          , 'ProjectHanlon::Error::Slice::Generic' ],
       ].each do |err|
-        ProjectHanlon::Error.create_class *err
+        ProjectHanlon::ErrorFactory.create_class *err
       end
 
     end

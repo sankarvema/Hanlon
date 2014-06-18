@@ -26,6 +26,8 @@ $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './api').cleanpath.to_
 #$LOAD_PATH.unshift(File.join(PROJECT_ROOT, "app"))
 #$LOAD_PATH.unshift(File.join(PROJECT_ROOT, "lib"))
 
+require 'hanlon_global'
+
 # hanlon dependencies
 require 'object'
 require 'slice'

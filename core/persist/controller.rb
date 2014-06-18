@@ -1,4 +1,4 @@
-require 'project_hanlon'
+#require 'project_hanlon'
 
 module ProjectHanlon
   module Persist
@@ -17,8 +17,8 @@ module ProjectHanlon
         # @todo danielp 2013-03-13: well, this seems less helpful now that
         # config has a sane global accessor, but whatever.  Keeping this
         # reduces code churn right this second.
-        @config = ProjectHanlon.config
-
+        #@config = ProjectHanlon.config
+        @config = $config
         # init correct database object
         if (config.persist_mode == :mongo)
           logger.debug "Using Mongo plugin"
