@@ -46,10 +46,10 @@ module ProjectHanlon
           logger.debug "mount path: #{mount_path}"
 
           # Make sure file exists
-          return cleanup([false,"File does not exist"]) unless File.exist?(fullpath)
+          return cleanup([false,"File '#{fullpath}' does not exist"]) unless File.exist?(fullpath)
 
           # Make sure it has an .iso extension
-          return cleanup([false,"File is not an ISO"]) if @filename[-4..-1] != ".iso"
+          return cleanup([false,"File '#{fullpath}' is not an ISO"]) if @filename[-4..-1] != ".iso"
 
           File.size(src_image_path)
 
