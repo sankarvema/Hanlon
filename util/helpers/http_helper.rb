@@ -93,6 +93,8 @@ module ProjectHanlon
         when Net::HTTPSuccess
           return [JSON.parse(response.body)["response"], response] if include_http_response
           JSON.parse(response.body)["response"]
+        when Net::HTTPBadRequest
+          raise ProjectHanlon::Error::Slice::CommandFailed, JSON.parse(response.body)["response"]["result"]["description"]
         when Net::HTTPNotFound
           raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
         when Net::HTTPForbidden
