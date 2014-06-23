@@ -35,7 +35,7 @@ module Hanlon
         end
 
         rescue_from :all do |e|
-          raise e
+          #raise e
           Rack::Response.new(
               Hanlon::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,

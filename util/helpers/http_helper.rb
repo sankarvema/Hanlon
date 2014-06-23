@@ -83,8 +83,10 @@ module ProjectHanlon
     def make_http_request(uri, http_client, request)
       begin
         response = http_client.request(request)
-      rescue Errno::ECONNREFUSED
+      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH => e
         raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+      rescue StandardError => e
+        raise ProjectHanlon::Error::Slice::CommandFailed, "Error while submitting request #{request} against uri #{uri}\n\t#{e.inspect}"
       end
     end
 
@@ -93,11 +95,9 @@ module ProjectHanlon
         when Net::HTTPSuccess
           return [JSON.parse(response.body)["response"], response] if include_http_response
           JSON.parse(response.body)["response"]
-        when Net::HTTPBadRequest
-          raise ProjectHanlon::Error::Slice::CommandFailed, JSON.parse(response.body)["response"]["result"]["description"]
         when Net::HTTPNotFound
           raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
-        when Net::HTTPForbidden
+        when Net::HTTPForbidden, Net::HTTPBadRequest, Net::HTTPInternalServerError
           raise ProjectHanlon::Error::Slice::CommandFailed, JSON.parse(response.body)["response"]["result"]["description"]
         else
           raise ProjectHanlon::Error::Slice::CommandFailed, response.message
