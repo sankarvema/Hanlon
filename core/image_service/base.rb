@@ -56,7 +56,7 @@ module ProjectHanlon
           # Confirm a mount doesn't already exist
           unless is_mounted?(fullpath)
             unless mount(fullpath)
-              logger.error "Could not mount #{fullpath} on #{mount_path}"
+              logger.error "Could not mount '#{fullpath}' on '#{mount_path}'"
               return cleanup([false,"Could not mount"])
             end
           end
@@ -69,8 +69,8 @@ module ProjectHanlon
 
           ## Create image path
           unless create_image_path
-            logger.error "Cannot create image path: #{image_path}"
-            return cleanup([false, "Cannot create image path: #{image_path}"])
+            logger.error "Cannot create image path: '#{image_path}'"
+            return cleanup([false, "Cannot create image path: '#{image_path}'"])
           end
 
           # Attempt to copy from mount path to image path

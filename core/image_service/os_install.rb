@@ -29,9 +29,9 @@ module ProjectHanlon
         end
       end
 
-      def verify(lcl_image_path)
-        super(lcl_image_path)
-      end
+      # def verify(lcl_image_path)
+      #   super(lcl_image_path)
+      # end
 
       def print_item_header
         super.push "OS Name", "OS Version"
