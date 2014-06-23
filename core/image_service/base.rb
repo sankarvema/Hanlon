@@ -46,10 +46,10 @@ module ProjectHanlon
           logger.debug "mount path: #{mount_path}"
 
           # Make sure file exists
-          return cleanup([false,"File '#{fullpath}' does not exist"]) unless File.exist?(fullpath)
+          return cleanup([false, "File '#{fullpath}' does not exist"]) unless File.exist?(fullpath)
 
           # Make sure it has an .iso extension
-          return cleanup([false,"File '#{fullpath}' is not an ISO"]) if @filename[-4..-1] != ".iso"
+          return cleanup([false, "File '#{fullpath}' is not an ISO"]) if @filename[-4..-1] != ".iso"
 
           File.size(src_image_path)
 
@@ -57,7 +57,7 @@ module ProjectHanlon
           unless is_mounted?(fullpath)
             unless mount(fullpath)
               logger.error "Could not mount '#{fullpath}' on '#{mount_path}'"
-              return cleanup([false,"Could not mount"])
+              return cleanup([false, "Could not mount '#{fullpath}' on '#{mount_path}'"])
             end
           end
 
@@ -87,10 +87,10 @@ module ProjectHanlon
 
         rescue => e
           logger.error e.message
-          return cleanup([false,e.message])
+          return cleanup([false, e.message])
         end
 
-        cleanup([true ,""])
+        cleanup([true , ''])
       end
 
       # Used to remove an image to the service
