@@ -12,6 +12,7 @@ module Hanlon
         version :v1, :using => :path, :vendor => "hanlon"
         format :json
         default_format :json
+        SLICE_REF = ProjectHanlon::Slice::Config.new([])
 
         rescue_from ProjectHanlon::Error::Slice::InvalidUUID do |e|
           Rack::Response.new(
@@ -64,6 +65,10 @@ module Hanlon
             Hanlon::WebService::Utils::request_from_hanlon_server?(ip_addr)
           end
 
+          def slice_success_response(slice, command, response, options = {})
+            Hanlon::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+          end
+
         end
 
         # the following description hides this endpoint from the swagger-ui-based documentation
@@ -87,7 +92,8 @@ module Hanlon
             end
           end
           get do
-            JSON(ProjectHanlon.config.to_json)
+            config = JSON(ProjectHanlon.config.to_json)
+            slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
           end     # end GET /config
 
           resource :ipxe do

@@ -65,9 +65,14 @@ module ProjectHanlon
       def read_config
         @command = :read_config
         uri = URI.parse @uri_string
-        config = hnl_http_get_hash_response(uri)
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = hnl_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+        end
         puts "ProjectHanlon Config:"
-        config.each { |key,val|
+        result.each { |key,val|
             print "\t#{key.sub("@","")}: ".white
             print "#{val} \n".green
         }
