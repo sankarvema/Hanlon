@@ -46,18 +46,18 @@ module ProjectHanlon
           logger.debug "mount path: #{mount_path}"
 
           # Make sure file exists
-          return cleanup([false,"File '#{fullpath}' does not exist"]) unless File.exist?(fullpath)
+          return cleanup([false, "File '#{fullpath}' does not exist"]) unless File.exist?(fullpath)
 
           # Make sure it has an .iso extension
-          return cleanup([false,"File '#{fullpath}' is not an ISO"]) if @filename[-4..-1] != ".iso"
+          return cleanup([false, "File '#{fullpath}' is not an ISO"]) if @filename[-4..-1] != ".iso"
 
           File.size(src_image_path)
 
           # Confirm a mount doesn't already exist
           unless is_mounted?(fullpath)
             unless mount(fullpath)
-              logger.error "Could not mount #{fullpath} on #{mount_path}"
-              return cleanup([false,"Could not mount"])
+              logger.error "Could not mount '#{fullpath}' on '#{mount_path}'"
+              return cleanup([false, "Could not mount '#{fullpath}' on '#{mount_path}'"])
             end
           end
 
@@ -69,8 +69,8 @@ module ProjectHanlon
 
           ## Create image path
           unless create_image_path
-            logger.error "Cannot create image path: #{image_path}"
-            return cleanup([false, "Cannot create image path: #{image_path}"])
+            logger.error "Cannot create image path: '#{image_path}'"
+            return cleanup([false, "Cannot create image path: '#{image_path}'"])
           end
 
           # Attempt to copy from mount path to image path
@@ -87,10 +87,10 @@ module ProjectHanlon
 
         rescue => e
           logger.error e.message
-          return cleanup([false,e.message])
+          return cleanup([false, e.message])
         end
 
-        cleanup([true ,""])
+        cleanup([true , ''])
       end
 
       # Used to remove an image to the service
@@ -194,7 +194,8 @@ module ProjectHanlon
 
       def print_items
         set_lcl_image_path(ProjectHanlon.config.image_path)
-        return @uuid, @description, @filename, image_path.to_s, "#{verify(@_lcl_image_path) ? "Valid".green : "Broken/Missing".red}"
+        success, message = verify(@_lcl_image_path)
+        return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
       end
 
       def print_item_header
@@ -203,7 +204,8 @@ module ProjectHanlon
 
       def print_item
         set_lcl_image_path(ProjectHanlon.config.image_path)
-        return @uuid, @description, @filename, image_path.to_s, "#{verify(@_lcl_image_path) ? "Valid".green : "Broken/Missing".red}"
+        success, message = verify(@_lcl_image_path)
+        return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
       end
 
       def line_color

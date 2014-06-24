@@ -18,9 +18,10 @@ module ProjectHanlon
         begin
           resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
-            unless verify(lcl_image_path)
-              logger.error "Missing metadata"
-              return [false, "Missing metadata"]
+            success, result_string = verify(lcl_image_path)
+            unless success
+              logger.error result_string
+              return [false, result_string]
             end
             return resp
           else
@@ -33,30 +34,33 @@ module ProjectHanlon
       end
 
       def verify(lcl_image_path)
-        super(lcl_image_path)
+        # check to make sure that the hashes match (of the file list
+        # extracted and the file list from the ISO)
         unless super(lcl_image_path)
-          logger.error "File structure is invalid"
-          return false
+          logger.error "ISO file structure is invalid"
+          return [false, "ISO file structure is invalid"]
         end
-
+        # and check some parameters from the files extracted from the ISO
         if File.exist?("#{image_path}/vmware-esx-base-osl.txt") && File.exist?("#{image_path}/boot.cfg")
           begin
             @esxi_version = File.read("#{image_path}/vmware-esx-base-osl.txt").split("\n")[2].gsub("\r","")
-
             @boot_cfg =  File.read("#{image_path}/boot.cfg")
-
             if @esxi_version && @boot_cfg
-              return true
+              return [true, '']
             end
-
-            false
+            # if we got here, could read the files but there wasn't anything in one or
+            # the other or both (so return the correct error)
+            return [false, "Missing 'esxi_version' and 'boot_cfg' in ISO"] unless @esxi_version || @boot_cfg
+            return [false, "Missing 'esxi_version' in ISO"] unless @esxi_version
+            [false, "Missing 'boot_cfg' in ISO"]
           rescue => e
             logger.debug e
-            false
+            [false, e.message]
           end
+          [true, '']
         else
           logger.error "Does not look like an ESXi ISO"
-          false
+          [false, "Does not look like an ESXi ISO"]
         end
       end
 

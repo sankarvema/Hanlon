@@ -28,10 +28,10 @@ module ProjectHanlon
         begin
           resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
-
-            unless verify(lcl_image_path)
-              logger.error "Missing metadata"
-              return [false, "Missing metadata"]
+            success, result_string = verify(lcl_image_path)
+            unless success
+              logger.error result_string
+              return [false, result_string]
             end
             return resp
           else
@@ -45,73 +45,74 @@ module ProjectHanlon
       end
 
       def verify(lcl_image_path)
+        # check to make sure that the hashes match (of the file list
+        # extracted and the file list from the ISO)
         unless super(lcl_image_path)
-          logger.error "File structure is invalid"
-          return false
+          logger.error "ISO file structure is invalid"
+          return [false, "ISO file structure is invalid"]
         end
-
+        # if the ISO includes an "iso-metadata.yaml" file, check the
+        # contents and make sure the required fields are included
         if File.exist?("#{image_path}/iso-metadata.yaml")
+          # first, read the parameters
           File.open("#{image_path}/iso-metadata.yaml","r") do
           |f|
             @_meta = YAML.load(f)
           end
-
+          # set the hash variables from those parameters
           set_hash_vars
-
-
+          # check the kernel_path parameter value
           unless File.exists?(kernel_path)
             logger.error "missing kernel: #{kernel_path}"
-            return false
+            return [false, "missing kernel: #{kernel_path}"]
           end
-
+          # check the initrd_path parameter value
           unless File.exists?(initrd_path)
             logger.error "missing initrd: #{initrd_path}"
-            return false
+            return [false, "missing initrd: #{initrd_path}"]
           end
-
+          # check the build_time parameter value
           if @iso_build_time == nil
             logger.error "ISO build time is nil"
-            return false
+            return [false, "ISO build time is nil"]
           end
-
+          # check the iso_version parameter value
           if @iso_version == nil
-            logger.error "ISO build time is nil"
-            return false
+            logger.error "ISO version is nil"
+            return [false, "ISO version is nil"]
           end
-
+          # check the hash_description parameter value
           if @hash_description == nil
             logger.error "Hash description is nil"
-            return false
+            return [false, "Hash description is nil"]
           end
-
+          # check the kernel_hash parameter value
           if @kernel_hash == nil
             logger.error "Kernel hash is nil"
-            return false
+            return [false, "Kernel hash is nil"]
           end
-
+          # check the initrd_hash parameter value
           if @initrd_hash == nil
             logger.error "Initrd hash is nil"
-            return false
+            return [false, "Initrd hash is nil"]
           end
-
+          # and use the hash values to check the kernel and initrd files
           digest = ::Object::full_const_get(@hash_description["type"]).new(@hash_description["bitlen"])
           khash = File.exist?(kernel_path) ? digest.hexdigest(File.read(kernel_path)) : ""
           ihash = File.exist?(initrd_path) ? digest.hexdigest(File.read(initrd_path)) : ""
-
           unless @kernel_hash == khash
             logger.error "Kernel #{@kernel} is invalid"
-            return false
+            return [false, "Kernel #{@kernel} is invalid"]
           end
-
           unless @initrd_hash == ihash
             logger.error "Initrd #{@initrd} is invalid"
-            return false
+            return [false, "Initrd #{@initrd} is invalid"]
           end
-
-          true
+          # if all of those checks passed, then return success
+          [true, '']
         else
-          logger.error "Missing metadata"
-          false
+          logger.error "Missing metadata file '#{image_path}/iso-metadata.yaml'"
+          [false, "Missing metadata file '#{image_path}/iso-metadata.yaml'"]
         end
       end
 
