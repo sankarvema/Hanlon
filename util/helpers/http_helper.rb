@@ -60,7 +60,8 @@ module ProjectHanlon
       # make the request
       response = make_http_request(uri, http_client, request)
       # and return the result
-      handle_http_response(uri, response, include_http_response)
+      return [response.body, response] if include_http_response
+      response.body
     end
 
     # used to retrieve a result when the endpoint is expected
