@@ -81,8 +81,13 @@ module ProjectHanlon
       def generate_ipxe_script
         @command = :generate_ipxe_script
         uri = URI.parse @uri_string + '/ipxe'
-        ipxe_script = hnl_http_get_text(uri)
-        puts ipxe_script
+        # and get the results of the appropriate RESTful request using that URI
+        include_http_response = true
+        result, response = hnl_http_get(uri, include_http_response)
+        if response.instance_of?(Net::HTTPBadRequest)
+          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+        end
+        puts result
       end
 
     end
