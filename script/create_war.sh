@@ -4,20 +4,54 @@ underline_text=$(tput smul)
 green_text=$(tput setaf 2)
 normal_text=$(tput sgr0)
 blue_text=$(tput setaf 4)
+red_text=$(tput setaf 1)
+reverse_text=$(tput smso)
+pblue_text=$(tput setaf 153)
+cyan_text=$(tput setaf 6)
 
-echo "Checking dependencies..."
+printf "${blue_text}Checking dependencies${normal_text}\n"
 echo
 
 if !hash jar 2>/dev/null; then
 
-    echo "Could not find jar command line utility"
-    echo "   either jre not install or java path not set"
-    echo "   Please install / configure jre before initialing this script"
+    printf "${red_text}Could not find jar command line utility\n"
+    printf "${red_text}   either jre not install or java path not set\n"
+    printf "${red_text}   Please install / configure jre before initiating this script${normal_text}\n"
     exit -1
 
 fi
 
 script_dir=$(pwd)
+
+printf "${blue_text}Downloading Hanlon dependencies${normal_text}\n"
+echo
+
+dep_file="hanlon.dep"
+
+if [ ! -f $dep_file ];
+then
+    printf "${red_text}Script dependency listing file $dep_file does not exists\n"
+    printf "${red_text}   Please create the file before initiating this script${normal_text}\n"
+   exit -1
+fi
+
+OLDIFS=$IFS
+IFS=";"
+
+line_cntr=1
+while read name url
+do
+    printf "${cyan_text}[$line_cntr]: downloading $name${normal_text}\n"
+    echo
+    filename="${url##*/}"
+    wget $url
+    mv "$filename" ../web/lib
+    line_cntr=$[line_cntr+1]
+    echo
+    echo
+done < $dep_file
+
+IFS=$OLDIFS
 
 cd ../core
 
