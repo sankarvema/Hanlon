@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/bash
 
 underline_text=$(tput smul)
 green_text=$(tput setaf 2)
@@ -94,6 +94,12 @@ mv hanlon.war ../script
 
 cd $script_dir
 
+# final touches to the script to address issue  reported by @ jcpowermac as #77
+zip -d hanlon.war  WEB-INF/../
+zip -d hanlon.war  WEB-INF/../Gemfile.lock
+zip -d hanlon.war  WEB-INF/../Gemfile
+
 echo
 printf "${green_text}hanlon.war created successfully${normal_text}\n"
 echo
+
