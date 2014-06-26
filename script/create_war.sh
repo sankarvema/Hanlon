@@ -5,6 +5,18 @@ green_text=$(tput setaf 2)
 normal_text=$(tput sgr0)
 blue_text=$(tput setaf 4)
 
+echo "Checking dependencies..."
+echo
+
+if !hash jar 2>/dev/null; then
+
+    echo "Could not find jar command line utility"
+    echo "   either jre not install or java path not set"
+    echo "   Please install / configure jre before initialing this script"
+    exit -1
+
+fi
+
 script_dir=$(pwd)
 
 cd ../core
