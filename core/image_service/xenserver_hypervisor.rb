@@ -32,28 +32,30 @@ module ProjectHanlon
       end
 
       def verify(lcl_image_path)
+        # check to make sure that the hashes match (of the file list
+        # extracted and the file list from the ISO)
         unless super(lcl_image_path)
-          logger.error "File structure is invalid"
-          return false
+          logger.error "ISO file structure is invalid"
+          return [false, "ISO file structure is invalid"]
         end
-
-        if File.exist?("#{image_path}/packages.xenserver/XS-REPOSITORY") && File.exist?("#{image_path}/boot/pxelinux/mboot.c32") && File.exist?("#{image_path}/boot/pxelinux/pxelinux.0")
+        # and check some parameters from the files extracted from the ISO
+        if File.exist?("#{image_path}/packages.xenserver/XS-REPOSITORY") &&
+            File.exist?("#{image_path}/boot/pxelinux/mboot.c32") &&
+            File.exist?("#{image_path}/boot/pxelinux/pxelinux.0")
           begin
             line = File.read("#{image_path}/packages.xenserver/XS-REPOSITORY").split("\n")[0]
             @xenserver_version = line[line.index("version=")+9,5]
-
-            if @xenserver_version 
-              return true
+            if @xenserver_version
+              return [true, '']
             end
-
-            false
+            [false, "Missing 'xenserver_version' in ISO"]
           rescue => e
             logger.debug e
-            false
+            [false, e.message]
           end
         else
           logger.error "Does not look like an XenServer ISO"
-          false
+          [false, "Does not look like an XenServer ISO"]
         end
       end
 

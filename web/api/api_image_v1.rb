@@ -31,6 +31,14 @@ module Hanlon
           )
         end
 
+        rescue_from ProjectHanlon::Error::Slice::MissingArgument do |e|
+          Rack::Response.new(
+              Hanlon::WebService::Response.new(403, "Bad Request", e.message).to_json,
+              403,
+              { "Content-type" => "application/json" }
+          )
+        end
+
         rescue_from Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
@@ -40,7 +48,7 @@ module Hanlon
         end
 
         rescue_from :all do |e|
-          raise e
+          #raise e
           Rack::Response.new(
               Hanlon::WebService::Response.new(500, e.class.name, e.message).to_json,
               500,

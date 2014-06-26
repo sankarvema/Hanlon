@@ -29,7 +29,10 @@ module ProjectHanlon
 
     def default_mk
       mk_images = []
-      get_data.fetch_all_objects(:images).each { |i| mk_images << i if i.path_prefix == "mk" && i.verify(ProjectHanlon.config.image_path) == true }
+      get_data.fetch_all_objects(:images).each { |i|
+        success, message = i.verify(ProjectHanlon.config.image_path)
+        mk_images << i if i.path_prefix == "mk" && success
+      }
 
       if mk_images.count > 0
         mk_image = nil

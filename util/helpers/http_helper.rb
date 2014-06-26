@@ -6,7 +6,7 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Delete.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -18,7 +18,7 @@ module ProjectHanlon
       request.body = json_data
       request["Content-Type"] = "application/json"
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -30,7 +30,7 @@ module ProjectHanlon
       request.body = json_data
       request["Content-Type"] = "application/json"
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
@@ -44,9 +44,10 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
-      handle_http_response(uri, response, include_http_response)
+      return [JSON.parse(response.body), response] if include_http_response
+      JSON.parse(response.body)
     end
 
     # used to retrieve a result when the endpoint is expected
@@ -57,9 +58,10 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
-      handle_http_response(uri, response, include_http_response)
+      return [response.body, response] if include_http_response
+      response.body
     end
 
     # used to retrieve a result when the endpoint is expected
@@ -73,18 +75,20 @@ module ProjectHanlon
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       # make the request
-      response = make_http_request(http_client, request)
+      response = make_http_request(uri, http_client, request)
       # and return the result
       handle_http_response(uri, response, include_http_response)
     end
 
     private
 
-    def make_http_request(http_client, request)
+    def make_http_request(uri, http_client, request)
       begin
         response = http_client.request(request)
-      rescue Errno::ECONNREFUSED
+      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH => e
         raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
+      rescue StandardError => e
+        raise ProjectHanlon::Error::Slice::CommandFailed, "Error while submitting request #{request} against uri #{uri}\n\t#{e.inspect}"
       end
     end
 
@@ -95,7 +99,7 @@ module ProjectHanlon
           JSON.parse(response.body)["response"]
         when Net::HTTPNotFound
           raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
-        when Net::HTTPForbidden
+        when Net::HTTPForbidden, Net::HTTPBadRequest, Net::HTTPInternalServerError
           raise ProjectHanlon::Error::Slice::CommandFailed, JSON.parse(response.body)["response"]["result"]["description"]
         else
           raise ProjectHanlon::Error::Slice::CommandFailed, response.message
