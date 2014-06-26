@@ -7,8 +7,6 @@ require 'forwardable'
 require 'require_all'
 require 'helpers/http_helper'
 
-puts "running at slice...."
-
 # @todo danielp 2012-10-24: this shouldn't include the database tooling.
 class ProjectHanlon::Slice < ProjectHanlon::Object
   include ProjectHanlon::HttpHelper
@@ -36,8 +34,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     this_config = ProjectHanlon.config
     Diagnostics::Tracer.watch_object(this_config)
 
-
-    puts "Config @slice #{$config.hanlon_uri + $config.websvc_root}"
     @uri_root = $config.hanlon_uri + $config.websvc_root
 
     #puts "Config @slice  #{this_config.hanlon_uri + this_config.websvc_root}"

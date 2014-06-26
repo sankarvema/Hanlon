@@ -3,6 +3,7 @@
 require 'json'
 require 'colored'
 require 'optparse'
+require 'hanlon_global'
 require 'slice'
 require 'logging/logger'
 require 'slice/config'

@@ -39,7 +39,6 @@ module ProjectHanlon
 
       def self.instance
         unless @_instance
-          puts "Config path #{$config_file_path}"
           if(File.exist?($config_file_path))
             config = YAML.load_file($config_file_path)
           else
