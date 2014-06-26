@@ -35,6 +35,26 @@ module Diagnostics
       end
     end
 
+    def self.raise_hand
+      classname = self.class.name
+
+      methodname = caller[0][/`([^']*)'/, 1]
+      tracer_sign = "@@ #{caller[0]} from <class:#{classname}>\<method:#{methodname}>"
+
+      puts "Diagnostics::Tracer.raise_hand <arg:#{arg}> -- #{tracer_sign}".green
+    end
+
+    def self.eval(exp)
+      classname = self.class.name
+
+      methodname = caller[0][/`([^']*)'/, 1]
+      tracer_sign = "@@ #{caller[0]} from <class:#{classname}>\<method:#{methodname}>"
+
+      puts "Diagnostics::Tracer.eval <arg:#{arg}> -- #{tracer_sign}".green
+
+      #ToDo:: Sankar -- Implement evaluation method
+    end
+
   end
 
 end
