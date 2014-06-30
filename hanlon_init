@@ -44,21 +44,49 @@ module ProjectHanlon
     def create_hanlon_config_file
 
       puts "Creating server configuration file"
+
       web_config_path = File.join($app_root, "web/conf/hanlon_server.conf")
       server_config = ProjectHanlon::Config::Server.new
-      server_config.save_as_yaml(web_config_path)
+
+      check_file server_config, web_config_path
+
       puts "   default server configuration available at #{web_config_path}"
 
       puts
 
       puts "Creating client configuration file"
+
       cli_config_path = File.join($app_root, "cli/conf/hanlon_client.conf")
       client_config = ProjectHanlon::Config::Client.new
-      client_config.save_as_yaml(cli_config_path)
-      puts "   default server configuration available at #{cli_config_path}"
+
+      check_file client_config, cli_config_path
+
+      puts "   default client configuration available at #{cli_config_path}"
 
       puts
       puts "Please edit respective configuration files as needed before starting #{ProjectHanlon::Properties.app_name} server"
+
+    end
+
+    def check_file(obj, web_config_path)
+      if File.exist? web_config_path then
+        puts "Hanlon configuration file exists at #{web_config_path}"
+
+        begin
+          puts "Do you want to replace it (Y/n)?"
+          input = STDIN.getch
+        end while ! ['Y', 'N', 'n'].include? input
+
+        if input == 'Y' then
+          File.rename web_config_path, web_config_path + "_" + Time.now.strftime("%m%d%Y%I%M") + ".bak"
+        else
+          return
+        end
+
+
+      end
+
+      obj.save_as_yaml(web_config_path)
 
     end
 
