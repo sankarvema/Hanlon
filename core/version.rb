@@ -38,8 +38,14 @@ module ProjectHanlon
     end
   end
 
+  # determine, and store, the git derived version number to be used consistently across Hanlon
+  # this logic depends on gitś existance, we need to find a fool proof technique
+  gitversion_cmd="git describe --tags --dirty --always | sed -e 's@-@+@' | sed -e 's/^v//'"
+
+  version = %x[ #{gitversion_cmd} ].delete!("\n")
+
   # The running version of Project Hanlon.  Hanlon follows the tenets of
   # [semantic versioning](http://semver.org), and this version number reflects
   # the rules as of SemVer 2.0.0-rc.1
-  VERSION = version
+  $VERSION = version
 end
