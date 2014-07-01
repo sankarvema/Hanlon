@@ -35,35 +35,6 @@ module ProjectHanlon
       handle_http_response(uri, response, include_http_response)
     end
 
-    # used to retrieve a result when the endpoint is expected to return
-    # a JSON hash containing the results as the response (this is used
-    # in the config slice, for example, who's endpoint returns the configuration
-    # as a JSON hash in the response body)
-    def hnl_http_get_hash_response(uri, include_http_response = false)
-      # setup the request
-      http_client = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.request_uri)
-      # make the request
-      response = make_http_request(uri, http_client, request)
-      # and return the result
-      return [JSON.parse(response.body), response] if include_http_response
-      JSON.parse(response.body)
-    end
-
-    # used to retrieve a result when the endpoint is expected
-    # to return a plain-text response (in which case the response
-    # body contains the response, not a JSON version of the response)
-    def hnl_http_get_text(uri, include_http_response = false)
-      # setup the request
-      http_client = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.request_uri)
-      # make the request
-      response = make_http_request(uri, http_client, request)
-      # and return the result
-      return [response.body, response] if include_http_response
-      response.body
-    end
-
     # used to retrieve a result when the endpoint is expected
     # to return a JSON version of a hash map in the response body
     # that includes the actual response in the "response" field
@@ -95,16 +66,27 @@ module ProjectHanlon
     def handle_http_response(uri, response, include_http_response)
       case response
         when Net::HTTPSuccess
-          return [JSON.parse(response.body)["response"], response] if include_http_response
-          JSON.parse(response.body)["response"]
+          return [get_hnl_response(response), response] if include_http_response
+          get_hnl_response(response)
         when Net::HTTPNotFound
           raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
         when Net::HTTPForbidden, Net::HTTPBadRequest, Net::HTTPInternalServerError
-          raise ProjectHanlon::Error::Slice::CommandFailed, JSON.parse(response.body)["response"]["result"]["description"]
+          raise ProjectHanlon::Error::Slice::CommandFailed, get_hnl_response(response)["result"]["description"]
         else
           raise ProjectHanlon::Error::Slice::CommandFailed, response.message
       end
     end
+
+    def get_hnl_response(http_response)
+      # first, try to parse the body of the response as a JSON string; if that doesn't
+      # work then return the body of the response (as text) instead
+      begin
+        JSON.parse(http_response.body)["response"]
+      rescue JSON::ParserError => e
+        http_response.body
+      end
+    end
+
   end
 end
 
