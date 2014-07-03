@@ -23,6 +23,12 @@ fi
 
 script_dir=$(pwd)
 
+LIBDIR="../web/lib/"
+
+if [ ! -d "$LIBDIR" ]; then
+  mkdir ../web/lib/
+fi
+
 printf "${blue_text}Downloading Hanlon dependencies${normal_text}\n"
 echo
 
@@ -119,12 +125,6 @@ rm hanlon.util.README
 
 cd $script_dir
 
-LIBDIR="../web/lib/"
-
-if [ ! -d "$LIBDIR" ]; then
-  mkdir ../web/lib/
-fi
-
 cp ../script/hanlon.util.jar ../web/lib/
 cp ../script/hanlon.core.jar ../web/lib/
 
@@ -139,11 +139,6 @@ warble
 mv hanlon.war ../script
 
 cd $script_dir
-
-# final touches to the script to address issue  reported by @ jcpowermac as #77
-zip -d hanlon.war  WEB-INF/../
-zip -d hanlon.war  WEB-INF/../Gemfile.lock
-zip -d hanlon.war  WEB-INF/../Gemfile
 
 echo
 printf "${green_text}hanlon.war created successfully${normal_text}\n"
