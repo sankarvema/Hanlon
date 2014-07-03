@@ -6,8 +6,10 @@ module ProjectHanlon
     # Base image abstract
     class Base < ProjectHanlon::Object
 
-      MOUNT_COMMAND = (Process::uid == 0 ? "mount" : "sudo mount")
-      UMOUNT_COMMAND = (Process::uid == 0 ? "umount" : "sudo umount")
+      MOUNT_COMMAND = (Process::uid == 0 ? "mount" : "sudo -n mount")
+      UMOUNT_COMMAND = (Process::uid == 0 ? "umount" : "sudo -n umount")
+      ARCHIVE_COMMAND = "fuseiso"
+      ARCHIVE_UMOUNT_COMMAND = "fusermount"
 
       attr_accessor :filename
       attr_accessor :description
@@ -36,45 +38,48 @@ module ProjectHanlon
         set_lcl_image_path(lcl_image_path)
 
         begin
+          create_imagepath_success = false
+          create_mount_success = false
           # Get full path
-          fullpath = File.expand_path(src_image_path)
+          isofullpath = File.expand_path(src_image_path)
           # Get filename
-          @filename = File.basename(fullpath)
-
-          logger.debug "fullpath: #{fullpath}"
-          logger.debug "filename: #@filename"
+          @filename = File.basename(isofullpath)
+          logger.debug "isofullpath: #{isofullpath}"
+          logger.debug "filename: #{@filename}"
           logger.debug "mount path: #{mount_path}"
 
           # Make sure file exists
-          return cleanup([false, "File '#{fullpath}' does not exist"]) unless File.exist?(fullpath)
+          return cleanup_on_failure(create_mount_success, create_imagepath_success, "File '#{isofullpath}' does not exist") unless File.exist?(isofullpath)
 
           # Make sure it has an .iso extension
-          return cleanup([false, "File '#{fullpath}' is not an ISO"]) if @filename[-4..-1] != ".iso"
-
-          File.size(src_image_path)
+          return cleanup_on_failure(create_mount_success, create_imagepath_success, "File '#{isofullpath}' is not an ISO") if @filename[-4..-1] != ".iso"
 
           # Confirm a mount doesn't already exist
-          unless is_mounted?(fullpath)
-            unless mount(fullpath)
-              logger.error "Could not mount '#{fullpath}' on '#{mount_path}'"
-              return cleanup([false, "Could not mount '#{fullpath}' on '#{mount_path}'"])
+          # TODO is_mounted method does not work with fuseiso
+          unless is_mounted?(isofullpath)
+            unless mount(isofullpath)
+              logger.error "Could not mount '#{isofullpath}' on '#{mount_path}'"
+              return cleanup_on_failure(create_mount_success, create_imagepath_success, "Could not mount '#{isofullpath}' on '#{mount_path}'")
             end
           end
+          create_mount_success = true
 
           # Determine if there is an existing image path for iso
-          if is_image_path?
+          if File.directory?(image_path)
             ## Remove if there is
             remove_dir_completely(image_path)
           end
 
           ## Create image path
-          unless create_image_path
+          unless FileUtils.mkpath(image_path)
             logger.error "Cannot create image path: '#{image_path}'"
-            return cleanup([false, "Cannot create image path: '#{image_path}'"])
+            return cleanup_on_failure(create_mount_success, create_imagepath_success, "Cannot create image path: '#{image_path}'")
           end
+          create_imagepath_success = true
 
           # Attempt to copy from mount path to image path
-          copy_to_image_path
+          # No way to test if successful. FileUtils.cp_r returns nil.
+          FileUtils.cp_r(mount_path + "/.", image_path)
 
           # Verify diff between mount / image paths
           # For speed/flexibility reasons we just verify all files exists and not their contents
@@ -82,27 +87,28 @@ module ProjectHanlon
           mount_hash = get_dir_hash(mount_path)
           unless mount_hash == @verification_hash
             logger.error "Image copy failed verification: #{@verification_hash} <> #{mount_hash}"
-            return cleanup([false, "Image copy failed verification: #{@verification_hash} <> #{mount_hash}"])
+            return cleanup_on_failure(create_mount_success, create_imagepath_success, "Image copy failed verification: #{@verification_hash} <> #{mount_hash}")
           end
 
         rescue => e
           logger.error e.message
-          return cleanup([false, e.message])
+          return cleanup_on_failure(create_mount_success, create_imagepath_success, e.message)
         end
 
-        cleanup([true , ''])
+        umount
+        [true, '']
       end
 
       # Used to remove an image to the service
       # Within each child class the methods are overridden for that child template
       def remove(lcl_image_path)
         set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
-        cleanup([false ,""])
+        remove_dir_completely(image_path)
         !File.directory?(image_path)
       end
 
       # Used to verify an image within the filesystem (local/remote/possible Glance)
-      # Within each child class the methods are overridden for that child emplate
+      # Within each child class the methods are overridden for that child template
       def verify(lcl_image_path)
         set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
         get_dir_hash(image_path) == @verification_hash
@@ -112,60 +118,70 @@ module ProjectHanlon
         @_lcl_image_path + "/" + @uuid
       end
 
-      def is_mounted?(src_image_path)
+      def is_mounted?(isoimage)
         mounts.each do
         |mount|
-          return true if mount[0] == src_image_path && mount[1] == mount_path
+          return true if mount[0] == isoimage && mount[1] == mount_path
         end
         false
       end
 
-      def mount(src_image_path)
+      def mount(isoimage)
         FileUtils.mkpath(mount_path) unless File.directory?(mount_path)
 
-        `#{MOUNT_COMMAND} -o loop #{src_image_path} #{mount_path} 2> /dev/null`
-        if $? == 0
-          logger.debug "mounted: #{src_image_path} on #{mount_path}"
-          true
-        else
-          logger.debug "could not mount: #{src_image_path} on #{mount_path}"
-          false
+        `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
+        if $? != 0
+          `#{MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}`
+          if $? != 0
+            cleanup_on_failure(false, true, "Could not mount '#{isoimage}' on '#{mount_path}'")
+            raise "Neither #{ARCHIVE_COMMAND} or #{MOUNT_COMMAND} was available for extracting the ISO."
+          end
         end
+        true
       end
 
       def umount
         `#{UMOUNT_COMMAND} #{mount_path} 2> /dev/null`
-        if $? == 0
-          logger.debug "unmounted: #{mount_path}"
-          true
+        if $? != 0
+          `#{ARCHIVE_UMOUNT_COMMAND} -u #{mount_path}`
+          if $? != 0
+            raise "Neither #{ARCHIVE_UMOUNT_COMMAND} or #{UMOUNT_COMMAND} was available for unmounting the ISO."
+          else
+            remove_dir_completely(mount_path)
+            return
+          end
         else
-          logger.debug "could not unmount: #{mount_path}"
-          false
+          remove_dir_completely(mount_path)
         end
       end
 
       def mounts
-        `#{MOUNT_COMMAND}`.split("\n").map! {|x| x.split("on")}.map! {|x| [x[0],x[1].split(" ")[0]]}
+        `#{MOUNT_COMMAND}`.split("\n").map! { |x| x.split("on") }.map! { |x| [x[0], x[1].split(" ")[0]] }
       end
 
-      def cleanup(ret)
-        umount
-        remove_dir_completely(mount_path)
-        remove_dir_completely(image_path) if !ret[0]
-        logger.error "Error: #{ret[1]}" if !ret[0]
-        ret
+      ## cleanup_on_failure method, based on arguments will unmount the iso,
+      ## delete the mount directory and/or remove the image directory.
+      ## If the image directory is removed a exception will be raised to inform
+      ## the client of the error.
+      def cleanup_on_failure(do_unmount, do_image_delete, errormsg)
+        logger.error "Error: #{errormsg}"
+
+        # unmount, if mounted
+        if do_unmount
+          umount
+        end
+
+        # remove directory if created
+        if do_image_delete
+          remove_dir_completely(image_path)
+          raise "Deleted Image Directory, Image Path: #{image_path}"
+        end
+
+        [false, errormsg]
       end
 
       def mount_path
         "#{$temp_path}/#{@uuid}"
-      end
-
-      def is_image_path?
-        File.directory?(image_path)
-      end
-
-      def create_image_path
-        FileUtils.mkpath(image_path)
       end
 
       def remove_dir_completely(path)
@@ -176,17 +192,11 @@ module ProjectHanlon
         end
       end
 
-      def copy_to_image_path
-        FileUtils.cp_r(mount_path + "/.", image_path)
-      end
-
       def get_dir_hash(dir)
         logger.debug "Generating hash for path: #{dir}"
-
-        files_string = Dir.glob("#{dir}/**/*").map {|x| x.sub("#{dir}/","")}.sort.join("\n")
+        files_string = Dir.glob("#{dir}/**/*").map { |x| x.sub("#{dir}/", "") }.sort.join("\n")
         Digest::SHA2.hexdigest(files_string)
       end
-
 
       def print_header
         return "UUID", "Type", "ISO Filename", "Path", "Status"
