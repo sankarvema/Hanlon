@@ -16,7 +16,7 @@ Warbler::Config.new do |config|
   config.features += ['gemjar']
 
   #config.gem_path = '/WEB-INF/lib/gems.jar'
-  config.init_contents =  %w(/home/user/ohan/fr-war/web/config/init.rb)
+  config.init_contents =  %w(config/init.rb)
   config.dirs += ['api']
   config.dirs += ['conf']
   config.dirs += ['log']
