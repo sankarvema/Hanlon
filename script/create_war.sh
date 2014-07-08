@@ -12,13 +12,18 @@ cyan_text=$(tput setaf 6)
 printf "${blue_text}Checking dependencies${normal_text}\n"
 echo
 
-if !hash jar 2>/dev/null; then
-
+if !(hash jar 2>/dev/null); then
     printf "${red_text}Could not find jar command line utility\n"
     printf "${red_text}   either jre not install or java path not set\n"
     printf "${red_text}   Please install / configure jre before initiating this script${normal_text}\n"
     exit -1
+fi
 
+if !(hash jrubyc 2>/dev/null); then
+    printf "${red_text}Could not find jruby compiler\n"
+    printf "${red_text}   either jruby not install or jruby environment set properly\n"
+    printf "${red_text}   Please install / configure jruby before initiating this script${normal_text}\n"
+    exit -1
 fi
 
 #ToDo :: Check if all the necessary script files exist
