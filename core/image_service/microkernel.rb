@@ -1,5 +1,6 @@
 require "yaml"
 require "digest/sha2"
+require "image_service/base"
 
 module ProjectHanlon
   module ImageService

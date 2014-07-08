@@ -3,6 +3,8 @@
 require 'json'
 require 'api_utils'
 require 'slice'
+require 'slice/tag'
+require 'error'
 
 module Hanlon
   module WebService

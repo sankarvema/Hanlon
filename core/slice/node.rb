@@ -1,4 +1,5 @@
 require 'net/http'
+require 'engine'
 
 # Root ProjectHanlon namespace
 module ProjectHanlon

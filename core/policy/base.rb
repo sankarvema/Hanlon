@@ -1,6 +1,6 @@
 # ProjectHanlon Policy Base class
 # Root abstract
-require 'object'
+require 'hanlon_global'
 
 module ProjectHanlon
   module PolicyTemplate
