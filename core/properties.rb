@@ -11,7 +11,7 @@ module ProjectHanlon
     end
 
     @app_name = "Project Hanlon"
-    @app_build_version = $VERSION
+    @app_build_version = ProjectHanlon::VERSION
     @app_copy_right = "#{ProjectHanlon::Properties.app_name} (c) 2014. All rights reserved."
   end
 
