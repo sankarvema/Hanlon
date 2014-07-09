@@ -68,10 +68,10 @@ module Facter::Util::IP
 
   def self.get_single_interface_output(interface)
     # first, try one location
-    output = %x{/usr/sbin/ifconfig #{interface}}
+    output = %x{/sbin/ifconfig #{interface}}
     unless output.length > 0
       # that didn't work, so try the other
-      output = %x{/sbin/ifconfig #{interface}}
+      output = %x{/usr/sbin/ifconfig #{interface}}
     end
   end
 
