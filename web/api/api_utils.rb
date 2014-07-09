@@ -6,6 +6,77 @@ require 'facter'
 require 'facter/util/ip'
 require 'ipaddr'
 
+# monkey-patch Facter::Util::IP to fix problems we are seeing under
+# Tomcat (where the 'Facter.value(:kernel)' method call returns an
+# empty string)
+module Facter::Util::IP
+
+  def self.get_interface_value(interface, label)
+    tmp1 = []
+
+    # Pull each regex out of the map.
+    REGEX_MAP.each { |kernel, map|
+      regex = map[label.to_sym]
+
+      # Linux changes the MAC address reported via ifconfig when an ethernet interface
+      # becomes a slave of a bonding device to the master MAC address.
+      # We have to dig a bit to get the original/real MAC address of the interface.
+      bonddev = get_bonding_master(interface)
+      if label == 'macaddress' and bonddev
+        bondinfo = IO.readlines("/proc/net/bonding/#{bonddev}")
+        hwaddrre = /^Slave Interface: #{interface}\n[^\n].+?\nPermanent HW addr: (([0-9a-fA-F]{2}:?)*)$/m
+        value = hwaddrre.match(bondinfo.to_s)[1].upcase
+      else
+        output_int = get_single_interface_output(interface)
+        if interface != /^lo[0:]?\d?/
+          output_int.split('\n').each do |s|
+            if s =~ regex
+              value = $1
+              if label == 'netmask' && convert_from_hex?(kernel)
+                value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.')
+              end
+              tmp1.push(value)
+            end
+          end
+        end
+
+        if tmp1
+          value = tmp1.shift
+          return value if value
+        end
+      end
+    }
+    return ''
+  end
+
+  def self.get_interfaces
+    # first, try one location
+    output = %x{/sbin/ifconfig -a}
+    unless output.length > 0
+      # that didn't work, so try the other
+      output = %x{/usr/sbin/ifconfig -a}
+    end
+
+    # We get lots of warnings on platforms that don't get an output
+    # made.
+    if output
+      output.scan(/^\w+[.:]?\d+/)
+    else
+      []
+    end
+  end
+
+  def self.get_single_interface_output(interface)
+    # first, try one location
+    output = %x{/usr/sbin/ifconfig #{interface}}
+    unless output.length > 0
+      # that didn't work, so try the other
+      output = %x{/sbin/ifconfig #{interface}}
+    end
+  end
+
+end
+
 module Hanlon
   module WebService
     module Utils
