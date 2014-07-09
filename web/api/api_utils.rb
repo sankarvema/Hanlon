@@ -73,6 +73,7 @@ module Facter::Util::IP
       # that didn't work, so try the other
       output = %x{/usr/sbin/ifconfig #{interface}}
     end
+    output
   end
 
 end
