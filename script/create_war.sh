@@ -84,13 +84,15 @@ EOF
 
 jar cvf hanlon.core.jar hanlon.core.README
 
-FILESCNT=$(find . -name \*.rb | wc -l)
-FILES=$(find . -name \*.rb)
+RUBY_FILESCNT=$(find . -name \*.rb | wc -l)
+RUBY_FILES=$(find . -name \*.rb)
+ERB_FILES=$(find . -name \*.erb)
+JSON_FILES=$(find . -name \*.json)
 FILECNTR=1
 
-for f in $FILES
+for f in $RUBY_FILES
 do
-  printf "Compiling (%-3s of %-4s) -- [%50s]" $FILECNTR $FILESCNT $f
+  printf "Compiling (%-3s of %-4s) -- [%50s]" $FILECNTR $RUBY_FILESCNT $f
   jrubyc "$f"
   CLASS_FILE=${f//rb/class}
   printf " -- jarify"
@@ -98,6 +100,11 @@ do
   printf " -- ${green_text}[OK]${normal_text}\n"
   rm "$CLASS_FILE"
   FILECNTR=$[FILECNTR+1]
+done
+
+for f in $ERB_FILES $JSON_FILES
+do
+  jar uf hanlon.core.jar "$f"
 done
 
 mv hanlon.core.jar $build_dir
