@@ -90,12 +90,22 @@ module ProjectHanlon
       if File.exist? web_config_path then
         puts "   existing config file found at #{web_config_path}"
 
-        begin
-          printf "   do you want to replace (Yes/No)?"
-          input = STDIN.gets.strip.upcase
-        end while ! %w(Y N NO YES).include? input
 
-        if %w(Y YES).include? input then
+        begin
+          printf "   do you want to replace it [y/N]? "
+          input = STDIN.gets.strip.upcase
+
+          if input == ''
+            input =  'N'
+          end
+
+          if ! %w(Y N).include? input
+            puts "   sorry, invalid response!!!".red
+          end
+
+        end while ! %w(Y N).include? input
+
+        if %w(Y).include? input then
           File.rename web_config_path, web_config_path + "_" + Time.now.strftime("%m%d%Y%I%M") + ".bak"
           file_action = 1
         else
