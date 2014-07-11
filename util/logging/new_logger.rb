@@ -1,4 +1,5 @@
 require "logger"
+require "logging/logger_patch"
 
 #custom_logger.rb
 class CustomLogger < Logger
@@ -7,8 +8,6 @@ class CustomLogger < Logger
   #def format_message(severity, timestamp, progname, msg)
   #  "#{msg}\n"
   #end
-
-
 
   def log_exception(ex)
     self.error "exception occured #{ex.message}"
