@@ -3,8 +3,6 @@ require 'logger'
 class Logger
 
   def add(severity, message = nil, progname = nil, &block)
-    puts "Log add patched."
-
     @logdev = LogDevice.new($logging_path)
 
     severity ||= UNKNOWN
