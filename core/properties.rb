@@ -1,4 +1,5 @@
 require 'version'
+require 'copyright'
 
 module ProjectHanlon
 
@@ -12,7 +13,7 @@ module ProjectHanlon
 
     @app_name = "Project Hanlon"
     @app_build_version = ProjectHanlon::VERSION
-    @app_copy_right = "#{ProjectHanlon::Properties.app_name} (c) 2014. All rights reserved."
+    @app_copy_right = ProjectHanlon::Copy_Right
   end
 
 end
