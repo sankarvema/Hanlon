@@ -14,7 +14,9 @@ module ProjectHanlon
   Copy_Right = ""
   File.open("LICENSE", "r").each_line do |line|
     break if line.strip == ""
-    Copy_Right += line if line.upcase.include? "COPYRIGHT"
+    if line.upcase.include? "COPYRIGHT"
+      Copy_Right << line
+    end
   end
 
 end
