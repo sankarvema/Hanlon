@@ -21,7 +21,6 @@ module ProjectHanlon::Logging
 
         @_logger ||= ProjectHanlon::Logging.logger_for(classname, methodname)
         @_logger.progname = "#{caller[0]}>>#{classname}\##{methodname}"
-
         @_logger
       end
 
@@ -46,15 +45,6 @@ module ProjectHanlon::Logging
             config = ProjectHanlon::Config::Client.instance
           end
 
-          #puts "log level Logger::UNKNOWN is #{Logger::UNKNOWN}"
-          #puts "log level Logger::FATAL is #{Logger::FATAL}"
-          #puts "log level Logger::ERROR is #{Logger::ERROR}"
-          #puts "log level Logger::WARN is #{Logger::WARN}"
-          #puts "log level Logger::INFO is #{Logger::INFO}"
-          #puts "log level Logger::DEBUG is #{Logger::DEBUG}"
-
-          #ToDo::Sankar::Implement - convert this logic to custom logger
-
           case config.hanlon_log_level
               when "Logger::UNKNOWN" then 5
               when "Logger::FATAL" then 4
@@ -76,27 +66,9 @@ module ProjectHanlon::Logging
         require 'fileutils'
         # Creates a logger instance
         def configure_logger_for(classname, methodname)
-          init_log
           logger = CustomLogger.new(get_log_path, shift_age = LOG_MAX_FILES, shift_size = LOG_MAX_SIZE)
           logger.level = get_log_level
           logger
-        end
-
-        #ToDo::Sankar::Workaround - this should be part of custom logger
-        def init_log
-
-          begin
-
-            if !File.file?(get_log_path)
-
-              FileUtils.mkdir_p(File.dirname(get_log_path))
-              File.open(get_log_path, 'w') { |file| file.write("Log file initialized...\n") }
-
-            end
-          rescue Exception => e
-            puts "exception occured @ logger.rb::init_log\n" + e.message.to_s + "\nException Stack Trace...\n" + e.backtrace.to_s
-          end
-
         end
 
       end
