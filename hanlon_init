@@ -18,6 +18,9 @@ require 'properties'
 
 require 'helper/swagger'
 
+#require "highline/system_extensions"  # gem install highline
+
+
 module ProjectHanlon
   class Init
 
@@ -28,37 +31,92 @@ module ProjectHanlon
     def run(*argv)
       puts
       puts "#{ProjectHanlon::Properties.app_name} (ver #{ProjectHanlon::Properties.app_build_version})".green
-      puts ProjectHanlon::Properties.app_copy_right.red
+      puts ProjectHanlon::Properties.app_copy_right.yellow
       puts
-      puts "Setting initial environment for #{ProjectHanlon::Properties.app_name}"
+      puts "Setting initial environment for #{ProjectHanlon::Properties.app_name}".blue
+      puts
 
       validate_hanlon_struct
       create_hanlon_config_file
 
-      "Setting up #{ProjectHanlon::Properties.app_name} environment complete"
       puts
+      puts "Setting up of #{ProjectHanlon::Properties.app_name} environment complete".blue
 
       return 0
     end
 
     def create_hanlon_config_file
 
-      puts "Creating server configuration file"
+      puts "Creating server configuration file...".cyan
+
       web_config_path = File.join($app_root, "web/conf/hanlon_server.conf")
       server_config = ProjectHanlon::Config::Server.new
-      server_config.save_as_yaml(web_config_path)
-      puts "   default server configuration available at #{web_config_path}"
+
+      case check_file server_config, web_config_path
+        when -1
+          puts "   existing server config file at #{web_config_path} left intact"
+        when 0
+          puts "   a new default server configuration file created at #{web_config_path}"
+        when 1
+          puts "   a new default server configuration created at #{web_config_path}"
+          puts "   existing file backed up with timestamp"
+      end
 
       puts
 
-      puts "Creating client configuration file"
+      puts "Creating client configuration file...".cyan
+
       cli_config_path = File.join($app_root, "cli/conf/hanlon_client.conf")
       client_config = ProjectHanlon::Config::Client.new
-      client_config.save_as_yaml(cli_config_path)
-      puts "   default server configuration available at #{cli_config_path}"
+
+      case check_file client_config, cli_config_path
+        when -1
+          puts "   existing client config file at #{cli_config_path} left intact"
+        when 0
+          puts "   a new default client configuration created at #{cli_config_path}"
+        when 1
+          puts "   a new default client configuration created at #{cli_config_path}"
+          puts "   existing file backed up with timestamp"
+      end
 
       puts
       puts "Please edit respective configuration files as needed before starting #{ProjectHanlon::Properties.app_name} server"
+
+    end
+
+    def check_file(obj, web_config_path)
+      file_action = 0 # 0 -create new 1 - overwrite existing 2 - skip
+
+      if File.exist? web_config_path then
+        puts "   existing config file found at #{web_config_path}"
+
+
+        begin
+          printf "   Do you want to replace it? [y/N] "
+          input = STDIN.gets.strip.upcase
+
+          if input == ''
+            input =  'N'
+          end
+
+          if ! %w(Y N).include? input
+            puts "   sorry, invalid response!!!".red
+          end
+
+        end while ! %w(Y N).include? input
+
+        if %w(Y).include? input then
+          File.rename web_config_path, web_config_path + "_" + Time.now.strftime("%m%d%Y%I%M") + ".bak"
+          file_action = 1
+        else
+          return file_action = -1
+        end
+
+
+      end
+
+      obj.save_as_yaml(web_config_path)
+      return file_action
 
     end
 
