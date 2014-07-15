@@ -92,7 +92,7 @@ module ProjectHanlon
 
 
         begin
-          printf "   Do you want to replace it? [y/N]   "
+          printf "   Do you want to replace it? [y/N] "
           input = STDIN.gets.strip.upcase
 
           if input == ''
