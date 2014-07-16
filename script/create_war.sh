@@ -176,7 +176,7 @@ warble -q
 mv hanlon.war $build_dir
 
 echo
-printf "${blue_text}Cleaning temporary files{normal_text}\n"
+printf "${blue_text}Cleaning temporary files${normal_text}\n"
 
 rm -f $web_dir/Gemfile*
 rm -rf $web_dir/tmp/
