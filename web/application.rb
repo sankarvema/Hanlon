@@ -39,7 +39,7 @@ require 'slice'
 # Define path to iPXE ERB file and a few iPXE-related parameters
 # ToDo::Sankar::Refactor IPXE_ERB value to be changed to work on app servers
 
-IPXE_ERB = File.join($app_root, "../core/slice/config/hanlon.ipxe.erb")
+IPXE_ERB = File.join($app_root, "/config/hanlon.ipxe.erb")
 IPXE_NIC_MAX = 7
 IPXE_TIMEOUT = 15
 
