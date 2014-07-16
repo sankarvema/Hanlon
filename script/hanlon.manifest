@@ -1,0 +1,7 @@
+Name: ${module_name}
+Specification-Title: ${module_title}
+Specification-Version: ${module_version}
+Specification-Vendor: Computer Sciences Corporation
+Implementation-Title: Hanlon
+Implementation-Version: ${module_version}
+Implementation-Vendor: Computer Sciences Corporation

@@ -22,6 +22,6 @@ Warbler::Config.new do |config|
   config.dirs += ['log']
 
   config.includes = FileList["*.rb"]
-
+  config.manifest_file = "../build/hanlon.war.manifest"
   config.jar_name = "hanlon"
 end

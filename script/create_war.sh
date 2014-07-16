@@ -37,6 +37,13 @@ then
 fi
 #check gemfile, init.rb, hanlon_server.conf log_dir
 
+# determine, and store, the git derived ISO file version into the bundle
+gitversion="$(git describe --tags --dirty --always | sed -e 's@-@+@' | sed -e 's/^v//')"
+if test $? -gt 0; then
+    echo " ! Unable to determine the build version with git!"
+    exit 1
+fi
+
 script_dir=$(pwd)
 build_dir="../build"
 lib_dir="../web/lib/"
@@ -51,6 +58,12 @@ fi
 if [ ! -d "$build_dir" ]; then
   mkdir $build_dir
 fi
+
+# create mainfest files
+printf "${blue_text}Creating Hanlon manifests${normal_text}\n"
+sed -e "s/\${module_name}/hanlon.core.jar/" -e "s/\${module_title}/hanlon core library/" -e "s/\${module_version}/$gitversion/" hanlon.manifest > $build_dir/hanlon.core.manifest
+sed -e "s/\${module_name}/hanlon.util.jar/" -e "s/\${module_title}/hanlon util library/" -e "s/\${module_version}/$gitversion/" hanlon.manifest > $build_dir/hanlon.util.manifest
+sed -e "s/\${module_name}/hanlon.war/" -e "s/\${module_title}/hanlon application deployment file/" -e "s/\${module_version}/$gitversion/" hanlon.manifest > $build_dir/hanlon.war.manifest
 
 printf "${blue_text}Downloading Hanlon dependencies${normal_text}\n"
 echo
@@ -80,9 +93,10 @@ echo
 cat > hanlon.core.README <<EOF
 Hanlon application library
 hanlon.core.jar
+version: $gitversion
 EOF
 
-jar cvf hanlon.core.jar hanlon.core.README
+jar cvmf $build_dir/hanlon.core.manifest hanlon.core.jar hanlon.core.README
 
 RUBY_FILESCNT=$(find . -name \*.rb | wc -l)
 RUBY_FILES=$(find . -name \*.rb)
@@ -90,6 +104,7 @@ ERB_FILES=$(find . -name \*.erb)
 JSON_FILES=$(find . -name \*.json)
 FILECNTR=1
 
+# compile all ruby files and add them to jar
 for f in $RUBY_FILES
 do
   printf "Compiling (%-3s of %-4s) -- [%50s]" $FILECNTR $RUBY_FILESCNT $f
@@ -102,6 +117,7 @@ do
   FILECNTR=$[FILECNTR+1]
 done
 
+# add all .erb and .json file to jar
 for f in $ERB_FILES $JSON_FILES
 do
   jar uf hanlon.core.jar "$f"
@@ -119,9 +135,10 @@ cd $util_dir
 cat > hanlon.util.README <<EOF
 Hanlon application library
 hanlon.util.jar
+version: $gitversion
 EOF
 
-jar cvf hanlon.util.jar hanlon.util.README
+jar cvmf $build_dir/hanlon.util.manifest  hanlon.util.jar hanlon.util.README
 
 FILESCNT=$(find . -name \*.rb | wc -l)
 FILES=$(find . -name \*.rb)
@@ -159,10 +176,11 @@ warble -q
 mv hanlon.war $build_dir
 
 echo
-printf "${blue_text}Cleaning temporary files{normal_text}\n"
+printf "${blue_text}Cleaning temporary files${normal_text}\n"
 
 rm -f $web_dir/Gemfile*
 rm -rf $web_dir/tmp/
+rm -f $build_dir/*.manifest
 
 cd $script_dir
 
