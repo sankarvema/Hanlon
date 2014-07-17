@@ -19,8 +19,8 @@ nohup.out
 /cli/log/*.log
 /web/log/*.log
 
-/cli/conf/*.conf
-/web/conf/*.conf
+/cli/config/*.conf
+/web/config/*.conf
 
 scripts
 
