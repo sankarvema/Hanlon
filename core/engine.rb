@@ -147,7 +147,7 @@ module ProjectHanlon
 
     # Used to override per-node checkin behavior for testing
     def checkin_action_override(uuid)
-      checkin_file = "#{$hanlon_root}/conf/checkin_action.yaml"
+      checkin_file = "#{$hanlon_root}/config/checkin_action.yaml"
 
       return nil unless File.exist?(checkin_file) # skip is file doesn't exist'
       f               = File.open(checkin_file, "r")

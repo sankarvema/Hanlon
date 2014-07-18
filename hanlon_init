@@ -49,7 +49,7 @@ module ProjectHanlon
 
       puts "Creating server configuration file...".cyan
 
-      web_config_path = File.join($app_root, "web/conf/hanlon_server.conf")
+      web_config_path = File.join($app_root, "web/config/hanlon_server.conf")
       server_config = ProjectHanlon::Config::Server.new
 
       case check_file server_config, web_config_path
@@ -66,7 +66,7 @@ module ProjectHanlon
 
       puts "Creating client configuration file...".cyan
 
-      cli_config_path = File.join($app_root, "cli/conf/hanlon_client.conf")
+      cli_config_path = File.join($app_root, "cli/config/hanlon_client.conf")
       client_config = ProjectHanlon::Config::Client.new
 
       case check_file client_config, cli_config_path

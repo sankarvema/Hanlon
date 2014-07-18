@@ -5,7 +5,7 @@ require 'utility'
 require 'logging/logger'
 
 # This class represents the ProjectHanlon cli configuration. It is stored persistently in
-# './cli/conf/hanlon_client.conf' and editing by the user
+# './cli/config/hanlon_client.conf' and editing by the user
 
 module ProjectHanlon
   module Config

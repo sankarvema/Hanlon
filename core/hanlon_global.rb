@@ -1,4 +1,4 @@
-$config_file_path = "#{$app_root}/conf/hanlon_#{$app_type}.conf"
+$config_file_path = "#{$app_root}/config/hanlon_#{$app_type}.conf"
 $logging_path = "#{$app_root}/log/project_hanlon.log"
 $temp_path = "#{$app_root}/tmp"
 
