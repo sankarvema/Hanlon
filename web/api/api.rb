@@ -24,7 +24,8 @@ module Hanlon
         # first, grab a few parameters we'll need from the service.yaml file
         #mount_path = SERVICE_CONFIG[:config][:swagger_ui][:mount_path]
         #api_version = SERVICE_CONFIG[:config][:swagger_ui][:api_version]
-        config = ProjectHanlon::Config::Server.instance
+        #config = ProjectHanlon::Config::Server.instance
+        config = $config
         mount_path = config.sui_mount_path
         api_version = config.api_version
 
