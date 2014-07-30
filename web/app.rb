@@ -15,7 +15,8 @@ module Hanlon
 
       def initialize
 
-        config = ProjectHanlon::Config::Server.instance
+        #config = ProjectHanlon::Config::Server.instance
+        config = $config
         if config.nil?
           abort("Aborting hanlon server")
         end

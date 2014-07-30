@@ -6,9 +6,9 @@ module ProjectHanlon
     class Swagger
 
       def self.allow_swagger_access
-        config = ProjectHanlon::Config::Server.instance
+        #config = ProjectHanlon::Config::Server.instance
 
-        config.sui_allow_access
+        $config.sui_allow_access
       end
 
     end

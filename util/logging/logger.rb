@@ -38,14 +38,7 @@ module ProjectHanlon::Logging
         end
 
         def get_log_level
-
-          if($app_type == "server")
-            config = ProjectHanlon::Config::Server.instance
-          else
-            config = ProjectHanlon::Config::Client.instance
-          end
-
-          case config.hanlon_log_level
+          case $config.hanlon_log_level
               when "Logger::UNKNOWN" then 5
               when "Logger::FATAL" then 4
               when "Logger::ERROR" then 3
@@ -55,7 +48,6 @@ module ProjectHanlon::Logging
               else
                 3
           end
-
         end
 
         # Returns specific logger instance from loggers[Hash] or creates one if it doesn't exist
