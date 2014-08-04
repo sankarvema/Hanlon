@@ -212,10 +212,15 @@ module ProjectHanlon
         return "UUID", "Type", "ISO Filename", "Path", "Status"
       end
 
+      # def print_item
+      #   set_lcl_image_path(ProjectHanlon.config.image_path)
+      #   success, message = verify(@_lcl_image_path)
+      #   return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
+      # end
+
       def print_item
-        set_lcl_image_path(ProjectHanlon.config.image_path)
-        success, message = verify(@_lcl_image_path)
-        return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
+        #return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
+        return @uuid, @description, @filename, "unknown", "Not validated".red
       end
 
       def line_color

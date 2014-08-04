@@ -24,7 +24,7 @@ module ProjectHanlon
       attr_accessor :admin_port
       attr_accessor :register_timeout
 
-      attr_accessor :image_path
+      #attr_accessor :image_path
 
       attr_accessor :persist_mode
       attr_accessor :persist_host
@@ -54,7 +54,7 @@ module ProjectHanlon
 
           'register_timeout'         => 120,
 
-          'image_path'               => default_image_path,
+          #'image_path'               => default_image_path,
           'hanlon_log_level'        => "Logger::ERROR",
           'persist_mode'             => :mongo,
           'persist_host'             => "127.0.0.1",
