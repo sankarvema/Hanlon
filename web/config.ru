@@ -1,6 +1,6 @@
 require './application'
 require 'yaml'
-require 'puma'
+require 'rack/handler/puma'
 
 hanlon_config = YAML::load(File.open('config/hanlon_server.conf'))
 
@@ -12,7 +12,7 @@ use Rack::Static,
       [:all, {'Cache-Control' => 'public, max-age=86400'}]
     ]
 
-Rack::Handler::get(:puma).run(
+Rack::Handler::Puma.run(
     Rack::URLMap.new(hanlon_config['base_path'] => Hanlon::WebService::App.new),
     { :Port => hanlon_config['api_port'] }
 )
