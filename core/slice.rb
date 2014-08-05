@@ -39,7 +39,8 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     #puts "Config @slice  #{this_config.hanlon_uri + this_config.websvc_root}"
     #@uri_root = this_config.hanlon_uri + this_config.websvc_root
 
-    @data = get_data
+    # 129-issue-fix
+    #@data = get_data
 
   end
 
@@ -125,16 +126,20 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   end
 
   def eval_action(command_hash, command_action)
+    puts "Hash #{command_hash}, action #{command_action}"
     case command_hash[command_action]
       when Symbol
         # Symbol reroutes to another command
+        puts "eval command for symbol"
         @command_array.unshift(command_hash[command_action].to_s)
         eval_command(command_hash)
       when String
         # String calls a method
+        puts "eval command for string"
         self.send(command_hash[command_action])
       when Hash
         # A hash is iterated
+        puts "eval command for hash"
         eval_command(command_hash[command_action])
       else
         raise "InvalidActionSlice"
