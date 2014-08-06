@@ -36,11 +36,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
 
     @uri_root = $config.hanlon_uri + $config.websvc_root
 
-    #puts "Config @slice  #{this_config.hanlon_uri + this_config.websvc_root}"
-    #@uri_root = this_config.hanlon_uri + this_config.websvc_root
-
-    @data = get_data
-
   end
 
   # Return the name of this slice - essentially, the final classname without
