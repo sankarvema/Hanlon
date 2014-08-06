@@ -20,6 +20,7 @@ gem 'atomic'
 gem 'facter'
 gem 'rufus-scheduler'
 gem 'warbler'
+gem 'puma'
 
 group :test do
   gem 'rspec',              '>= 2.13.0'
