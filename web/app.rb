@@ -70,7 +70,7 @@ module Hanlon
           end
         end
 
-        matches_image = /^(\/v1)(\/image)(\/.*)$/.match(URI.unescape(request_path))
+        matches_image = /^([\/]+v1)(\/image)(\/.*)$/.match(URI.unescape(request_path))
 
         #matches_image.each { |a| puts ">>>#{a} " }
 
