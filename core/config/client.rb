@@ -24,8 +24,6 @@ module ProjectHanlon
       attr_accessor :admin_port
       attr_accessor :register_timeout
 
-      attr_accessor :image_path
-
       attr_accessor :hanlon_log_level
 
       attr_reader   :noun
@@ -45,7 +43,6 @@ module ProjectHanlon
 
           'register_timeout'         => 120,
 
-          'image_path'               => default_image_path,
           'hanlon_log_level'        => "Logger::ERROR"
         }
 
