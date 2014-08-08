@@ -36,6 +36,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
 
     @uri_root = $config.hanlon_uri + $config.websvc_root
 
+    @data = get_data if $app_type=="server"
   end
 
   # Return the name of this slice - essentially, the final classname without
@@ -189,6 +190,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # Returns a json string representing a [Hash] with metadata including error code and message
   # @param [Hash] error
   def slice_error(error, options = {})
+    puts "error:: #{error.message}"
     mk_response = options[:mk_response] ? options[:mk_response] : false
     return_hash = {}
     log_level = :error
