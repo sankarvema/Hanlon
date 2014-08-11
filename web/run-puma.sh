@@ -1,23 +1,21 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
 
-Dir.chdir(File.dirname(__FILE__))
+# get the location of the script relative to the cwd
+SCRIPT="${BASH_SOURCE[0]}"
+# while the filename in $SCRIPT is a symlink
+while [ -L "$SCRIPT" ]; do
+  # similar to above, but -P forces a change to the physical,
+  # not symbolic, directory
+  DIR="$( cd -P "$( dirname "$SCRIPT" )" && pwd )"
+  # value of symbolic link if $SCRIPT is relative (doesn't begin
+  # with /), resolve relative path where symlink lives
+  SCRIPT="$(readlink "$SCRIPT")" && SCRIPT="$DIR/$SCRIPT"
+done
+DIR="$( cd -P "$( dirname "$SCRIPT" )" && pwd )"
 
-require './application'
-require 'yaml'
-require 'open3'
-
-hanlon_config = YAML::load(File.open('config/hanlon_server.conf'))
-
-cmd_str="puma -p #{hanlon_config['api_port']} 2>&1 | tee /tmp/puma.log"
-puts "running #{cmd_str}..."
-trap("SIGINT") { throw :ctrl_c }
-catch :ctrl_c do
-  begin
-    Open3.popen3(cmd_str) { |stdin, stdout, stderr, wait_thr|
-      while line = stdout.gets
-        puts line
-      end
-    }
-  rescue Exception
-  end
-end
+# now that we know where the script is located, change directories
+# to that directory and start up the puma server on the correct port
+# (based on the 'api_port' set in the hanlon_server.conf file)
+cd ${DIR}
+PORT=`awk '/api_port/ {print $2}' config/hanlon_server.conf`
+puma -p ${PORT} 2>&1 | tee /tmp/puma.log
