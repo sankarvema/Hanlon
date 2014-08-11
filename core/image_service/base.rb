@@ -129,13 +129,16 @@ module ProjectHanlon
       def mount(isoimage)
         FileUtils.mkpath(mount_path) unless File.directory?(mount_path)
 
-        `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
-        if $? != 0
+        if File.file?(ARCHIVE_COMMAND)
+          output = `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
+        elsif (`which #{MOUNT_COMMAND}`.empty?) == false
+          puts "Failed to locate #{ARCHIVE_COMMAND}. Trying #{MOUNT_COMMAND}"
           `#{MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}`
           if $? != 0
             cleanup_on_failure(false, true, "Could not mount '#{isoimage}' on '#{mount_path}'")
-            raise "Neither #{ARCHIVE_COMMAND} or #{MOUNT_COMMAND} was available for extracting the ISO."
           end
+        else
+          raise "Neither #{ARCHIVE_COMMAND} or #{MOUNT_COMMAND} was available for extracting the ISO."
         end
         true
       end
