@@ -162,7 +162,7 @@ module Hanlon
               begin
                 engine = ProjectHanlon::Engine.instance
                 engine.remove_expired_nodes(node_timeout)
-              rescue java.lang.IllegalStateException => e
+              rescue Exception => e
                 #puts "At 1...#{e.message}"
                 logger.error "At 1...#{e.message}"
               end
@@ -181,7 +181,7 @@ module Hanlon
                 job_ids = Rufus::Scheduler.singleton.jobs(:tag => 'periodic_hanlon_tasks').map{ |job| job.id }
                 puts "  >> At #{Time.now}; Hanlon-related jobs running => [#{job_ids.join(', ')}]"
                 logger.debug "  >> At #{Time.now}; Hanlon-related jobs running => [#{job_ids.join(', ')}]"
-              rescue java.lang.IllegalStateException => e
+              rescue Exception => e
                 #puts "At 2...#{e.message}"
                 logger.error "At 2...#{e.message}"
               end
@@ -193,7 +193,7 @@ module Hanlon
             puts "  >> At #{Time.now}; All jobs running => [#{job_ids.join(', ')}]"
             logger.debug "  >> At #{Time.now}; All jobs running => [#{job_ids.join(', ')}]"
           end
-        rescue java.lang.IllegalStateException => e
+        rescue Exception => e
           #puts "At 3...#{e.message}"
           logger.error "At 3...#{e.message}"
         end
