@@ -17,6 +17,7 @@ module ProjectHanlon
       attr_accessor :verification_hash
       attr_accessor :path_prefix
       attr_accessor :hidden
+      attr_accessor :local_image_path
 
       def initialize(hash)
         super()

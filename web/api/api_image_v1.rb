@@ -111,6 +111,13 @@ module Hanlon
           end
           get do
             images = SLICE_REF.get_object("images", :images)
+
+            # fix 125 - add image local path to image end point
+            @_lcl_image_path = ProjectHanlon.config.image_path + "/"
+            images.each do |image|
+              image.set_lcl_image_path(ProjectHanlon.config.image_path)
+              image.local_image_path = image.image_path
+            end
             slice_success_object(SLICE_REF, :get_all_images, images, :success_type => :created)
           end     # end GET /image
 
