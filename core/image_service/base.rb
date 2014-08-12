@@ -127,34 +127,51 @@ module ProjectHanlon
       end
 
       def mount(isoimage)
+        # First, create the mount_path directory if it doesn't exist already
         FileUtils.mkpath(mount_path) unless File.directory?(mount_path)
-
+        # Then use the fuseiso command (if available on the system) or the
+        # mount command (if the fuseiso command is not available) to mount the
+        # isoimage
+        @mount_method = nil
         if `which #{ARCHIVE_COMMAND}`.empty? == false
-          output = `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
+          logger.debug "Mounting #{isoimage} using command '#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}'"
+          `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
+          @mount_method = :fuseiso
         elsif (`which #{MOUNT_COMMAND}`.empty?) == false
-          puts "Failed to locate #{ARCHIVE_COMMAND}. Trying #{MOUNT_COMMAND}"
+          logger.debug "Mounting #{isoimage} using command '#{MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}'"
           `#{MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}`
           if $? != 0
             cleanup_on_failure(false, true, "Could not mount '#{isoimage}' on '#{mount_path}'")
+          else
+            @mount_method = :mount
           end
         else
+          # raise an exception if neither command could be found
+          # (this should not happen, but...)
           raise "Neither #{ARCHIVE_COMMAND} or #{MOUNT_COMMAND} was available for extracting the ISO."
         end
+        # return true, indicating success
         true
       end
 
       def umount
-        `#{UMOUNT_COMMAND} #{mount_path} 2> /dev/null`
-        if $? != 0
+        # this block of code should never execute, but if it does make a note of it
+        unless @mount_method
+          logger.error "Attempting to unmount a volume (#{mount_path}) that was never successfully mounted"
+          return
+        end
+        # use the @mount_method value to determine how to unmount a volume that was
+        # mounted using the 'mount' method (above)
+        if @mount_method == :fuseiso
+          logger.debug "Unmounting via '#{ARCHIVE_UMOUNT_COMMAND} -u #{mount_path}' command"
           `#{ARCHIVE_UMOUNT_COMMAND} -u #{mount_path}`
-          if $? != 0
-            raise "Neither #{ARCHIVE_UMOUNT_COMMAND} or #{UMOUNT_COMMAND} was available for unmounting the ISO."
-          else
-            remove_dir_completely(mount_path)
-            return
-          end
-        else
           remove_dir_completely(mount_path)
+        elsif @mount_method == :mount
+          logger.debug "Unmounting via '#{UMOUNT_COMMAND} #{mount_path} 2> /dev/null' command"
+          `#{UMOUNT_COMMAND} #{mount_path} 2> /dev/null`
+          remove_dir_completely(mount_path)
+        else
+          logger.error "Unrecognized mount_method (#{@mount_method}) used to mount volume; umount failed"
         end
       end
 
