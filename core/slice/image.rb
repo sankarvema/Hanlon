@@ -122,7 +122,8 @@ module ProjectHanlon
         @command = :get_images
         uri = URI.parse @uri_string
 
-        image_hash_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        #image_hash_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        image_hash_array = hash_array_to_obj_array(hnl_http_get(uri))
 
         # convert it to an array of objects (from an array of hashes) and print the result
         print_object_array(image_hash_array, "Images:", :style => :item)

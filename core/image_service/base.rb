@@ -237,7 +237,7 @@ module ProjectHanlon
         #set_lcl_image_path(ProjectHanlon.config.image_path)
         #success, message = verify(@_lcl_image_path)
         #return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
-        return @uuid, @description, @filename, "Not Available".red, "Unknown".red
+        return @uuid, @description, @filename, @local_image_path , "Unknown".red
       end
 
       def line_color
