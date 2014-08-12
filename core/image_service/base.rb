@@ -129,7 +129,7 @@ module ProjectHanlon
       def mount(isoimage)
         FileUtils.mkpath(mount_path) unless File.directory?(mount_path)
 
-        if File.file?(ARCHIVE_COMMAND)
+        if `which #{ARCHIVE_COMMAND}`.empty? == false
           output = `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
         elsif (`which #{MOUNT_COMMAND}`.empty?) == false
           puts "Failed to locate #{ARCHIVE_COMMAND}. Trying #{MOUNT_COMMAND}"
