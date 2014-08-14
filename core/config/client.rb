@@ -28,6 +28,13 @@ module ProjectHanlon
 
       attr_reader   :noun
 
+      # attr_accessor :persist_mode
+      # attr_accessor :persist_host
+      # attr_accessor :persist_port
+      # attr_accessor :persist_username
+      # attr_accessor :persist_password
+      # attr_accessor :persist_timeout
+
       # Obtain our defaults
       def defaults
 
@@ -36,6 +43,12 @@ module ProjectHanlon
 
         defaults = {
           'hanlon_server'            => get_an_ip,
+          # 'persist_mode'             => :mongo,
+          # 'persist_host'             => "127.0.0.1",
+          # 'persist_port'             => 27017,
+          # 'persist_username'         => '',
+          # 'persist_password'         => '',
+          # 'persist_timeout'          => 10,
           'base_path'                => default_base_path,
           'api_version'              => 'v1',
           'admin_port'               => 8025,

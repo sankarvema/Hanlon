@@ -146,7 +146,7 @@ module ProjectHanlon
            "Bind Time"]
         else
           ["UUID",
-           "Line Number",
+           #"Line Number",
            "Label",
            "Enabled",
            "Template",
@@ -154,7 +154,7 @@ module ProjectHanlon
            "Tags",
            "Model Label",
            "Broker Target",
-           "Currently Bound",
+           #"Currently Bound",
            "Maximum Bound",
            "Bound Counter"]
         end
@@ -176,7 +176,7 @@ module ProjectHanlon
         else
           broker_name = @broker ? @broker.name : "none"
           [@uuid,
-           line_number.to_s,
+           #line_number.to_s,  # ToDo - Issue 125, move to server end
            @label,
            @enabled.to_s,
            @template.to_s,
@@ -184,7 +184,7 @@ module ProjectHanlon
            "[#{@tags.join(", ")}]",
            @model.label.to_s,
            broker_name,
-           current_count.to_s,
+           #current_count.to_s, # ToDo - Issue 125, move to server end
            @maximum_count.to_s,
            @model.counter.to_s]
         end
