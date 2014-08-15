@@ -195,6 +195,13 @@ module Hanlon
                 # it's a UUID, to retrieve the appropriate image and return it
                 image_uuid = component
                 image = SLICE_REF.get_object("images", :images, image_uuid)
+
+                # fix 125 - add image local path to image end point
+                @_lcl_image_path = ProjectHanlon.config.image_path + "/"
+
+                image.set_lcl_image_path(ProjectHanlon.config.image_path)
+                image.local_image_path = image.image_path
+
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 slice_success_object(SLICE_REF, :get_image_by_uuid, image, :success_type => :generic)
               else
