@@ -17,6 +17,7 @@ module ProjectHanlon
       attr_accessor :verification_hash
       attr_accessor :path_prefix
       attr_accessor :hidden
+      attr_accessor :local_image_path
 
       def initialize(hash)
         super()
@@ -233,9 +234,10 @@ module ProjectHanlon
       end
 
       def print_item
-        set_lcl_image_path(ProjectHanlon.config.image_path)
-        success, message = verify(@_lcl_image_path)
-        return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
+        #set_lcl_image_path(ProjectHanlon.config.image_path)
+        #success, message = verify(@_lcl_image_path)
+        #return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
+        return @uuid, @description, @filename, @local_image_path , "Unknown".red
       end
 
       def line_color
