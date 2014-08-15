@@ -127,7 +127,8 @@ module ProjectHanlon
             return @template.to_s, @description.to_s
           else
             max_num = @maximum_count.to_i == 0 ? '-' : @maximum_count
-            return line_number.to_s, @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "#{current_count.to_s}/#{max_num}", @model.counter.to_s, @uuid
+            #return line_number.to_s, @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "#{current_count.to_s}/#{max_num}", @model.counter.to_s, @uuid
+            return "0", @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "0/0", @model.counter.to_s, @uuid # ToDo - Issue 125, move to server end
           end
         end
       end
@@ -146,7 +147,7 @@ module ProjectHanlon
            "Bind Time"]
         else
           ["UUID",
-           #"Line Number",
+           #"Line Number", # ToDo - Issue 125, move to server end
            "Label",
            "Enabled",
            "Template",
@@ -154,7 +155,7 @@ module ProjectHanlon
            "Tags",
            "Model Label",
            "Broker Target",
-           #"Currently Bound",
+           #"Currently Bound", # ToDo - Issue 125, move to server end
            "Maximum Bound",
            "Bound Counter"]
         end
