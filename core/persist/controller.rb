@@ -30,13 +30,13 @@ module ProjectHanlon
           logger.debug "Using Postgres plugin"
           # ToDo::Sankar::Clean junk code
           #require "project_hanlon/persist/postgres_plugin" unless ProjectHanlon::Persist.const_defined?(:PostgresPlugin)
-          require "postgres_plugin" unless ProjectHanlon::Persist.const_defined?(:PostgresPlugin)
+          require "persist/postgres_plugin" unless ProjectHanlon::Persist.const_defined?(:PostgresPlugin)
           @database = ProjectHanlon::Persist::PostgresPlugin.new
         elsif (config.persist_mode == :memory)
           logger.debug "Using in-memory plugin"
           # ToDo::Sankar::Clean junk code
           #require "project_hanlon/persist/memory_plugin" unless ProjectHanlon::Persist.const_defined?(:MemoryPlugin)
-          require "memory_plugin" unless ProjectHanlon::Persist.const_defined?(:MemoryPlugin)
+          require "persist/memory_plugin" unless ProjectHanlon::Persist.const_defined?(:MemoryPlugin)
           @database = ProjectHanlon::Persist::MemoryPlugin.new
         else
           logger.error "Invalid Database plugin(#{config.persist_mode})"
