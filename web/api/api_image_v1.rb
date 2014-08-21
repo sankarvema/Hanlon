@@ -117,6 +117,7 @@ module Hanlon
             images.each do |image|
               image.set_lcl_image_path(ProjectHanlon.config.image_path)
               image.local_image_path = image.image_path
+              image.image_status, image.image_status_message = image.verify(image.local_image_path)
             end
             slice_success_object(SLICE_REF, :get_all_images, images, :success_type => :created)
           end     # end GET /image
@@ -201,6 +202,7 @@ module Hanlon
 
                 image.set_lcl_image_path(ProjectHanlon.config.image_path)
                 image.local_image_path = image.image_path
+                image.image_status, image.image_status_message = image.verify(image.local_image_path)
 
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 slice_success_object(SLICE_REF, :get_image_by_uuid, image, :success_type => :generic)
