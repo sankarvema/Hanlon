@@ -43,6 +43,10 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
 
   end
 
+  def self.additional_fields
+    %w"   "
+  end
+
   # Return the name of this slice - essentially, the final classname without
   # the leading hierarchy, in Ruby "filename" format rather than "classname"
   # format.  Not cached, because this is seldom used, and is never on the
