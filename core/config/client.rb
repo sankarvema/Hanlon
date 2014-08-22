@@ -35,6 +35,8 @@ module ProjectHanlon
 
       attr_accessor :hanlon_log_level
 
+      attr_accessor :http_read_timeout
+
       attr_reader   :noun
 
 
@@ -61,7 +63,8 @@ module ProjectHanlon
           'persist_port'             => 27017,
           'persist_username'         => '',
           'persist_password'         => '',
-          'persist_timeout'          => 10
+          'persist_timeout'          => 10,
+          'http_read_timeout'        => 60
         }
 
         return defaults
