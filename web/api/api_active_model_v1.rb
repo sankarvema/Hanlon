@@ -14,7 +14,8 @@ module Hanlon
         default_format :json
         SLICE_REF = ProjectHanlon::Slice::ActiveModel.new([])
 
-        rescue_from ProjectHanlon::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectHanlon::Error::Slice::InvalidUUID,
+                    Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
@@ -22,18 +23,11 @@ module Hanlon
           )
         end
 
-        rescue_from ProjectHanlon::Error::Slice::MethodNotAllowed do |e|
+        rescue_from ProjectHanlon::Error::Slice::MethodNotAllowed,
+                    ProjectHanlon::Error::Slice::CouldNotRemove do |e|
           Rack::Response.new(
               Hanlon::WebService::Response.new(403, e.class.name, e.message).to_json,
               403,
-              { "Content-type" => "application/json" }
-          )
-        end
-
-        rescue_from Grape::Exceptions::Validation do |e|
-          Rack::Response.new(
-              Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
-              400,
               { "Content-type" => "application/json" }
           )
         end

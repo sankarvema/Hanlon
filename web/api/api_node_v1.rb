@@ -14,7 +14,11 @@ module Hanlon
         default_format :json
         SLICE_REF = ProjectHanlon::Slice::Node.new([])
 
-        rescue_from ProjectHanlon::Error::Slice::InvalidUUID do |e|
+        rescue_from ProjectHanlon::Error::Slice::InvalidUUID,
+                    ProjectHanlon::Error::Slice::InvalidCommand,
+                    ProjectHanlon::Error::Slice::MissingArgument,
+                    ProjectHanlon::Error::Slice::InputError,
+                    Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
               400,
@@ -22,10 +26,10 @@ module Hanlon
           )
         end
 
-        rescue_from Grape::Exceptions::Validation do |e|
+        rescue_from ProjectHanlon::Error::Slice::CouldNotRegisterNode do |e|
           Rack::Response.new(
-              Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
-              400,
+              Hanlon::WebService::Response.new(404, e.class.name, e.message).to_json,
+              404,
               { "Content-type" => "application/json" }
           )
         end
