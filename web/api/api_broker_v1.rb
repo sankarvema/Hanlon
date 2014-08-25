@@ -20,6 +20,8 @@ module Hanlon
 
         rescue_from ProjectHanlon::Error::Slice::InvalidUUID,
                     ProjectHanlon::Error::Slice::MissingArgument,
+                    ProjectHanlon::Error::Slice::InvalidBrokerMetadata,
+                    ProjectHanlon::Error::Slice::MissingBrokerMetadata,
                     Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,

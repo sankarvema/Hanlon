@@ -17,6 +17,8 @@ module Hanlon
         rescue_from ProjectHanlon::Error::Slice::InvalidUUID,
                     ProjectHanlon::Error::Slice::MissingArgument,
                     ProjectHanlon::Error::Slice::InvalidModelTemplate,
+                    ProjectHanlon::Error::Slice::InvalidModelMetadata,
+                    ProjectHanlon::Error::Slice::MissingModelMetadata,
                     Grape::Exceptions::Validation do |e|
           Rack::Response.new(
               Hanlon::WebService::Response.new(400, e.class.name, e.message).to_json,
@@ -31,6 +33,14 @@ module Hanlon
           Rack::Response.new(
               Hanlon::WebService::Response.new(403, e.class.name, e.message).to_json,
               403,
+              { "Content-type" => "application/json" }
+          )
+        end
+
+        rescue_from ProjectHanlon::Error::Slice::InternalError do |e|
+          Rack::Response.new(
+              Hanlon::WebService::Response.new(500, e.class.name, e.message).to_json,
+              500,
               { "Content-type" => "application/json" }
           )
         end
