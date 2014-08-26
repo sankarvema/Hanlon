@@ -20,6 +20,7 @@ require 'model/xenserver'
 require 'model/redhat_6'
 require 'model/centos_6'
 require 'model/oraclelinux_6'
+require 'model/redhat_7'
 
 # level 3 - ubuntu
 require 'model/ubuntu_oneiric'
