@@ -70,8 +70,12 @@ module Hanlon
           # Query for the boot script for a node
           #   parameters:
           #         required:
-          #           :hw_id      | String | The hardware ID for the node. |                   | Default: unavailable
-          #           :dhcp_mac   | String | The MAC address the DHCP NIC. |                   | Default: unavailable
+          #           :dhcp_mac | String | The MAC address the DHCP NIC.          |      | Default: unavailable
+          #         optional (although one of these two must be specified):
+          #           :uuid     | String | The UUID for the node (from the BIOS). |      | Default: unavailable
+          #           :mac_id   | String | The MAC addresses for the node's NICs. |      | Default: unavailable
+          #         allowed for backwards compatibility (although will throw an error if used with 'mac_id')
+          #           :hw_id    | String | The MAC addresses for the node's NICs. |      | Default: unavailable
           desc "Retrieve the iPXE-boot script (for a node)"
           before do
             # only allow access to this resource from the Hanlon subnet
@@ -81,15 +85,25 @@ module Hanlon
             end
           end
           params do
-            requires :hw_id, type: String, desc: "The hardware ID for the node"
             requires :dhcp_mac, type: String, desc: "The MAC address of the DHCP NIC"
+            optional :uuid, type: String, desc: "The UUID for the node"
+            optional :mac_id, type: String, desc: "The MAC addresses of the node's NICs."
+            optional :hw_id, type: String, desc: "The MAC addresses of the node's NICs."
           end
           get do
-            hw_id = params[:hw_id].split("_")
+            uuid = params[:uuid]
+            mac_id = params[:mac_id].split("_") if params[:mac_id]
+            # the following parameter is only used for backwards compatibility (with
+            # previous versions of Hanlon, which used a 'hw_id' field during the boot
+            # process instead of the new 'mac_id' field)
+            hw_id = params[:hw_id].split("_") if params[:hw_id]
+            raise ProjectHanlon::Error::Slice::InvalidCommand, "The hw_id parameter is only allowed for backwards compatibility; use with the mac_id parameter is not allowed" if (hw_id && mac_id)
+            mac_id = hw_id if hw_id
+            raise ProjectHanlon::Error::Slice::MissingArgument, "At least one of the optional arguments (uuid or mac_id) must be specified" unless ((uuid && uuid.length > 0) || (mac_id && !(mac_id.empty?)))
             dhcp_mac = params[:dhcp_mac]
-            hw_id.collect! {|x| x.upcase.gsub(':', '') }
+            mac_id.collect! {|x| x.upcase.gsub(':', '') }
             env['api.format'] = :text
-            ProjectHanlon::Engine.instance.boot_checkin(:hw_id => hw_id, :dhcp_mac => dhcp_mac)
+            ProjectHanlon::Engine.instance.boot_checkin(:uuid => uuid, :mac_id => mac_id, :dhcp_mac => dhcp_mac)
           end     # end GET /boot
 
         end     # end resource /boot

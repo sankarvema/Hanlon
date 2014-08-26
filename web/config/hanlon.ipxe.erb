@@ -10,9 +10,9 @@ set dhcp_mac 01-${net<%= index %>/mac:hexhyp}
 
 :s1
 <% if @ipxe_options[:style] == :old %>
-chain <%= @ipxe_options[:uri] %><%= @ipxe_options[:websvc_root] %>/boot?mac=${net0/mac}&dhcp_mac=${dhcp_mac} || goto error
+chain <%= @ipxe_options[:uri] %><%= @ipxe_options[:websvc_root] %>/boot?uuid=${uuid}&mac=${net0/mac}&dhcp_mac=${dhcp_mac} || goto error
 <% else %>
-chain <%= @ipxe_options[:uri] %><%= @ipxe_options[:websvc_root] %>/boot?hw_id=<%= "#{(1..@ipxe_options[:nic_max]).inject('${net0/mac}') {|x,y| x << "_${net#{y.to_s}/mac}"}}" %>&dhcp_mac=${dhcp_mac} || goto error
+chain <%= @ipxe_options[:uri] %><%= @ipxe_options[:websvc_root] %>/boot?uuid=${uuid}&mac_id=<%= "#{(1..@ipxe_options[:nic_max]).inject('${net0/mac}') {|x,y| x << "_${net#{y.to_s}/mac}"}}" %>&dhcp_mac=${dhcp_mac} || goto error
 <% end %>
 
 :error

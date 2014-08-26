@@ -169,7 +169,7 @@ module ProjectHanlon
     def boot_checkin(options = {})
       # Called by a node boot process
 
-      logger.info "Request for boot - hw_id: #{options[:hw_id]}"
+      logger.info "Request for boot - uuid: #{options[:uuid]}, mac_id: #{options[:mac_id]}"
 
       # We attempt to fetch the node object
       node = lookup_node_by_hw_id(options)
@@ -202,7 +202,7 @@ module ProjectHanlon
 
         # Node isn't in DB, we boot it into the MK
         # This is a default behavior
-        logger.info "Node unknown - hw_id: #{options[:hw_id]}"
+        logger.info "Node unknown - uuid: #{options[:uuid]}, mac_id: #{options[:mac_id]}"
         default_mk_boot("unknown")
       end
 
@@ -235,17 +235,26 @@ module ProjectHanlon
 
     # @param [Hash] options
     # @return [Object,nil]
-    def lookup_node_by_hw_id(options = { :hw_id => [] })
-      unless options[:hw_id].count > 0
+    def lookup_node_by_hw_id(options = { :uuid => '', :mac_id => [] })
+      if (!options[:uuid] || options[:uuid].empty?) && (!options[:mac_id] || options[:mac_id].empty?)
         return nil
       end
       matching_nodes = []
       nodes          = get_data.fetch_all_objects(:node)
-      nodes.each do
-      |node|
-        matching_hw_id = node.hw_id & options[:hw_id]
+      nodes.each { |node|
+        # if a 'uuid' was provided, then search for a match based on
+        # that 'uuid' value
+        if options[:uuid] && !(options[:uuid].empty?) && node.hw_id == [options[:uuid]]
+          matching_nodes << node
+          next
+        end
+        # if no 'uuid' was provided or a match was not found based on
+        # the provided 'uuid' value, then look for a matching 'hw_id';
+        # if a match based on 'mac_id' is found, add that node to the
+        # array of matching nodes
+        matching_hw_id = node.hw_id & options[:mac_id]
         matching_nodes << node if matching_hw_id.count > 0
-      end
+      }
 
       if matching_nodes.count > 1
         # uh oh - we have more than one
