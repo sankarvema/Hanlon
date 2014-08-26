@@ -93,28 +93,48 @@ module Hanlon
             # handle a node checkin (from a Hanlon Microkernel instance)
             #   parameters:
             #         required:
-            #           :hw_id      | String | The hardware ID of the node.          |           | Default: unavailable
-            #           :last_state | String | The "state" the node is currently in. |           | Default: unavailable
+            #           :last_state     | String | The "state" the node is currently in.    |           | Default: unavailable
+            #         optional (although one of these two must be specified):
+            #           :uuid           | String | The UUID for the node (from the BIOS).   |           | Default: unavailable
+            #           :mac_id         | String | The MAC addresses for the node's NICs.   |           | Default: unavailable
+            #         optional
+            #           :first_checkin  | Boolean | Indicates if is first checkin (or not). |           | Default: unavailable
+            #         allowed for backwards compatibility (although will throw an error if used with 'mac_id')
+            #           :hw_id          | String | The MAC addresses for the node's NICs.   |      | Default: unavailable
+
             params do
-              requires :hw_id, type: String, desc: "The node's hardware ID"
               requires :last_state, type: String, desc: "The last state received by the Microkernel"
+              optional :uuid, type: String, desc: "The UUID for the node"
+              optional :mac_id, type: String, desc: "The MAC addresses of the node's NICs."
+              optional :hw_id, type: String, desc: "The MAC addresses of the node's NICs."
               optional :first_checkin, type: Boolean, desc: "Used to indicate if is first checkin (or not) by MK"
             end
             desc "Handle a node checkin (by a Microkernel instance)"
             get do
-              hw_id = params[:hw_id]
+              uuid = params["uuid"]
+              mac_id = params[:mac_id].split("_") if params[:mac_id]
+              # the following parameter is only used for backwards compatibility (with
+              # previous versions of Hanlon, which used a 'hw_id' field during the boot
+              # process instead of the new 'mac_id' field)
+              hw_id = params[:hw_id].split("_") if params[:hw_id]
+              raise ProjectHanlon::Error::Slice::InvalidCommand, "The hw_id parameter is only allowed for backwards compatibility; use with the mac_id parameter is not allowed" if (hw_id && mac_id)
+              mac_id = hw_id if hw_id
+              # check to make sure that either the mac_id or the uuid were passed in (or that the
+              # hw_id was included instead of the mac_id if it's an old Microkernel checking in, in
+              # which case the mac_id will be defined here)
+              raise ProjectHanlon::Error::Slice::MissingArgument, "At least one of the optional arguments (uuid or mac_id) must be specified" unless ((uuid && uuid.length > 0) || (mac_id && !(mac_id.empty?)))
               last_state = params[:last_state]
               first_checkin = params[:first_checkin]
               # Validate our args are here
-              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
+              # raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
               raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
-              hw_id = hw_id.split("_") unless hw_id.is_a? Array
-              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
+              mac_id = mac_id.split("_") if mac_id && mac_id.is_a?(String)
+              # raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
               # grab a couple of references we need
               engine = ProjectHanlon::Engine.instance
               # if it's not the first node, check to see if the node exists
               unless first_checkin
-                new_node = engine.lookup_node_by_hw_id(:hw_id => hw_id)
+                new_node = engine.lookup_node_by_hw_id({:uuid => uuid, :mac_id => mac_id})
                 if new_node
                   # if a node with this hardware id exists, simply acknowledge the checkin request
                   command = engine.mk_checkin(new_node.uuid, last_state)
@@ -138,32 +158,55 @@ module Hanlon
             # POST /node/register
             # register a node with Hanlon
             #   parameters:
-            #     hw_id           | String | The hardware ID of the node.          |           | Default: unavailable
-            #     last_state      | String | The "state" the node is currently in. |           | Default: unavailable
-            #     attributes_hash | Hash   | The attributes_hash of the node.      |           | Default: unavailable
+            #     required:
+            #       last_state      | String | The "state" the node is currently in.  |           | Default: unavailable
+            #       attributes_hash | Hash   | The attributes_hash of the node.       |           | Default: unavailable
+            #     optional (although one of these two must be specified):
+            #       uuid            | String | The UUID for the node (from the BIOS). |           | Default: unavailable
+            #       mac_id          | String | The MAC addresses for the node's NICs. |           | Default: unavailable
+            #         allowed for backwards compatibility (although will throw an error if used with 'mac_id')
+            #           :hw_id      | String | The MAC addresses for the node's NICs. |           | Default: unavailable
             desc "Handle a node registration request (by a Microkernel instance)"
             params do
-              requires "hw_id", type: String, desc: "The node's hardware ID"
               requires "last_state", type: String, desc: "The last state received by the Microkernel"
               requires "attributes_hash", type: Hash, desc: "A hash of the node's attributes (from facter, lshw, etc.)"
+              optional "uuid", type: String, desc: "The UUID for the node"
+              optional "mac_id", type: String, desc: "The MAC addresses of the node's NICs."
             end
             post do
-              hw_id = params["hw_id"]
+              uuid = params["uuid"]
+              mac_id = params["mac_id"].split("_") if params[:mac_id]
+              # the following parameter is only used for backwards compatibility (with
+              # previous versions of Hanlon, which used a 'hw_id' field during the boot
+              # process instead of the new 'mac_id' field)
+              hw_id = params["hw_id"].split("_") if params[:hw_id]
+              raise ProjectHanlon::Error::Slice::InvalidCommand, "The hw_id parameter is only allowed for backwards compatibility; use with the mac_id parameter is not allowed" if (hw_id && mac_id)
+              mac_id = hw_id if hw_id
+              # check to make sure that either the mac_id or the uuid were passed in (or that the
+              # hw_id was included instead of the mac_id if it's an old Microkernel registering, in
+              # which case the mac_id will be defined here)
+              raise ProjectHanlon::Error::Slice::MissingArgument, "At least one of the optional arguments (uuid or mac_id) must be specified" unless ((uuid && uuid.length > 0) || (mac_id && !(mac_id.empty?)))
               last_state = params["last_state"]
               attributes_hash = params["attributes_hash"]
               # Validate our args are here
-              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Hardware IDs[hw_id]" unless validate_param(hw_id)
               raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Last State[last_state]" unless validate_param(last_state)
               raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Attributes Hash[attributes_hash]" unless attributes_hash.is_a? Hash and attributes_hash.size > 0
-              hw_id = hw_id.split("_") if hw_id.is_a? String
-              raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide At Least One Hardware ID [hw_id]" unless hw_id.count > 0
+              # mac_id = mac_id.split("_") if mac_id && mac_id.is_a?(String)
               engine = ProjectHanlon::Engine.instance
-              new_node = engine.lookup_node_by_hw_id(:hw_id => hw_id)
+              new_node = engine.lookup_node_by_hw_id({:uuid => uuid, :mac_id => mac_id})
               if new_node
-                new_node.hw_id = new_node.hw_id | hw_id
+                if uuid && !(uuid.empty?)
+                  new_node.hw_id = [uuid]
+                else
+                  new_node.hw_id = new_node.hw_id | mac_id
+                end
               else
                 shell_node = ProjectHanlon::Node.new({})
-                shell_node.hw_id = hw_id
+                if uuid && !(uuid.empty?)
+                  shell_node.hw_id = [uuid]
+                else
+                  shell_node.hw_id = mac_id
+                end
                 new_node = engine.register_new_node_with_hw_id(shell_node)
                 raise ProjectHanlon::Error::Slice::CouldNotRegisterNode, "Could not register new node" unless new_node
               end
