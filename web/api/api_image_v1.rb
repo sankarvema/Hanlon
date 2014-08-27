@@ -170,6 +170,14 @@ module Hanlon
             end
             raise ProjectHanlon::Error::Slice::InternalError, res[1] unless res[0]
             raise ProjectHanlon::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)
+
+            # fix 125 - add image local path to image end point
+            @_lcl_image_path = ProjectHanlon.config.image_path + "/"
+
+            image.set_lcl_image_path(ProjectHanlon.config.image_path)
+            image.local_image_path = image.image_path
+            image.image_status, image.image_status_message = image.verify(image.local_image_path)
+
             slice_success_object(SLICE_REF, :create_image, image, :success_type => :created)
           end     # end POST /image
 
