@@ -9,6 +9,9 @@ class ProjectHanlon::Node < ProjectHanlon::Object
   #attr_accessor :next_state
   attr_accessor :dhcp_mac
 
+  attr_accessor :tags
+  attr_accessor :status
+
   # init
   # @param hash [Hash]
   def initialize(hash)
@@ -50,10 +53,11 @@ class ProjectHanlon::Node < ProjectHanlon::Object
   end
 
   def print_items
-    temp_tags = self.tags
-    temp_tags = ["n/a"] if temp_tags == [] || temp_tags == nil
+    #temp_tags = self.tags
+    #temp_tags = ["n/a"] if temp_tags == [] || temp_tags == nil
     time_diff = Time.now.to_i - @timestamp.to_i
     status = "-"
+=begin
     case current_status
       when "bound"
         status = "B"
@@ -64,7 +68,8 @@ class ProjectHanlon::Node < ProjectHanlon::Object
       else
         status = "U"
     end
-    return @uuid, pretty_time(time_diff), status, "[#{temp_tags.join(",")}]"
+=end
+    return @uuid, pretty_time(time_diff), @status, "[#{@tags.join(",")}]"
   end
 
   def print_item_header
@@ -72,10 +77,10 @@ class ProjectHanlon::Node < ProjectHanlon::Object
   end
 
   def print_item
-    temp_tags = self.tags
-    temp_tags = ["n/a"] if temp_tags == [] || temp_tags == nil
-    return @uuid, Time.at(@timestamp.to_i).strftime("%m-%d-%y %H:%M:%S"), current_status,
-        "[#{temp_tags.join(",")}]", "[#{hw_id.join(", ")}]"
+    #temp_tags = self.tags
+    #temp_tags = ["n/a"] if temp_tags == [] || temp_tags == nil
+    return @uuid, Time.at(@timestamp.to_i).strftime("%m-%d-%y %H:%M:%S"), @status,
+        "[#{@tags.join(",")}]", "[#{@hw_id.join(", ")}]"
   end
 
   def line_color
