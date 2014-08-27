@@ -104,8 +104,14 @@ EOT
       end
 
       # next, a method that returns a list of the "key" fields from this class
+      #     Note; in this method we are removing the "mk_fact_excl_pattern" key
+      #       (if it exists) from the list of keys we return for this configuration.
+      #       This is because we have removed this field from the "hanlon_server.conf"
+      #       file, but have no way to force it's removal from any pre-existing
+      #       "hanlon_server.conf" files (the content in the file overrides any
+      #       content defined in the code).
       def keys
-        self.to_hash.keys.map { |k| k.sub("@","") }
+        self.to_hash.keys.map { |k| k.sub("@","") } - ["mk_fact_excl_pattern"]
       end
 
       # and, finally, a method that gives users the ability to check and see
@@ -126,6 +132,17 @@ EOT
             client_config_hash[k.sub("@","")] = v
           end
         end
+
+        if self.is_a? ProjectHanlon::Config::Server
+          # if this is a server config, then add in the 'mk_fact_excl_pattern',
+          # which is embedded in the code on purpose (this will also override
+          # any definitions of this parameter in existing 'hanlon_server.conf'
+          # files; we do his on purpose because, in hindsight, we've come to
+          # realize that this parameter really isn't something that the user
+          # should be modifying)
+          client_config_hash["mk_fact_excl_pattern"] = self.mk_fact_excl_pattern
+        end
+
         client_config_hash
       end
 

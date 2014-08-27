@@ -34,7 +34,6 @@ module ProjectHanlon
 
       attr_accessor :mk_checkin_interval
       attr_accessor :mk_checkin_skew
-      attr_accessor :mk_fact_excl_pattern
 
       # mk_log_level should be 'Logger::FATAL', 'Logger::ERROR', 'Logger::WARN',
       # 'Logger::INFO', or 'Logger::DEBUG' (default is 'Logger::ERROR')
@@ -85,12 +84,6 @@ module ProjectHanlon
 
           'mk_checkin_interval'      => 60,
           'mk_checkin_skew'          => 5,
-          'mk_fact_excl_pattern'     => [
-            "(^facter.*$)", "(^id$)", "(^kernel.*$)", "(^memoryfree$)","(^memoryfree_mb$)",
-            "(^operating.*$)", "(^osfamily$)", "(^path$)", "(^ps$)",
-            "(^ruby.*$)", "(^selinux$)", "(^ssh.*$)", "(^swap.*$)",
-            "(^timezone$)", "(^uniqueid$)", "(^uptime.*$)","(.*json_str$)"
-          ].join("|"),
           'mk_log_level'             => "Logger::ERROR",
           'mk_gem_mirror'            => "http://localhost:2158/gem-mirror",
           'mk_gemlist_uri'           => "/gems/gem.list",
@@ -126,6 +119,15 @@ module ProjectHanlon
         }
 
         return defaults
+      end
+
+      def mk_fact_excl_pattern
+        [
+            "(^facter.*$)", "(^id$)", "(^kernel.*$)", "(^memoryfree$)","(^memoryfree_mb$)",
+            "(^operating.*$)", "(^osfamily$)", "(^path$)", "(^ps$)",
+            "(^ruby.*$)", "(^selinux$)", "(^ssh.*$)", "(^swap.*$)",
+            "(^timezone$)", "(^uniqueid$)", "(^.*uptime.*$)","(.*json_str$)"
+        ].join("|")
       end
 
     end

@@ -74,7 +74,8 @@ module ProjectHanlon
         puts "ProjectHanlon Config:"
         result.each { |key,val|
             print "\t#{key.sub("@","")}: ".white
-            print "#{val} \n".green
+            print "#{val} ".green
+            print "\n"
         }
       end
 
