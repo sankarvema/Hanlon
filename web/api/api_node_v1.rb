@@ -111,12 +111,12 @@ module Hanlon
             end
             desc "Handle a node checkin (by a Microkernel instance)"
             get do
-              uuid = params["uuid"]
-              mac_id = params[:mac_id].split("_") if params[:mac_id]
+              uuid = params["uuid"].upcase if params["uuid"]
+              mac_id = params[:mac_id].upcase.split("_") if params[:mac_id]
               # the following parameter is only used for backwards compatibility (with
               # previous versions of Hanlon, which used a 'hw_id' field during the boot
               # process instead of the new 'mac_id' field)
-              hw_id = params[:hw_id].split("_") if params[:hw_id]
+              hw_id = params[:hw_id].upcase.split("_") if params[:hw_id]
               raise ProjectHanlon::Error::Slice::InvalidCommand, "The hw_id parameter is only allowed for backwards compatibility; use with the mac_id parameter is not allowed" if (hw_id && mac_id)
               mac_id = hw_id if hw_id
               # check to make sure that either the mac_id or the uuid were passed in (or that the
@@ -174,12 +174,12 @@ module Hanlon
               optional "mac_id", type: String, desc: "The MAC addresses of the node's NICs."
             end
             post do
-              uuid = params["uuid"]
-              mac_id = params["mac_id"].split("_") if params[:mac_id]
+              uuid = params["uuid"].upcase if params["uuid"]
+              mac_id = params["mac_id"].upcase.split("_") if params[:mac_id]
               # the following parameter is only used for backwards compatibility (with
               # previous versions of Hanlon, which used a 'hw_id' field during the boot
               # process instead of the new 'mac_id' field)
-              hw_id = params["hw_id"].split("_") if params[:hw_id]
+              hw_id = params["hw_id"].upcase.split("_") if params[:hw_id]
               raise ProjectHanlon::Error::Slice::InvalidCommand, "The hw_id parameter is only allowed for backwards compatibility; use with the mac_id parameter is not allowed" if (hw_id && mac_id)
               mac_id = hw_id if hw_id
               # check to make sure that either the mac_id or the uuid were passed in (or that the
