@@ -22,6 +22,9 @@ module ProjectHanlon
       attr_accessor :root_policy
       attr_accessor :node_uuid
       attr_accessor :bind_timestamp
+      attr_accessor :serial_number
+      attr_accessor :bind_counter
+
 
       # TODO - method for setting tags that removes duplicates
 

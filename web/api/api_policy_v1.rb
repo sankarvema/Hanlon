@@ -107,6 +107,15 @@ module Hanlon
           desc "Retrieve a list of all policy instances"
           get do
             policies = SLICE_REF.get_object("policies", :policy)
+            #puts policies.inspect
+            counter = 0
+            policies.each do |policy|
+
+              policy.serial_number = policy.line_number
+              policy.bind_counter = policy.current_count
+              puts "No: #{policy.serial_number}"
+              puts "Counter #{policy.bind_counter}"
+            end
             slice_success_object(SLICE_REF, :get_all_policies, policies, :success_type => :generic)
           end     # end GET /policy
 
