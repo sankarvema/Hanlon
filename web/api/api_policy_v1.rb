@@ -110,11 +110,8 @@ module Hanlon
             #puts policies.inspect
             counter = 0
             policies.each do |policy|
-
               policy.serial_number = policy.line_number
               policy.bind_counter = policy.current_count
-              puts "No: #{policy.serial_number}"
-              puts "Counter #{policy.bind_counter}"
             end
             slice_success_object(SLICE_REF, :get_all_policies, policies, :success_type => :generic)
           end     # end GET /policy
@@ -266,6 +263,8 @@ module Hanlon
             get do
               policy_uuid = params[:uuid]
               policy = SLICE_REF.get_object("get_policy_by_uuid", :policy, policy_uuid)
+              policy.serial_number = policy.line_number
+              policy.bind_counter = policy.current_count
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
               slice_success_object(SLICE_REF, :get_policy_by_uuid, policy, :success_type => :generic)
             end     # end GET /policy/{uuid}

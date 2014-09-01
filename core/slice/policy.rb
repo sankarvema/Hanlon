@@ -200,7 +200,8 @@ module ProjectHanlon
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
         uri = URI.parse @uri_string
-        policy_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        #policy_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        policy_array = hash_array_to_obj_array(hnl_http_get(uri))
         print_object_array(policy_array, "Policies:", :style => :table)
       end
 
