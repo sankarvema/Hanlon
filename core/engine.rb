@@ -252,8 +252,10 @@ module ProjectHanlon
         # the provided 'uuid' value, then look for a matching 'hw_id';
         # if a match based on 'mac_id' is found, add that node to the
         # array of matching nodes
-        matching_hw_id = node.hw_id & options[:mac_id]
-        matching_nodes << node if matching_hw_id.count > 0
+        if options[:mac_id]
+          matching_hw_id = node.hw_id & options[:mac_id]
+          matching_nodes << node if matching_hw_id.count > 0
+        end
       }
 
       if matching_nodes.count > 1
