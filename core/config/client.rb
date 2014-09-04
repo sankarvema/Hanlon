@@ -22,22 +22,10 @@ module ProjectHanlon
       attr_accessor :api_version
       attr_accessor :api_port
       attr_accessor :admin_port
-      attr_accessor :register_timeout
-
-      attr_accessor :image_path
-
-      attr_accessor :persist_mode
-      attr_accessor :persist_host
-      attr_accessor :persist_port
-      attr_accessor :persist_username
-      attr_accessor :persist_password
-      attr_accessor :persist_timeout
 
       attr_accessor :hanlon_log_level
 
       attr_reader   :noun
-
-
 
       # Obtain our defaults
       def defaults
@@ -52,16 +40,7 @@ module ProjectHanlon
           'admin_port'               => 8025,
           'api_port'                 => 8026,
 
-          'register_timeout'         => 120,
-
-          'image_path'               => default_image_path,
-          'hanlon_log_level'        => "Logger::ERROR",
-          'persist_mode'             => :mongo,
-          'persist_host'             => "127.0.0.1",
-          'persist_port'             => 27017,
-          'persist_username'         => '',
-          'persist_password'         => '',
-          'persist_timeout'          => 10
+          'hanlon_log_level'        => "Logger::ERROR"
         }
 
         return defaults
