@@ -22,7 +22,7 @@ module ProjectHanlon
       attr_accessor :api_version
       attr_accessor :api_port
       attr_accessor :admin_port
-      attr_accessor :register_timeout
+      #attr_accessor :register_timeout
 
       attr_accessor :hanlon_log_level
 
@@ -54,7 +54,7 @@ module ProjectHanlon
           'admin_port'               => 8025,
           'api_port'                 => 8026,
 
-          'register_timeout'         => 120,
+          #'register_timeout'         => 120,
 
           'hanlon_log_level'        => "Logger::ERROR"
         }
