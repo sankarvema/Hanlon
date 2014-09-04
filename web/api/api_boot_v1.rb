@@ -101,7 +101,7 @@ module Hanlon
             mac_id = hw_id if hw_id
             raise ProjectHanlon::Error::Slice::MissingArgument, "At least one of the optional arguments (uuid or mac_id) must be specified" unless ((uuid && uuid.length > 0) || (mac_id && !(mac_id.empty?)))
             dhcp_mac = params[:dhcp_mac]
-            mac_id.collect! {|x| x.upcase.gsub(':', '') }
+            mac_id.collect! {|x| x.upcase.gsub(':', '') } if mac_id
             env['api.format'] = :text
             ProjectHanlon::Engine.instance.boot_checkin(:uuid => uuid, :mac_id => mac_id, :dhcp_mac => dhcp_mac)
           end     # end GET /boot
