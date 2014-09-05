@@ -22,6 +22,9 @@ module ProjectHanlon
       attr_accessor :root_policy
       attr_accessor :node_uuid
       attr_accessor :bind_timestamp
+      attr_accessor :line_number
+      attr_accessor :bind_counter
+
 
       # TODO - method for setting tags that removes duplicates
 
@@ -127,7 +130,7 @@ module ProjectHanlon
             return @template.to_s, @description.to_s
           else
             max_num = @maximum_count.to_i == 0 ? '-' : @maximum_count
-            return @serial_number.to_s, @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "#{@bind_counter}/#{max_num}", @model.counter.to_s, @uuid
+            return @line_number.to_s, @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "#{@bind_counter}/#{max_num}", @model.counter.to_s, @uuid
           end
         end
       end
@@ -177,7 +180,7 @@ module ProjectHanlon
           broker_name = @broker ? @broker.name : "none"
           [@uuid,
            #line_number.to_s,
-           @serial_number.to_s,
+           @line_number.to_s,
            @label,
            @enabled.to_s,
            @template.to_s,

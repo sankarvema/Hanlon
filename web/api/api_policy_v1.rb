@@ -107,6 +107,11 @@ module Hanlon
           desc "Retrieve a list of all policy instances"
           get do
             policies = SLICE_REF.get_object("policies", :policy)
+            # Issue 125 Fix - add policy serial number & bind_counter to rest api
+            policies.each do |policy|
+              policy.line_number = policy.line_number
+              policy.bind_counter = policy.current_count
+            end
             slice_success_object(SLICE_REF, :get_all_policies, policies, :success_type => :generic)
           end     # end GET /policy
 
@@ -165,6 +170,9 @@ module Hanlon
             # Add policy
             policy_rules         = ProjectHanlon::Policies.instance
             raise(ProjectHanlon::Error::Slice::CouldNotCreate, "Could not create Policy") unless policy_rules.add(policy)
+            # Issue 125 Fix - add policy serial number & bind_counter to rest api
+            policy.line_number = policy.line_number
+            policy.bind_counter = policy.current_count
             slice_success_object(SLICE_REF, :create_policy, policy, :success_type => :created)
           end     # end POST /policy
 
@@ -260,6 +268,9 @@ module Hanlon
             get do
               policy_uuid = params[:uuid]
               policy = SLICE_REF.get_object("get_policy_by_uuid", :policy, policy_uuid)
+              # Issue 125 Fix - add policy serial number & bind_counter to rest api
+              policy.line_number = policy.line_number
+              policy.bind_counter = policy.current_count
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
               slice_success_object(SLICE_REF, :get_policy_by_uuid, policy, :success_type => :generic)
             end     # end GET /policy/{uuid}
@@ -340,6 +351,9 @@ module Hanlon
               end
               # Update object
               raise ProjectHanlon::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless policy.update_self
+              # Issue 125 Fix - add policy serial number & bind_counter to rest api
+              policy.line_number = policy.line_number
+              policy.bind_counter = policy.current_count
               slice_success_object(SLICE_REF, :update_policy, policy, :success_type => :updated)
             end     # end PUT /policy/{uuid}
 

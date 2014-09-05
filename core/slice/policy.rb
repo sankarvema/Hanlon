@@ -26,6 +26,10 @@ module ProjectHanlon
         @uri_string = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + '/policy'
       end
 
+      def self.additional_fields
+        %w"@line_number @bind_counter"
+      end
+
       def slice_commands
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
