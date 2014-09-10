@@ -6,6 +6,7 @@
 
 # level 1
 require 'model/base'
+require 'model/noop'
 
 # level 2
 require 'model/redhat'

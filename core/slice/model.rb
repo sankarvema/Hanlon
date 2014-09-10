@@ -160,6 +160,10 @@ module ProjectHanlon
         includes_uuid = false
         # load the appropriate option items for the subcommand we are handling
         option_items = command_option_data(:add)
+        command_hash = Hash[*@command_array]
+        option_items = option_items.map { |option|
+          option[:name] == :image_uuid ? (option[:required] = false; option) : option
+        } if command_hash["-t"] == "noop"
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)

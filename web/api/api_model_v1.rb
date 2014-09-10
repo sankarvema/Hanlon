@@ -114,12 +114,12 @@ module Hanlon
             # check the values that were passed in
             model = SLICE_REF.get_model_using_template_name(template)
             raise ProjectHanlon::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
-            image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true
-            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image
+            image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : nil
+            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless template == "noop" || image
             # use the arguments passed in (above) to create a new model
             raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless req_metadata_hash
             model.label = label
-            model.image_uuid = image.uuid
+            model.image_uuid = image.uuid if image
             model.is_template = false
             model.req_metadata_hash.each { |key, md_hash_value|
               value = params[key]
