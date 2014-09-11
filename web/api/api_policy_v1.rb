@@ -135,7 +135,7 @@ module Hanlon
             policy_template = params["template"]
             label = params["label"]
             model_uuid = params["model_uuid"]
-            broker_uuid = params["broker_uuid"]
+            broker_uuid = params["broker_uuid"] unless params["broker_uuid"] == "none"
             tags = params["tags"]
             enabled = params["enabled"]
             maximum = params["maximum"]
@@ -145,9 +145,11 @@ module Hanlon
             model = SLICE_REF.get_object("model_by_uuid", :model, model_uuid)
             raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
             raise ProjectHanlon::Error::Slice::InvalidModel, "Invalid Model Type [#{model.template}] != [#{policy.template}]" unless policy.template.to_s == model.template.to_s
-            raise ProjectHanlon::Error::Slice::InputError, "Cannot add a broker to a 'noop' policy" if broker_uuid && ["boot_local", "discover_only"].include?(policy_template)
-            broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
-            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
+            if broker_uuid
+              raise ProjectHanlon::Error::Slice::InputError, "Cannot add a broker to a 'noop' policy" if ["boot_local", "discover_only"].include?(policy_template)
+              broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
+            end
             tags = tags.split(",") unless tags.class.to_s == "Array"
             raise ProjectHanlon::Error::Slice::MissingTags, "Must provide at least one tag ['tag(,tag)']" unless tags.count > 0
             raise ProjectHanlon::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless maximum.to_i.to_s == maximum
@@ -312,6 +314,7 @@ module Hanlon
               end
               broker = nil
               if broker_uuid
+                raise ProjectHanlon::Error::Slice::InputError, "Cannot add a broker to a 'noop' policy" if [:boot_local, :discover_only].include?(policy.template)
                 broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
               end

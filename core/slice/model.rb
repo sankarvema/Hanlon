@@ -179,6 +179,7 @@ module ProjectHanlon
         image_uuid = options[:image_uuid]
         # use the arguments passed in to create a new model
         model = get_model_using_template_name(options[:template])
+        raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{options[:template]}] " unless model
         model.cli_create_metadata
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
