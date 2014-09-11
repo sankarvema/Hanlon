@@ -113,9 +113,11 @@ module Hanlon
             req_metadata_hash = params["req_metadata_hash"]
             # check the values that were passed in
             model = SLICE_REF.get_model_using_template_name(template)
+            is_noop_template = ["boot_local", "discover_only"].include?(template)
             raise ProjectHanlon::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
+            raise ProjectHanlon::Error::Slice::InputError, "Cannot add an image to a 'noop' model" if image_uuid && is_noop_template
             image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : nil
-            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless ["boot_local", "discover_only"].include?(template) || image
+            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless is_noop_template || image
             # use the arguments passed in (above) to create a new model
             raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless req_metadata_hash
             model.label = label
