@@ -97,29 +97,31 @@ module Hanlon
           #   parameters:
           #     template          | String | The "template" to use for the new model |         | Default: unavailable
           #     label             | String | The "label" to use for the new model    |         | Default: unavailable
-          #     image_uuid        | String | The UUID of the image to use            |         | Default: unavailable
+          #     optional          | String | The UUID of the image to use            |         | Default: "false"
           #     req_metadata_hash | Hash   | The metadata to use for the new model   |         | Default: unavailable
           desc "Create a new model instance"
           params do
             requires "template", type: String, desc: "The model template to use"
             requires "label", type: String, desc: "The new model's label"
-            requires "image_uuid", type: String, desc: "The UUID of the image to use"
+            optional "image_uuid", type: String, default: "false", desc: "The UUID of the image to use"
             requires "req_metadata_hash", type: Hash, desc: "The (JSON) metadata hash"
           end
           post do
             template = params["template"]
             label = params["label"]
-            image_uuid = params["image_uuid"]
+            image_uuid = params["image_uuid"] unless params["image_uuid"] == "false"
             req_metadata_hash = params["req_metadata_hash"]
             # check the values that were passed in
             model = SLICE_REF.get_model_using_template_name(template)
+            is_noop_template = ["boot_local", "discover_only"].include?(template)
             raise ProjectHanlon::Error::Slice::InvalidModelTemplate, "Invalid Model Template [#{template}] " unless model
-            image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true
-            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image
+            raise ProjectHanlon::Error::Slice::InputError, "Cannot add an image to a 'noop' model" if image_uuid && is_noop_template
+            image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : nil if image_uuid
+            raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless is_noop_template || image
             # use the arguments passed in (above) to create a new model
             raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless req_metadata_hash
             model.label = label
-            model.image_uuid = image.uuid
+            model.image_uuid = image.uuid if image
             model.is_template = false
             model.req_metadata_hash.each { |key, md_hash_value|
               value = params[key]
@@ -186,20 +188,20 @@ module Hanlon
             # once a model is created
             #   parameters:
             #     label             | String | The "label" to use for the new model    |         | Default: unavailable
-            #     image_uuid        | String | The UUID of the image to use            |         | Default: unavailable
+            #     image_uuid        | String | The UUID of the image to use            |         | Default: "false"
             #     req_metadata_hash | Hash   | The metadata to use for the new model   |         | Default: unavailable
             desc "Update a model instance (by UUID)"
             params do
               requires :uuid, type: String, desc: "The model's UUID"
               optional "label", type: String, desc: "The model's new label"
-              optional "image_uuid", type: String, desc: "The new image (by UUID)"
+              optional "image_uuid", type: String, default: "false", desc: "The new image (by UUID)"
               optional "req_metadata_hash", type: Hash, desc: "The new metadata hash"
             end
             put do
               # get the input parameters that were passed in as part of the request
               # (at least one of these should be a non-nil value)
               label = params["label"]
-              image_uuid = params["image_uuid"]
+              image_uuid = params["image_uuid"] unless params["image_uuid"] == "false"
               req_metadata_hash = params["req_metadata_hash"]
               # get the UUID for the model being updated
               model_uuid = params[:uuid]
@@ -210,7 +212,8 @@ module Hanlon
               model = SLICE_REF.get_object("model_with_uuid", :model, model_uuid)
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Model UUID [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
               model.label = label if label
-              image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : true if image_uuid
+              raise ProjectHanlon::Error::Slice::InputError, "Cannot add an image to a 'noop' model" if image_uuid && [:boot_local, :discover_only].include?(model.template)
+              image = model.image_prefix ? SLICE_REF.verify_image(model, image_uuid) : nil if image_uuid
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Image UUID [#{image_uuid}] " unless image || !image_uuid
               model.image_uuid = image.uuid if image
               if req_metadata_hash

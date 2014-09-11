@@ -160,6 +160,11 @@ module ProjectHanlon
         includes_uuid = false
         # load the appropriate option items for the subcommand we are handling
         option_items = command_option_data(:add)
+        command_hash = Hash[*@command_array]
+        template_name = command_hash["-t"] || command_hash["--template"]
+        option_items = option_items.map { |option|
+          option[:name] == :image_uuid ? (option[:required] = false; option) : option
+        } if ["boot_local", "discover_only"].include?(template_name)
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
@@ -174,6 +179,7 @@ module ProjectHanlon
         image_uuid = options[:image_uuid]
         # use the arguments passed in to create a new model
         model = get_model_using_template_name(options[:template])
+        raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{options[:template]}] " unless model
         model.cli_create_metadata
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
