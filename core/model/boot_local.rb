@@ -29,7 +29,7 @@ module ProjectHanlon
         {
             :init => {
                 :mk_call       => :init,
-                :boot_call     => :init,
+                :boot_call     => :os_complete,
                 :timeout       => :timeout_error,
                 :error         => :error_catch,
                 :else          => :init
@@ -67,7 +67,7 @@ module ProjectHanlon
       def boot_call(node, policy_uuid)
         super(node, policy_uuid)
         case @current_state
-          when :init
+          when :init, :complete_no_broker
             ret = local_boot(node)
           else
             # otherwise, boot into the Microkernel
