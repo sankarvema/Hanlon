@@ -425,7 +425,7 @@ module ProjectHanlon
       # if so, then raise an exception (and return to the caller without removing the image)
       models = get_data.fetch_all_objects(:model)
       models.each { |model|
-        if model.image_uuid == image.uuid
+        if model.respond_to?(:image_uuid) && model.image_uuid == image.uuid
           logger.warn "Cannot remove image '#{image.uuid}' because it is used in model '#{model.uuid}'"
           raise Exception, "Cannot remove image '#{image.uuid}' because it is used in model '#{model.uuid}'"
         end

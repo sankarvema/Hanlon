@@ -1,6 +1,7 @@
 require "policy/base"
 require "policy/boot_mk"
-require "policy/noop"
+require "policy/boot_local"
+require "policy/discover_only"
 require "policy/linux_deploy"
 require "policy/vmware_hypervisor"
 require "policy/xenserver_hypervisor"

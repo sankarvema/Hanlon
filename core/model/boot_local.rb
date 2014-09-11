@@ -3,7 +3,7 @@ module ProjectHanlon
   module ModelTemplate
     # Root Model object
     # @abstract
-    class Noop < ProjectHanlon::ModelTemplate::Base
+    class BootLocal < ProjectHanlon::ModelTemplate::Base
       include(ProjectHanlon::Logging)
 
       attr_reader :image_prefix
@@ -12,9 +12,9 @@ module ProjectHanlon
         super(hash)
         # Static config
         @hidden = false
-        @template = :noop
-        @name = "noop"
-        @description = "Generic Noop Model"
+        @template = :boot_local
+        @name = "boot_local"
+        @description = "Noop model to add existing nodes"
         # there is no image associated with this type of model
         @image_prefix = nil
         # State / must have a starting state
@@ -66,11 +66,25 @@ module ProjectHanlon
 
       def boot_call(node, policy_uuid)
         super(node, policy_uuid)
-        # always boot into the Microkernel
-        engine = ProjectHanlon::Engine.instance
-        ret = engine.default_mk_boot(node.uuid)
+        case @current_state
+          when :init
+            ret = local_boot(node)
+          else
+            # otherwise, boot into the Microkernel
+            engine = ProjectHanlon::Engine.instance
+            ret = engine.default_mk_boot(node.uuid)
+        end
         fsm_action(:boot_call, :boot_call)
         ret
+      end
+
+      def template_filepath(filename)
+        filepath = File.join(File.dirname(__FILE__), "boot_local/#{filename}.erb")
+      end
+
+      def local_boot(node)
+        filepath = template_filepath('boot_local')
+        ERB.new(File.read(filepath)).result(binding)
       end
 
       def print_item

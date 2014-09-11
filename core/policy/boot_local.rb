@@ -4,15 +4,15 @@ require 'policy/base'
 
 module ProjectHanlon
   module PolicyTemplate
-    class Noop < ProjectHanlon::PolicyTemplate::Base
+    class BootLocal < ProjectHanlon::PolicyTemplate::Base
       include(ProjectHanlon::Logging)
 
       # @param hash [Hash]
       def initialize(hash)
         super(hash)
         @hidden = false
-        @template = :noop
-        @description = "Policy used for discovery of existing nodes."
+        @template = :boot_local
+        @description = "Policy used to adding existing nodes to Hanlon."
 
         from_hash(hash) unless hash == nil
       end

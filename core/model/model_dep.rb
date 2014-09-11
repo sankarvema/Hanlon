@@ -6,7 +6,8 @@
 
 # level 1
 require 'model/base'
-require 'model/noop'
+require 'model/boot_local'
+require 'model/discover_only'
 
 # level 2
 require 'model/redhat'
