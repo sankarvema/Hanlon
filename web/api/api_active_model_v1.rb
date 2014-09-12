@@ -127,10 +127,9 @@ module Hanlon
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{uuid}]" unless node
               active_model = engine.find_active_model(node)
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Node [#{uuid}] is not bound to an active_model" unless active_model
-              active_models = [active_model]
-            else
-              active_models = SLICE_REF.get_object("active_models", :active)
+              return slice_success_object(SLICE_REF, :get_all_active_models, active_model, :success_type => :generic)
             end
+            active_models = SLICE_REF.get_object("active_models", :active)
             slice_success_object(SLICE_REF, :get_all_active_models, active_models, :success_type => :generic)
           end     # end GET /active_model
 

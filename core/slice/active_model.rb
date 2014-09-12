@@ -80,9 +80,9 @@ module ProjectHanlon
           include_http_response = true
           result, response = hnl_http_get(uri, include_http_response)
           if response.instance_of?(Net::HTTPBadRequest)
-            raise ProjectHanlon::Error::Slice::CommandFailed, result[0]["result"]["description"]
+            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
           end
-          return print_object_array(hash_array_to_obj_array(expand_response_with_uris(result)), "Active Model:")
+          return print_object_array(hash_array_to_obj_array([result]), "Active Model:")
         end
         uri = URI.parse @uri_string
         active_model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
