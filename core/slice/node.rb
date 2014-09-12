@@ -1,6 +1,5 @@
 require 'net/http'
 require 'engine'
-require 'pp'
 
 # Root ProjectHanlon namespace
 module ProjectHanlon
@@ -26,9 +25,13 @@ module ProjectHanlon
         # API, so the last three arguments are nil
         commands = get_command_map("node_help", "get_all_nodes",
                                    "get_node_by_uuid", nil, nil, nil, nil)
-        # and add a few more commands specific to this slice
+        # and add a few more commands specific to this slice; first remove the default line that
+        # handles the lines where a UUID is passed in as part of a "get_node_by_uuid" command
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
+        # then add a slightly different version of this line back in; one that incorporates
+        # the other two flags we might pass in as part of a "get_all_nodes" command
         commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
+        # and add in a line that handles those two flags properly
         commands[:get][["-i", "--hw_id"]] = "get_all_nodes"
         commands
       end
@@ -70,8 +73,9 @@ module ProjectHanlon
                 "\thanlon node [get] [all] [--hw_id,-i HW_ID]   " + "Display list of nodes".yellow,
                 "\thanlon node [get] (UUID)                     " + "Display details for a node".yellow,
                 "\thanlon node [get] (UUID) [--field,-f FIELD]  " + "Display node's field values".yellow,
-                "\thanlon node --help                           " + "Display this screen".yellow,
-                "  Note; the FIELD value (above) can be either 'attributes' or 'hardware_ids'".red].join("\n")
+                "\t    Note; the FIELD value can be either 'attributes' or 'hardware_ids'",
+                "\thanlon node --help                           " + "Display this screen".yellow].join("\n")
+
       end
 
       def get_all_nodes
@@ -90,9 +94,9 @@ module ProjectHanlon
           include_http_response = true
           result, response = hnl_http_get(uri, include_http_response)
           if response.instance_of?(Net::HTTPBadRequest)
-            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+            raise ProjectHanlon::Error::Slice::CommandFailed, result[0]["result"]["description"]
           end
-          return print_object_array(hash_array_to_obj_array([result]), "Node:")
+          return print_object_array(hash_array_to_obj_array(expand_response_with_uris(result)), "Node:")
         end
         uri = URI.parse @uri_string
         node_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))

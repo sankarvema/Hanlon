@@ -116,8 +116,21 @@ module Hanlon
           # GET /active_model
           # Retrieve list of active_models.
           desc "Retrieve a list of all active_model instances"
+          params do
+            optional :uuid, type: String, desc: "The Hardware ID (SMBIOS UUID) of the bound node."
+          end
           get do
-            active_models = SLICE_REF.get_object("active_models", :active)
+            uuid = params[:uuid]
+            if uuid
+              engine = ProjectHanlon::Engine.instance
+              node = engine.lookup_node_by_hw_id({:uuid => uuid, :mac_id => []})
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{uuid}]" unless node
+              active_model = engine.find_active_model(node)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Node [#{uuid}] is not bound to an active_model" unless active_model
+              active_models = [active_model]
+            else
+              active_models = SLICE_REF.get_object("active_models", :active)
+            end
             slice_success_object(SLICE_REF, :get_all_active_models, active_models, :success_type => :generic)
           end     # end GET /active_model
 
