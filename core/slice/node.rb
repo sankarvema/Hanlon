@@ -77,11 +77,15 @@ module ProjectHanlon
       def get_all_nodes
         # Get all node instances and print/return
         @command = :get_all_nodes
+        # when we get here, should be zero or one elements in the @command_array Array (depending
+        # on whether we included a hardware_id value to match in the command to get all nodes)
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 1
-        hw_id = @command_array[0] if @command_array
-        if hw_id
-          uri = URI.parse(@uri_string + "?uuid=#{hw_id}")
+        hardware_id = @command_array[0] if @command_array
+        # if a hardware ID was passed in, then append it to the @uri_string and return the result,
+        # else just get the list of all nodes and return that result
+        if hardware_id
+          uri = URI.parse(@uri_string + "?uuid=#{hardware_id}")
           # and get the results of the appropriate RESTful request using that URI
           include_http_response = true
           result, response = hnl_http_get(uri, include_http_response)

@@ -83,6 +83,7 @@ module Hanlon
             uuid = params[:uuid]
             if uuid
               nodes = ProjectHanlon::Engine.instance.lookup_node_by_hw_id({:uuid => uuid, :mac_id => []})
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{uuid}]" unless nodes
             else
               nodes = SLICE_REF.get_object("nodes", :node)
             end
