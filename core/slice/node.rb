@@ -1,5 +1,6 @@
 require 'net/http'
 require 'engine'
+require 'pp'
 
 # Root ProjectHanlon namespace
 module ProjectHanlon
@@ -26,7 +27,9 @@ module ProjectHanlon
         commands = get_command_map("node_help", "get_all_nodes",
                                    "get_node_by_uuid", nil, nil, nil, nil)
         # and add a few more commands specific to this slice
-        commands[:get][/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:else] = "get_node_by_uuid"
+        commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
+        commands[:get][["-i", "--hw_id"]] = "get_all_nodes"
         commands
       end
 
@@ -64,7 +67,7 @@ module ProjectHanlon
       def get_node_help
         return ["Node Slice: used to view the current list of nodes (or node details)".red,
                 "Node Commands:".yellow,
-                "\thanlon node [get] [all]                      " + "Display list of nodes".yellow,
+                "\thanlon node [get] [all] [--hw_id,-i HW_ID]   " + "Display list of nodes".yellow,
                 "\thanlon node [get] (UUID)                     " + "Display details for a node".yellow,
                 "\thanlon node [get] (UUID) [--field,-f FIELD]  " + "Display node's field values".yellow,
                 "\thanlon node --help                           " + "Display this screen".yellow,
@@ -75,7 +78,18 @@ module ProjectHanlon
         # Get all node instances and print/return
         @command = :get_all_nodes
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
-              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
+              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 1
+        hw_id = @command_array[0] if @command_array
+        if hw_id
+          uri = URI.parse(@uri_string + "?uuid=#{hw_id}")
+          # and get the results of the appropriate RESTful request using that URI
+          include_http_response = true
+          result, response = hnl_http_get(uri, include_http_response)
+          if response.instance_of?(Net::HTTPBadRequest)
+            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+          end
+          return print_object_array(hash_array_to_obj_array([result]), "Node:")
+        end
         uri = URI.parse @uri_string
         node_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(node_array, "Discovered Nodes", :style => :table)
