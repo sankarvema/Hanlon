@@ -229,7 +229,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
       print "[#{return_hash["command"]}] ".red
       print "<-#{return_hash["result"]}\n".yellow
     end
-    if @command_help_text
+    if @command_help_text && @command_help_text.length > 0
       puts "\nCommand help:\n" +  @command_help_text
     end
   end

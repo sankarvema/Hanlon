@@ -89,7 +89,7 @@ module ProjectHanlon
         # A active model means the node will never evaluate a policy
         # So for safety's sake - we set an extra flag (active_models_flag) which
         # prevents the policy eval below to run
-        active_model = find_active_models(node)
+        active_model = find_active_model(node)
 
         if active_model
           command_array = active_model.mk_call(node)
@@ -178,7 +178,7 @@ module ProjectHanlon
       if node != nil
         # Node is in DB, lets check for policy
         logger.info "Node identified - uuid: #{node.uuid}"
-        active_model = find_active_models(node) # commented out until refactor
+        active_model = find_active_model(node) # commented out until refactor
         # We update the dhcp_mac for the mac address that was booted
         if options[:dhcp_mac]
           node.dhcp_mac = options[:dhcp_mac]
@@ -208,7 +208,7 @@ module ProjectHanlon
 
     end
 
-    def find_active_models(node)
+    def find_active_model(node)
       active_models = get_data.fetch_all_objects(:active)
       active_models.each do
       |bp|
@@ -371,7 +371,7 @@ module ProjectHanlon
 
     def node_status(node)
       node.attributes_hash
-      active_model = find_active_models(node)
+      active_model = find_active_model(node)
       return "bound" if active_model
       max_active_elapsed_time = ProjectHanlon.config.register_timeout
       time_since_last_checkin = Time.now.to_i - node.timestamp.to_i

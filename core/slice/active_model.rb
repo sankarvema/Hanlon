@@ -1,7 +1,6 @@
 require "json"
 require "policy/base"
 
-
 # Root ProjectHanlon namespace
 module ProjectHanlon
   class Slice
@@ -28,8 +27,18 @@ module ProjectHanlon
           "remove_all_active_models",
           "remove_active_model_by_uuid")
 
+        # and add a few more commands specific to this slice; first remove the default line that
+        # handles the lines where a UUID is passed in as part of a "get_active_model_by_uuid" command
+        tmp_map = commands[:get][/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/]
+        commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
+        # then add a slightly different version of this line back in; one that incorporates
+        # the other two flags we might pass in as part of a "get_all_active_models" command
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = tmp_map
+        # and add in a line that handles those two flags properly
+        commands[:get][["-i", "--hw_id"]] = "get_all_active_models"
+        # finally, add in a couple of lines to properly handle "get_active_model_logs" commands
         commands[:logs] = "get_logs"
-        commands[:get][/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:logs] = "get_active_model_logs"
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:logs] = "get_active_model_logs"
 
         commands
       end
@@ -49,17 +58,32 @@ module ProjectHanlon
         # been asked for generic help, so provide generic help
         puts "Active Model Slice: used to view active models or active model logs, and to remove active models.".red
         puts "Active Model Commands:".yellow
-        puts "\thanlon active_model [get] [all]          " + "View all active models".yellow
-        puts "\thanlon active_model [get] (UUID) [logs]  " + "View specific active model (log)".yellow
-        puts "\thanlon active_model logs                 " + "Prints an aggregate view of active model logs".yellow
-        puts "\thanlon active_model remove (UUID)|all    " + "Remove existing (or all) active model(s)".yellow
-        puts "\thanlon active_model --help|-h            " + "Display this screen".yellow
+        puts "\thanlon active_model [get] [all] [--hw_id,-i HW_ID] " + "View all active models".yellow
+        puts "\thanlon active_model [get] (UUID) [logs]            " + "View specific active model (log)".yellow
+        puts "\thanlon active_model logs                           " + "Prints an aggregate view of active model logs".yellow
+        puts "\thanlon active_model remove (UUID)|all              " + "Remove existing (or all) active model(s)".yellow
+        puts "\thanlon active_model --help|-h                      " + "Display this screen".yellow
       end
 
       def get_all_active_models
         @command = :get_all_active_models
+        # when we get here, should be zero or one elements in the @command_array Array (depending
+        # on whether we included a hardware_id value to match in the command to get all nodes)
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
-              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
+              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 1
+        hardware_id = @command_array[0] if @command_array
+        # if a hardware ID was passed in, then append it to the @uri_string and return the result,
+        # else just get the list of all nodes and return that result
+        if hardware_id
+          uri = URI.parse(@uri_string + "?uuid=#{hardware_id}")
+          # and get the results of the appropriate RESTful request using that URI
+          include_http_response = true
+          result, response = hnl_http_get(uri, include_http_response)
+          if response.instance_of?(Net::HTTPBadRequest)
+            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+          end
+          return print_object_array(hash_array_to_obj_array([result]), "Active Model:")
+        end
         uri = URI.parse @uri_string
         active_model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(active_model_array, "Active Models:", :style => :table)
@@ -78,7 +102,7 @@ module ProjectHanlon
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
         # finally, based on the options selected, print the results
-        return print_object_array(hash_array_to_obj_array([result]), "Active Model:")
+        print_object_array(hash_array_to_obj_array([result]), "Active Model:")
       end
 
       def get_active_model_logs

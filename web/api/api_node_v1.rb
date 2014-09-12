@@ -76,7 +76,16 @@ module Hanlon
           # GET /node
           # Query registered nodes.
           desc "Retrieve a list of all node instances"
+          params do
+            optional :uuid, type: String, desc: "The Hardware ID (SMBIOS UUID) of the node."
+          end
           get do
+            uuid = params[:uuid]
+            if uuid
+              node = ProjectHanlon::Engine.instance.lookup_node_by_hw_id({:uuid => uuid, :mac_id => []})
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{uuid}]" unless node
+              return slice_success_object(SLICE_REF, :get_all_nodes, node, :success_type => :generic)
+            end
             nodes = SLICE_REF.get_object("nodes", :node)
             slice_success_object(SLICE_REF, :get_all_nodes, nodes, :success_type => :generic)
           end       # end GET /node

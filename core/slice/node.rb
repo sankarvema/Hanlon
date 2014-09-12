@@ -25,8 +25,14 @@ module ProjectHanlon
         # API, so the last three arguments are nil
         commands = get_command_map("node_help", "get_all_nodes",
                                    "get_node_by_uuid", nil, nil, nil, nil)
-        # and add a few more commands specific to this slice
-        commands[:get][/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:else] = "get_node_by_uuid"
+        # and add a few more commands specific to this slice; first remove the default line that
+        # handles the lines where a UUID is passed in as part of a "get_node_by_uuid" command
+        commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
+        # then add a slightly different version of this line back in; one that incorporates
+        # the other two flags we might pass in as part of a "get_all_nodes" command
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
+        # and add in a line that handles those two flags properly
+        commands[:get][["-i", "--hw_id"]] = "get_all_nodes"
         commands
       end
 
@@ -64,18 +70,34 @@ module ProjectHanlon
       def get_node_help
         return ["Node Slice: used to view the current list of nodes (or node details)".red,
                 "Node Commands:".yellow,
-                "\thanlon node [get] [all]                      " + "Display list of nodes".yellow,
+                "\thanlon node [get] [all] [--hw_id,-i HW_ID]   " + "Display list of nodes".yellow,
                 "\thanlon node [get] (UUID)                     " + "Display details for a node".yellow,
                 "\thanlon node [get] (UUID) [--field,-f FIELD]  " + "Display node's field values".yellow,
-                "\thanlon node --help                           " + "Display this screen".yellow,
-                "  Note; the FIELD value (above) can be either 'attributes' or 'hardware_ids'".red].join("\n")
+                "\t    Note; the FIELD value can be either 'attributes' or 'hardware_ids'",
+                "\thanlon node --help                           " + "Display this screen".yellow].join("\n")
+
       end
 
       def get_all_nodes
         # Get all node instances and print/return
         @command = :get_all_nodes
+        # when we get here, should be zero or one elements in the @command_array Array (depending
+        # on whether we included a hardware_id value to match in the command to get all nodes)
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
-              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
+              "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 1
+        hardware_id = @command_array[0] if @command_array
+        # if a hardware ID was passed in, then append it to the @uri_string and return the result,
+        # else just get the list of all nodes and return that result
+        if hardware_id
+          uri = URI.parse(@uri_string + "?uuid=#{hardware_id}")
+          # and get the results of the appropriate RESTful request using that URI
+          include_http_response = true
+          result, response = hnl_http_get(uri, include_http_response)
+          if response.instance_of?(Net::HTTPBadRequest)
+            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+          end
+          return print_object_array(hash_array_to_obj_array([result]), "Node:")
+        end
         uri = URI.parse @uri_string
         node_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
         print_object_array(node_array, "Discovered Nodes", :style => :table)
