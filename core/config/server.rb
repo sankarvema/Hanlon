@@ -25,6 +25,7 @@ module ProjectHanlon
       attr_accessor :persist_username
       attr_accessor :persist_password
       attr_accessor :persist_timeout
+      attr_accessor :persist_dbname
 
       attr_accessor :base_path
       attr_accessor :api_version
@@ -76,6 +77,7 @@ module ProjectHanlon
           'persist_username'         => '',
           'persist_password'         => '',
           'persist_timeout'          => 10,
+          'persist_dbname'           => "project_hanlon",
 
           'base_path'                => default_base_path,
           'api_version'              => 'v1',
