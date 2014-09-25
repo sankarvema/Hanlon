@@ -67,7 +67,7 @@ module ProjectHanlon
         current_count < @maximum_count.to_i
       end
 
-      def line_number
+      def row_number
         policies = ProjectHanlon::Policies.instance
         policies.get_line_number(self.uuid)
       end

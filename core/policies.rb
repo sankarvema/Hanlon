@@ -200,7 +200,7 @@ module ProjectHanlon
       # Sort the policies based on line_number
       policies_array.sort! do
       |a,b|
-        a.line_number <=> b.line_number
+        a.row_number <=> b.row_number
       end
       policies_array
     end
