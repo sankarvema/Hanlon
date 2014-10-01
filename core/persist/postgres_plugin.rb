@@ -34,7 +34,7 @@ module ProjectHanlon
       #
       def connect(hostname, port, username, password, timeout)
         logger.debug "Connecting to PostgreSQL (#{username}@#{hostname}:#{port}) with timeout (#{timeout})"
-        dbname = "project_hanlon"
+        dbname = $config.persist_dbname
         begin
           @connection = PG::Connection.new(:host => hostname, :port => port, :connect_timeout => timeout, :dbname => dbname, :user => username, :password => password)
         rescue PG::Error => e

@@ -46,7 +46,7 @@ module ProjectHanlon
           logger.error "Mongo::OperationTimeout"
           return false
         end
-        @hanlon_database = @connection.db("project_hanlon")
+        @hanlon_database = @connection.db($config.persist_dbname)
         @connection.active?
       end
 
