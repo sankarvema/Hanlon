@@ -22,6 +22,9 @@ module ProjectHanlon
       attr_accessor :root_policy
       attr_accessor :node_uuid
       attr_accessor :bind_timestamp
+      attr_accessor :line_number
+      attr_accessor :bind_counter
+
 
       # TODO - method for setting tags that removes duplicates
 
@@ -64,7 +67,7 @@ module ProjectHanlon
         current_count < @maximum_count.to_i
       end
 
-      def line_number
+      def row_number
         policies = ProjectHanlon::Policies.instance
         policies.get_line_number(self.uuid)
       end
@@ -127,7 +130,7 @@ module ProjectHanlon
             return @template.to_s, @description.to_s
           else
             max_num = @maximum_count.to_i == 0 ? '-' : @maximum_count
-            return line_number.to_s, @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "#{current_count.to_s}/#{max_num}", @model.counter.to_s, @uuid
+            return @line_number.to_s, @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "#{@bind_counter}/#{max_num}", @model.counter.to_s, @uuid
           end
         end
       end
@@ -176,7 +179,8 @@ module ProjectHanlon
         else
           broker_name = @broker ? @broker.name : "none"
           [@uuid,
-           line_number.to_s,
+           #line_number.to_s,
+           @line_number.to_s,
            @label,
            @enabled.to_s,
            @template.to_s,
@@ -184,7 +188,8 @@ module ProjectHanlon
            "[#{@tags.join(", ")}]",
            @model.label.to_s,
            broker_name,
-           current_count.to_s,
+           #current_count.to_s,
+           @bind_counter.to_s,
            @maximum_count.to_s,
            @model.counter.to_s]
         end

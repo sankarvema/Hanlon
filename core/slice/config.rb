@@ -33,7 +33,6 @@ module ProjectHanlon
             nil)
         # then add a couple of additional methods (that are
         # specific to this slice)
-        commands[:db_check] = "db_check"
         commands[:ipxe] = "generate_ipxe_script"
         commands
       end
@@ -52,7 +51,6 @@ module ProjectHanlon
         puts "Config Slice: used to view/check config.".red
         puts "Config Commands:".yellow
         puts "\thanlon config [get]      " + "View the current Hanlon configuration".yellow
-        puts "\thanlon config db_check   " + "Check the Hanlon database connection".yellow
         puts "\thanlon config ipxe       " + "Generate an iPXE script (for use with TFTP)".yellow
       end
 

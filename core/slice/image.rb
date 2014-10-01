@@ -45,6 +45,10 @@ module ProjectHanlon
         }
       end
 
+      def self.additional_fields
+        %w"@local_image_path @status @status_message"
+      end
+
       def slice_commands
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)

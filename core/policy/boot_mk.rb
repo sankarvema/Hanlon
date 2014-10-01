@@ -15,8 +15,8 @@ module ProjectHanlon
         @template = :hidden
         @description = "Default MK boot object. Hidden"
 
-        @data = ProjectHanlon::Data.instance
-        @data.check_init
+        @data = ProjectHanlon::Data.instance  if $app_type=="server"
+        @data.check_init                      if $app_type=="server"
         @config = ProjectHanlon.config
       end
 

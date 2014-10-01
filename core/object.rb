@@ -60,9 +60,11 @@ class ProjectHanlon::Object
   end
 
   def get_data
-    data = ProjectHanlon::Data.instance
-    data.check_init
-    data
+    if $app_type=="server"
+      data = ProjectHanlon::Data.instance
+      data.check_init
+      data
+    end
   end
 
   private
