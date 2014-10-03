@@ -43,8 +43,8 @@ module ProjectHanlon
         # and check some parameters from the files extracted from the ISO
         if File.exist?("#{image_path}/vmware-esx-base-osl.txt") && File.exist?("#{image_path}/boot.cfg")
           begin
-            @esxi_version = File.read("#{image_path}/vmware-esx-base-osl.txt").split("\n")[2].gsub("\r","")
-            @boot_cfg =  File.read("#{image_path}/boot.cfg")
+            @esxi_version = File.read("#{image_path}/vmware-esx-base-osl.txt", :encoding => 'ISO-8859-1').split("\n")[2].gsub("\r","")
+            @boot_cfg =  File.read("#{image_path}/boot.cfg", :encoding => 'ISO-8859-1')
             if @esxi_version && @boot_cfg
               return [true, '']
             end
