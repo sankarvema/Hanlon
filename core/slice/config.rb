@@ -52,15 +52,16 @@ module ProjectHanlon
         end
         puts "Config Slice: used to view/check config.".red
         puts "Config Commands:".yellow
-        puts "\thanlon config server     " + "View the current Hanlon server configuration".yellow
+        puts "\thanlon config [get]      " + "View the current Hanlon configuration".yellow
         puts "\thanlon config client     " + "View the current Hanlon client configuration".yellow
+        puts "\thanlon config server     " + "View the current Hanlon server configuration".yellow
         puts "\thanlon config ipxe       " + "Generate an iPXE script (for use with TFTP)".yellow
       end
 
       def read_config
-        #this command is replaced with config {client|server}
-        #display help instead
-        config_help
+        # generate client config when no parameters
+        @command = :generate_client_config
+        generate_config
       end
 
       def db_check
