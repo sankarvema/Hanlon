@@ -57,7 +57,6 @@ module ProjectHanlon
             logger.debug e
             [false, e.message]
           end
-          [true, '']
         else
           logger.error "Does not look like an ESXi ISO"
           [false, "Does not look like an ESXi ISO"]
