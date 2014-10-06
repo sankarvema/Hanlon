@@ -34,6 +34,8 @@ module ProjectHanlon
         # then add a couple of additional methods (that are
         # specific to this slice)
         commands[:ipxe] = "generate_ipxe_script"
+        commands[:server] = "generate_server_config"
+        commands[:client] = "generate_client_config"
         commands
       end
 
@@ -51,7 +53,15 @@ module ProjectHanlon
         puts "Config Slice: used to view/check config.".red
         puts "Config Commands:".yellow
         puts "\thanlon config [get]      " + "View the current Hanlon configuration".yellow
+        puts "\thanlon config client     " + "View the current Hanlon client configuration".yellow
+        puts "\thanlon config server     " + "View the current Hanlon server configuration".yellow
         puts "\thanlon config ipxe       " + "Generate an iPXE script (for use with TFTP)".yellow
+      end
+
+      def read_config
+        # generate client config when no parameters
+        @command = :generate_client_config
+        generate_config
       end
 
       def db_check
@@ -60,20 +70,33 @@ module ProjectHanlon
         puts get_data.persist_ctrl.is_connected?
       end
 
-      def read_config
-        @command = :read_config
-        uri = URI.parse @uri_string
+      def generate_server_config
+        @command = :generate_server_config
+        generate_config
+      end
+
+      def generate_client_config
+        @command = :generate_client_config
+        generate_config
+      end
+
+      def generate_config
+        uri = URI.parse @uri_string + '/server' if @command == :generate_server_config
+        uri = URI.parse @uri_string + '/client' if @command == :generate_client_config
+
         # and get the results of the appropriate RESTful request using that URI
         include_http_response = true
         result, response = hnl_http_get(uri, include_http_response)
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        puts "ProjectHanlon Config:"
+        puts "ProjectHanlon Server Config:" if @command == :generate_server_config
+        puts "ProjectHanlon Client Config:" if @command == :generate_client_config
+
         result.each { |key,val|
-            print "\t#{key.sub("@","")}: ".white
-            print "#{val} ".green
-            print "\n"
+          print "\t#{key.sub("@","")}: ".white
+          print "#{val} ".green
+          print "\n"
         }
       end
 
