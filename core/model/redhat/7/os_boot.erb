@@ -20,22 +20,11 @@ cp -p /etc/hosts /etc/hosts-
 # Modified for RHEL7, I can't imagine there would be multiple interaces and have multiple default gateways 
  
 default_gw_device=`ip route show | grep 'default' | awk '{print $5}'`
-ip_addr=`ip addr show $default_gw_device | grep 'inet ' | awk -F'[ /]' '{print $6}'`
-echo "$ip_addr \t<%= hostname %>.<%= domainname %> <%= hostname %>" >> /etc/hosts
+node_ip=`ip addr show $default_gw_device | grep 'inet ' | awk -F'[ /]' '{print $6}'`
+echo "$node_ip \t<%= hostname %>.<%= domainname %> <%= hostname %>" >> /etc/hosts
 
 [ "$?" -eq 0 ] && curl <%= callback_url("postinstall", "set_hostname_ok") %> || curl <%= callback_url("postinstall", "set_hostname_fail") %>
 
-# Need to add the Puppetlabs repo
-#rpm -i http://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-6.noarch.rpm
-rpm -i http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-[ "$?" -eq 0 ] && curl <%= callback_url("postinstall", "repo_install_ok") %> || curl <%= callback_url("postinstall", "repo_install_fail") %>
-
-# Install requirements
-yum -y install facter
-[ "$?" -eq 0 ] && curl <%= callback_url("postinstall", "yum_install_ok") %> || curl <%= callback_url("postinstall", "yum_install_fail") %>
-
-# Get current IP
-node_ip=`facter ipaddress`
 # Send IP up
 curl <%= callback_url("postinstall", "send_ips") %>/$node_ip
 # get final script

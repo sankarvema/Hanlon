@@ -104,20 +104,23 @@ rsync -av --progress ${ISO_MOUNT}/ ${BUILD_DIR} --exclude Packages
 
 # and then copy over the packages we need from the core, base and
 # anaconda-tools package groups
-for url in `repoquery --enablerepo=dvd --nevr --qf=%{pkg} -g --list --grouppkgs=all anaconda-tools core base | xargs repotrack --repoid=dvd -a x86_64 -u`; do
+for url in `repoquery --enablerepo=dvd --nevr --qf=%{pkg} -g --list --grouppkgs=all \
+  anaconda-tools core base ruby-runtime | xargs repotrack --repoid=dvd -a x86_64 -u`; do
     file=`echo ${url#*/} | cut -d'/' -f2-`
     cp -pv ${file} ${BUILD_DIR}/Packages
 done
 
 # get the volume id to use from the isolinux.cfg file in the ISO we're copying from
 # (converting any '\x20' character sequences to spaces)
-VOL_ID=`grep LABEL ${ISO_MOUNT}/isolinux/isolinux.cfg | sed 's/.*LABEL=\([^ ]\+\) .*/\1/' | head -1` | sed 's/\\x20/ /g'
+VOL_ID=`grep LABEL ${ISO_MOUNT}/isolinux/isolinux.cfg | \
+  sed 's/.*LABEL=\([^ ]\+\) .*/\1/' | head -1` | sed 's/\\x20/ /g'
 [ -z ${VOL_ID} ] && VOL_ID='Disk'
 
 echo "creating new iso '${OUTPUT_FILE}' with volume id '${VOL_ID}'..."
 
 cd ${BUILD_DIR}
-mkisofs -o ${OUTPUT_FILE} -b isolinux/isolinux.bin -c isolinux/boot.cat --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V "${VOL_ID}" .
+mkisofs -o ${OUTPUT_FILE} -b isolinux/isolinux.bin -c isolinux/boot.cat \
+  --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V "${VOL_ID}" .
 
 rm -f /etc/yum.repos.d/rhel-dvd.repo
 rm -rf /var/cache/yum/x86_64/6Server/dvd
