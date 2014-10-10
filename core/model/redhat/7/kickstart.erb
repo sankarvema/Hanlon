@@ -24,7 +24,8 @@ autopart
 # reboot automatically
 reboot
 
-# followig is MINIMAL https://partner-bugzilla.redhat.com/show_bug.cgi?id=593309
+# All packages below @core are required for facter
+#
 %packages --nobase
 @core
 @ruby-runtime
@@ -35,4 +36,7 @@ curl <%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/kickstart/end
 curl -o /tmp/hanlon_postinstall.sh <%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/postinstall/inject
 echo bash /tmp/hanlon_postinstall.sh >> /etc/rc.local
 chmod +x /tmp/hanlon_postinstall.sh
+# This line needs to be added otherwise rc.local will not execute on boot
+chmod +x /etc/rc.d/rc.local
 ############
+%end

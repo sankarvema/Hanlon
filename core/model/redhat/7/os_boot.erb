@@ -16,16 +16,15 @@ echo <%= hostname %> > /etc/hostname
 # be resolved properly). A backup of the original file will be left in place
 # in the /etc/hosts- file
 cp -p /etc/hosts /etc/hosts-
-grep '^127\.0\.0\.1.*' /etc/hosts- > /etc/hosts
-grep -v '^127\.0\.0\.1.*' /etc/hosts- | grep '^127\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}.*' | head -1 | sed 's/^\(127\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\([[:blank:]]\{1,\}\)\(.*\)$/\1\2'<%= hostname %>.<%= domainname %>'\2'<%= hostname %>'/' >> /etc/hosts
-grep -v '^127\.0\.0\.1.*' /etc/hosts- | grep '^127\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}.*' | tail -n +2 >> /etc/hosts
-grep -v '^127\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}.*' /etc/hosts- >> /etc/hosts
+
+# Modified for RHEL7, I can't imagine there would be multiple interaces and have multiple default gateways 
+ 
+default_gw_device=`ip route show | grep 'default' | awk '{print $5}'`
+node_ip=`ip addr show $default_gw_device | grep 'inet ' | awk -F'[ /]' '{print $6}'`
+echo "$node_ip \t<%= hostname %>.<%= domainname %> <%= hostname %>" >> /etc/hosts
 
 [ "$?" -eq 0 ] && curl <%= callback_url("postinstall", "set_hostname_ok") %> || curl <%= callback_url("postinstall", "set_hostname_fail") %>
 
-# Get current IP
-default_gw_device=`ip route show | grep 'default' | awk '{print $5}'`
-node_ip=`ip addr show $default_gw_device | grep 'inet ' | awk -F'[ /]' '{print $6}'`
 # Send IP up
 curl <%= callback_url("postinstall", "send_ips") %>/$node_ip
 # get final script

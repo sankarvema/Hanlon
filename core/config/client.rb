@@ -22,8 +22,8 @@ module ProjectHanlon
       attr_accessor :api_version
       attr_accessor :api_port
       attr_accessor :admin_port
-
       attr_accessor :hanlon_log_level
+      attr_accessor :http_timeout
 
       attr_reader   :noun
 
@@ -39,8 +39,8 @@ module ProjectHanlon
           'api_version'              => 'v1',
           'admin_port'               => 8025,
           'api_port'                 => 8026,
-
-          'hanlon_log_level'        => "Logger::ERROR"
+          'http_timeout'             => 60,
+          'hanlon_log_level'         => "Logger::ERROR"
         }
 
         return defaults

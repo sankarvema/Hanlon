@@ -20,7 +20,12 @@ require 'model/xenserver'
 
 # level 3 - redhat
 require 'model/redhat_6'
+require 'model/redhat_7'
+
+# level 3 - centos
 require 'model/centos_6'
+
+# leval 3 - oracle
 require 'model/oraclelinux_6'
 
 # level 3 - ubuntu

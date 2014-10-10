@@ -26,6 +26,7 @@ module ProjectHanlon
     def hnl_http_post_json_data(uri, json_data, include_http_response = false)
       # setup the request
       http_client = Net::HTTP.new(uri.host, uri.port)
+      http_client.read_timeout = ProjectHanlon.config.http_timeout
       request = Net::HTTP::Post.new(uri.request_uri)
       request.body = json_data
       request["Content-Type"] = "application/json"

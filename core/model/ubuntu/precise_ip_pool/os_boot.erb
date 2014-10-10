@@ -23,9 +23,6 @@ apt-get -y update
 apt-get -y upgrade
 [ "$?" -eq 0 ] && curl <%= callback_url("postinstall", "apt_upgrade_ok") %> || curl <%= callback_url("postinstall", "apt_upgrade_fail") %>
 
-apt-get -y install ruby rubygems facter openssh-server
-[ "$?" -eq 0 ] && curl <%= callback_url("postinstall", "apt_install_ok") %> || curl <%= callback_url("postinstall", "apt_install_fail") %>
-
 # Set IP from IP Pool
 echo "auto lo
 iface lo inet loopback
@@ -40,7 +37,8 @@ gateway <%= @gateway %>
 /etc/init.d/networking restart && curl <%= callback_url("postinstall", "net_restart_ok") %> || curl <%= callback_url("postinstall", "net_restart_fail") %>
 
 # Get current IP
-node_ip=`facter ipaddress`
+default_gw_device=`route | grep default | awk '{print $8}'`
+node_ip=`ifconfig $default_gw_device | grep -w inet | awk -F: '{print $2}' | awk '{print $1}'`
 # Send IP up
 curl <%= callback_url("postinstall", "send_ips") %>/$node_ip
 # get final script
