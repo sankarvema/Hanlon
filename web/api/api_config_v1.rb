@@ -72,49 +72,21 @@ module Hanlon
         resource :config do
 
           # GET /config
-          # Query for Hanlon client configuration
-          desc "Retrieve the current Hanlon client configuration"
+          # Query for Hanlon server configuration
+          desc "Retrieve the current Hanlon server configuration"
           before do
-            # no validations added at this point
-          end
-          get do
-            client_config = ProjectHanlon::Config::Client.new
-            config = JSON(client_config.to_json)
-            slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
-          end
-
-          resource :server do
-            # GET /config/server
-            # Query for Hanlon server configuration
-            desc "Retrieve the current Hanlon server configuration"
-            before do
-              # only test if directly accessing the /config resource
-              if env["PATH_INFO"].match(/server$/)
-                # only allow access to configuration resource from the hanlon server
-                unless request_is_from_hanlon_server(env['REMOTE_ADDR'])
-                  raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config resource is only allowed from Hanlon server"
-                end
+            # only test if directly accessing the /config resource
+            if env["PATH_INFO"].match(/server$/)
+              # only allow access to configuration resource from the hanlon server
+              unless request_is_from_hanlon_server(env['REMOTE_ADDR'])
+                raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config resource is only allowed from Hanlon server"
               end
             end
-            get do
-              config = JSON(ProjectHanlon.config.to_json)
-              slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
-            end
-          end      # end GET /config/server
-
-          resource :client do
-            # GET /config/client
-            # Query for Hanlon client configuration
-            desc "Retrieve the current Hanlon client configuration"
-            before do
-              # no validations added at this point
-            end
-            get do
-              client_config = ProjectHanlon::Config::Client.new
-              config = JSON(client_config.to_json)
-              slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
-            end
-          end      # end GET /config/client
+          end
+          get do
+            config = JSON(ProjectHanlon.config.to_json)
+            slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
+          end       # end GET /config
 
           resource :ipxe do
             # GET /config/ipxe
