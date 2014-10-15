@@ -47,6 +47,8 @@ module ProjectHanlon
         @vcenter_name            = nil
         @vcenter_datacenter_path = nil
         @vcenter_cluster_path    = nil
+
+	@packages		= nil
         # Metadata
         @req_metadata_hash       = {
             "@esx_license"             => { :default     => "",
@@ -99,7 +101,9 @@ module ProjectHanlon
                                             :example     => "ntp.hanlon.example.local",
                                             :validation  => '^[\w.]{3,}$',
                                             :required    => true,
-                                            :description => "NTP server for node" },
+                                            :description => "NTP server for node" }
+	}
+@opt_metadata_hash = {
             "@vcenter_name"            => { :default     => "",
                                             :example     => "vcenter01",
                                             :validation  => '^[\w.-]{3,}$',
@@ -114,7 +118,13 @@ module ProjectHanlon
                                             :example     => "Cluster01",
                                             :validation  => '^[a-zA-Z\d-]{3,}$',
                                             :required    => false,
-                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" }
+                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" },
+"@packages"    => { :default     => "",
+                                            :example     => "",
+                                            :validation  => '',
+                                            :required    => false,
+                                           :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" }
+
 
 
         }
