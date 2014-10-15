@@ -200,7 +200,6 @@ module ProjectHanlon
           raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
         end
         req_metadata_params = model.cli_get_metadata_params(metadata_hash)
-puts req_metadata_params
         raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled model creation" unless req_metadata_params
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
