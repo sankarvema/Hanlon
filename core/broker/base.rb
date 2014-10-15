@@ -66,29 +66,6 @@ module ProjectHanlon
         :red_on_black
       end
 
-      def web_create_metadata(provided_metadata)
-        missing_metadata = []
-        rmd = req_metadata_hash
-        rmd.each_key do
-        |md|
-          metadata = map_keys_to_symbols(rmd[md])
-          provided_metadata = map_keys_to_symbols(provided_metadata)
-          md = (!md.is_a?(Symbol) ? md.gsub(/^@/,'').to_sym : md)
-          md_fld_name = '@' + md.to_s
-          if provided_metadata[md]
-            raise ProjectHanlon::Error::Slice::InvalidBrokerMetadata, "Invalid Metadata [#{md.to_s}:'#{provided_metadata[md]}']" unless
-                set_metadata_value(md_fld_name, provided_metadata[md], metadata[:validation])
-          else
-            if metadata[:default] != ""
-              raise ProjectHanlon::Error::Slice::MissingBrokerMetadata, "Missing metadata [#{md.to_s}]" unless
-                  set_metadata_value(md_fld_name, metadata[:default], metadata[:validation])
-            else
-              raise ProjectHanlon::Error::Slice::MissingBrokerMetadata, "Missing metadata [#{md.to_s}]" if metadata[:required]
-            end
-          end
-        end
-      end
-
       def cli_create_metadata
         req_metadata_params = cli_get_metadata_params
         return false unless req_metadata_params

@@ -65,7 +65,16 @@ module ProjectHanlon
                   :description => 'The image UUID to use for the new model.',
                   :uuid_is     => 'not_allowed',
                   :required    => true
+                },
+		 { :name        => :optional_yaml,
+                  :default     => false,
+                  :short_form  => '-o',
+                  :long_form   => '--option YAML_FILE',
+                  :description => 'Use optional yaml file to create model',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
                 }
+
             ],
             :update => [
                 { :name        => :label,
@@ -174,13 +183,24 @@ module ProjectHanlon
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
+        optional_yaml_file = options[:optional_yaml]
         template = options[:template]
         label = options[:label]
         image_uuid = options[:image_uuid]
         # use the arguments passed in to create a new model
         model = get_model_using_template_name(options[:template])
         raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{options[:template]}] " unless model
-        req_metadata_params = model.cli_get_metadata_params
+        # read in the req_metadata_params (either from the YAML file if one was provided
+        # or from the CLI, will ask for any parameters required but not provided via the
+        # YAML file in the )
+        metadata_hash = {}
+        begin
+          metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+        rescue Exception => e
+          raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+        end
+        req_metadata_params = model.cli_get_metadata_params(metadata_hash)
+puts req_metadata_params
         raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled model creation" unless req_metadata_params
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
