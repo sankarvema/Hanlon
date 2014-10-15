@@ -180,19 +180,16 @@ module ProjectHanlon
         # use the arguments passed in to create a new model
         model = get_model_using_template_name(options[:template])
         raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{options[:template]}] " unless model
-        model.cli_create_metadata
+        req_metadata_params = model.cli_get_metadata_params
+        raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled model creation" unless req_metadata_params
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
         body_hash = {
             "template" => template,
             "label" => label,
             "image_uuid" => image_uuid,
-            "req_metadata_hash" => model.req_metadata_hash
         }
-        model.req_metadata_hash.each { |key, md_hash_value|
-          value = model.instance_variable_get(key)
-          body_hash[key] = value
-        }
+        body_hash["req_metadata_params"] = req_metadata_params
         json_data = body_hash.to_json
         result, response = hnl_http_post_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
@@ -229,9 +226,10 @@ module ProjectHanlon
         model = hash_to_obj(result)
         # if the user requested a change to the meta-data hash associated with the
         # indicated model, then gather that new meta-data from the user
+        req_metadata_params = nil
         if change_metadata
-          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled Model creation" unless
-              model.cli_create_metadata
+          req_metadata_params = model.cli_get_metadata_params
+          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled model update" unless req_metadata_params
         end
         # add properties passed in from command line to the json_data
         # hash that we'll be passing in as the body of the request
@@ -239,11 +237,7 @@ module ProjectHanlon
         body_hash["label"] = label if label
         body_hash["image_uuid"] = image_uuid if image_uuid
         if change_metadata
-          model.req_metadata_hash.each { |key, md_hash_value|
-            value = model.instance_variable_get(key)
-            body_hash[key] = value
-          }
-          body_hash["req_metadata_hash"] = model.req_metadata_hash
+          body_hash["req_metadata_params"] = req_metadata_params
         end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated policy) and return the results
