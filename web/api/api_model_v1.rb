@@ -126,14 +126,11 @@ module Hanlon
             # for both the req_metadata_hash and the opt_metadata_hash, extract the values that
             # were supplied in the req_metadata_params and add them to the underlying model
             [model.req_metadata_hash, model.opt_metadata_hash].each { |md_hash|
-puts "md_hash => #{md_hash}"
               md_hash.each { |key, md_hash_value|
-puts "#{key} => #{md_hash_value}"
                 # strip off the '@' prefix from the req_metadata_hash key to get the
                 # corresponding key in the input req_metadata_params hash map
                 param_key = key[1..-1]
                 value = req_metadata_params[param_key]
-puts "#{param_key} => #{value}"
                 # if the value doesn't exist in the req_metadata_params, then set the underlying instance
                 # variable to the default value for this field (if it exists) and move on to the next
                 # req_metadata_hash field
