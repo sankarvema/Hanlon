@@ -90,34 +90,48 @@ module Hanlon
           # POST /broker
           # Create a Hanlon broker
           #   parameters:
-          #     plugin            | String | The "plugin" to use for the new broker   |         | Default: unavailable
-          #     name              | String | The "name" to use for the new broker     |         | Default: unavailable
-          #     description       | String | The description of the new broker        |         | Default: unavailable
-          #     req_metadata_hash | Hash   | The metadata to use for the new broker   |         | Default: unavailable
+          #     plugin              | String | The "plugin" to use for the new broker              |         | Default: unavailable
+          #     name                | String | The "name" to use for the new broker                |         | Default: unavailable
+          #     description         | String | The description of the new broker                   |         | Default: unavailable
+          #     req_metadata_params | Hash   | The metadata parameters to use for the new broker   |         | Default: unavailable
           desc "Create a new broker instance"
           params do
             requires "plugin", type: String, desc: "The broker plugin to use"
             requires "name", type: String, desc: "The new broker's name"
             requires "description", type: String, desc: "The new broker's description"
-            requires "req_metadata_hash", type: Hash, desc: "The metadata hash to use"
+            requires "req_metadata_params", type: Hash, desc: "The metadata hash parameters to use"
           end
           post do
             plugin = params["plugin"]
             name = params["name"]
             description = params["description"]
-            req_metadata_hash = params["req_metadata_hash"]
+            req_metadata_params = params["req_metadata_params"]
             # use the arguments passed in to create a new broker
             broker = SLICE_REF.new_object_from_template_name(BROKER_PREFIX, plugin)
-            raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_hash]" unless
-                req_metadata_hash
+            raise ProjectHanlon::Error::Slice::MissingArgument, "Must Provide Required Metadata [req_metadata_params]" unless
+                req_metadata_params
             broker.name             = name
             broker.user_description = description
             broker.is_template      = false
-            req_metadata_hash.each { |key, md_hash_value|
-              value = params[key]
-              broker.set_metadata_value(key, value, md_hash_value[:validation])
-            }
-            broker.req_metadata_hash = req_metadata_hash
+            broker.req_metadata_hash.each { |key, md_hash_value|
+              # strip off the '@' prefix from the req_metadata_hash key to get the
+              # corresponding key in the input req_metadata_params hash map
+              param_key = key[1..-1]
+              value = req_metadata_params[param_key]
+              # if the value doesn't exist in the req_metadata_params, then set the underlying instance
+              # variable to the default value for this field (if it exists) and move on to the next
+              # req_metadata_hash field
+              unless value
+                broker.set_default_metadata_value(key, value)
+                next
+              end
+              # set the instance variable in the underlying broker object (creates a new instance variable dynamically);
+              # note that if the value passed through isn't a valid value (the req_metadata_hash includes a regular
+              # expression that must be matched for any value to be considered as a 'valid' value), then an error
+              # will be thrown here
+              val_set = broker.set_metadata_value(key, value)
+              raise ProjectHanlon::Error::Slice::InputError, "Invalid value #{value} for #{param_key} field in req_metadata_params hash" unless val_set
+            } if req_metadata_params && !req_metadata_params.empty?
             # persist that broker, and print the result (or raise an error if cannot persist it)
             get_data_ref.persist_object(broker)
             raise(ProjectHanlon::Error::Slice::CouldNotCreate, "Could not create Broker Target") unless broker
@@ -174,19 +188,19 @@ module Hanlon
             end     # end GET /broker/{uuid}
 
             # PUT /broker/{uuid}
-            # Update a Hanlon broker (any of the the name, description, or req_metadata_hash
+            # Update a Hanlon broker (any of the the name, description, or req_metadata_params
             # can be updated using this endpoint; note that the broker plugin cannot be updated
             # once a broker is created
             #   parameters:
-            #     name              | String | The "name" to use for the new broker     |         | Default: unavailable
-            #     description       | String | The description of the new broker        |         | Default: unavailable
-            #     req_metadata_hash | Hash   | The metadata to use for the new broker   |         | Default: unavailable
+            #     name                | String | The "name" to use for the new broker                |         | Default: unavailable
+            #     description         | String | The description of the new broker                   |         | Default: unavailable
+            #     req_metadata_params | Hash   | The metadata parameters to use for the new broker   |         | Default: unavailable
             desc "Update a broker instance (by UUID)"
             params do
               requires :uuid, type: String, desc: "The broker's UUID"
               optional "name", type: String, desc: "The broker's new name"
               optional "description", type: String, desc: "The broker's new description"
-              optional "req_metadata_hash", type: Hash, desc: "The new metadata hash"
+              optional "req_metadata_params", type: Hash, desc: "The new metadata hash parameters"
             end
             put do
               # get the input parameters that were passed in as part of the request
@@ -195,23 +209,32 @@ module Hanlon
               plugin = params[:plugin]
               name = params[:name]
               description = params[:description]
-              req_metadata_hash = params[:req_metadata_hash]
+              req_metadata_params = params[:req_metadata_params]
               # check the values that were passed in (and gather new meta-data if
               # the --change-metadata flag was included in the update command and the
               # command was invoked via the CLI...it's an error to use this flag via
-              # the RESTful API, the req_metadata_hash should be used instead)
+              # the RESTful API, the req_metadata_params should be used instead)
               broker = SLICE_REF.get_object("broker_with_uuid", :broker, broker_uuid)
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless broker && (broker.class != Array || broker.length > 0)
               # fill in the fields with the new values that were passed in (if any)
               broker.name              = name if name
               broker.user_description  = description if description
               broker.is_template       = false
-              if req_metadata_hash
-                req_metadata_hash.each { |key, md_hash_value|
-                  value = params[key]
-                  broker.set_metadata_value(key, value, md_hash_value[:validation])
+              if req_metadata_params
+                req_metadata_params.each { |key, value|
+                  # add an '@' prefix from the req_metadata_params key to get the name
+                  # of the corresponding instance variable in the underlying broker instance
+                  broker_key = "@#{key}"
+                  # throw an error if don't find a required key in the broker's req_metadata_hash
+                  md_hash_value = broker.req_metadata_hash[broker_key]
+                  raise ProjectHanlon::Error::Slice::InputError, "Unrecognized field #{key} in req_metadata_params hash" unless md_hash_value
+                  # set the instance variable in the underlying broker object (creates a new instance variable dynamically);
+                  # note that if the value passed through isn't a valid value (the req_metadata_hash includes a regular
+                  # expression that must be matched for any value to be considered as a 'valid' value), then an error
+                  # will be thrown here
+                  val_set = broker.set_metadata_value(broker_key, value)
+                  raise ProjectHanlon::Error::Slice::InputError, "Invalid value #{value} for #{key} field in req_metadata_params hash" unless val_set
                 }
-                broker.req_metadata_hash = req_metadata_hash
               end
               raise ProjectHanlon::Error::Slice::CouldNotUpdate, "Could not update Broker Target [#{broker.uuid}]" unless broker.update_self
               slice_success_object(SLICE_REF, :update_broker, broker, :success_type => :updated)

@@ -169,19 +169,15 @@ module ProjectHanlon
         check_option_usage(option_items, options, includes_uuid, false)
         # use the arguments passed in to create a new broker
         broker = new_object_from_template_name(SLICE_BROKER_PREFIX, options[:plugin])
-        broker.cli_create_metadata
+        req_metadata_params = broker.cli_get_metadata_params
         # setup the POST (to create the requested broker) and return the results
         uri = URI.parse @uri_string
         body_hash = {
             "name" => options[:name],
             "description" => options[:description],
             "plugin" => options[:plugin],
-            "req_metadata_hash" => broker.req_metadata_hash
         }
-        broker.req_metadata_hash.each { |key, md_hash_value|
-          value = broker.instance_variable_get(key)
-          body_hash[key] = value
-        }
+        body_hash["req_metadata_params"] = req_metadata_params
         json_data = body_hash.to_json
         result, response = hnl_http_post_json_data(uri, json_data, true)
         if response.instance_of?(Net::HTTPBadRequest)
@@ -219,8 +215,8 @@ module ProjectHanlon
         # if the user requested a change to the meta-data hash associated with the
         # indicated broker, then gather that new meta-data from the user
         if change_metadata
-          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled Broker creation" unless
-              broker.cli_create_metadata
+          req_metadata_params = broker.cli_get_metadata_params
+          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled broker update" unless req_metadata_params
         end
         # add properties passed in from command line to the json_data
         # hash that we'll be passing in as the body of the request
@@ -228,11 +224,7 @@ module ProjectHanlon
         body_hash["name"] = name if name
         body_hash["description"] = description if description
         if change_metadata
-          broker.req_metadata_hash.each { |key, md_hash_value|
-            value = broker.instance_variable_get(key)
-            body_hash[key] = value
-          }
-          body_hash["req_metadata_hash"] = broker.req_metadata_hash
+          body_hash["req_metadata_params"] = req_metadata_params
         end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated broker) and return the results
