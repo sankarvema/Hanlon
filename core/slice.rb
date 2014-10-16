@@ -297,7 +297,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
 
   def get_options(options = { }, optparse_options = { })
     optparse_options[:banner] ||= "hanlon [command] [options...]"
-    optparse_options[:width] ||= 40
+    optparse_options[:width] ||= 32
     optparse_options[:indent] ||= ' ' * 4
     OptionParser.new(optparse_options[:banner], optparse_options[:width], optparse_options[:indent]) do |opts|
       opts.banner = optparse_options[:banner]
@@ -375,12 +375,12 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   end
 
   # used by slices to parse and validate the options for a particular subcommand
-  def parse_and_validate_options(option_items, banner, logic = nil)
+  def parse_and_validate_options(option_items, banner, logic = nil, summary_width = nil)
     options = {}
     #uuid = @web_command ? @prev_args.peek(1) : @prev_args.peek(0)
     uuid = @prev_args.peek(0)
     # Get our optparse object passing our options hash, option_items hash, and our banner
-    optparse = get_options(options, :options_items => option_items, :banner => banner)
+    optparse = get_options(options, :options_items => option_items, :banner => banner, :width => summary_width)
     # set the command help text to the string output from optparse
     @command_help_text << optparse.to_s
     # if it's a web command, get the web options that were passed
@@ -397,6 +397,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # used by the slices to print out detailed usage for individual commands
   def print_command_help(command, option_items, contained_resource = nil)
     banner = ""
+puts option_items
     if contained_resource
       banner = ( option_items.select { |elem| elem[:uuid_is] == "required" }.length > 0 ?
           "hanlon #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (UUID) (options...)" :
