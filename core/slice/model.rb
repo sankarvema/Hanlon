@@ -96,7 +96,7 @@ module ProjectHanlon
                 { :name        => :change_metadata,
                   :default     => false,
                   :short_form  => '-c',
-                  :long_form   => '--change-metadata',
+                  :long_form   => '--change-metadata [YAML_FILE]',
                   :description => 'Used to trigger a change in the model\'s meta-data',
                   :uuid_is     => 'required',
                   :required    => true
@@ -234,6 +234,7 @@ module ProjectHanlon
         label = options[:label]
         image_uuid = options[:image_uuid]
         change_metadata = options[:change_metadata]
+        optional_yaml_file = (change_metadata && change_metadata.is_a?(String) ? change_metadata : nil)
         # now, use the values that were passed in to update the indicated model
         uri = URI.parse(@uri_string + '/' + model_uuid)
         # and get the results of the appropriate RESTful request using that URI
@@ -247,7 +248,13 @@ module ProjectHanlon
         # indicated model, then gather that new meta-data from the user
         req_metadata_params = nil
         if change_metadata
-          req_metadata_params = model.cli_get_metadata_params
+          metadata_hash = {}
+          begin
+            metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+          rescue Exception => e
+            raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+          end
+          req_metadata_params = model.cli_get_metadata_params(metadata_hash)
           raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled model update" unless req_metadata_params
         end
         # add properties passed in from command line to the json_data
