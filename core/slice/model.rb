@@ -111,6 +111,7 @@ module ProjectHanlon
           begin
             # load the option items for this command (if they exist) and print them
             option_items = command_option_data(command)
+            option_items[:width] = 40
             print_command_help(command, option_items)
             return
           rescue
@@ -177,6 +178,8 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
+puts option_items
+        option_items[:width] = 40
         tmp, options = parse_and_validate_options(option_items, "hanlon model add (options...)", :require_all)
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
@@ -225,7 +228,8 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        model_uuid, options = parse_and_validate_options(option_items, "hanlon model update UUID (options...)", :require_one)
+        help_summ_width = 34
+        model_uuid, options = parse_and_validate_options(option_items, "hanlon model update UUID (options...)", :require_one, help_summ_width)
         includes_uuid = true if model_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
