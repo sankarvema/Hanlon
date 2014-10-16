@@ -297,7 +297,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
 
   def get_options(options = { }, optparse_options = { })
     optparse_options[:banner] ||= "hanlon [command] [options...]"
-    OptionParser.new do |opts|
+    optparse_options[:width] ||= 40
+    optparse_options[:indent] ||= ' ' * 4
+    OptionParser.new(optparse_options[:banner], optparse_options[:width], optparse_options[:indent]) do |opts|
       opts.banner = optparse_options[:banner]
       optparse_options[:options_items].each do |opt_item|
         options[opt_item[:name]] = opt_item[:default]

@@ -228,19 +228,6 @@ module ProjectHanlon
         "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}"
       end
 
-      # def cli_create_metadata
-      #   req_metadata_params = cli_get_metadata_params
-      #   return false unless req_metadata_params
-      #   req_metadata_params.each { |key, value|
-      #     rmd_hash_key = "@#{key}"
-      #     metadata = req_metadata_hash[rmd_hash_key]
-      #     # this error should never get thrown, but test for it anyway
-      #     raise ProjectHanlon::Error::Slice::InputError, "Unrecognized metadata field #{rmd_hash_key} in client metadata" unless metadata
-      #     flag = set_metadata_value(rmd_hash_key, value)
-      #   }
-      #   true
-      # end
-
       def yaml_read_metadata(yaml_metadata_hash)
         req_metadata_params = {}
         # set instance variables for the required values in the input yaml_metadata_hash
