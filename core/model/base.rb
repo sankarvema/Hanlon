@@ -228,18 +228,18 @@ module ProjectHanlon
         "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}"
       end
 
-      def cli_create_metadata
-        req_metadata_params = cli_get_metadata_params
-        return false unless req_metadata_params
-        req_metadata_params.each { |key, value|
-          rmd_hash_key = "@#{key}"
-          metadata = req_metadata_hash[rmd_hash_key]
-          # this error should never get thrown, but test for it anyway
-          raise ProjectHanlon::Error::Slice::InputError, "Unrecognized metadata field #{rmd_hash_key} in client metadata" unless metadata
-          flag = set_metadata_value(rmd_hash_key, value)
-        }
-        true
-      end
+      # def cli_create_metadata
+      #   req_metadata_params = cli_get_metadata_params
+      #   return false unless req_metadata_params
+      #   req_metadata_params.each { |key, value|
+      #     rmd_hash_key = "@#{key}"
+      #     metadata = req_metadata_hash[rmd_hash_key]
+      #     # this error should never get thrown, but test for it anyway
+      #     raise ProjectHanlon::Error::Slice::InputError, "Unrecognized metadata field #{rmd_hash_key} in client metadata" unless metadata
+      #     flag = set_metadata_value(rmd_hash_key, value)
+      #   }
+      #   true
+      # end
 
       def yaml_read_metadata(yaml_metadata_hash)
         req_metadata_params = {}
@@ -372,9 +372,20 @@ module ProjectHanlon
       end
 
 
-      def set_default_metadata_value(key, value, md_hash = req_metadata_hash)
+      def set_default_metadata_value(key, md_hash = req_metadata_hash)
         md_hash_value = map_keys_to_symbols(md_hash[key])
-        self.instance_variable_set(key.to_sym, md_hash_value[:default])
+        validation_str = md_hash_value[:validation]
+        def_value = md_hash_value[:default]
+        regex = Regexp.new(validation_str) if validation_str && !validation_str.empty?
+        def_is_valid = regex ? regex.match(def_value) : true
+        if (md_hash_value[:required] && def_value && def_is_valid)
+          self.instance_variable_set(key.to_sym, def_value)
+          true
+        elsif !md_hash_value[:required]
+          true
+        else
+          false
+        end
       end
 
       def validate_metadata_value(value, validation)

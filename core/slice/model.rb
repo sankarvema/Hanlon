@@ -66,7 +66,7 @@ module ProjectHanlon
                   :uuid_is     => 'not_allowed',
                   :required    => true
                 },
-		 { :name        => :optional_yaml,
+                { :name        => :optional_yaml,
                   :default     => false,
                   :short_form  => '-o',
                   :long_form   => '--option YAML_FILE',
@@ -188,8 +188,8 @@ module ProjectHanlon
         label = options[:label]
         image_uuid = options[:image_uuid]
         # use the arguments passed in to create a new model
-        model = get_model_using_template_name(options[:template])
-        raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{options[:template]}] " unless model
+        model = get_model_using_template_name(template)
+        raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{template}] " unless model
         # read in the req_metadata_params (either from the YAML file if one was provided
         # or from the CLI, will ask for any parameters required but not provided via the
         # YAML file in the )
