@@ -134,8 +134,9 @@ module Hanlon
                 # if the value doesn't exist in the req_metadata_params, then set the underlying instance
                 # variable to the default value for this field (if it exists) and move on to the next
                 # req_metadata_hash field
-                unless value
-                  model.set_default_metadata_value(key, value, md_hash)
+                unless value && !value.empty?
+                  val_set = model.set_default_metadata_value(key, md_hash)
+                  raise ProjectHanlon::Error::Slice::InputError, "No value supplied and no valid default available for #{param_key} field in req_metadata_params hash" unless val_set
                   next
                 end
                 # set the instance variable in the underlying model object (creates a new instance variable dynamically);
