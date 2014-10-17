@@ -21,6 +21,7 @@ module ProjectHanlon
       attr_accessor :counter
       attr_accessor :log
       attr_accessor :req_metadata_hash
+      attr_accessor :opt_metadata_hash
 
       # init
       # @param hash [Hash]
@@ -32,6 +33,7 @@ module ProjectHanlon
         @noun = "model"
         @description = "Base model template"
         @req_metadata_hash = {}
+        @opt_metadata_hash = {}
         @callback = {}
         @current_state = :init
         @node = nil
@@ -226,48 +228,45 @@ module ProjectHanlon
         "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}"
       end
 
-      def web_create_metadata(provided_metadata)
-        missing_metadata = []
-        rmd = req_metadata_hash
-        rmd.each_key do
-        |md|
-          metadata = map_keys_to_symbols(rmd[md])
-          provided_metadata = map_keys_to_symbols(provided_metadata)
-          md = (!md.is_a?(Symbol) ? md.gsub(/^@/,'').to_sym : md)
-          md_fld_name = '@' + md.to_s
-          if provided_metadata[md]
-            raise ProjectHanlon::Error::Slice::InvalidModelMetadata, "Invalid Metadata [#{md.to_s}:'#{provided_metadata[md]}']" unless
-                set_metadata_value(md_fld_name, provided_metadata[md], metadata[:validation])
-          else
-            if metadata[:default] != ""
-              raise ProjectHanlon::Error::Slice::MissingModelMetadata, "Missing metadata [#{md.to_s}]" unless
-                  set_metadata_value(md_fld_name, metadata[:default], metadata[:validation])
-            else
-              raise ProjectHanlon::Error::Slice::MissingModelMetadata, "Missing metadata [#{md.to_s}]" if metadata[:required]
-            end
-          end
-        end
-      end
-
-      def cli_create_metadata
-        req_metadata_params = cli_get_metadata_params
-        return false unless req_metadata_params
-        req_metadata_params.each { |key, value|
-          rmd_hash_key = "@#{key}"
-          metadata = req_metadata_hash[rmd_hash_key]
-          # this error should never get thrown, but test for it anyway
-          raise ProjectHanlon::Error::Slice::InputError, "Unrecognized metadata field #{rmd_hash_key} in client metadata" unless metadata
-          flag = set_metadata_value(rmd_hash_key, value)
-        }
-        true
-      end
-
-      def cli_get_metadata_params
-        puts "--- Building Model (#{name}): #{label}\n".yellow
+      def yaml_read_metadata(yaml_metadata_hash)
         req_metadata_params = {}
-        req_metadata_hash.each { |key, metadata|
+        # set instance variables for the required values in the input yaml_metadata_hash
+        req_meta_vals = yaml_metadata_hash.select{ |key| req_metadata_hash.keys.include?("@#{key}") }
+        req_meta_vals.each { |key, value|
+          model_key = "@#{key}"
+          flag = set_metadata_value(model_key, value)
+          if !flag
+            raise ProjectHanlon::Error::Slice::InvalidModelMetadata, "Invalid Metadata [#{key}:#{value}]"
+          end
+          req_metadata_params[key] = value
+        }
+        # set instance variables for the optional values in the input yaml_metadata_hash
+        optional_vals = yaml_metadata_hash.reject{ |key| req_metadata_hash.keys.include?("@#{key}") }
+        optional_vals.each { |key, value|
+          model_key = "@#{key}"
+          flag = set_metadata_value(model_key, value, opt_metadata_hash)
+          if !flag
+            raise ProjectHanlon::Error::Slice::InvalidModelMetadata, "Invalid Metadata [#{key}:#{value}]"
+          end
+          req_metadata_params[key] = value
+        }
+        # determine which keys are still missing from the req_metadata_hash
+        # keys list, will ask for these using the CLI; note that if the input
+        # 'yaml_metadata_hash' map was empty, this operation will return all
+        # of the keys in the 'req_metadata_hash'
+        [(req_metadata_hash.keys - yaml_metadata_hash.keys.map { |key| "@#{key}" } ), req_metadata_params]
+      end
+
+      def cli_get_metadata_params(yaml_metadata_hash = {})
+        puts "--- Building Model (#{name}): #{label}\n".yellow
+        # will return a list of the fields from the req_metadata_hash that were
+        # not provided in the input yaml_metadata_hash map
+        remaining_keys, req_metadata_params = yaml_read_metadata(yaml_metadata_hash)
+        # req_metadata_hash.each { |key, metadata|
+        remaining_keys.each { |model_key|
+          key = model_key[1..-1]
+          metadata = req_metadata_hash[model_key]
           metadata = map_keys_to_symbols(metadata)
-          params_key = key[1..-1]
           flag = false
           val = nil
           until flag
@@ -302,7 +301,7 @@ module ProjectHanlon
                 val = response if flag
             end
           end
-          req_metadata_params[params_key] = val
+          req_metadata_params[key] = val
         }
         req_metadata_params
       end
@@ -332,16 +331,26 @@ module ProjectHanlon
         tmp
       end
 
-      def set_metadata_value(key, value)
-        md_hash_value = map_keys_to_symbols(req_metadata_hash[key])
+      def set_metadata_value(key, value, md_hash = req_metadata_hash)
+        md_hash_value = map_keys_to_symbols(md_hash[key])
         is_required_field = md_hash_value[:required]
         # skip any empty/nil values that aren't required (i.e. continue only if it's a required field or the field
         # is not required but the value is not empty/nil)
         return true unless is_required_field || value
         # otherwise, validate the value and, if is valid, set a corresponding
         # instance variable
-        regex = Regexp.new(md_hash_value[:validation])
-        if regex =~ value
+        validation_str = md_hash_value[:validation]
+        regex = Regexp.new(validation_str) if validation_str && !validation_str.empty?
+        is_valid = false
+        if value.is_a?(Array)
+          # if have an array of values as input, then the input value is only valid
+          # if all of the array's values themselves match the regular expression used
+          # for validation (or if the regular expression was never set or was empty)
+          is_valid = value.map{ |val| regex ? regex.match(value) : true }.select{ |val| val }.size == value.size
+        else
+          is_valid = regex ? regex.match(value) : true
+        end
+        if is_valid
           self.instance_variable_set(key.to_sym, value)
           true
         else
@@ -350,9 +359,20 @@ module ProjectHanlon
       end
 
 
-      def set_default_metadata_value(key, value)
-        md_hash_value = map_keys_to_symbols(req_metadata_hash[key])
-        self.instance_variable_set(key.to_sym, md_hash_value[:default])
+      def set_default_metadata_value(key, md_hash = req_metadata_hash)
+        md_hash_value = map_keys_to_symbols(md_hash[key])
+        validation_str = md_hash_value[:validation]
+        def_value = md_hash_value[:default]
+        regex = Regexp.new(validation_str) if validation_str && !validation_str.empty?
+        def_is_valid = regex ? regex.match(def_value) : true
+        if (md_hash_value[:required] && def_value && def_is_valid)
+          self.instance_variable_set(key.to_sym, def_value)
+          true
+        elsif !md_hash_value[:required]
+          true
+        else
+          false
+        end
       end
 
       def validate_metadata_value(value, validation)

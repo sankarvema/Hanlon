@@ -123,24 +123,29 @@ module Hanlon
             model.label = label
             model.image_uuid = image.uuid if image
             model.is_template = false
-            model.req_metadata_hash.each { |key, md_hash_value|
-              # strip off the '@' prefix from the req_metadata_hash key to get the
-              # corresponding key in the input req_metadata_params hash map
-              param_key = key[1..-1]
-              value = req_metadata_params[param_key]
-              # if the value doesn't exist in the req_metadata_params, then set the underlying instance
-              # variable to the default value for this field (if it exists) and move on to the next
-              # req_metadata_hash field
-              unless value
-                model.set_default_metadata_value(key, value)
-                next
-              end
-              # set the instance variable in the underlying model object (creates a new instance variable dynamically);
-              # note that if the value passed through isn't a valid value (the req_metadata_hash includes a regular
-              # expression that must be matched for any value to be considered as a 'valid' value), then an error
-              # will be thrown here
-              val_set = model.set_metadata_value(key, value)
-              raise ProjectHanlon::Error::Slice::InputError, "Invalid value #{value} for #{param_key} field in req_metadata_params hash" unless val_set
+            # for both the req_metadata_hash and the opt_metadata_hash, extract the values that
+            # were supplied in the req_metadata_params and add them to the underlying model
+            [model.req_metadata_hash, model.opt_metadata_hash].each { |md_hash|
+              md_hash.each { |key, md_hash_value|
+                # strip off the '@' prefix from the req_metadata_hash key to get the
+                # corresponding key in the input req_metadata_params hash map
+                param_key = key[1..-1]
+                value = req_metadata_params[param_key]
+                # if the value doesn't exist in the req_metadata_params, then set the underlying instance
+                # variable to the default value for this field (if it exists) and move on to the next
+                # req_metadata_hash field
+                unless value && !value.empty?
+                  val_set = model.set_default_metadata_value(key, md_hash)
+                  raise ProjectHanlon::Error::Slice::InputError, "No value supplied and no valid default available for #{param_key} field in req_metadata_params hash" unless val_set
+                  next
+                end
+                # set the instance variable in the underlying model object (creates a new instance variable dynamically);
+                # note that if the value passed through isn't a valid value (the req_metadata_hash includes a regular
+                # expression that must be matched for any value to be considered as a 'valid' value), then an error
+                # will be thrown here
+                val_set = model.set_metadata_value(key, value, md_hash)
+                raise ProjectHanlon::Error::Slice::InputError, "Invalid value #{value} for #{param_key} field in req_metadata_params hash" unless val_set
+              }
             } if req_metadata_params && !req_metadata_params.empty?
             get_data_ref.persist_object(model)
             raise(ProjectHanlon::Error::Slice::CouldNotCreate, "Could not create Model") unless model

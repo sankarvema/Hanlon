@@ -115,7 +115,7 @@ module ProjectHanlon
                 { :name        => :tags,
                   :default     => nil,
                   :short_form  => '-t',
-                  :long_form   => '--tags TAG{ ,TAG,TAG}',
+                  :long_form   => '--tags TAG{,TAG,TAG}',
                   :description => 'Policy tags. Comma delimited.',
                   :uuid_is     => 'not_allowed',
                   :required    => true
@@ -165,7 +165,7 @@ module ProjectHanlon
                 { :name        => :tags,
                   :default     => nil,
                   :short_form  => '-t',
-                  :long_form   => '--tags TAG{ ,TAG,TAG}',
+                  :long_form   => '--tags TAG{,TAG,TAG}',
                   :description => 'Policy tags. Comma delimited.',
                   :uuid_is     => 'required',
                   :required    => true
@@ -241,7 +241,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon policy add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon policy add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -279,7 +279,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        policy_uuid, options = parse_and_validate_options(option_items, "hanlon policy update UUID (options...)", :require_one)
+        policy_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon policy update UUID (options...)")
         includes_uuid = true if policy_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
