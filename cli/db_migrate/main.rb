@@ -5,7 +5,13 @@ require 'hanlon_global'
 require 'logging/logger'
 require 'slice/config'
 require 'properties'
+
 require 'db_migrate/global'
+
+
+Dir[File.dirname(__FILE__) + "/commands/**/*.rb"].each do |file|
+  require file
+end
 
 
 class ProjectHanlon::Main
@@ -29,10 +35,6 @@ class ProjectHanlon::Main
 
     @cli_private = false
 
-    #if @options[:jsoncommand] then
-    #  @web_command = true
-    #  @cli_private = true
-    #end
 
     @debug = @options[:debug]
     @verbose = @options[:verbose]
@@ -53,9 +55,9 @@ class ProjectHanlon::Main
     end
 
     command = argv.shift
-    if ProjectHanlon::DbMigration::run_command(command, argv)
-      return ProjectHanlon::DbMigration::ErrorCodes[:no_error]
-    end
+    # if ProjectHanlon::DbMigration::run_command(command, argv)
+    #   return ProjectHanlon::DbMigration::ErrorCodes[:no_error]
+    # end
 
     puts optparse
     print_available_commands
@@ -103,6 +105,11 @@ class ProjectHanlon::Main
         @options[:nocolor] = true
       end
 
+      @options[:silent] = false
+      opts.on( '-s', '--silent', 'Disable print messages. Useful for script wrapping.'.yellow ) do
+        @options[:silent] = true
+      end
+
       opts.on_tail('-V', '--version', 'Display the version of Hanlon'.yellow) do
         puts opts.banner
         exit
@@ -124,6 +131,22 @@ class ProjectHanlon::Main
   end
 
   def print_available_commands
-    puts "Available commands"
+    print "\n", "Available Commands\n".yellow
+    # first, find all slices that extend the ProjectHanlon::DbMigrate class
+    commands = ObjectSpace.each_object(Class).select { |klass| klass < ProjectHanlon::DbMigration::Command }
+    # then construct a hash containing those slices (or slice classes); the key for
+    # this hash is the slice name
+    command_hash = Hash[commands.map { |a| [a.new([]).command_name, a] }]
+    # finally, output the list of slice names (sorted by name) for all
+    # of the "non-hidden" slices
+    command_hash.keys.sort.each do |command_name|
+      command_obj = command_hash[command_name].new([])
+      unless command_obj.hidden
+        print "    #{command_obj.display_name.ljust(18)} ".bold.white
+        print "#{command_obj.description}\n".yellow
+      end
+    end
+    print "\n"
   end
+
 end

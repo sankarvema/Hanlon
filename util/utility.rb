@@ -106,5 +106,14 @@ module ProjectHanlon
         obj
       end
     end
+
+    def print_yaml(data)
+      data.each { |key,val|
+        print "\t#{key.sub("@","")}: ".white
+        print "#{val} ".green
+        print "\n"
+      }
+    end
+
   end
 end

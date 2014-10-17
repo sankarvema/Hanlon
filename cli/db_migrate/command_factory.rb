@@ -26,14 +26,34 @@ module ProjectHanlon::DbMigration
 
       return true
     end
-
-    def print_yaml(data)
-      data.each { |key,val|
-        print "\t#{key.sub("@","")}: ".white
-        print "#{val} ".green
-        print "\n"
-      }
-    end
   end
 
+end
+
+module ProjectHanlon::DbMigration
+  class Command
+
+    attr_accessor :display_name, :description, :hidden
+
+    def initialize(args = nil)
+      @command_array = []
+      @command_array = args if args
+
+      @hidden = true
+
+    end
+
+    # Return the name of this slice - essentially, the final classname without
+    # the leading hierarchy, in Ruby "filename" format rather than "classname"
+    # format.  Not cached, because this is seldom used, and is never on the
+    # hot path.
+    def command_name
+      self.class.name.
+          split('::').
+          last.
+          scan(/[[:upper:]][[:lower:]]*/).
+          join('_').
+          downcase
+    end
+  end
 end

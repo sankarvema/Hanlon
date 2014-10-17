@@ -1,7 +1,7 @@
 require 'db_migrate/errors'
 require 'db_migrate/command_factory'
 
-module ProjectHanlon
+module ProjectHanlon::DbMigrate
 
 end
 
