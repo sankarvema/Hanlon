@@ -169,7 +169,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon broker add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon broker add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -209,7 +209,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        broker_uuid, options = parse_and_validate_options(option_items, "hanlon broker update (UUID) (options...)", :require_one)
+        broker_uuid, options = parse_and_validate_options(option_items, :require_one, banner => "hanlon broker update (UUID) (options...)")
         includes_uuid = true if broker_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -264,7 +264,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        broker_uuid, options = parse_and_validate_options(option_items, "hanlon broker remove (UUID)|(--all)", :require_all)
+        broker_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon broker remove (UUID)|(--all)")
         if !@web_command
           broker_uuid = @command_array.shift
         end

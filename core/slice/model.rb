@@ -111,8 +111,11 @@ module ProjectHanlon
           begin
             # load the option items for this command (if they exist) and print them
             option_items = command_option_data(command)
-            option_items[:width] = 40
-            print_command_help(command, option_items)
+            # this line adjusts the help output width for the help on the 'update' command
+            # (for all others, a width of 32 will be used for the summary section of the
+            # commmand help)
+            optparse_options = (command == 'update' ? {:width => 34} : { })
+            print_command_help(command, option_items, optparse_options)
             return
           rescue
           end
@@ -178,9 +181,8 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-puts option_items
         option_items[:width] = 40
-        tmp, options = parse_and_validate_options(option_items, "hanlon model add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon model add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -228,8 +230,7 @@ puts option_items
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        help_summ_width = 34
-        model_uuid, options = parse_and_validate_options(option_items, "hanlon model update UUID (options...)", :require_one, help_summ_width)
+        model_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon model update UUID (options...)", :width => 34)
         includes_uuid = true if model_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the

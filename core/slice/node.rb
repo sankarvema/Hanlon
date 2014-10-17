@@ -111,7 +111,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        node_uuid, options = parse_and_validate_options(option_items, "hanlon node [get] (UUID) [--field,-f FIELD]", :require_all)
+        node_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon node [get] (UUID) [--field,-f FIELD]")
         includes_uuid = true if node_uuid
         selected_option = options[:field]
         # setup the proper URI depending on the options passed in
