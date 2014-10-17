@@ -121,8 +121,9 @@ module Hanlon
               # if the value doesn't exist in the req_metadata_params, then set the underlying instance
               # variable to the default value for this field (if it exists) and move on to the next
               # req_metadata_hash field
-              unless value
-                broker.set_default_metadata_value(key, value)
+              unless value && !value.empty?
+                val_set = broker.set_default_metadata_value(key)
+                raise ProjectHanlon::Error::Slice::InputError, "Invalid value #{value} for #{param_key} field in req_metadata_params hash" unless val_set
                 next
               end
               # set the instance variable in the underlying broker object (creates a new instance variable dynamically);
