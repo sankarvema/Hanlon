@@ -77,6 +77,15 @@ module ProjectHanlon
             raise ProjectHanlon::Error::Slice::InvalidBrokerMetadata, "Invalid Metadata [#{key}:#{value}]"
           end
           req_metadata_params[key] = value
+      def cli_create_metadata
+        req_metadata_params = cli_get_metadata_params
+        return false unless req_metadata_params
+        req_metadata_params.each { |key, value|
+          rmd_hash_key = "@#{key}"
+          metadata = req_metadata_hash[rmd_hash_key]
+          # this error should never get thrown, but test for it anyway
+          raise ProjectHanlon::Error::Slice::InputError, "Unrecognized metadata field #{rmd_hash_key} in client metadata" unless metadata
+          flag = set_metadata_value(rmd_hash_key, value)
         }
         [(req_metadata_hash.keys - yaml_metadata_hash.keys.map { |key| "@#{key}" } ), req_metadata_params]
       end
