@@ -66,48 +66,31 @@ module ProjectHanlon
         :red_on_black
       end
 
-      def web_create_metadata(provided_metadata)
-        missing_metadata = []
-        rmd = req_metadata_hash
-        rmd.each_key do
-        |md|
-          metadata = map_keys_to_symbols(rmd[md])
-          provided_metadata = map_keys_to_symbols(provided_metadata)
-          md = (!md.is_a?(Symbol) ? md.gsub(/^@/,'').to_sym : md)
-          md_fld_name = '@' + md.to_s
-          if provided_metadata[md]
-            raise ProjectHanlon::Error::Slice::InvalidBrokerMetadata, "Invalid Metadata [#{md.to_s}:'#{provided_metadata[md]}']" unless
-                set_metadata_value(md_fld_name, provided_metadata[md], metadata[:validation])
-          else
-            if metadata[:default] != ""
-              raise ProjectHanlon::Error::Slice::MissingBrokerMetadata, "Missing metadata [#{md.to_s}]" unless
-                  set_metadata_value(md_fld_name, metadata[:default], metadata[:validation])
-            else
-              raise ProjectHanlon::Error::Slice::MissingBrokerMetadata, "Missing metadata [#{md.to_s}]" if metadata[:required]
-            end
-          end
-        end
-      end
-
-      def cli_create_metadata
-        req_metadata_params = cli_get_metadata_params
-        return false unless req_metadata_params
-        req_metadata_params.each { |key, value|
-          rmd_hash_key = "@#{key}"
-          metadata = req_metadata_hash[rmd_hash_key]
-          # this error should never get thrown, but test for it anyway
-          raise ProjectHanlon::Error::Slice::InputError, "Unrecognized metadata field #{rmd_hash_key} in client metadata" unless metadata
-          flag = set_metadata_value(rmd_hash_key, value)
-        }
-        true
-      end
-
-      def cli_get_metadata_params
-        puts "--- Building Broker (#{plugin}): #{name}\n".yellow
+      def yaml_read_metadata(yaml_metadata_hash)
         req_metadata_params = {}
-        req_metadata_hash.each { |key, metadata|
+        # set instance variables for the required values in the input yaml_metadata_hash
+        req_meta_vals = yaml_metadata_hash.select{ |key| req_metadata_hash.keys.include?("@#{key}") }
+        req_meta_vals.each { |key, value|
+          broker_key = "@#{key}"
+          flag = set_metadata_value(broker_key, value)
+          if !flag
+            raise ProjectHanlon::Error::Slice::InvalidBrokerMetadata, "Invalid Metadata [#{key}:#{value}]"
+          end
+          req_metadata_params[key] = value
+        }
+        [(req_metadata_hash.keys - yaml_metadata_hash.keys.map { |key| "@#{key}" } ), req_metadata_params]
+      end
+
+      def cli_get_metadata_params(yaml_metadata_hash = {})
+        puts "--- Building Broker (#{plugin}): #{name}\n".yellow
+        # will return a list of the fields from the req_metadata_hash that were
+        # not provided in the input yaml_metadata_hash map
+        remaining_keys, req_metadata_params = yaml_read_metadata(yaml_metadata_hash)
+        #req_metadata_hash.each { |key, metadata|
+        remaining_keys.each { |broker_key|
+          params_key = broker_key[1..-1]
+          metadata = req_metadata_hash[broker_key]
           metadata = map_keys_to_symbols(metadata)
-          params_key = key[1..-1]
           flag = false
           val = nil
           until flag
@@ -190,9 +173,20 @@ module ProjectHanlon
         end
       end
 
-      def set_default_metadata_value(key, value)
+      def set_default_metadata_value(key)
         md_hash_value = map_keys_to_symbols(req_metadata_hash[key])
-        self.instance_variable_set(key.to_sym, md_hash_value[:default])
+        validation_str = md_hash_value[:validation]
+        def_value = md_hash_value[:default]
+        regex = Regexp.new(validation_str) if validation_str && !validation_str.empty?
+        def_is_valid = regex ? regex.match(def_value) : true
+        if (md_hash_value[:required] && def_value && def_is_valid)
+          self.instance_variable_set(key.to_sym, def_value)
+          true
+        elsif !md_hash_value[:required]
+          true
+        else
+          false
+        end
       end
 
       def validate_metadata_value(value, validation)

@@ -66,6 +66,14 @@ module ProjectHanlon
                   :description => 'A description for the broker target.',
                   :uuid_is     => 'not_allowed',
                   :required    => true
+                },
+                { :name        => :optional_yaml,
+                  :default     => false,
+                  :short_form  => '-o',
+                  :long_form   => '--option YAML_FILE',
+                  :description => 'Use optional yaml file to create model',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
                 }
             ],
             :update  =>  [
@@ -88,7 +96,7 @@ module ProjectHanlon
                 { :name        => :change_metadata,
                   :default     => false,
                   :short_form  => '-c',
-                  :long_form   => '--change-metadata',
+                  :long_form   => '--change-metadata [YAML_FILE]',
                   :description => 'Used to trigger a change in the broker\'s meta-data',
                   :uuid_is     => 'required',
                   :required    =>true
@@ -167,9 +175,16 @@ module ProjectHanlon
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
+        optional_yaml_file = options[:optional_yaml]
         # use the arguments passed in to create a new broker
         broker = new_object_from_template_name(SLICE_BROKER_PREFIX, options[:plugin])
-        req_metadata_params = broker.cli_get_metadata_params
+        metadata_hash = {}
+        begin
+          metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+        rescue Exception => e
+          raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+        end
+        req_metadata_params = broker.cli_get_metadata_params(metadata_hash)
         # setup the POST (to create the requested broker) and return the results
         uri = URI.parse @uri_string
         body_hash = {
@@ -203,6 +218,7 @@ module ProjectHanlon
         name = options[:name]
         description = options[:description]
         change_metadata = options[:change_metadata]
+        optional_yaml_file = (change_metadata && change_metadata.is_a?(String) ? change_metadata : nil)
         # now, use the values that were passed in to update the indicated broker
         uri = URI.parse(@uri_string + '/' + broker_uuid)
         # and get the results of the appropriate RESTful request using that URI
@@ -215,7 +231,13 @@ module ProjectHanlon
         # if the user requested a change to the meta-data hash associated with the
         # indicated broker, then gather that new meta-data from the user
         if change_metadata
-          req_metadata_params = broker.cli_get_metadata_params
+          metadata_hash = {}
+          begin
+            metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+          rescue Exception => e
+            raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+          end
+          req_metadata_params = broker.cli_get_metadata_params(metadata_hash)
           raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled broker update" unless req_metadata_params
         end
         # add properties passed in from command line to the json_data
