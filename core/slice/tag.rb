@@ -195,7 +195,11 @@ module ProjectHanlon
             # underscore character and swap the order when printing the command usage
             option_items = command_option_data(command)
             command, subcommand = command.split("_")
-            print_command_help(command, option_items, subcommand)
+            if subcommand
+              print_subcommand_help(command, subcommand, option_items)
+            else
+              print_command_help(command, option_items)
+            end
             return
           rescue
           end
@@ -256,7 +260,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon tag add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon tag add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -283,7 +287,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return the options map constructed
         # from the @commmand_array)
-        tagrule_uuid, options = parse_and_validate_options(option_items, "hanlon tag update (UUID) (options...)", :require_one)
+        tagrule_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon tag update (UUID) (options...)")
         includes_uuid = true if tagrule_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -366,7 +370,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon tag matcher add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon tag matcher add (options...)")
         includes_uuid if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -400,7 +404,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        matcher_uuid, options = parse_and_validate_options(option_items, "hanlon policy update UUID (options...)", :require_one)
+        matcher_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon policy update UUID (options...)")
         includes_uuid = true if matcher_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
