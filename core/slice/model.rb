@@ -181,8 +181,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        option_items[:width] = 40
-        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon model add (options...)")
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon model add (options...)", :width => 40)
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
