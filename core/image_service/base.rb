@@ -225,9 +225,7 @@ module ProjectHanlon
       end
 
       def print_items
-        set_lcl_image_path(ProjectHanlon.config.image_path)
-        success, message = verify(@_lcl_image_path)
-        return @uuid, @description, @filename, "#{success ? "Valid".green : "Broken/Missing".red}"
+        return @uuid, @description, @filename, "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
       end
 
       def print_item_header
