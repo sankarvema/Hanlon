@@ -478,7 +478,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # used by slices to construct a typical @slice_command hash map based on
   # an input set of function names
   def get_command_map(help_cmd_name, get_all_cmd_name, get_by_uuid_cmd_name,
-      add_cmd_name, update_cmd_name, remove_all_cmd_name, remove_by_uuid_cmd_name)
+                      add_cmd_name, update_cmd_name, remove_all_cmd_name, remove_by_uuid_cmd_name)
     return_all = ["all", '{}', /^\{.*\}$/, nil]
     cmd_map = {}
     get_all_cmd_name = "throw_missing_uuid_error" unless get_all_cmd_name
@@ -743,7 +743,17 @@ def tag_matcher_hash_array_to_obj_array(hash_array, tagrule_uuid)
   hash_array.map { |hash| class_from_string(hash["@classname"]).new(hash, tagrule_uuid) }
 end
 
-def hash_array_to_obj_array(hash_array)
+def hash_array_to_obj_array(hash_array, sort_fieldname = nil)
+  # If a sort_field name is provided, sort the hash_array
+  if sort_fieldname
+    # If the sort_fieldname in the first element of the hash array is a String,
+    # convert it to lower case for case insensitive sorting
+    if hash_array.first["@#{sort_fieldname}"].is_a? String
+      hash_array = hash_array.sort_by { |elem| elem["@#{sort_fieldname}"].downcase }
+    else
+      hash_array = hash_array.sort_by { |elem| elem["@#{sort_fieldname}"] }
+    end
+  end
   hash_array.map { |hash_val| class_from_string(hash_val["@classname"]).new(hash_val) }
 end
 

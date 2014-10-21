@@ -19,13 +19,13 @@ module ProjectHanlon
         # get the slice commands map for this slice (based on the set of
         # commands that are typical for most slices)
         commands = get_command_map(
-          "active_model_help",
-          "get_all_active_models",
-          "get_active_model_by_uuid",
-          nil,
-          nil,
-          "remove_all_active_models",
-          "remove_active_model_by_uuid")
+            "active_model_help",
+            "get_all_active_models",
+            "get_active_model_by_uuid",
+            nil,
+            nil,
+            "remove_all_active_models",
+            "remove_active_model_by_uuid")
 
         # and add a few more commands specific to this slice; first remove the default line that
         # handles the lines where a UUID is passed in as part of a "get_active_model_by_uuid" command
@@ -84,8 +84,11 @@ module ProjectHanlon
           end
           return print_object_array(hash_array_to_obj_array([result]), "Active Model:")
         end
+        # get the active models from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        active_model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
+        sort_fieldname = 'node_uuid'
+        active_model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(active_model_array, "Active Models:", :style => :table)
       end
 

@@ -139,8 +139,11 @@ module ProjectHanlon
 
       def get_all_models
         @command = :get_all_models
+        # get the models from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
+        sort_fieldname = 'label'
+        model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(model_array, "Models:", :style => :table)
       end
 
@@ -164,7 +167,8 @@ module ProjectHanlon
         @command = :get_all_templates
         # get the list of model templates nd print it
         uri = URI.parse @uri_string + '/templates'
-        model_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        sort_fieldname = 'name'
+        model_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(model_templates, "Model Templates:")
       end
 
