@@ -268,6 +268,7 @@ module Hanlon
             get do
               policy_uuid = params[:uuid]
               policy = SLICE_REF.get_object("get_policy_by_uuid", :policy, policy_uuid)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Policy with UUID: [#{policy_uuid}]" unless policy
               # Issue 125 Fix - add policy serial number & bind_counter to rest api
               policy.line_number = policy.row_number
               policy.bind_counter = policy.current_count

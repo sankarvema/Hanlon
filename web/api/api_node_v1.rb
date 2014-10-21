@@ -2,6 +2,7 @@
 
 require 'json'
 require 'api_utils'
+require 'rubyipmi'
 
 module Hanlon
   module WebService
@@ -257,6 +258,63 @@ module Hanlon
                 end
               end
             end     # end GET /node/{uuid}
+
+            resource 'power' do
+
+              # GET /node/{uuid}/power
+              # Query for the power state of a specific node.
+              params do
+                requires :uuid, type: String, desc: "The node's UUID"
+              end
+              get do
+                node_uuid = params[:uuid]
+                node = SLICE_REF.get_object("node_with_uuid", :node, node_uuid)
+                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
+                # attempt to get the IP address of the BMC from the facts reported back to Hanlon by the Microkernel
+                ipmi_ip_address = node.attributes_hash['mk_ipmi_IP_Address']
+                # if we didn't find that IP address in the list of facts for this node, then throw
+                # an error (you can't get the power status if the node doesn't have an attached BMC)
+                raise ProjectHanlon::Error::Slice::CommandFailed, "BMC for node with UUID [#{node_uuid}] does not exist; power state cannot be determined" unless ipmi_ip_address
+                # if we get this far, then grab the IPMI username, password, and preferred IPMI command
+                # (freeipmi, ipmitool or, if unspecified, whichever is found first) from the server configuration
+                config_hash = $config.to_hash
+                config_hash.keys.each{ |key| config_hash.store(key[1..-1], config_hash.delete(key)) }
+                conn = Rubyipmi.connect(config_hash['ipmi_username'], config_hash['ipmi_password'], ipmi_ip_address, config_hash['username'])
+                current_power_status = conn.chassis.power.status
+                slice_success_response(SLICE_REF, :get_node_powerstatus, {'PowerStatus' => current_power_status}, :success_type => :generic)
+              end     # end GET /node/{uuid}/power
+
+              # POST /node/{uuid}/power
+              # Reset the power state of a specific node using the stated 'power_command'
+              # (valid values for the 'power_command' are 'on', 'off', 'reset', 'cycle' or 'softShutdown').
+              params do
+                requires :uuid, type: String, desc: "The node's UUID"
+                requires :power_command, type: String, desc: "The BMC-related power command (on, off, reset, or cycle)"
+              end
+              post do
+                node_uuid = params[:uuid]
+                power_command = params[:power_command]
+                node = SLICE_REF.get_object("node_with_uuid", :node, node_uuid)
+                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
+                # attempt to get the IP address of the BMC from the facts reported back to Hanlon by the Microkernel
+                ipmi_ip_address = node.attributes_hash['mk_ipmi_IP_Address']
+                # if we didn't find that IP address in the list of facts for this node, then throw
+                # an error (you can't get the power status if the node doesn't have an attached BMC)
+                raise ProjectHanlon::Error::Slice::CommandFailed, "BMC for node with UUID [#{node_uuid}] does not exist; power state cannot be controlled through node slice" unless ipmi_ip_address
+                # check the value of the power_command, throw an error if it's unrecognized
+                unless ['on','off','reset','cycle','softShutdown'].include?(power_command)
+                  raise ProjectHanlon::Error::Slice::CommandFailed, "Unrecognized power command [#{power_command}]; valid values are 'on', 'off', 'reset', 'cycle' or 'softShutdown'"
+                end
+                # if we get this far, then grab the IPMI username, password, and preferred IPMI command
+                # (freeipmi, ipmitool or, if unspecified, whichever is found first) from the server configuration
+                config_hash = $config.to_hash
+                config_hash.keys.each{ |key| config_hash.store(key[1..-1], config_hash.delete(key)) }
+                conn = Rubyipmi.connect(config_hash['ipmi_username'], config_hash['ipmi_password'], ipmi_ip_address, config_hash['username'])
+                current_power_status = conn.chassis.power.command(power_command)
+                slice_success_response(SLICE_REF, :get_node_powerstatus, {'PowerStatus' => current_power_status}, :success_type => :generic)
+              end     # end POST /node/{uuid}/power
+
+            end     # end resource /node/:uuid/power
 
           end     # end resource /node/:uuid
 

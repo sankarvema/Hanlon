@@ -21,6 +21,7 @@ gem 'facter'
 gem 'rufus-scheduler'
 gem 'warbler'
 gem 'puma'
+gem 'rubyipmi'
 
 group :test do
   gem 'rspec',              '>= 2.13.0'

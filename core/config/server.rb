@@ -27,6 +27,10 @@ module ProjectHanlon
       attr_accessor :persist_timeout
       attr_accessor :persist_dbname
 
+      attr_accessor :ipmi_username
+      attr_accessor :ipmi_password
+      attr_accessor :ipmi_command
+
       attr_accessor :base_path
       attr_accessor :api_version
       attr_accessor :admin_port
@@ -78,6 +82,10 @@ module ProjectHanlon
           'persist_password'         => '',
           'persist_timeout'          => 10,
           'persist_dbname'           => "project_hanlon",
+
+          'ipmi_username'            => '',
+          'ipmi_password'            => '',
+          'ipmi_command'             => '',
 
           'base_path'                => default_base_path,
           'api_version'              => 'v1',
