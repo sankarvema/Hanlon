@@ -107,12 +107,19 @@ module ProjectHanlon
       end
     end
 
-    def print_yaml(data)
+    def self.print_yaml(data)
       data.each { |key,val|
         print "\t#{key.sub("@","")}: ".white
         print "#{val} ".green
         print "\n"
       }
+    end
+
+
+    def self.class_from_string(str)
+      str.split('::').inject(Object) do |mod, class_name|
+        mod.const_get(class_name)
+      end
     end
 
   end

@@ -55,9 +55,11 @@ class ProjectHanlon::Main
     end
 
     command = argv.shift
-    # if ProjectHanlon::DbMigration::run_command(command, argv)
-    #   return ProjectHanlon::DbMigration::ErrorCodes[:no_error]
-    # end
+    if command != nil
+    if ProjectHanlon::DbMigration::run_command(command, argv)
+      return ProjectHanlon::DbMigration::ErrorCodes[:no_error]
+    end
+    end
 
     puts optparse
     print_available_commands
