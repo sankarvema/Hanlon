@@ -68,7 +68,6 @@ module ProjectHanlon
         commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-power|\-p|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
         # and add in a couple of lines to that handle those flags properly
         commands[:get][["-i", "--hw_id"]] = "get_all_nodes"
-        commands[:get][["-p", "--power"]] = "get_node_by_uuid"
         commands
       end
 

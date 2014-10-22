@@ -338,7 +338,7 @@ module Hanlon
                 ipmi_command = config_hash['ipmi_command']
                 conn = Rubyipmi.connect(ipmi_username, ipmi_password, ipmi_ip_address, ipmi_command)
                 current_power_status = conn.chassis.power.command(power_command)
-                slice_success_response(SLICE_REF, :update_node_powerstatus, {'UUID' => node.uuid, 'BMC IP' => ipmi_ip_address, 'Status' => ipmi_command}, :success_type => :generic)
+                slice_success_response(SLICE_REF, :update_node_powerstatus, {'UUID' => node.uuid, 'BMC IP' => ipmi_ip_address, 'Status' => power_command}, :success_type => :generic)
               end     # end POST /node/{uuid}/power
 
             end     # end resource /node/:uuid/power
