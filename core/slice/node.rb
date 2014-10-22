@@ -9,6 +9,36 @@ module ProjectHanlon
     # Used for policy management
     class Node < ProjectHanlon::Slice
 
+      # monkey-patch Hash class to add in functions needed for printing...
+      # (note, this is used in handling the result of the commands that
+      # return Hashes instead of serialized Hanlon objects)
+      Hash.class_eval do
+        # returns the header to print for a table of items in an array of hashes
+        def print_header
+          return keys
+        end
+        # returns the values to print for a table of items in an array of hashes
+        def print_items
+          return values
+        end
+        # returns the header to print for a single item
+        def print_item_header
+          return keys
+        end
+        # returns the values to print for a single item
+        def print_item
+          return values
+        end
+        # returns the color that should be used for values
+        def line_color
+          :white_on_black
+        end
+        # returns the color that should be used for headings
+        def header_color
+          :red_on_black
+        end
+      end
+
       # @param [Array] args
       def initialize(args)
         super(args)
@@ -53,11 +83,27 @@ module ProjectHanlon
                   :uuid_is     => 'not_allowed',
                   :required    => false
                 },
-                { :name        => :power,
+                { :name        => :bmc,
+                  :default     => nil,
+                  :short_form  => '-b',
+                  :long_form   => '--bmc',
+                  :description => 'Get the BMC (power) status of the specified node',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                },
+                { :name        => :ipmi_username,
+                  :default     => nil,
+                  :short_form  => '-u',
+                  :long_form   => '--username USERNAME',
+                  :description => 'The IPMI username',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                },
+                { :name        => :ipmi_password,
                   :default     => nil,
                   :short_form  => '-p',
-                  :long_form   => '--power',
-                  :description => 'Get the power status of the specified node',
+                  :long_form   => '--password PASSWORD',
+                  :description => 'The IPMI password',
                   :uuid_is     => 'not_allowed',
                   :required    => false
                 }
@@ -68,26 +114,58 @@ module ProjectHanlon
                   :short_form  => '-f',
                   :long_form   => '--field FIELD_NAME',
                   :description => 'The fieldname (attributes or hardware_id) to get',
-                  :uuid_is     => 'required',
+                  :uuid_is     => 'not_allowed',
                   :required    => false
                 },
-                { :name        => :power,
+                { :name        => :bmc,
+                  :default     => nil,
+                  :short_form  => '-b',
+                  :long_form   => '--bmc',
+                  :description => 'Get the BMC (power) status of the specified node',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                },
+                { :name        => :ipmi_username,
+                  :default     => nil,
+                  :short_form  => '-u',
+                  :long_form   => '--username USERNAME',
+                  :description => 'The IPMI username',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                },
+                { :name        => :ipmi_password,
                   :default     => nil,
                   :short_form  => '-p',
-                  :long_form   => '--power',
-                  :description => 'Get the power status of the specified node',
-                  :uuid_is     => 'required',
+                  :long_form   => '--password PASSWORD',
+                  :description => 'The IPMI password',
+                  :uuid_is     => 'not_allowed',
                   :required    => false
                 }
             ],
             :update => [
-                { :name        => :power,
+                { :name        => :bmc,
                   :default     => nil,
-                  :short_form  => '-p',
-                  :long_form   => '--power POWER_CMD',
-                  :description => 'Run a POWER_CMD (on, off, reset, cycle, or softShutdown)',
+                  :short_form  => '-b',
+                  :long_form   => '--bmc POWER_CMD',
+                  :description => 'Get the BMC (power) status of the specified node',
                   :uuid_is     => 'required',
                   :required    => true
+                },
+                { :name        => :ipmi_username,
+                  :default     => nil,
+                  :short_form  => '-u',
+                  :long_form   => '--username USERNAME',
+                  :description => 'The IPMI username',
+                  :uuid_is     => 'required',
+                  :required    => false
+                },
+                { :name        => :ipmi_password,
+                  :default     => nil,
+                  :short_form  => '-p',
+                  :long_form   => '--password PASSWORD',
+                  :description => 'The IPMI password',
+                  :uuid_is     => 'required',
+                  :required    => false
                 }
             ]
         }.freeze
@@ -116,9 +194,9 @@ module ProjectHanlon
                 "\thanlon node [get] (UUID)                                " + "Display details for a node".yellow,
                 "\thanlon node [get] (UUID) [--field,-f FIELD]             " + "Display node's field values".yellow,
                 "\t    Note; the FIELD value can be either 'attributes' or 'hardware_ids'",
-                "\thanlon node [get] (UUID) [--power,-p]                   " + "Display node's power status".yellow,
-                "\thanlon node update (UUID) --power,-p (POWER_CMD)        " + "Run a BMC-related power command".yellow,
-                "\t    Note; the POWER_CMD can any one of 'on', 'off', 'reset', 'cycle' or 'softShutdown'",
+                "\thanlon node [get] (UUID) [--bmc,-b]                     " + "Display node's power status".yellow,
+                "\thanlon node update (UUID) --bmc,-b (BMC_POWER_CMD)      " + "Run a BMC-related power command".yellow,
+                "\t    Note; the BMC_POWER_CMD can any one of 'on', 'off', 'reset', 'cycle' or 'softShutdown'",
                 "\thanlon node --help                                      " + "Display this screen".yellow].join("\n")
 
       end
@@ -140,6 +218,7 @@ module ProjectHanlon
           # subcommand (this method will return a UUID value, if present, and the
           # options map constructed from the @commmand_array)
           node_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon node [get] (options...)")
+          options[:hw_id] = hardware_id
           return print_node_cmd_output("#{@uri_string}?uuid=#{hardware_id}", options)
         end
         # otherwise just get the list of all nodes and print that result
@@ -161,19 +240,32 @@ module ProjectHanlon
       end
 
       def print_node_cmd_output(uri_string, options)
-        power_cmd = options[:power]
-        if power_cmd
-          uri = URI.parse("#{uri_string}/power")
+        bmc_power_cmd = options[:bmc]
+        selected_option = options[:field]
+        hw_id = options[:hw_id]
+        ipmi_username = options[:ipmi_username]
+        ipmi_password = options[:ipmi_password]
+        raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot use the 'field' and 'bmc' options simultaneously" if bmc_power_cmd && selected_option
+        raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot use the 'hw_id' and 'bmc' options simultaneously" if bmc_power_cmd && hw_id
+        if bmc_power_cmd
+          uri_string << '/power'
+          uri_string << "?ipmi_username=#{ipmi_username}" if ipmi_username && !ipmi_username.empty?
+          if ipmi_username && !ipmi_username.empty? &&
+              ipmi_password && !ipmi_password.empty?
+            uri_string << "&ipmi_password=#{ipmi_password}"
+          elsif ipmi_password && !ipmi_password.empty?
+            uri_string << "?ipmi_password=#{ipmi_password}"
+          end
+          uri = URI.parse(uri_string)
           # get the current power state of the node using that URI
           include_http_response = true
           result, response = hnl_http_get(uri, include_http_response)
           if response.instance_of?(Net::HTTPBadRequest)
             raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
           end
-          print_object_array(hash_array_to_obj_array([result]), "Node Power Status:")
+          print_object_array([result], "Node Power Status:", :style => :table)
         else
-          # otherwise, check to see if a field was requested
-          selected_option = options[:field]
+          raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot use the IPMI username/password without the '-b' option" if ipmi_username || ipmi_password
           # setup the proper URI depending on the options passed in
           uri = URI.parse(uri_string)
           print_node_attributes = false
@@ -209,9 +301,21 @@ module ProjectHanlon
         # options map constructed from the @commmand_array)
         node_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon model update UUID (options...)")
         includes_uuid = true if node_uuid
-        power_cmd = options[:power]
+        power_cmd = options[:bmc]
+        ipmi_username = options[:ipmi_username]
+        ipmi_password = options[:ipmi_password]
+        # modify URI string based on the values passed in for the ipmi_username and ipmi_password
+        # parameters (if any)
+        uri_string = "#{@uri_string}/#{node_uuid}/power"
+        uri_string << "?ipmi_username=#{ipmi_username}" if ipmi_username && !ipmi_username.empty?
+        if ipmi_username && !ipmi_username.empty? &&
+            ipmi_password && !ipmi_password.empty?
+          uri_string << "&ipmi_password=#{ipmi_password}"
+        elsif ipmi_password && !ipmi_password.empty?
+          uri_string << "?ipmi_password=#{ipmi_password}"
+        end
         # if a power command was passed in, then process it and return the result
-        uri = URI.parse("#{@uri_string}/#{node_uuid}/power")
+        uri = URI.parse(uri_string)
         if ['on','off','reset','cycle','softShutdown'].include?(power_cmd)
           body_hash = {
               "power_command" => power_cmd,
@@ -222,7 +326,7 @@ module ProjectHanlon
           if response.instance_of?(Net::HTTPBadRequest)
             raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
           end
-          print_object_array(hash_array_to_obj_array([result]), "Node Power Result:")
+          print_object_array([result], "Node Power Result:", :style => :table)
         else
           raise ProjectHanlon::Error::Slice::CommandFailed, "Unrecognized power command [#{power_cmd}]; valid values are 'on', 'off', 'reset', 'cycle' or 'softShutdown'"
         end

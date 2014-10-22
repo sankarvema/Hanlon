@@ -103,14 +103,14 @@ module Hanlon
             # handle a node checkin (from a Hanlon Microkernel instance)
             #   parameters:
             #         required:
-            #           :last_state     | String | The "state" the node is currently in.    |           | Default: unavailable
+            #           :last_state     | String | The "state" the node is currently in.    |     | Default: unavailable
             #         optional (although one of these two must be specified):
-            #           :uuid           | String | The UUID for the node (from the BIOS).   |           | Default: unavailable
-            #           :mac_id         | String | The MAC addresses for the node's NICs.   |           | Default: unavailable
+            #           :uuid           | String | The UUID for the node (from the BIOS).   |     | Default: unavailable
+            #           :mac_id         | String | The MAC addresses for the node's NICs.   |     | Default: unavailable
             #         optional
-            #           :first_checkin  | Boolean | Indicates if is first checkin (or not). |           | Default: unavailable
+            #           :first_checkin  | Boolean | Indicates if is first checkin (or not). |     | Default: unavailable
             #         allowed for backwards compatibility (although will throw an error if used with 'mac_id')
-            #           :hw_id          | String | The MAC addresses for the node's NICs.   |      | Default: unavailable
+            #           :hw_id          | String | The MAC addresses for the node's NICs.   |     | Default: unavailable
 
             params do
               requires :last_state, type: String, desc: "The last state received by the Microkernel"
@@ -263,11 +263,21 @@ module Hanlon
 
               # GET /node/{uuid}/power
               # Query for the power state of a specific node.
+              #   parameters:
+              #     required:
+              #       :uuid          | String   | The uuid of the specified node.      |
+              #     optional:
+              #       :ipmi_username | String   | The username used to access the BMC. |
+              #       :ipmi_password | String   | The password used to access the BMC. |
               params do
                 requires :uuid, type: String, desc: "The node's UUID"
+                optional :ipmi_username, type: String, desc: "The IPMI username"
+                optional :ipmi_password, type: String, desc: "The IPMI password"
               end
               get do
                 node_uuid = params[:uuid]
+                ipmi_username = params[:ipmi_username]
+                ipmi_password = params[:ipmi_password]
                 node = SLICE_REF.get_object("node_with_uuid", :node, node_uuid)
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
                 # attempt to get the IP address of the BMC from the facts reported back to Hanlon by the Microkernel
@@ -279,21 +289,35 @@ module Hanlon
                 # (freeipmi, ipmitool or, if unspecified, whichever is found first) from the server configuration
                 config_hash = $config.to_hash
                 config_hash.keys.each{ |key| config_hash.store(key[1..-1], config_hash.delete(key)) }
-                conn = Rubyipmi.connect(config_hash['ipmi_username'], config_hash['ipmi_password'], ipmi_ip_address, config_hash['username'])
+                ipmi_username = config_hash['ipmi_username'] unless ipmi_username
+                ipmi_password = config_hash['ipmi_password'] unless ipmi_password
+                ipmi_command = config_hash['ipmi_command']
+                conn = Rubyipmi.connect(ipmi_username, ipmi_password, ipmi_ip_address, ipmi_command)
                 current_power_status = conn.chassis.power.status
-                slice_success_response(SLICE_REF, :get_node_powerstatus, {'PowerStatus' => current_power_status}, :success_type => :generic)
+                slice_success_response(SLICE_REF, :get_node_powerstatus, {'UUID' => node.uuid, 'BMC IP' => ipmi_ip_address, 'Status' => current_power_status}, :success_type => :generic)
               end     # end GET /node/{uuid}/power
 
               # POST /node/{uuid}/power
               # Reset the power state of a specific node using the stated 'power_command'
-              # (valid values for the 'power_command' are 'on', 'off', 'reset', 'cycle' or 'softShutdown').
+              #   parameters:
+              #     required:
+              #       uuid          | String   | The uuid of the specified node.      |         | Default: unavailable
+              #       power_command | String   | The BMC power command to execute.    |         | Default: unavailable
+              #     optional:
+              #       ipmi_username | String   | The username used to access the BMC. |         | Default: unavailable
+              #       ipmi_password | String   | The password used to access the BMC. |         | Default: unavailable
+              # (Note; valid values for the 'power_command' are 'on', 'off', 'reset', 'cycle' or 'softShutdown').
               params do
                 requires :uuid, type: String, desc: "The node's UUID"
                 requires :power_command, type: String, desc: "The BMC-related power command (on, off, reset, or cycle)"
+                optional :ipmi_username, type: String, desc: "The IPMI username"
+                optional :ipmi_password, type: String, desc: "The IPMI password"
               end
               post do
                 node_uuid = params[:uuid]
                 power_command = params[:power_command]
+                ipmi_username = params[:ipmi_username]
+                ipmi_password = params[:ipmi_password]
                 node = SLICE_REF.get_object("node_with_uuid", :node, node_uuid)
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node && (node.class != Array || node.length > 0)
                 # attempt to get the IP address of the BMC from the facts reported back to Hanlon by the Microkernel
@@ -309,9 +333,12 @@ module Hanlon
                 # (freeipmi, ipmitool or, if unspecified, whichever is found first) from the server configuration
                 config_hash = $config.to_hash
                 config_hash.keys.each{ |key| config_hash.store(key[1..-1], config_hash.delete(key)) }
-                conn = Rubyipmi.connect(config_hash['ipmi_username'], config_hash['ipmi_password'], ipmi_ip_address, config_hash['username'])
+                ipmi_username = config_hash['ipmi_username'] unless ipmi_username
+                ipmi_password = config_hash['ipmi_password'] unless ipmi_password
+                ipmi_command = config_hash['ipmi_command']
+                conn = Rubyipmi.connect(ipmi_username, ipmi_password, ipmi_ip_address, ipmi_command)
                 current_power_status = conn.chassis.power.command(power_command)
-                slice_success_response(SLICE_REF, :get_node_powerstatus, {'PowerStatus' => current_power_status}, :success_type => :generic)
+                slice_success_response(SLICE_REF, :update_node_powerstatus, {'UUID' => node.uuid, 'BMC IP' => ipmi_ip_address, 'Status' => ipmi_command}, :success_type => :generic)
               end     # end POST /node/{uuid}/power
 
             end     # end resource /node/:uuid/power
