@@ -310,5 +310,5 @@ join_vsan_cluster("<%= vsan_uuid %>")
 <% end %>
 
 <% for @pkg in @packages %>
-install_esxi_packages(<%= @pkg['url'] %>, <%= @pkg['force'] %>)
+install_esxi_packages("<%= @pkg['url'] %>", <%= @pkg['force'] ? "True" : "False" %>)
 <% end %>
