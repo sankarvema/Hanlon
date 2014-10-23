@@ -65,9 +65,11 @@ module ProjectHanlon
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         # then add a slightly different version of this line back in; one that incorporates
         # the other flags we might pass in as part of a "get_all_nodes" command
-        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-power|\-p|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-bmc|\-b|\-\-username|\-u|\-\-password|\-p|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
         # and add in a couple of lines to that handle those flags properly
-        commands[:get][["-i", "--hw_id"]] = "get_all_nodes"
+        [["-i", "--hw_id"],["-u", "--username"],["-p", "--password"],["-b", "--bmc"]].each { |val|
+          commands[:get][val] = "get_all_nodes"
+        }
         commands
       end
 
@@ -203,16 +205,27 @@ module ProjectHanlon
       def get_all_nodes
         # Get all node instances and print/return
         @command = :get_all_nodes
-        hardware_id = @command_array[0] if @prev_args.peek(0) == "--hw_id"
+        # grab the hardware ID (if one was supplied); throw an error if the flag
+        # was found but the value was not
+        if @prev_args.peek(0) == "--hw_id"
+          hardware_id = @command_array.shift
+          raise ProjectHanlon::Error::Slice::InputError, "Usage Error: missing hardware ID value" unless hardware_id && !hardware_id.empty?
+        else
+          hw_id_index = @command_array.index('-i') || @command_array.index('--hw_id')
+          if hw_id_index
+            hw_id_val = @command_array[hw_id_index + 1]
+            hardware_id = @command_array[hw_id_index + 1] if hw_id_val && !['-p','-password','-u','-user','-b','-bmc'].include?(hw_id_val)
+            raise ProjectHanlon::Error::Slice::InputError, "Usage Error: missing hardware ID value" unless hardware_id && !hardware_id.empty?
+            @command_array.delete_at(hw_id_index + 1); @command_array.delete_at(hw_id_index)
+            @command_array.unshift(@prev_args.pop)
+          end
+        end
         # if a hardware ID was passed in, then append it to the @uri_string and print the result...
         # (note; in this case might also have ot handle the same options used in the "get_node_by_uuid"
         # method, except the UUID will not be required since we've supplied a hardware_id instead)
         if hardware_id
           # load the appropriate option items for the subcommand we are handling
           option_items = command_option_data(:get_all)
-          # and get rid of the extra argument in the @command_array (the hardware_id of the node
-          # we're interested in)
-          @command_array.shift
           # parse and validate the options that were passed in as part of this
           # subcommand (this method will return a UUID value, if present, and the
           # options map constructed from the @commmand_array)
@@ -224,6 +237,10 @@ module ProjectHanlon
             return update_power_state(@uri_string, node_uuid, options)
           end
           return print_node_cmd_output(@uri_string, options)
+        end
+        # catch situations where user included the BMC flag, but didn't include a hardware_id
+        if (['-b','-bmc'].include?(@prev_args.peek(0))) || (['-b','-bmc'] & @command_array)
+          raise ProjectHanlon::Error::Slice::InputError, "Usage Error: a hardware ID value must be specified to get/set BMC power-state"
         end
         # otherwise just get the list of all nodes and print that result
         uri = URI.parse @uri_string
