@@ -78,7 +78,7 @@ module Hanlon
             ipmi_ip_address = node.attributes_hash['mk_ipmi_IP_Address']
             # if we didn't find that IP address in the list of facts for this node, then throw
             # an error (you can't get the power status if the node doesn't have an attached BMC)
-            raise ProjectHanlon::Error::Slice::CommandFailed, "BMC for node with UUID [#{node_uuid}] does not exist; power state cannot be determined" unless ipmi_ip_address
+            raise ProjectHanlon::Error::Slice::CommandFailed, "BMC for node with UUID [#{node.uuid}] does not exist; power state cannot be determined" unless ipmi_ip_address
             # if we get this far, then grab the IPMI username, password, and preferred IPMI command
             # (freeipmi, ipmitool or, if unspecified, whichever is found first) from the server configuration
             config_hash = $config.to_hash
@@ -106,7 +106,7 @@ module Hanlon
             ipmi_ip_address = node.attributes_hash['mk_ipmi_IP_Address']
             # if we didn't find that IP address in the list of facts for this node, then throw
             # an error (you can't get the power status if the node doesn't have an attached BMC)
-            raise ProjectHanlon::Error::Slice::CommandFailed, "BMC for node with UUID [#{node_uuid}] does not exist; power state cannot be controlled through node slice" unless ipmi_ip_address
+            raise ProjectHanlon::Error::Slice::CommandFailed, "BMC for node with UUID [#{node.uuid}] does not exist; power state cannot be controlled through node slice" unless ipmi_ip_address
             # check the value of the power_command, throw an error if it's unrecognized
             unless ['on','off','reset','cycle','softShutdown'].include?(power_command)
               raise ProjectHanlon::Error::Slice::CommandFailed, "Unrecognized power command [#{power_command}]; valid values are 'on', 'off', 'reset', 'cycle' or 'softShutdown'"
