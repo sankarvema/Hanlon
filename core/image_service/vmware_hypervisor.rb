@@ -36,9 +36,9 @@ module ProjectHanlon
       def verify(lcl_image_path)
         # check to make sure that the hashes match (of the file list
         # extracted and the file list from the ISO)
-        unless super(lcl_image_path)
-          logger.error "ISO file structure is invalid"
-          return [false, "ISO file structure is invalid"]
+        is_valid, result = super(lcl_image_path)
+        unless is_valid
+          return [false, result]
         end
         # and check some parameters from the files extracted from the ISO
         if File.exist?("#{image_path}/vmware-esx-base-osl.txt") && File.exist?("#{image_path}/boot.cfg")
