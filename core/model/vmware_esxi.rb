@@ -48,7 +48,10 @@ module ProjectHanlon
         @vcenter_datacenter_path = nil
         @vcenter_cluster_path    = nil
 
-        @packages		= nil
+        @enable_vsan             = false
+        @vsan_uuid               = UUID.generate
+        @packages                = []
+
         # Metadata
         @req_metadata_hash       = {
             "@esx_license"             => { :default     => "",
@@ -124,7 +127,7 @@ module ProjectHanlon
                                            :validation  => '',
                                            :required    => false,
                                            :description => "Generate vSAN UUID" },
-            "@vsan_uuid"               => { :default     => UUID.generate,
+            "@vsan_uuid"               => { :default     => "",
                                             :example     => "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
                                             :validation  => '^[a-z\d]{8}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{12}$',
                                             :required    => false,
