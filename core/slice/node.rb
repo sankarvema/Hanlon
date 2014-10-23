@@ -65,9 +65,9 @@ module ProjectHanlon
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         # then add a slightly different version of this line back in; one that incorporates
         # the other flags we might pass in as part of a "get_all_nodes" command
-        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-bmc|\-b|\-\-username|\-u|\-\-password|\-p|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-bmc|\-f|\-\-field|\-b|\-\-username|\-u|\-\-password|\-p|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_node_by_uuid"
         # and add in a couple of lines to that handle those flags properly
-        [["-i", "--hw_id"],["-u", "--username"],["-p", "--password"],["-b", "--bmc"]].each { |val|
+        [["-f", "--field"], ["-i", "--hw_id"],["-u", "--username"],["-p", "--password"],["-b", "--bmc"]].each { |val|
           commands[:get][val] = "get_all_nodes"
         }
         commands
