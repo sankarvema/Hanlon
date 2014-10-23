@@ -119,14 +119,21 @@ module ProjectHanlon
                                             :validation  => '^[a-zA-Z\d-]{3,}$',
                                             :required    => false,
                                             :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" },
-            "@packages"    => { :default     => "",
-                                :example     => "",
-                                :validation  => '',
-                                :required    => false,
-                                :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" }
-
-
-
+            "@enable_vsan"       => { :default     => false,
+                                           :example     => "",
+                                           :validation  => '',
+                                           :required    => false,
+                                           :description => "Generate vSAN UUID" },
+            "@vsan_uuid"               => { :default     => UUID.generate,
+                                            :example     => "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                                            :validation  => '^[a-z\d]{8}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{12}$',
+                                            :required    => false,
+                                            :description => "VMware vSAN UUID.  Use the default or type in" },
+            "@packages"                => { :default     => "",
+                                            :example     => "",
+                                            :validation  => '',
+                                            :required    => false,
+                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" }
         }
 
         from_hash(hash) unless hash == nil

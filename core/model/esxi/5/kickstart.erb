@@ -7,25 +7,37 @@ reboot
 
 %include /tmp/networkconfig
 %pre --interpreter=busybox
+
 echo 'network --bootproto=static --addvmportgroup=false --device=vmnic0 --ip=<%= node_ip_address %> --netmask=<%= @ip_range_subnet %> --gateway=<%= @gateway %> --nameserver=<%= @nameserver %> --hostname=<%= node_hostname %>' > /tmp/networkconfig
 
+
+#Send callback to hanlon that the kickstart is complete
 wget <%= api_svc_uri %>/policy/callback/<%= @policy_uuid %>/kickstart/end
+
 %firstboot --interpreter=busybox
 
+vsan_syslog_key = "VSAN-KS"
+
+logger $vsan_syslog_key " Hanlon Postinstall complete"
+#Send callback to hanlon that the postinstall is complete
 wget <%= api_svc_uri %>/policy/callback/<%= @policy_uuid %>/postinstall/end
-# enable HV (Hardware Virtualization to run nested 64bit Guests + Hyper-V VM)
-grep -i 'vhv.allow' /etc/vmware/config || echo 'vhv.allow = 'TRUE'' >> /etc/vmware/config
+
+logger $vsan_syslog_key " Enabling & Starting SSH"
 vim-cmd hostsvc/enable_ssh
 vim-cmd hostsvc/start_ssh
 
-# enable & start ESXi Shell (TSM)
+logger $vsan_syslog_key " Enabling & Starting ESXi Shell"
 vim-cmd hostsvc/enable_esx_shell
 vim-cmd hostsvc/start_esx_shell
 
-esxcli system settings advanced set -o /UserVars/SuppressShellWarning -i 1
+logger $vsan_syslog_key " Reconfiguring VSAN Default Policy"
+esxcli vsan policy setdefault -c vdisk -p "((\"hostFailuresToTolerate\" i1) (\"forceProvisioning\" i1))"
+esxcli vsan policy setdefault -c vmnamespace -p "((\"hostFailuresToTolerate\" i1) (\"forceProvisioning\" i1))"
+ 
+logger $vsan_syslog_key "Enabling VSAN Traffic on vmk0"
+esxcli vsan network ipv4 add -i vmk0
 
-
-# rename local datastore to something more meaningful
+logger $vsan_syslog_key "Renaming datastore1"
 vim-cmd hostsvc/datastore/rename datastore1 "$(hostname -s)-local-storage-1"
 
 # assign license
@@ -67,4 +79,236 @@ vim-cmd hostsvc/maintenance_mode_enter
 # copy %first boot script logs to persisted datastore
 cp /var/log/hostd.log "/vmfs/volumes/$(hostname -s)-local-storage-1/firstboot-hostd.log"
 cp /var/log/esxi_install.log "/vmfs/volumes/$(hostname -s)-local-storage-1/firstboot-esxi_install.log"
-reboot
+
+## not sure what to do about the reboot
+
+%firstboot --interpreter=python
+ 
+from subprocess import Popen, PIPE
+import syslog
+import sys
+import re
+import traceback
+
+vib_syslog_key = "VIB-KS"
+vsan_syslog_key = "VSAN-KS"
+
+'''
+If we receive something other than zip or vib this will be the exception we
+raise.  Don't really need to modify it just inheriting the base Exception class
+'''
+
+
+class IncorrectFileType(Exception):
+    pass
+
+
+'''
+Executes process using the shell, waits for the command to exit and
+returns returns output (string), err (string), returncode (int)
+'''
+
+
+def execute_process(cmd_line):
+    try:
+        process = Popen(cmd_line, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+        process.wait()
+        output, err = process.communicate()
+        returncode = process.returncode
+        return output, err, returncode
+    except Exception as e:
+        syslog.syslog("Exception %s in execute_process()" % str(e))
+        sys.exit(1)
+
+
+'''
+Using vim-cmd find the location of the scratch partition that can be used to download a ZIP
+based package.  The output of the process needs to be parsed specifically for the value of
+the ConfiguredScratchLocation which is the UUID based path
+'''
+
+
+def find_scratch_location():
+    output, err, returncode = execute_process('vim-cmd hostsvc/advopt/view ScratchConfig.ConfiguredScratchLocation')
+
+    if returncode == 0:
+        match = re.search('value = "(.*)"', output)
+        if match:
+            print match.group(1)
+            return match.group(1)
+    else:
+        return ""
+
+
+'''
+Check to make sure that we have a scratch partition.
+Parse result of vim-cmd, which will provide path of scratch
+Download zip package
+return empty string or path of local zip
+'''
+
+
+def download_zip_package(url):
+    scratch = find_scratch_location()
+    if len(scratch) != 0:
+        split_url = url.split('/')
+        file_name = split_url[len(split_url)-1]
+        filename_with_path = "%s/%s" % (scratch, file_name)
+        cmd_line = "wget -q -O %s %s" % (filename_with_path, url)
+        syslog.syslog("%s Executing %s" % (vib_syslog_key, cmd_line))
+        output, err, returncode = execute_process(cmd_line)
+        return filename_with_path, returncode
+    else:
+        #No scratch partition cannot install!
+        return "", 1
+'''
+Iterates over vibs with the corresponding command line to install VIB or ZIP packagess
+
+NOTES: I have removed exceptions from this method purposely.  It could be a single VIB or ZIP that fails to
+install but the others may complete.
+'''
+
+
+def do_software_vib_install(url, force):
+
+    returncode = 0
+
+    try:
+        if url.endswith("zip"):
+            filename_with_path, returncode = download_zip_package(url)
+            cmd_line = "esxcli software vib install %s -d %s" % (("-f" if force else ""), filename_with_path)
+        elif url.endswith("vib"):
+            cmd_line = "esxcli software vib install %s -v %s" % (("-f" if force else ""), url)
+        else:
+            raise IncorrectFileType()
+
+        if returncode == 0:
+            syslog.syslog("%s Executing %s" % (vib_syslog_key, cmd_line))
+            output, err, returncode = execute_process(cmd_line)
+            if returncode != 0:
+                syslog.syslog("%s ERROR %s in do_software_vib_install()" % (vib_syslog_key, output))
+        else:
+            syslog.syslog("%s ERROR %s in do_software_vib_install()" % (vib_syslog_key, url))
+    except:
+        syslog.syslog("%s ERROR %s in do_software_vib_install()" % (vib_syslog_key, url))
+
+
+def install_esxi_packages(url, force):
+
+    try:
+        do_software_vib_install(url, force)
+    except IncorrectFileType:
+        print "Incorrect file type for adding package to ESXi"
+        sys.exit(1)
+    except:
+        print traceback.format_exc()
+        sys.exit(1)
+
+
+'''
+### VSAN CODE SECTION ###
+Minor refactoring and modification from William Lam's code
+http://www.virtuallyghetto.com/2014/07/esxi-5-5-kickstart-script-for-setting-up-vsan.html
+'''
+
+'''
+From the vdq command determine which disks are solid-state and magnetic, return
+arrays of each.  If a disk is non-local force, change it in the process.
+Not 100% sure that is a good idea especially if you had SAN-attached storage.
+'''
+def disk_type_array():
+
+    vdq_cmd_line = "/sbin/vdq -q"
+    output, err, return_code = execute_process(vdq_cmd_line)
+
+    #arrays for magnetic and solid state disks
+    md = []
+    ssd = []
+
+    if return_code == 0:
+        vdq_output = eval(output)
+        for device in vdq_output:
+            if device['State'] == 'Eligible for use by VSAN':
+                if device['Reason'] == 'Non-local disk':
+                    nmp_satp_rule_cmd = "esxcli storage nmp satp rule add -s VMW_SATP_LOCAL -o enable_local -d %s" % device['Name']
+                    core_claming_cmd = "esxcli storage core claiming reclaim -d %s" % device['Name']
+
+                    syslog.syslog(vsan_syslog_key + " Setting enable_local and reclaiming " + device['Name'])
+                    output, err, return_code = execute_process(nmp_satp_rule_cmd)
+                    if return_code != 0:
+                        syslog.syslog(vsan_syslog_key + " ERROR esxcli storage command returned a non-zero exit. %s" % err)
+                        sys.exit(1)
+                    output, err, return_code = execute_process(core_claming_cmd)
+                    if return_code != 0:
+                        syslog.syslog(vsan_syslog_key + " ERROR esxcli storage command returned a non-zero exit. %s" % err)
+                        sys.exit(1)
+                if device['IsSSD'] == '1':
+                    ssd.append(device['Name'])
+                else:
+                    md.append(device['Name'])
+    else:
+        syslog.syslog(vsan_syslog_key + " ERROR vdq command returned a non-zero exit. %s" % err)
+        sys.exit(1)
+
+    return md, ssd
+
+'''
+Confirm that we have at least one ssd available, otherwise exit
+Determine the quantity of magnetic disks per vSAN group.
+Create new vSAN group per SSDs that are available
+'''
+def create_vsan_disk_group():
+
+        try:
+            md, ssd = disk_type_array()
+            md_length = len(md)
+            ssd_length = len(ssd)
+
+            #might as well quit while we are ahead...
+            if ssd_length == 0:
+                syslog.syslog(vsan_syslog_key + " ERROR no SSDs available for use in vSAN disk group")
+                sys.exit(1)
+
+            # find the number of magnetic disks are available to be used
+            # per vSAN disk group
+            md_per_vsan_group = md_length / ssd_length
+            if md_per_vsan_group > 7:
+                md_per_vsan_group = 7
+
+            for ssd_disk_name in ssd:
+                for x in range(0, md_per_vsan_group, 1):
+                    temp_md = []
+                    temp_md.append(md.pop())
+
+                diskgroup_cmd = 'esxcli vsan storage add -s ' + ssd_disk_name + ' -d ' + ' -d '.join(temp_md)
+                syslog.syslog(vsan_syslog_key + "Creating VSAN Disk Group: %s" % diskgroup_cmd)
+
+                output, err, return_code = execute_process(diskgroup_cmd)
+
+                if return_code != 0:
+                    syslog.syslog(vsan_syslog_key + " ERROR Unable ot create vSAN Disk Group: %s" % err)
+                    sys.exit(1)
+
+        except:
+            syslog.syslog(vsan_syslog_key + " ERROR %s" % traceback.format_exc())
+            sys.exit(1)
+
+'''
+Join ESXi node to a vSAN cluster
+'''
+def join_vsan_cluster(vsan_uuid):
+    syslog.syslog(vsan_syslog_key + " Creating VSAN Cluster using UUID: %s" % vsan_uuid)
+    output, err, return_code = execute_process("esxcli vsan cluster join -u %s" % vsan_uuid)
+    if return_code != 0:
+        syslog.syslog(vsan_syslog_key + " ERROR Unable to create vSAN cluster: %s" % err)
+        sys.exit(1)
+
+
+<% if @enable_vsan %>
+create_vsan_disk_group()
+join_vsan_cluster("<%= vsan_uuid %>")
+<% end %>
+
+<% for @pkg in @packages %>
+install_esxi_packages(<%= @pkg['url'] %>, <%= @pkg['force'] %>)
+<% end %>
