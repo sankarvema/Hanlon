@@ -239,7 +239,7 @@ module ProjectHanlon
           return print_node_cmd_output(@uri_string, options)
         end
         # catch situations where user included the BMC flag, but didn't include a hardware_id
-        if (['-b','-bmc'].include?(@prev_args.peek(0))) || (['-b','-bmc'] & @command_array)
+        if (['-b','-bmc'].include?(@prev_args.peek(0))) || !(['-b','-bmc'] & @command_array).empty?
           raise ProjectHanlon::Error::Slice::InputError, "Usage Error: a hardware ID value must be specified to get/set BMC power-state"
         end
         # otherwise just get the list of all nodes and print that result
