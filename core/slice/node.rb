@@ -220,8 +220,8 @@ module ProjectHanlon
             @command_array.unshift(@prev_args.pop)
           end
         end
-        # if a hardware ID was passed in, then append it to the @uri_string and print the result...
-        # (note; in this case might also have ot handle the same options used in the "get_node_by_uuid"
+        # if a hardware ID was passed in, then use it to select the appropriate node and print the result...
+        # (note; in this case might also have to handle the same options used in the "get_node_by_uuid"
         # method, except the UUID will not be required since we've supplied a hardware_id instead)
         if hardware_id
           # load the appropriate option items for the subcommand we are handling
