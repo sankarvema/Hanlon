@@ -701,7 +701,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     print_array.each_with_index do |line, li|
       line_string = ""
       line.each_with_index do |col, ci|
-        max_col = print_array.collect { |x| x[ci].length }.max
+        # /\e\[(\d+)(;\d+)*m/
+        # Removes foreground and/or background colors
+        max_col = print_array.collect { |x| x[ci].gsub(/\e\[(\d+)(;\d+)*m/, '').length }.max
         if li == 0
           if header_color
             line_string << "#{col.center(max_col)}  ".send(header_color)
