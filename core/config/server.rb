@@ -29,7 +29,7 @@ module ProjectHanlon
 
       attr_accessor :ipmi_username
       attr_accessor :ipmi_password
-      attr_accessor :ipmi_command
+      attr_accessor :ipmi_utility
 
       attr_accessor :base_path
       attr_accessor :api_version
@@ -85,7 +85,7 @@ module ProjectHanlon
 
           'ipmi_username'            => '',
           'ipmi_password'            => '',
-          'ipmi_command'             => '',
+          'ipmi_utility'             => '',
 
           'base_path'                => default_base_path,
           'api_version'              => 'v1',

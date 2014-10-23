@@ -85,8 +85,8 @@ module ProjectHanlon
                 { :name        => :bmc,
                   :default     => nil,
                   :short_form  => '-b',
-                  :long_form   => '--bmc',
-                  :description => 'Get the BMC (power) status of the specified node',
+                  :long_form   => '--bmc [POWER_CMD]',
+                  :description => 'Get/set the power-state of the specified node',
                   :uuid_is     => 'not_allowed',
                   :required    => false
                 },
@@ -218,7 +218,12 @@ module ProjectHanlon
           # options map constructed from the @commmand_array)
           node_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon node [get] (options...)")
           options[:hw_id] = hardware_id
-          return print_node_cmd_output("#{@uri_string}?uuid=#{hardware_id}", options)
+          # check to see if an option was passed in for a power-control command
+          bmc_power_cmd = options[:bmc]
+          if bmc_power_cmd && options[:bmc].class == String
+            return update_power_state(@uri_string, node_uuid, options)
+          end
+          return print_node_cmd_output(@uri_string, options)
         end
         # otherwise just get the list of all nodes and print that result
         uri = URI.parse @uri_string
@@ -235,7 +240,14 @@ module ProjectHanlon
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
         node_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon node [get] (UUID) (options...)")
+        raise ProjectHanlon::Error::Slice::InputError, "Usage Error: missing UUID value" if /^\-/.match(node_uuid)
         print_node_cmd_output("#{@uri_string}/#{node_uuid}", options)
+      end
+
+      def add_field_to_query_string(uri_string, fieldname, value)
+        # if there's already a query string in this uri_string, then
+        # just append to it, otherwise start a new query string
+        /^[a-z]+:\/\/[^\?]+\?\S+$/.match(uri_string) ? uri_string << "&#{fieldname}=#{value}" : uri_string << "?#{fieldname}=#{value}"
       end
 
       def print_node_cmd_output(uri_string, options)
@@ -245,16 +257,11 @@ module ProjectHanlon
         ipmi_username = options[:ipmi_username]
         ipmi_password = options[:ipmi_password]
         raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot use the 'field' and 'bmc' options simultaneously" if bmc_power_cmd && selected_option
-        raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot use the 'hw_id' and 'bmc' options simultaneously" if bmc_power_cmd && hw_id
         if bmc_power_cmd
           uri_string << '/power'
-          uri_string << "?ipmi_username=#{ipmi_username}" if ipmi_username && !ipmi_username.empty?
-          if ipmi_username && !ipmi_username.empty? &&
-              ipmi_password && !ipmi_password.empty?
-            uri_string << "&ipmi_password=#{ipmi_password}"
-          elsif ipmi_password && !ipmi_password.empty?
-            uri_string << "?ipmi_password=#{ipmi_password}"
-          end
+          add_field_to_query_string(uri_string, 'ipmi_username', ipmi_username) if ipmi_username && !ipmi_username.empty?
+          add_field_to_query_string(uri_string, 'ipmi_password', ipmi_password) if ipmi_password && !ipmi_password.empty?
+          add_field_to_query_string(uri_string, 'hw_id', hw_id) if hw_id && !hw_id.empty?
           uri = URI.parse(uri_string)
           # get the current power state of the node using that URI
           include_http_response = true
@@ -266,6 +273,7 @@ module ProjectHanlon
         else
           raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot use the IPMI username/password without the '-b' option" if ipmi_username || ipmi_password
           # setup the proper URI depending on the options passed in
+          add_field_to_query_string(uri_string, "uuid", hw_id) if hw_id && !hw_id.empty?
           uri = URI.parse(uri_string)
           print_node_attributes = false
           if selected_option
@@ -290,35 +298,24 @@ module ProjectHanlon
         end
       end
 
-      def update_node
-        @command = :update_node
-        includes_uuid = false
-        # load the appropriate option items for the subcommand we are handling
-        option_items = command_option_data(:update)
-        # parse and validate the options that were passed in as part of this
-        # subcommand (this method will return a UUID value, if present, and the
-        # options map constructed from the @commmand_array)
-        node_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon model update UUID (options...)")
-        includes_uuid = true if node_uuid
+      def update_power_state(uri_string, node_uuid, options)
+        # extract the parameters we need from the input options
         power_cmd = options[:bmc]
         ipmi_username = options[:ipmi_username]
         ipmi_password = options[:ipmi_password]
-        # modify URI string based on the values passed in for the ipmi_username and ipmi_password
-        # parameters (if any)
-        uri_string = "#{@uri_string}/#{node_uuid}/power"
-        uri_string << "?ipmi_username=#{ipmi_username}" if ipmi_username && !ipmi_username.empty?
-        if ipmi_username && !ipmi_username.empty? &&
-            ipmi_password && !ipmi_password.empty?
-          uri_string << "&ipmi_password=#{ipmi_password}"
-        elsif ipmi_password && !ipmi_password.empty?
-          uri_string << "?ipmi_password=#{ipmi_password}"
-        end
+        hw_id = options[:hw_id]
+        # construct our initial uri_string using the input node_uuid (or not, if a hw_id was specified
+        # instead of a node_uuid)
+        hw_id ? uri_string = "#{uri_string}/power" : uri_string = "#{uri_string}/#{node_uuid}/power"
         # if a power command was passed in, then process it and return the result
         uri = URI.parse(uri_string)
         if ['on','off','reset','cycle','softShutdown'].include?(power_cmd)
           body_hash = {
               "power_command" => power_cmd,
           }
+          body_hash["ipmi_username"] = ipmi_username if ipmi_username && !ipmi_username.empty?
+          body_hash["ipmi_password"] = ipmi_password if ipmi_password && !ipmi_password.empty?
+          body_hash["hw_id"] = hw_id if hw_id && !hw_id.empty?
           json_data = body_hash.to_json
           include_http_response = true
           result, response = hnl_http_post_json_data(uri, json_data, include_http_response)
@@ -329,6 +326,20 @@ module ProjectHanlon
         else
           raise ProjectHanlon::Error::Slice::CommandFailed, "Unrecognized power command [#{power_cmd}]; valid values are 'on', 'off', 'reset', 'cycle' or 'softShutdown'"
         end
+      end
+
+      def update_node
+        @command = :update_node
+        includes_uuid = false
+        # load the appropriate option items for the subcommand we are handling
+        option_items = command_option_data(:update)
+        # parse and validate the options that were passed in as part of this
+        # subcommand (this method will return a UUID value, if present, and the
+        # options map constructed from the @commmand_array)
+        node_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon model update UUID (options...)")
+        includes_uuid = true if node_uuid
+        raise ProjectHanlon::Error::Slice::InputError, "Usage Error: must specify a node UUID to update" unless includes_uuid
+        update_power_state(@uri_string, node_uuid, options)
       end
 
     end
