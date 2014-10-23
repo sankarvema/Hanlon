@@ -341,7 +341,8 @@ module ProjectHanlon
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid)
+        sort_fieldname = 'key'
+        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid, sort_fieldname)
         # and print the result
         print_object_array(result, "Tag Matchers:", :style => :table)
       end

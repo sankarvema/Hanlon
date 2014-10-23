@@ -739,7 +739,17 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   end
 end
 
-def tag_matcher_hash_array_to_obj_array(hash_array, tagrule_uuid)
+def tag_matcher_hash_array_to_obj_array(hash_array, tagrule_uuid, sort_fieldname = nil)
+  # If a sort_field name is provided, sort the hash_array
+  if sort_fieldname
+    # If the sort_fieldname in the first element of the hash array is a String,
+    # convert it to lower case for case insensitive sorting
+    if hash_array.first["@#{sort_fieldname}"].is_a? String
+      hash_array = hash_array.sort_by { |elem| elem["@#{sort_fieldname}"].downcase }
+    else
+      hash_array = hash_array.sort_by { |elem| elem["@#{sort_fieldname}"] }
+    end
+  end
   hash_array.map { |hash| class_from_string(hash["@classname"]).new(hash, tagrule_uuid) }
 end
 
