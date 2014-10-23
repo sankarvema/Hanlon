@@ -90,7 +90,7 @@ module Hanlon
               conn = Rubyipmi.connect(ipmi_username, ipmi_password, ipmi_ip_address, ipmi_utility)
               current_power_status = conn.chassis.power.status
             rescue RuntimeError => e
-              raise ProjectHanlon::Error::Slice::CommandFailed, "IPMI power command '#{power_command}' failed with error '#{e.message}'" unless cmd_status
+              raise ProjectHanlon::Error::Slice::CommandFailed, "IPMI power command '#{power_command}' failed with error '#{e.message}'"
             end
             raise ProjectHanlon::Error::Slice::CommandFailed, "BMC command failed; power state cannot be determined" unless current_power_status
             slice_success_response(SLICE_REF, :get_node_powerstatus, {'UUID' => node.uuid, 'BMC IP' => ipmi_ip_address, 'Status' => current_power_status}, :success_type => :generic)
@@ -122,7 +122,7 @@ module Hanlon
               conn = Rubyipmi.connect(ipmi_username, ipmi_password, ipmi_ip_address, ipmi_utility)
               cmd_status = conn.chassis.power.command(power_command)
             rescue RuntimeError => e
-              raise ProjectHanlon::Error::Slice::CommandFailed, "IPMI power command '#{power_command}' failed with error '#{e.message}'" unless cmd_status
+              raise ProjectHanlon::Error::Slice::CommandFailed, "IPMI power command '#{power_command}' failed with error '#{e.message}'"
             end
             raise ProjectHanlon::Error::Slice::CommandFailed, "IPMI power command '#{power_command}' failed against BMC '#{ipmi_ip_address}' using '#{ipmi_utility}'" unless cmd_status
             slice_success_response(SLICE_REF, :update_node_powerstatus, {'UUID' => node.uuid, 'BMC IP' => ipmi_ip_address, 'Status' => power_command}, :success_type => :generic)
