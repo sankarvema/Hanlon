@@ -34,13 +34,13 @@ module ProjectHanlon
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
         commands = get_command_map(
-          "policy_help",
-          "get_all_policies",
-          "get_policy_by_uuid",
-          "add_policy",
-          "update_policy",
-          "remove_all_policies",
-          "remove_policy_by_uuid")
+            "policy_help",
+            "get_all_policies",
+            "get_policy_by_uuid",
+            "add_policy",
+            "update_policy",
+            "remove_all_policies",
+            "remove_policy_by_uuid")
         # and add any additional commands specific to this slice
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         commands[:get][:else] = "get_policy_by_uuid"
@@ -203,8 +203,11 @@ module ProjectHanlon
         @command = :get_all_policies
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
+        # get the policies from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        policy_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
+        sort_fieldname = 'line_number'
+        policy_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(policy_array, "Policies:", :style => :table)
       end
 
@@ -213,7 +216,8 @@ module ProjectHanlon
         @command = :get_policy_templates
         # get the list of policy templates nd print it
         uri = URI.parse @uri_string + '/templates'
-        policy_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        sort_fieldname = 'template'
+        policy_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(policy_templates, "Policy Templates:")
       end
 

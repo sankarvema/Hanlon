@@ -18,12 +18,12 @@ module ProjectHanlon
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
         commands = get_command_map("tag_help",
-                                          "get_all_tagrules",
-                                          "get_tagrule_by_uuid",
-                                          "add_tagrule",
-                                          "update_tagrule",
-                                          "remove_all_tagrules",
-                                          "remove_tagrule_by_uuid")
+                                   "get_all_tagrules",
+                                   "get_tagrule_by_uuid",
+                                   "add_tagrule",
+                                   "update_tagrule",
+                                   "remove_all_tagrules",
+                                   "remove_tagrule_by_uuid")
         # and add the corresponding 'matcher' commands to the set of slice_commands
         tag_uuid_match = /^((?!(matcher|add|get|all|remove|update|default)))\S+/
         commands[tag_uuid_match] = {}
@@ -77,110 +77,110 @@ module ProjectHanlon
 
       def all_command_option_data
         {
-          :add => [
-            { :name        => :name,
-              :default     => false,
-              :short_form  => '-n',
-              :long_form   => '--name NAME',
-              :description => 'Name for the tagrule being created',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :tag,
-              :default     => false,
-              :short_form  => '-t',
-              :long_form   => '--tag TAG',
-              :description => 'Tag for the tagrule being created',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            }
-          ],
-          :update => [
-            { :name        => :name,
-              :default     => nil,
-              :short_form  => '-n',
-              :long_form   => '--name NAME',
-              :description => 'New name for the tagrule being updated.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :tag,
-              :default     => nil,
-              :short_form  => '-t',
-              :long_form   => '--tag TAG',
-              :description => 'New tag for the tagrule being updated.',
-              :uuid_is     => 'required',
-              :required    => true
-            }
-          ],
-          :add_matcher => [
-            { :name        => :key,
-              :default     => nil,
-              :short_form  => '-k',
-              :long_form   => '--key KEY_FIELD',
-              :description => 'The node attribute key to match against.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :compare,
-              :default     => nil,
-              :short_form  => '-c',
-              :long_form   => '--compare METHOD',
-              :description => 'The comparison method to use (\'equal\'|\'like\').',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :value,
-              :default     => nil,
-              :short_form  => '-v',
-              :long_form   => '--value VALUE',
-              :description => 'The value to match against',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :inverse,
-              :default     => nil,
-              :short_form  => '-i',
-              :long_form   => '--inverse VALUE',
-              :description => 'Inverse the match (true if key does not match value).',
-              :uuid_is     => 'not_allowed',
-              :required    => false
-            }
-          ],
-          :update_matcher => [
-            { :name        => :key,
-              :default     => nil,
-              :short_form  => '-k',
-              :long_form   => '--key KEY_FIELD',
-              :description => 'The new node attribute key to match against.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :compare,
-              :default     => nil,
-              :short_form  => '-c',
-              :long_form   => '--compare METHOD',
-              :description => 'The new comparison method to use (\'equal\'|\'like\').',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :value,
-              :default     => nil,
-              :short_form  => '-v',
-              :long_form   => '--value VALUE',
-              :description => 'The new value to match against.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :inverse,
-              :default     => nil,
-              :short_form  => '-i',
-              :long_form   => '--inverse VALUE',
-              :description => 'Inverse the match (true|false).',
-              :uuid_is     => 'required',
-              :required    => true
-            }
-          ]
+            :add => [
+                { :name        => :name,
+                  :default     => false,
+                  :short_form  => '-n',
+                  :long_form   => '--name NAME',
+                  :description => 'Name for the tagrule being created',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :tag,
+                  :default     => false,
+                  :short_form  => '-t',
+                  :long_form   => '--tag TAG',
+                  :description => 'Tag for the tagrule being created',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                }
+            ],
+            :update => [
+                { :name        => :name,
+                  :default     => nil,
+                  :short_form  => '-n',
+                  :long_form   => '--name NAME',
+                  :description => 'New name for the tagrule being updated.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :tag,
+                  :default     => nil,
+                  :short_form  => '-t',
+                  :long_form   => '--tag TAG',
+                  :description => 'New tag for the tagrule being updated.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                }
+            ],
+            :add_matcher => [
+                { :name        => :key,
+                  :default     => nil,
+                  :short_form  => '-k',
+                  :long_form   => '--key KEY_FIELD',
+                  :description => 'The node attribute key to match against.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :compare,
+                  :default     => nil,
+                  :short_form  => '-c',
+                  :long_form   => '--compare METHOD',
+                  :description => 'The comparison method to use (\'equal\'|\'like\').',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :value,
+                  :default     => nil,
+                  :short_form  => '-v',
+                  :long_form   => '--value VALUE',
+                  :description => 'The value to match against',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :inverse,
+                  :default     => nil,
+                  :short_form  => '-i',
+                  :long_form   => '--inverse VALUE',
+                  :description => 'Inverse the match (true if key does not match value).',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                }
+            ],
+            :update_matcher => [
+                { :name        => :key,
+                  :default     => nil,
+                  :short_form  => '-k',
+                  :long_form   => '--key KEY_FIELD',
+                  :description => 'The new node attribute key to match against.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :compare,
+                  :default     => nil,
+                  :short_form  => '-c',
+                  :long_form   => '--compare METHOD',
+                  :description => 'The new comparison method to use (\'equal\'|\'like\').',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :value,
+                  :default     => nil,
+                  :short_form  => '-v',
+                  :long_form   => '--value VALUE',
+                  :description => 'The new value to match against.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :inverse,
+                  :default     => nil,
+                  :short_form  => '-i',
+                  :long_form   => '--inverse VALUE',
+                  :description => 'Inverse the match (true|false).',
+                  :uuid_is     => 'required',
+                  :required    => true
+                }
+            ]
         }.freeze
       end
 
@@ -229,10 +229,11 @@ module ProjectHanlon
 
       def get_all_tagrules
         @command = :get_all_tagrules
-        uri = URI.parse @uri_string
         # get the tagrules from the RESTful API (as an array of objects)
-        result = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-        # and print the result
+        uri = URI.parse @uri_string
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
+        sort_fieldname = 'name'
+        result = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(result, "Tag Rules:", :style => :table)
       end
 
@@ -340,7 +341,8 @@ module ProjectHanlon
         if response.instance_of?(Net::HTTPBadRequest)
           raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
         end
-        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid)
+        sort_fieldname = 'key'
+        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid, sort_fieldname)
         # and print the result
         print_object_array(result, "Tag Matchers:", :style => :table)
       end

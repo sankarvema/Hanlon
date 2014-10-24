@@ -242,9 +242,11 @@ module ProjectHanlon
         if (['-b','-bmc'].include?(@prev_args.peek(0))) || !(['-b','-bmc'] & @command_array).empty?
           raise ProjectHanlon::Error::Slice::InputError, "Usage Error: a hardware ID value must be specified to get/set BMC power-state"
         end
-        # otherwise just get the list of all nodes and print that result
+        # get the nodes from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        node_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
+        sort_fieldname = 'timestamp'
+        node_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(node_array, "Discovered Nodes", :style => :table)
       end
 

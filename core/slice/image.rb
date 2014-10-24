@@ -124,12 +124,12 @@ module ProjectHanlon
       #Lists details for all images
       def get_images
         @command = :get_images
+        # get the images from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-
-        image_hash_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-
-        # convert it to an array of objects (from an array of hashes) and print the result
-        print_object_array(image_hash_array, "Images:", :style => :item)
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
+        sort_fieldname = 'filename'
+        image_hash_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
+        print_object_array(image_hash_array, "Images:", :style => :table)
       end
 
       #Lists details for a specific image

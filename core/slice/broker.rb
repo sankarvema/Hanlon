@@ -132,8 +132,11 @@ module ProjectHanlon
       # Returns all broker instances
       def get_all_brokers
         @command = :get_all_brokers
+        # get the brokers from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        broker_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
+        sort_fieldname = 'name'
+        broker_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(broker_array, "Broker Targets:", :style => :table)
       end
 
@@ -141,7 +144,8 @@ module ProjectHanlon
       def get_broker_plugins
         @command = :get_broker_plugins
         uri = URI.parse @uri_string + '/plugins'
-        broker_plugins = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        sort_fieldname = 'plugin'
+        broker_plugins = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(broker_plugins, "Available Broker Plugins:")
       end
 
