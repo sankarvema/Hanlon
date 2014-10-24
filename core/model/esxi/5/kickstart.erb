@@ -230,7 +230,7 @@ def disk_type_array():
         vdq_output = eval(output)
         for device in vdq_output:
             if device['State'] == 'Eligible for use by VSAN':
-                if (device['Reason'] == 'Non-local disk') and <%= @configure_disk_to_local ? "True" : "False" %>:
+                if (device['Reason'] == 'Non-local disk') and <%= @configure_disk_to_local %>:
                     configure_disk_to_local(device['Name'])
                 if device['IsSSD'] == '1':
                     ssd.append(device['Name'])
