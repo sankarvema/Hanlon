@@ -51,7 +51,7 @@ module ProjectHanlon
         @enable_vsan             = false
         @vsan_uuid               = UUID.generate
         @packages                = []
-
+	@configure_disk_to_local = false
         # Metadata
         @req_metadata_hash       = {
             "@esx_license"             => { :default     => "",
@@ -136,7 +136,12 @@ module ProjectHanlon
                                             :example     => "",
                                             :validation  => '',
                                             :required    => false,
-                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" }
+                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" },
+	    "@configure_disk_to_local" => { :default     => false,
+                                            :example     => "",
+                                            :validation  => '',
+                                            :required    => false,
+                                            :description => "Optional for vSAN, should we use non-local disks in vSAN disk group." }
         }
 
         from_hash(hash) unless hash == nil

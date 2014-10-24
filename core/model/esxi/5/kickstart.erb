@@ -83,12 +83,13 @@ cp /var/log/esxi_install.log "/vmfs/volumes/$(hostname -s)-local-storage-1/first
 ## not sure what to do about the reboot
 
 %firstboot --interpreter=python
- 
+
 from subprocess import Popen, PIPE
 import syslog
 import sys
 import re
 import traceback
+
 
 vib_syslog_key = "VIB-KS"
 vsan_syslog_key = "VSAN-KS"
@@ -105,7 +106,7 @@ class IncorrectFileType(Exception):
 
 '''
 Executes process using the shell, waits for the command to exit and
-returns returns output (string), err (string), returncode (int)
+returns returns output (string), err (string), return_code (int)
 '''
 
 
@@ -114,8 +115,8 @@ def execute_process(cmd_line):
         process = Popen(cmd_line, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
         process.wait()
         output, err = process.communicate()
-        returncode = process.returncode
-        return output, err, returncode
+        return_code = process.returncode
+        return output, err, return_code
     except Exception as e:
         syslog.syslog("Exception %s in execute_process()" % str(e))
         sys.exit(1)
@@ -129,9 +130,9 @@ the ConfiguredScratchLocation which is the UUID based path
 
 
 def find_scratch_location():
-    output, err, returncode = execute_process('vim-cmd hostsvc/advopt/view ScratchConfig.ConfiguredScratchLocation')
+    output, err, return_code = execute_process('vim-cmd hostsvc/advopt/view ScratchConfig.ConfiguredScratchLocation')
 
-    if returncode == 0:
+    if return_code == 0:
         match = re.search('value = "(.*)"', output)
         if match:
             print match.group(1)
@@ -156,8 +157,8 @@ def download_zip_package(url):
         filename_with_path = "%s/%s" % (scratch, file_name)
         cmd_line = "wget -q -O %s %s" % (filename_with_path, url)
         syslog.syslog("%s Executing %s" % (vib_syslog_key, cmd_line))
-        output, err, returncode = execute_process(cmd_line)
-        return filename_with_path, returncode
+        output, err, return_code = execute_process(cmd_line)
+        return filename_with_path, return_code
     else:
         #No scratch partition cannot install!
         return "", 1
@@ -171,21 +172,21 @@ install but the others may complete.
 
 def do_software_vib_install(url, force):
 
-    returncode = 0
+    return_code = 0
 
     try:
         if url.endswith("zip"):
-            filename_with_path, returncode = download_zip_package(url)
+            filename_with_path, return_code = download_zip_package(url)
             cmd_line = "esxcli software vib install %s -d %s" % (("-f" if force else ""), filename_with_path)
         elif url.endswith("vib"):
             cmd_line = "esxcli software vib install %s -v %s" % (("-f" if force else ""), url)
         else:
             raise IncorrectFileType()
 
-        if returncode == 0:
+        if return_code == 0:
             syslog.syslog("%s Executing %s" % (vib_syslog_key, cmd_line))
-            output, err, returncode = execute_process(cmd_line)
-            if returncode != 0:
+            output, err, return_code = execute_process(cmd_line)
+            if return_code != 0:
                 syslog.syslog("%s ERROR %s in do_software_vib_install()" % (vib_syslog_key, output))
         else:
             syslog.syslog("%s ERROR %s in do_software_vib_install()" % (vib_syslog_key, url))
@@ -229,19 +230,8 @@ def disk_type_array():
         vdq_output = eval(output)
         for device in vdq_output:
             if device['State'] == 'Eligible for use by VSAN':
-                if device['Reason'] == 'Non-local disk':
-                    nmp_satp_rule_cmd = "esxcli storage nmp satp rule add -s VMW_SATP_LOCAL -o enable_local -d %s" % device['Name']
-                    core_claming_cmd = "esxcli storage core claiming reclaim -d %s" % device['Name']
-
-                    syslog.syslog(vsan_syslog_key + " Setting enable_local and reclaiming " + device['Name'])
-                    output, err, return_code = execute_process(nmp_satp_rule_cmd)
-                    if return_code != 0:
-                        syslog.syslog(vsan_syslog_key + " ERROR esxcli storage command returned a non-zero exit. %s" % err)
-                        sys.exit(1)
-                    output, err, return_code = execute_process(core_claming_cmd)
-                    if return_code != 0:
-                        syslog.syslog(vsan_syslog_key + " ERROR esxcli storage command returned a non-zero exit. %s" % err)
-                        sys.exit(1)
+                if (device['Reason'] == 'Non-local disk') and <%= @configure_disk_to_local ? "True" : "False" %>:
+                    configure_disk_to_local(device['Name'])
                 if device['IsSSD'] == '1':
                     ssd.append(device['Name'])
                 else:
@@ -251,6 +241,22 @@ def disk_type_array():
         sys.exit(1)
 
     return md, ssd
+
+
+def configure_disk_to_local(device):
+    nmp_satp_rule_cmd = "esxcli storage nmp satp rule add -s VMW_SATP_LOCAL -o enable_local -d %s" % device
+    core_claming_cmd = "esxcli storage core claiming reclaim -d %s" % device
+
+    syslog.syslog(vsan_syslog_key + " Setting enable_local and reclaiming " + device)
+    output, err, return_code = execute_process(nmp_satp_rule_cmd)
+    if return_code != 0:
+        syslog.syslog(vsan_syslog_key + " ERROR esxcli storage command returned a non-zero exit. %s" % err)
+        sys.exit(1)
+    output, err, return_code = execute_process(core_claming_cmd)
+    if return_code != 0:
+        syslog.syslog(vsan_syslog_key + " ERROR esxcli storage command returned a non-zero exit. %s" % err)
+        sys.exit(1)
+
 
 '''
 Confirm that we have at least one ssd available, otherwise exit
@@ -272,7 +278,15 @@ def create_vsan_disk_group():
             # find the number of magnetic disks are available to be used
             # per vSAN disk group
             md_per_vsan_group = md_length / ssd_length
-            if md_per_vsan_group > 7:
+            # if md_per_vsan_group is 0 then the quantity of magnetic disks
+            # is less than solid-state.  We can only use a single MD per SSD
+            # and also remove the extra SSDs.
+            if md_per_vsan_group == 0:
+		md_per_vsan_group = 1
+                ssd_length_to_remove = ssd_length - md_length
+                for ssd_loc in range(0, ssd_length_to_remove, 1):
+                    ssd.pop()
+            elif md_per_vsan_group > 7:
                 md_per_vsan_group = 7
 
             for ssd_disk_name in ssd:
@@ -304,9 +318,11 @@ def join_vsan_cluster(vsan_uuid):
         sys.exit(1)
 
 
+
+
 <% if @enable_vsan %>
 create_vsan_disk_group()
-join_vsan_cluster("<%= vsan_uuid %>")
+join_vsan_cluster("<%= @vsan_uuid %>")
 <% end %>
 
 <% for @pkg in @packages %>
