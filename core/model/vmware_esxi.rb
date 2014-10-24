@@ -48,10 +48,10 @@ module ProjectHanlon
         @vcenter_datacenter_path = nil
         @vcenter_cluster_path    = nil
 
-        @enable_vsan             = nil 
+        @enable_vsan             = false 
         @vsan_uuid               = UUID.generate
         @packages                = []
-	@configure_disk_to_local = nil
+	@configure_disk_to_local = false
         # Metadata
         @req_metadata_hash       = {
             "@esx_license"             => { :default     => "",
@@ -122,7 +122,7 @@ module ProjectHanlon
                                             :validation  => '^[a-zA-Z\d-]{3,}$',
                                             :required    => false,
                                             :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" },
-            "@enable_vsan"       => { :default     => false,
+            "@enable_vsan"       => { :default     => "",
                                            :example     => "",
                                            :validation  => '',
                                            :required    => false,
@@ -137,7 +137,7 @@ module ProjectHanlon
                                             :validation  => '',
                                             :required    => false,
                                             :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" },
-	    "@configure_disk_to_local" => { :default     => false,
+	    "@configure_disk_to_local" => { :default     => "",
                                             :example     => "",
                                             :validation  => '',
                                             :required    => false,
