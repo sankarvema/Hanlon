@@ -13,6 +13,7 @@ Dir[File.dirname(__FILE__) + "/commands/**/*.rb"].each do |file|
   require file
 end
 
+$global = ProjectHanlon::DbMigration::Global
 
 class ProjectHanlon::Main
   include(ProjectHanlon::Logging)
@@ -137,15 +138,14 @@ class ProjectHanlon::Main
     # first, find all slices that extend the ProjectHanlon::DbMigrate class
     commands = ObjectSpace.each_object(Class).select { |klass| klass < ProjectHanlon::DbMigration::Command }
     # then construct a hash containing those slices (or slice classes); the key for
-    # this hash is the slice name
-    command_hash = Hash[commands.map { |a| [a.new([]).command_name, a] }]
+    # this hash is the command name
+    command_hash = Hash[commands.map { |a| [a.new().command_name, a] }]
     # finally, output the list of slice names (sorted by name) for all
     # of the "non-hidden" slices
     command_hash.keys.sort.each do |command_name|
-      command_obj = command_hash[command_name].new([])
+      command_obj = command_hash[command_name].new()
       unless command_obj.hidden
-        print "    #{command_obj.display_name.ljust(18)} ".bold.white
-        print "#{command_obj.description}\n".yellow
+        ProjectHanlon::Utility::Console.print_help_command_line command_obj.display_name, command_obj.description
       end
     end
     print "\n"

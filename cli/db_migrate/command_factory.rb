@@ -30,13 +30,8 @@ puts "cmd_class is #{cmd_class}"
     #eval "cmd.#{command}_validate args"
     #eval "cmd.#{command}_exec args"
 
-    if(cmd.cmd_validate args)
-      puts "validation successful"
-      return cmd.cmd_exec args
-    else
-      puts "validation failed"
-      return false
-    end
+    ProjectHanlon::DbMigration::Global.args = args
+    cmd.cmd_validate
   # rescue NameError
   #   puts "Name Error"
   #   false
@@ -61,41 +56,6 @@ puts "cmd_class is #{cmd_class}"
 
       return true
     end
-  end
-
-end
-
-module ProjectHanlon::DbMigration
-  class Command
-
-    attr_accessor :display_name, :description, :hidden
-
-    def initialize(args = nil)
-      @command_array = []
-      @command_array = args if args
-
-      @hidden = true
-
-    end
-
-    # Return the name of this slice - essentially, the final classname without
-    # the leading hierarchy, in Ruby "filename" format rather than "classname"
-    # format.  Not cached, because this is seldom used, and is never on the
-    # hot path.
-    def command_name
-      self.class.name.
-          split('::').
-          last.
-          scan(/[[:upper:]][[:lower:]]*/).
-          join('_').
-          downcase
-    end
-  end
-end
-
-module ProjectHanlon::DbMigration
-  class CommandTemplate
-    attr_accessor :command, :alt_command, :desc, :validator, :function
   end
 
 end
