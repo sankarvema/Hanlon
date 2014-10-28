@@ -160,7 +160,7 @@ def download_zip_package(url):
         output, err, return_code = execute_process(cmd_line)
         return filename_with_path, return_code
     else:
-        #No scratch partition cannot install!
+        syslog.syslog("%s ERROR %s No scratch partition available." % (vib_syslog_key, url))
         return "", 1
 '''
 Iterates over vibs with the corresponding command line to install VIB or ZIP packagess
@@ -187,7 +187,7 @@ def do_software_vib_install(url, force):
             syslog.syslog("%s Executing %s" % (vib_syslog_key, cmd_line))
             output, err, return_code = execute_process(cmd_line)
             if return_code != 0:
-                syslog.syslog("%s ERROR %s in do_software_vib_install()" % (vib_syslog_key, output))
+                syslog.syslog("%s ERROR %s in do_software_vib_install() %s" % (vib_syslog_key, output, err))
         else:
             syslog.syslog("%s ERROR %s in do_software_vib_install()" % (vib_syslog_key, url))
     except:
@@ -282,7 +282,7 @@ def create_vsan_disk_group():
             # is less than solid-state.  We can only use a single MD per SSD
             # and also remove the extra SSDs.
             if md_per_vsan_group == 0:
-		md_per_vsan_group = 1
+                md_per_vsan_group = 1
                 ssd_length_to_remove = ssd_length - md_length
                 for ssd_loc in range(0, ssd_length_to_remove, 1):
                     ssd.pop()
