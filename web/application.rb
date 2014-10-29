@@ -18,7 +18,7 @@ $hanlon_root = Pathname(__FILE__).parent.realpath.dirname.to_s
 $app_type = "server"
 
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + '../util').cleanpath.to_s)
-$LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + '../core').cleanpath.to_s)
+$LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + '../rules').cleanpath.to_s)
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './api').cleanpath.to_s)
 
 #PROJECT_ROOT = Pathname(__FILE__).expand_path.parent.parent.to_s

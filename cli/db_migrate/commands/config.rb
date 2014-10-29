@@ -1,5 +1,4 @@
 
-
 module ProjectHanlon::DbMigration
   class Command
 
@@ -13,7 +12,7 @@ module ProjectHanlon::DbMigration
         @description = "Get / set hanlon database migration configuration parameters"
 
         @cmd_function = "display_config"
-        @config_cmds =
+        @cmd_map =
         [
             ["-t", "--test", "Validate current configuration file for any issues", "no_more_args", "test_config"],
             ["-g", "--generate", "Generate a default config file", "no_more_args","generate_config"],

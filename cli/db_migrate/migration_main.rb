@@ -8,14 +8,9 @@ require 'properties'
 
 require 'db_migrate/global'
 
-
-Dir[File.dirname(__FILE__) + "/commands/**/*.rb"].each do |file|
-  require file
-end
-
 $global = ProjectHanlon::DbMigration::Global
 
-class ProjectHanlon::Main
+class ProjectHanlon::MigrationMain
   include(ProjectHanlon::Logging)
 
   def run(*argv)

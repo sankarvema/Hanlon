@@ -1,7 +1,11 @@
+Dir[File.dirname(__FILE__) + "/commands/**/*.rb"].each do |file|
+  require file
+end
+
 module ProjectHanlon::DbMigration
   class Command
 
-    attr_accessor :display_name, :description, :hidden, :config_cmds
+    attr_accessor :display_name, :description, :hidden, :cmd_map
 
     def initialize()
 
@@ -11,7 +15,7 @@ module ProjectHanlon::DbMigration
       @description = "to be defined"
 
       @cmd_function = "nope"
-      @config_cmds =
+      @cmd_map =
           [
               ["-h", "--help", "Display this help message", "no_more_args", "cmd_help"]
           ]
@@ -41,9 +45,9 @@ module ProjectHanlon::DbMigration
       #puts @cmd_function
 
       #@config_cmds.each { |cmd| puts cmd}
-      puts "config cmds...\n#{@config_cmds}"
+      puts "command map...\n#{@cmd_map}"
 
-      @config_cmds.each {|cmd|
+      @cmd_map.each {|cmd|
 
         puts "run command #{cmd}"
         if cmd[0] == $global.args[0] or cmd[1] == $global.args[0]
@@ -72,7 +76,7 @@ module ProjectHanlon::DbMigration
     def cmd_help
       puts "Help for #{self.class.name} command"
       puts
-      @config_cmds.each {|cmd|
+      @cmd_map.each {|cmd|
         cmd_string = "#{cmd[0]}, #{cmd[1]}"
         ProjectHanlon::Utility::Console.print_help_command_line cmd_string, cmd[2]
       }

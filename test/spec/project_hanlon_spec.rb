@@ -19,8 +19,8 @@ describe Object, "extensions" do
     let :child_class  do Class.new(parent) end
     let :child_module do Module.new end
 
-    # This is actually quite horrible, but that is what it takes to test core
-    # extensions.  This is why monkey-patching core is bad, m'kay.  --daniel
+    # This is actually quite horrible, but that is what it takes to test rules
+    # extensions.  This is why monkey-patching rules is bad, m'kay.  --daniel
     # 2013-02-20
     before :each do
       parent.const_set("ChildClass",  child_class)

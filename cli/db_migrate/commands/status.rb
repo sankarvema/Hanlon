@@ -10,7 +10,7 @@ module ProjectHanlon::DbMigration
 
         @hidden = false
         @display_name = "status"
-        @description = "Check the status of last migration"
+        @description = "Check the stat us of last migration"
 
       end
 
