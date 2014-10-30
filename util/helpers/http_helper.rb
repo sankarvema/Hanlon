@@ -1,17 +1,17 @@
 module ProjectHanlon
   module HttpHelper
 
-    def hnl_http_delete(uri, include_http_response = false)
+    def hnl_http_delete(uri)
       # setup the request
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Delete.new(uri.request_uri)
       # make the request
       response = make_http_request(uri, http_client, request)
       # and return the result
-      handle_http_response(uri, response, include_http_response)
+      handle_http_response(uri, response)
     end
 
-    def hnl_http_put_json_data(uri, json_data, include_http_response = false)
+    def hnl_http_put_json_data(uri, json_data)
       # setup the request
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Put.new(uri.request_uri)
@@ -20,10 +20,10 @@ module ProjectHanlon
       # make the request
       response = make_http_request(uri, http_client, request)
       # and return the result
-      handle_http_response(uri, response, include_http_response)
+      handle_http_response(uri, response)
     end
 
-    def hnl_http_post_json_data(uri, json_data, include_http_response = false)
+    def hnl_http_post_json_data(uri, json_data)
       # setup the request
       http_client = Net::HTTP.new(uri.host, uri.port)
       http_client.read_timeout = ProjectHanlon.config.http_timeout
@@ -33,7 +33,7 @@ module ProjectHanlon
       # make the request
       response = make_http_request(uri, http_client, request)
       # and return the result
-      handle_http_response(uri, response, include_http_response)
+      handle_http_response(uri, response)
     end
 
     # used to retrieve a result when the endpoint is expected
@@ -42,14 +42,14 @@ module ProjectHanlon
     # of that hash map (requiring a JSON.parse call followed by
     # retrieval of the response field to get the response to return
     # to the user)
-    def hnl_http_get(uri, include_http_response = false)
+    def hnl_http_get(uri)
       # setup the request
       http_client = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       # make the request
       response = make_http_request(uri, http_client, request)
       # and return the result
-      handle_http_response(uri, response, include_http_response)
+      handle_http_response(uri, response)
     end
 
     private
@@ -64,10 +64,9 @@ module ProjectHanlon
       end
     end
 
-    def handle_http_response(uri, response, include_http_response)
+    def handle_http_response(uri, response)
       case response
         when Net::HTTPSuccess
-          return [get_hnl_response(response), response] if include_http_response
           get_hnl_response(response)
         when Net::HTTPNotFound
           raise ProjectHanlon::Error::Slice::CommandFailed, "Cannot access Hanlon server at #{uri.to_s.sub(/\/[^\/]+[\/]?$/,'')}"
