@@ -81,18 +81,19 @@ module ProjectHanlon
       end
 
       def generate_config
-        uri = URI.parse @uri_string + '/server' if @command == :generate_server_config
-        uri = URI.parse @uri_string + '/client' if @command == :generate_client_config
-
-        # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+        if @command == :generate_server_config
+          uri = URI.parse @uri_string
+          # and get the results of the appropriate RESTful request using that URI
+          include_http_response = true
+          result, response = hnl_http_get(uri, include_http_response)
+          if response.instance_of?(Net::HTTPBadRequest)
+            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+          end
+          puts "Hanlon Server Config:"
+        elsif @command == :generate_client_config
+          result = JSON(ProjectHanlon.config.to_json)
+          puts "Hanlon Client Config:"
         end
-        puts "ProjectHanlon Server Config:" if @command == :generate_server_config
-        puts "ProjectHanlon Client Config:" if @command == :generate_client_config
-
         result.each { |key,val|
           print "\t#{key.sub("@","")}: ".white
           print "#{val} ".green
