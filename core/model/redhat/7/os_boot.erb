@@ -21,7 +21,7 @@ cp -p /etc/hosts /etc/hosts-
  
 default_gw_device=`ip route show | grep 'default' | awk '{print $5}'`
 node_ip=`ip addr show $default_gw_device | grep 'inet ' | awk -F'[ /]' '{print $6}'`
-echo "$node_ip \t<%= hostname %>.<%= domainname %> <%= hostname %>" >> /etc/hosts
+echo "$node_ip<%="\t"%><%= hostname %>.<%= domainname %> <%= hostname %>" >> /etc/hosts
 
 [ "$?" -eq 0 ] && curl <%= callback_url("postinstall", "set_hostname_ok") %> || curl <%= callback_url("postinstall", "set_hostname_fail") %>
 
