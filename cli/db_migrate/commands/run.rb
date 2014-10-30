@@ -14,15 +14,22 @@ module ProjectHanlon::DbMigration
         @cmd_map =
             [
                 ["-t", "--test", "Perform a test or dry run of database migration", "no_more_args", "test_migration"],
+                ["-m", "--migrate", "Perform database migration", "no_more_args", "run_migration"],
+                ["-u**", "--undo", "Undo migration", "no_more_args", "undo_migration"],
+                ["-r**", "--redo", "Resume / redo a migration", "no_more_args", "redo_migration"],
                 ["-h", "--help", "Display this help message", "no_more_args", "cmd_help"]
             ]
 
       end
 
       def test_migration
-
         migrate = ProjectHanlon::DbMigration::Controller.new
-        migrate.test
+        migrate.perform "test"
+      end
+
+      def run_migration
+        migrate = ProjectHanlon::DbMigration::Controller.new
+        migrate.perform "run"
       end
 
     end

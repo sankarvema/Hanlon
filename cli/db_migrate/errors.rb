@@ -6,7 +6,8 @@ module ProjectHanlon
         {
             :no_error                         => 0,
             :invalid_arguments                => 1,
-            :unknown_error                    => 3
+            :missing_config_file              => 2,
+            :unknown_error                    => 99
         }
   end
 end

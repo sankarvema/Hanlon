@@ -6,8 +6,8 @@ require 'logging/logger'
 
 require 'config/common'
 
-# This class represents the ProjectHanlon cli configuration. It is stored persistently in
-# './cli/config/hanlon_client.conf' and editing by the user
+# This class represents the ProjectHanlon Migrate configuration. It is stored persistently in
+# './cli/config/hanlon_migrate.conf' and editing by the user
 
 module ProjectHanlon
   module Config
@@ -34,6 +34,8 @@ module ProjectHanlon
       attr_accessor :destination_persist_dbname
 
       attr_accessor :hanlon_log_level
+
+      attr_reader   :noun
 
       # Obtain our defaults
       def defaults

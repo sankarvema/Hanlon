@@ -32,7 +32,8 @@ EOT
           #    return proper error messages on failed validation keys
 
           if  config.is_a? ProjectHanlon::Config::Client or
-              config.is_a? ProjectHanlon::Config::Server
+              config.is_a? ProjectHanlon::Config::Server or
+              config.is_a? ProjectHanlon::Config::DbMigrate
             config.defaults.each_pair {|key, value| config[key] ||= value }
           else
             raise "Invalid configuration file (#{$config_file_path})"

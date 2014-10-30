@@ -36,7 +36,7 @@ module ProjectHanlon::DbMigration
 
     def cmd_validate
 
-      puts "Validate #{self.class.name} command #{display_name} with #{$global.args[0]}"
+      #puts "Validate #{self.class.name} command #{display_name} with #{$global.args[0]}"
       #print args
 
       valid = false
@@ -45,14 +45,14 @@ module ProjectHanlon::DbMigration
       #puts @cmd_function
 
       #@config_cmds.each { |cmd| puts cmd}
-      puts "command map...\n#{@cmd_map}"
+      #puts "command map...\n#{@cmd_map}"
 
       @cmd_map.each {|cmd|
 
-        puts "run command #{cmd}"
+        #puts "run command #{cmd}"
         if cmd[0] == $global.args[0] or cmd[1] == $global.args[0]
           func = "#{cmd[3]}"
-          puts "validation function to exec:: #{func}"
+          #puts "validation function to exec:: #{func}"
           #puts eval func
           if eval func
             @cmd_function = cmd[4]
@@ -63,11 +63,12 @@ module ProjectHanlon::DbMigration
       }
 
       ProjectHanlon::Utility::Console.print_argument_error display_name, $global.args if !valid
+      puts
       cmd_exec
     end
 
     def cmd_exec
-      puts "exec #{self.class.name} command with #{@cmd_function}"
+      #puts "exec #{self.class.name} command with #{@cmd_function}"
 
       eval "#{@cmd_function}"
       true

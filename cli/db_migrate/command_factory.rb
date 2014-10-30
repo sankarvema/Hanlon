@@ -8,10 +8,10 @@ module ProjectHanlon::DbMigration
   def self.run_command(command, args)
 
     command = normalize_command(command)
-    puts "migration called with #{command}"
+    #puts "migration called with #{command}"
 
     cmd_class = "ProjectHanlon::DbMigration::Command::" + command
-puts "cmd_class is #{cmd_class}"
+#puts "cmd_class is #{cmd_class}"
     cmd = ProjectHanlon::Utility.class_from_string(cmd_class).new
 
     #cmd = cmd_class.to_class

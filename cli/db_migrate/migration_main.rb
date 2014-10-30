@@ -10,6 +10,7 @@ require 'db_migrate/global'
 
 $global = ProjectHanlon::DbMigration::Global
 
+
 class ProjectHanlon::MigrationMain
   include(ProjectHanlon::Logging)
 
