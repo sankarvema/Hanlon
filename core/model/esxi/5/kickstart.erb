@@ -123,25 +123,6 @@ def execute_process(cmd_line):
 
 
 '''
-Using vim-cmd find the location of the scratch partition that can be used to download a ZIP
-based package.  The output of the process needs to be parsed specifically for the value of
-the ConfiguredScratchLocation which is the UUID based path
-'''
-
-
-def find_scratch_location():
-    output, err, return_code = execute_process('vim-cmd hostsvc/advopt/view ScratchConfig.ConfiguredScratchLocation')
-
-    if return_code == 0:
-        match = re.search('value = "(.*)"', output)
-        if match:
-            print match.group(1)
-            return match.group(1)
-    else:
-        return ""
-
-
-'''
 Check to make sure that we have a scratch partition.
 Parse result of vim-cmd, which will provide path of scratch
 Download zip package
@@ -150,18 +131,16 @@ return empty string or path of local zip
 
 
 def download_zip_package(url):
-    scratch = find_scratch_location()
-    if len(scratch) != 0:
-        split_url = url.split('/')
-        file_name = split_url[len(split_url)-1]
-        filename_with_path = "%s/%s" % (scratch, file_name)
-        cmd_line = "wget -q -O %s %s" % (filename_with_path, url)
-        syslog.syslog("%s Executing %s" % (vib_syslog_key, cmd_line))
-        output, err, return_code = execute_process(cmd_line)
-        return filename_with_path, return_code
-    else:
-        syslog.syslog("%s ERROR %s No scratch partition available." % (vib_syslog_key, url))
-        return "", 1
+    scratch = "/scratch/downloads"
+    split_url = url.split('/')
+    file_name = split_url[len(split_url)-1]
+    filename_with_path = "%s/%s" % (scratch, file_name)
+    cmd_line = "wget -q -O %s %s" % (filename_with_path, url)
+    syslog.syslog("%s Executing %s" % (vib_syslog_key, cmd_line))
+    output, err, return_code = execute_process(cmd_line)
+    return filename_with_path, return_code
+
+
 '''
 Iterates over vibs with the corresponding command line to install VIB or ZIP packagess
 
