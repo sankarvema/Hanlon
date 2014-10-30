@@ -231,9 +231,10 @@ module ProjectHanlon
         @command = :get_all_tagrules
         # get the tagrules from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
+        result = hnl_http_get(uri)
         # convert it to a sorted array of objects (from an array of hashes) and print the result
         sort_fieldname = 'name'
-        result = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
+        result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
         print_object_array(result, "Tag Rules:", :style => :table)
       end
 
@@ -244,11 +245,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + tagrule_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Tag Rule:")
       end
@@ -273,10 +270,7 @@ module ProjectHanlon
             "name" => options[:name],
             "tag" => options[:tag]
         }.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Tag Rule Created:")
       end
 
@@ -302,10 +296,7 @@ module ProjectHanlon
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated tag rule) and return the results
         uri = URI.parse(@uri_string + '/' + tagrule_uuid)
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Tag Rule Updated:")
       end
 
@@ -320,10 +311,7 @@ module ProjectHanlon
         tagrule_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated tag rule) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 
@@ -336,11 +324,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher")
         # get the tag matchers for the indicated tagrule (from the RESTful API) as an array of objects
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         sort_fieldname = 'key'
         result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid, sort_fieldname)
         # and print the result
@@ -354,11 +338,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}")
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher:")
       end
@@ -390,10 +370,7 @@ module ProjectHanlon
             "value" => value,
             "inverse" => inverse
         }.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Added:")
       end
 
@@ -427,10 +404,7 @@ module ProjectHanlon
         body_hash["value"] = value if value
         body_hash["inverse"] = inverse if inverse
         json_data = body_hash.to_json
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Updated:")
       end
 
@@ -441,10 +415,7 @@ module ProjectHanlon
         matcher_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 

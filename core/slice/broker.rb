@@ -143,7 +143,9 @@ module ProjectHanlon
       # Returns the broker plugins available
       def get_broker_plugins
         @command = :get_broker_plugins
+        # get the broker plugins from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/plugins'
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
         sort_fieldname = 'plugin'
         broker_plugins = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
         print_object_array(broker_plugins, "Available Broker Plugins:")
@@ -156,11 +158,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + broker_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Broker:")
       end
@@ -198,10 +196,7 @@ module ProjectHanlon
         }
         body_hash["req_metadata_params"] = req_metadata_params
         json_data = body_hash.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Broker Created:")
       end
 
@@ -226,11 +221,7 @@ module ProjectHanlon
         # now, use the values that were passed in to update the indicated broker
         uri = URI.parse(@uri_string + '/' + broker_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         broker = hash_to_obj(result)
         # if the user requested a change to the meta-data hash associated with the
         # indicated broker, then gather that new meta-data from the user
@@ -254,10 +245,7 @@ module ProjectHanlon
         end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated broker) and return the results
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Broker Updated:")
       end
 
@@ -303,10 +291,7 @@ module ProjectHanlon
         broker_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated broker) and return the results
         uri = URI.parse @uri_string + "/#{broker_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 
