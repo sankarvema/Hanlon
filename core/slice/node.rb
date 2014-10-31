@@ -207,7 +207,7 @@ module ProjectHanlon
         @command = :get_all_nodes
         # grab the hardware ID (if one was supplied); throw an error if the flag
         # was found but the value was not
-        if @prev_args.peek(0) == "--hw_id"
+        if @prev_args.peek(0) == "-i" || @prev_args.peek(0) == "--hw_id"
           hardware_id = @command_array.shift
           raise ProjectHanlon::Error::Slice::InputError, "Usage Error: missing hardware ID value" unless hardware_id && !hardware_id.empty?
         else
