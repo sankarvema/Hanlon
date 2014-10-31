@@ -1,9 +1,7 @@
-#require 'slice_proxy'
 require 'data'
 require 'utility'
 require 'policies'
-
-require "json"
+require 'json'
 
 # Root namespace for policy objects
 # used to find them in object space for type checking
@@ -205,19 +203,22 @@ module ProjectHanlon
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
         # get the policies from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
+        result = hnl_http_get(uri)
         # convert it to a sorted array of objects (from an array of hashes) and print the result
         sort_fieldname = 'line_number'
-        policy_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
+        policy_array = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
         print_object_array(policy_array, "Policies:", :style => :table)
       end
 
       # Returns the policy templates available
       def get_policy_templates
         @command = :get_policy_templates
-        # get the list of policy templates nd print it
+        # get the policy templates from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/templates'
+        result = hnl_http_get(uri)
+        # convert it to a sorted array of objects (from an array of hashes) and print the result
         sort_fieldname = 'template'
-        policy_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
+        policy_templates = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
         print_object_array(policy_templates, "Policy Templates:")
       end
 
@@ -228,11 +229,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + policy_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Policy:")
       end
@@ -268,10 +265,7 @@ module ProjectHanlon
             "enabled" => options[:enabled],
             "maximum" => options[:maximum]
         }.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Policy Created:")
       end
 
@@ -302,10 +296,7 @@ module ProjectHanlon
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Policy Updated:")
       end
 
@@ -320,10 +311,7 @@ module ProjectHanlon
         policy_uuid = get_uuid_from_prev_args
         # setup the DELETE (to update the remove the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 

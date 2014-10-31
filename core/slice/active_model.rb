@@ -52,6 +52,7 @@ module ProjectHanlon
             print_command_help(command, option_items)
             return
           rescue
+            # ignored
           end
         end
         # if here, then either there are no specific options for the current command or we've
@@ -77,18 +78,15 @@ module ProjectHanlon
         if hardware_id
           uri = URI.parse(@uri_string + "?uuid=#{hardware_id}")
           # and get the results of the appropriate RESTful request using that URI
-          include_http_response = true
-          result, response = hnl_http_get(uri, include_http_response)
-          if response.instance_of?(Net::HTTPBadRequest)
-            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-          end
+          result = hnl_http_get(uri)
           return print_object_array(hash_array_to_obj_array([result]), "Active Model:")
         end
         # get the active models from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
+        result = hnl_http_get(uri)
         # convert it to a sorted array of objects (from an array of hashes) and print the result
         sort_fieldname = 'node_uuid'
-        active_model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
+        active_model_array = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
         print_object_array(active_model_array, "Active Models:", :style => :table)
       end
 
@@ -99,11 +97,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Active Model:")
       end
@@ -115,11 +109,7 @@ module ProjectHanlon
         # setup a URI to retrieve the active_model in question
         uri = URI.parse(@uri_string + '/' + uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # convert the result into an active_model instance, then use that instance to
         # print out the logs for that instance
         active_model_ref = hash_to_obj(result)
@@ -137,10 +127,7 @@ module ProjectHanlon
         uuid = get_uuid_from_prev_args
         # setup the DELETE (to update the remove the indicated active_model) and return the results
         uri = URI.parse @uri_string + "/#{uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 
@@ -148,11 +135,7 @@ module ProjectHanlon
         @command = :get_logs
         uri = URI.parse(@uri_string + '/logs')
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         lcl_slice_obj_ref = ProjectHanlon::PolicyTemplate::Base.new({})
         print_object_array(lcl_slice_obj_ref.print_log_all(result), "All Active Model Logs:", :style => :table)

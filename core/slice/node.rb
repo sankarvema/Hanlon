@@ -283,11 +283,7 @@ module ProjectHanlon
           add_field_to_query_string(uri_string, 'hw_id', hw_id) if hw_id && !hw_id.empty?
           uri = URI.parse(uri_string)
           # get the current power state of the node using that URI
-          include_http_response = true
-          result, response = hnl_http_get(uri, include_http_response)
-          if response.instance_of?(Net::HTTPBadRequest)
-            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-          end
+          result = hnl_http_get(uri)
           print_object_array([result], "Node Power Status:", :style => :table)
         else
           raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot use the IPMI username/password without the '-b' option" if ipmi_username || ipmi_password
@@ -303,11 +299,7 @@ module ProjectHanlon
             end
           end
           # and get the results of the appropriate RESTful request using that URI
-          include_http_response = true
-          result, response = hnl_http_get(uri, include_http_response)
-          if response.instance_of?(Net::HTTPBadRequest)
-            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-          end
+          result = hnl_http_get(uri)
           # finally, based on the options selected, print the results
           return print_object_array(hash_array_to_obj_array([result]), "Node:") unless selected_option
           if print_node_attributes
@@ -336,11 +328,7 @@ module ProjectHanlon
           body_hash["ipmi_password"] = ipmi_password if ipmi_password && !ipmi_password.empty?
           body_hash["hw_id"] = hw_id if hw_id && !hw_id.empty?
           json_data = body_hash.to_json
-          include_http_response = true
-          result, response = hnl_http_post_json_data(uri, json_data, include_http_response)
-          if response.instance_of?(Net::HTTPBadRequest)
-            raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-          end
+          result = hnl_http_post_json_data(uri, json_data)
           print_object_array([result], "Node Power Result:", :style => :table)
         else
           raise ProjectHanlon::Error::Slice::CommandFailed, "Unrecognized power command [#{power_cmd}]; valid values are 'on', 'off', 'reset', 'cycle' or 'softShutdown'"
