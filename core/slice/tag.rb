@@ -232,9 +232,12 @@ module ProjectHanlon
         # get the tagrules from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
         result = hnl_http_get(uri)
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'name'
-        result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'name'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
         print_object_array(result, "Tag Rules:", :style => :table)
       end
 
@@ -325,8 +328,11 @@ module ProjectHanlon
         uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher")
         # get the tag matchers for the indicated tagrule (from the RESTful API) as an array of objects
         result = hnl_http_get(uri)
-        sort_fieldname = 'key'
-        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid, sort_fieldname)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'key'
+          result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid, sort_fieldname)
+        end
         # and print the result
         print_object_array(result, "Tag Matchers:", :style => :table)
       end

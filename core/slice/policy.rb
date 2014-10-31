@@ -204,10 +204,13 @@ module ProjectHanlon
         # get the policies from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
         result = hnl_http_get(uri)
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'line_number'
-        policy_array = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
-        print_object_array(policy_array, "Policies:", :style => :table)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'line_number'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Policies:", :style => :table)
       end
 
       # Returns the policy templates available
@@ -216,10 +219,13 @@ module ProjectHanlon
         # get the policy templates from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/templates'
         result = hnl_http_get(uri)
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'template'
-        policy_templates = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
-        print_object_array(policy_templates, "Policy Templates:")
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'template'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Policy Templates:", :style => :table)
       end
 
       def get_policy_by_uuid
