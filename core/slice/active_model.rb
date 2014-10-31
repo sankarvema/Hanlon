@@ -84,10 +84,13 @@ module ProjectHanlon
         # get the active models from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
         result = hnl_http_get(uri)
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'node_uuid'
-        active_model_array = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
-        print_object_array(active_model_array, "Active Models:", :style => :table)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'node_uuid'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Active Models:", :style => :table)
       end
 
       def get_active_model_by_uuid

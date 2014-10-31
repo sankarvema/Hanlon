@@ -142,10 +142,13 @@ module ProjectHanlon
         # get the models from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
         result = hnl_http_get(uri)
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'label'
-        model_array = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
-        print_object_array(model_array, "Models:", :style => :table)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'label'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Models:", :style => :table)
       end
 
       def get_model_by_uuid
@@ -165,10 +168,13 @@ module ProjectHanlon
         # get the model templates from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/templates'
         result = hnl_http_get(uri)
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'name'
-        model_templates = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
-        print_object_array(model_templates, "Model Templates:")
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'name'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Model Templates:", :style => :table)
       end
 
       def add_model

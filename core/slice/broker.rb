@@ -134,10 +134,14 @@ module ProjectHanlon
         @command = :get_all_brokers
         # get the brokers from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'name'
-        broker_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
-        print_object_array(broker_array, "Broker Targets:", :style => :table)
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'name'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Broker Targets:", :style => :table)
       end
 
       # Returns the broker plugins available
@@ -145,10 +149,14 @@ module ProjectHanlon
         @command = :get_broker_plugins
         # get the broker plugins from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/plugins'
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'plugin'
-        broker_plugins = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
-        print_object_array(broker_plugins, "Available Broker Plugins:")
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'plugin'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Available Broker Plugins:", :style => :table)
       end
 
       def get_broker_by_uuid

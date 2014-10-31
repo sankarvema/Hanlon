@@ -244,10 +244,14 @@ module ProjectHanlon
         end
         # get the nodes from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        # convert it to a sorted array of objects (from an array of hashes) and print the result
-        sort_fieldname = 'timestamp'
-        node_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)), sort_fieldname)
-        print_object_array(node_array, "Discovered Nodes", :style => :table)
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'timestamp'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Discovered Nodes", :style => :table)
       end
 
       def get_node_by_uuid
