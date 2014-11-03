@@ -7,7 +7,7 @@ require 'logging/logger'
 require 'config/common'
 
 # This class represents the ProjectHanlon cli configuration. It is stored persistently in
-# './cli/config/hanlon_client.conf' and editing by the user
+# './cli/config/hanlon_client.conf' and edited by the user
 
 module ProjectHanlon
   module Config
@@ -30,20 +30,16 @@ module ProjectHanlon
       # Obtain our defaults
       def defaults
 
-        default_base_path = "/hanlon/api"
-        default_image_path  = "#{$hanlon_root}/image"
-
-        defaults = {
-          'hanlon_server'            => get_an_ip,
-          'base_path'                => default_base_path,
-          'api_version'              => 'v1',
-          'admin_port'               => 8025,
-          'api_port'                 => 8026,
-          'http_timeout'             => 60,
-          'hanlon_log_level'         => "Logger::ERROR"
+        {
+            :hanlon_server    => get_an_ip,
+            :base_path        => '/hanlon/api',
+            :api_version      => 'v1',
+            :api_port         => 8026,
+            :admin_port       => 8025,
+            :hanlon_log_level => 'Logger::ERROR',
+            :http_timeout     => 60
         }
 
-        return defaults
       end
 
     end
