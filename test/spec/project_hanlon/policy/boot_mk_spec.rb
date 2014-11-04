@@ -15,25 +15,25 @@ describe ProjectHanlon::PolicyTemplate::BootMK do
         get_boot_script(ProjectHanlon::ImageService::MicroKernel.new({}))
     end
 
-    it "should append the contents of rz_mk_boot_kernel_args to the iPXE kernel-line, if configured" do
-      boot_script('rz_mk_boot_kernel_args' => 'hanlon.ip=1.2.3.4').should include('hanlon.ip=1.2.3.4')
+    it "should append the contents of hnl_mk_boot_kernel_args to the iPXE kernel-line, if configured" do
+      boot_script('hnl_mk_boot_kernel_args' => 'hanlon.ip=1.2.3.4').should include('hanlon.ip=1.2.3.4')
     end
 
-    it "should append the contents of rz_mk_boot_debug_level if it is configured and matches 'quiet'" do
-      boot_script('rz_mk_boot_debug_level' => 'quiet').should include('quiet')
+    it "should append the contents of hnl_mk_boot_debug_level if it is configured and matches 'quiet'" do
+      boot_script('hnl_mk_boot_debug_level' => 'quiet').should include('quiet')
     end
 
-    it "should append the contents of rz_mk_boot_debug_level if it is configured and matches 'debug'" do
-      boot_script('rz_mk_boot_debug_level' => 'debug').should include('debug')
+    it "should append the contents of hnl_mk_boot_debug_level if it is configured and matches 'debug'" do
+      boot_script('hnl_mk_boot_debug_level' => 'debug').should include('debug')
     end
 
-    it "should not append the contents of rz_mk_boot_debug_level if it does not match 'quiet' or 'debug'" do
-      boot_script('rz_mk_boot_debug_level' => 'fubar').should_not include('fubar')
+    it "should not append the contents of hnl_mk_boot_debug_level if it does not match 'quiet' or 'debug'" do
+      boot_script('hnl_mk_boot_debug_level' => 'fubar').should_not include('fubar')
     end
 
-    it "should append the contents of rz_mk_boot_debug_level + rz_boot_kernel_args if both are configured" do
-      boot_script('rz_mk_boot_debug_level' => 'debug',
-        'rz_mk_boot_kernel_args' => 'hanlon.ip=1.2.3.4'
+    it "should append the contents of hnl_mk_boot_debug_level + hnl_boot_kernel_args if both are configured" do
+      boot_script('hnl_mk_boot_debug_level' => 'debug',
+        'hnl_mk_boot_kernel_args' => 'hanlon.ip=1.2.3.4'
       ).should include('debug hanlon.ip=1.2.3.4')
     end
   end

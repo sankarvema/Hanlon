@@ -14,7 +14,7 @@
 #  describe ".Microkernel" do
 #    it "should do something" do
 #      new_mk = ProjectHanlon::ImageService::MicroKernel.new({})
-#      resp = new_mk.add("#{$hanlon_root}/rz_mk_dev-image.0.2.1.0.iso", @config.image_path)
+#      resp = new_mk.add("#{$hanlon_root}/hnl_mk_dev-image.0.2.1.0.iso", @config.image_path)
 #      p resp
 #      p new_mk
 #
