@@ -1,9 +1,9 @@
 
 
 # Custom Matches for RSpec testing
-module RZRSpecMatchers
+module HnlRSpecMatchers
 
-  # This calls is override/executed by the RZSpecMatchers.keys_with_values_count_equals
+  # This calls is override/executed by the HnlSpecMatchers.keys_with_values_count_equals
   class KeysWithValuesCountEquals
 
     # Initialization takes a [Hash] with key/values to match and a [Numeric] count of how many should be in an [Array]

@@ -73,11 +73,11 @@ module Hanlon
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Hanlon::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Hanlon::WebService::Utils::hnl_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Hanlon::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Hanlon::WebService::Utils::hnl_slice_success_object(slice, command, response, options)
           end
 
         end

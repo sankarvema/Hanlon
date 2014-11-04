@@ -128,7 +128,7 @@ module Hanlon
 
       # used to construct a response to a RESTful request that is similar to the "slice_success"
       # response used previously by Hanlon
-      def rz_slice_success_response(slice, command, response, options = {})
+      def hnl_slice_success_response(slice, command, response, options = {})
         mk_response = options[:mk_response] ? options[:mk_response] : false
         type = options[:success_type] ? options[:success_type] : :generic
         # Slice Success types
@@ -143,17 +143,17 @@ module Hanlon
         return_hash["client_config"] = ProjectHanlon.config.get_client_config_hash if mk_response
         return_hash
       end
-      module_function :rz_slice_success_response
+      module_function :hnl_slice_success_response
 
-      # a method similar rz_slice_success_response method (above) that properly returns
+      # a method similar hnl_slice_success_response method (above) that properly returns
       # a Hanlon object (or array of Hanlon objects) as part of the response
-      def rz_slice_success_object(slice, command, rz_object, options = { })
-        if rz_object.respond_to?(:collect)
+      def hnl_slice_success_object(slice, command, hnl_object, options = { })
+        if hnl_object.respond_to?(:collect)
           # if here, it's a collection
           if slice.uri_root
             # if here, then we can reduce the details down and just show a URI to access
             # each element of the collection
-            rz_object = rz_object.collect do |element|
+            hnl_object = hnl_object.collect do |element|
               elem_hash = element.to_hash
               if element.respond_to?("is_template") && element.is_template
                 key_field = ""
@@ -187,16 +187,16 @@ module Hanlon
           else
             # if here, then there is no way to reference each element using
             # a URI, so show the full details for each
-            rz_object = rz_object.collect { |element| element.to_hash }
+            hnl_object = hnl_object.collect { |element| element.to_hash }
           end
         else
           # if here, then we're dealing with a single object, not a collection
           # so show the full details
-          rz_object = rz_object.to_hash
+          hnl_object = hnl_object.to_hash
         end
-        rz_slice_success_response(slice, command, rz_object, options)
+        hnl_slice_success_response(slice, command, hnl_object, options)
       end
-      module_function :rz_slice_success_object
+      module_function :hnl_slice_success_object
 
     end
   end

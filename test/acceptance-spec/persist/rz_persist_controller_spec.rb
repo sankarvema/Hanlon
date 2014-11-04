@@ -1,7 +1,7 @@
 
 require "project_hanlon"
 require "rspec"
-require "rz_rspec_matchers"
+require "hnl_rspec_matchers"
 require "uuid"
 
 # true == will remove all records from collection when done
