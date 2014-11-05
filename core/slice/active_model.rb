@@ -33,9 +33,9 @@ module ProjectHanlon
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         # then add a slightly different version of this line back in; one that incorporates
         # the other four flags we might pass in as part of a "get_all_active_models" command
-        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-nuuid|\-n|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = tmp_map
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-node_uuid|\-n|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = tmp_map
         # and add in a couple of lines that handle those four flags properly
-        [["-i", "--hw_id"], ["-n", "--nuuid"]].each { |val|
+        [["-i", "--hw_id"], ["-n", "--node_uuid"]].each { |val|
           commands[:get][val] = "get_all_active_models"
         }
 
@@ -45,16 +45,16 @@ module ProjectHanlon
         commands[:remove].delete(/^(?!^(all|\-\-help|\-h)$)\S+$/)
         # then add a slightly different version of this line back in; one that incorporates
         # the other four flags we might pass in as part of a "remove_active_model_by_uuid" command
-        commands[:remove][/^(?!^(all|\-\-hw_id|\-i|\-\-nuuid|\-n|\-\-help|\-h)$)\S+$/] = tmp_map
+        commands[:remove][/^(?!^(all|\-\-hw_id|\-i|\-\-node_uuid|\-n|\-\-help|\-h)$)\S+$/] = tmp_map
         # and add in a couple of lines that handle those four flags properly
-        [["-i", "--hw_id"], ["-n", "--nuuid"]].each { |val|
+        [["-i", "--hw_id"], ["-n", "--node_uuid"]].each { |val|
           commands[:remove][val] = "remove_active_model_by_uuid"
         }
 
         # finally, add in a couple of lines to properly handle "get_active_model_logs" commands
         commands[:logs] = "get_logs"
-        commands[:logs][/^(?!^(\-\-hw_id|\-i|\-\-nuuid|\-n|\{\}|\{.*\}|nil)$)\S+$/] = "get_active_model_logs"
-        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-nuuid|\-n|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:logs] = "get_active_model_logs"
+        commands[:logs][/^(?!^(\-\-hw_id|\-i|\-\-node_uuid|\-n|\{\}|\{.*\}|nil)$)\S+$/] = "get_active_model_logs"
+        commands[:get][/^(?!^(all|\-\-hw_id|\-i|\-\-node_uuid|\-n|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/][:logs] = "get_active_model_logs"
 
         commands
       end
@@ -75,15 +75,15 @@ module ProjectHanlon
         # been asked for generic help, so provide generic help
         puts "Active Model Slice: used to view active models or active model logs (and to remove active models).".red
         puts "Active Model Commands:".yellow
-        puts "\thanlon active_model [get] [all]                        " + "View all active models".yellow
-        puts "\thanlon active_model [get] (UUID) [logs]                " + "View specific active model (log)".yellow
-        puts "\thanlon active_model [get] --nuuid,-n NODE_UUID [logs]  " + "View (log for) active_model bound to node".yellow
-        puts "\thanlon active_model [get] --hw_id,-i HW_ID [logs]      " + "View (log for) active_model bound to node".yellow
-        puts "\thanlon active_model logs                               " + "Prints an aggregate view of active model logs".yellow
-        puts "\thanlon active_model remove (UUID)                      " + "Remove specific active model".yellow
-        puts "\thanlon active_model remove --nuuid,-n NODE_UUID        " + "Remove active_model bound to node".yellow
-        puts "\thanlon active_model remove --hw_id,-i HW_ID            " + "Remove active_model bound to node".yellow
-        puts "\thanlon active_model --help|-h                          " + "Display this screen".yellow
+        puts "\thanlon active_model [get] [all]                            " + "View all active models".yellow
+        puts "\thanlon active_model [get] (UUID) [logs]                    " + "View specific active model (log)".yellow
+        puts "\thanlon active_model [get] --node_uuid,-n NODE_UUID [logs]  " + "View (log for) active_model bound to node".yellow
+        puts "\thanlon active_model [get] --hw_id,-i HW_ID [logs]          " + "View (log for) active_model bound to node".yellow
+        puts "\thanlon active_model logs                                   " + "Prints an aggregate view of active model logs".yellow
+        puts "\thanlon active_model remove (UUID)                          " + "Remove specific active model".yellow
+        puts "\thanlon active_model remove --node_uuid,-n NODE_UUID        " + "Remove active_model bound to node".yellow
+        puts "\thanlon active_model remove --hw_id,-i HW_ID                " + "Remove active_model bound to node".yellow
+        puts "\thanlon active_model --help|-h                              " + "Display this screen".yellow
       end
 
       def get_all_active_models
@@ -96,7 +96,7 @@ module ProjectHanlon
         if @command_array.size < 3
           prev_flag = @prev_args.peek(0)
           hardware_id = @command_array[0] if prev_flag && ['--hw_id','-i'].include?(prev_flag)
-          node_uuid = @command_array[0] if prev_flag && ['--nuuid','-n'].include?(prev_flag)
+          node_uuid = @command_array[0] if prev_flag && ['--node_uuid','-n'].include?(prev_flag)
           if @command_array.size == 2 && @command_array[1] == 'logs'
             get_logs_flag = true
           end
@@ -153,7 +153,7 @@ module ProjectHanlon
         if @command_array.size == 2
           node_sel_flag = @command_array[0]
           hardware_id = @command_array[1] if ['--hw_id','-i'].include?(node_sel_flag)
-          node_uuid = @command_array[1] if ['--nuuid','-n'].include?(node_sel_flag)
+          node_uuid = @command_array[1] if ['--node_uuid','-n'].include?(node_sel_flag)
           if hardware_id || node_uuid
             uri = URI.parse(@uri_string + "?hw_id=#{hardware_id}") if hardware_id
             uri = URI.parse(@uri_string + "?uuid=#{node_uuid}") if node_uuid
@@ -193,7 +193,7 @@ module ProjectHanlon
         @command = :remove_active_model_by_uuid
         prev_flag = @prev_args.peek(0)
         hardware_id = @command_array[0] if prev_flag && ['--hw_id','-i'].include?(prev_flag)
-        node_uuid = @command_array[0] if prev_flag && ['--nuuid','-n'].include?(prev_flag)
+        node_uuid = @command_array[0] if prev_flag && ['--node_uuid','-n'].include?(prev_flag)
         if hardware_id || node_uuid
           uri = URI.parse(@uri_string + "?hw_id=#{hardware_id}") if hardware_id
           uri = URI.parse(@uri_string + "?uuid=#{node_uuid}") if node_uuid
