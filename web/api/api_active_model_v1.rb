@@ -74,7 +74,6 @@ module Hanlon
           end
 
           def remove_active_model(active_model, from_method_symbolic_name)
-            raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
             raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Active Model [#{active_model.uuid}]" unless get_data_ref.delete_object(active_model)
             slice_success_response(SLICE_REF, from_method_symbolic_name, "Active Model [#{active_model.uuid}] removed", :success_type => :removed)
           end
@@ -120,29 +119,29 @@ module Hanlon
         resource :active_model do
 
           # GET /active_model
-          # Retrieve list of active_models (or if a 'uuid' or 'hw_id' is provided, retrieve the details
+          # Retrieve list of active_models (or if a 'node_uuid' or 'hw_id' is provided, retrieve the details
           # for the active_model bound to the specified node instead)
           desc "Retrieve a list of all active_model instances"
           params do
-            optional :uuid, type: String, desc: "The (Hanlon-assigned) UUID of the bound node."
+            optional :node_uuid, type: String, desc: "The (Hanlon-assigned) UUID of the bound node."
             optional :hw_id, type: String, desc: "The Hardware ID (SMBIOS UUID) of the bound node."
           end
           get do
-            uuid = params[:uuid]
+            node_uuid = params[:node_uuid]
             hw_id = params[:hw_id]
-            raise ProjectHanlon::Error::Slice::InvalidCommand, "only one node selection parameter ('hw_id' or 'uuid') may be used" if (hw_id && uuid)
-            # if either a uuid or a hw_id was provided, return the details for the active_model bound to the node
+            raise ProjectHanlon::Error::Slice::InvalidCommand, "only one node selection parameter ('hw_id' or 'node_uuid') may be used" if (hw_id && node_uuid)
+            # if either a node_uuid or a hw_id was provided, return the details for the active_model bound to the node
             # with that node_id, otherwise just return the list of all active_models
-            if hw_id || uuid
+            if hw_id || node_uuid
               engine = ProjectHanlon::Engine.instance
               if hw_id
                 node = engine.lookup_node_by_hw_id({:uuid => hw_id, :mac_id => []})
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{hw_id}]" unless node
                 node_id = hw_id
-              elsif uuid
-                node = SLICE_REF.return_objects_using_uuid(:node, uuid)
-                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{uuid}]" unless node
-                node_id = uuid
+              elsif node_uuid
+                node = SLICE_REF.return_objects_using_uuid(:node, node_uuid)
+                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node
+                node_id = node_uuid
               end
               active_model = engine.find_active_model(node)
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Node [#{node_id}] is not bound to an active_model" unless active_model
@@ -154,17 +153,17 @@ module Hanlon
           end     # end GET /active_model
 
           # DELETE /active_model
-          # remove an active_model instance bound to a node with the given Hanlon-assigned 'uuid'
+          # remove an active_model instance bound to a node with the given Hanlon-assigned 'node_uuid'
           # or with the given 'hw_id' (SMBIOS UUID)
           params do
-            optional :uuid, type: String, desc: "The (Hanlon-assigned) UUID of the bound node."
+            optional :node_uuid, type: String, desc: "The (Hanlon-assigned) UUID of the bound node."
             optional :hw_id, type: String, desc: "The Hardware ID (SMBIOS UUID) of the bound node."
           end
           delete do
-            uuid = params[:uuid]
+            node_uuid = params[:node_uuid]
             hw_id = params[:hw_id]
-            raise ProjectHanlon::Error::Slice::InvalidCommand, "must select a node using one of the 'hw_id' or 'uuid' query parameters" unless (hw_id || uuid)
-            raise ProjectHanlon::Error::Slice::InvalidCommand, "only one node selection parameter ('hw_id' or 'uuid') may be used" if (hw_id && uuid)
+            raise ProjectHanlon::Error::Slice::InvalidCommand, "must select a node using one of the 'hw_id' or 'node_uuid' query parameters" unless (hw_id || node_uuid)
+            raise ProjectHanlon::Error::Slice::InvalidCommand, "only one node selection parameter ('hw_id' or 'node_uuid') may be used" if (hw_id && node_uuid)
             # find the matching node; either by Hardware ID (SMBIOS UUID) or Hanlon-assigned UUID
             engine = ProjectHanlon::Engine.instance
             if hw_id
@@ -172,13 +171,13 @@ module Hanlon
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{hw_id}]" unless node
               node_id = hw_id
             else
-              node = SLICE_REF.return_objects_using_uuid(:node, uuid)
-              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{uuid}]" unless node
-              node_id = uuid
+              node = SLICE_REF.return_objects_using_uuid(:node, node_uuid)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with UUID: [#{node_uuid}]" unless node
+              node_id = node_uuid
             end
             raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node: [#{node_id}]" unless node
             active_model = engine.find_active_model(node)
-            raise ProjectHanlon::Error::Slice::InvalidUUID, "Node [#{uuid}] is not bound to an active_model" unless active_model
+            raise ProjectHanlon::Error::Slice::InvalidUUID, "Node [#{node_id}] is not bound to an active_model" unless active_model
             remove_active_model(active_model, :remove_active_model_by_hw_id)
           end
 
@@ -239,6 +238,7 @@ module Hanlon
             delete do
               active_model_uuid = params[:uuid]
               active_model = SLICE_REF.get_object("active_model_instance", :active, active_model_uuid)
+              raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Active Model with UUID: [#{active_model_uuid}]" unless active_model && (active_model.class != Array || active_model.length > 0)
               remove_active_model(active_model, :remove_active_model_by_uuid)
             end     # end DELETE /active_model/{uuid}
 

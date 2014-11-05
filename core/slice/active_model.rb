@@ -108,7 +108,7 @@ module ProjectHanlon
         # else just get the list of all nodes and return that result
         if hardware_id || node_uuid
           uri = URI.parse(@uri_string + "?hw_id=#{hardware_id}") if hardware_id
-          uri = URI.parse(@uri_string + "?uuid=#{node_uuid}") if node_uuid
+          uri = URI.parse(@uri_string + "?node_uuid=#{node_uuid}") if node_uuid
           # and get the results of the appropriate RESTful request using that URI
           result = hnl_http_get(uri)
           # if user was actually looking for logs, then return the logs
@@ -156,7 +156,7 @@ module ProjectHanlon
           node_uuid = @command_array[1] if ['--node_uuid','-n'].include?(node_sel_flag)
           if hardware_id || node_uuid
             uri = URI.parse(@uri_string + "?hw_id=#{hardware_id}") if hardware_id
-            uri = URI.parse(@uri_string + "?uuid=#{node_uuid}") if node_uuid
+            uri = URI.parse(@uri_string + "?node_uuid=#{node_uuid}") if node_uuid
             # and get the results of the appropriate RESTful request using that URI
             result = hnl_http_get(uri)
           else
@@ -196,7 +196,7 @@ module ProjectHanlon
         node_uuid = @command_array[0] if prev_flag && ['--node_uuid','-n'].include?(prev_flag)
         if hardware_id || node_uuid
           uri = URI.parse(@uri_string + "?hw_id=#{hardware_id}") if hardware_id
-          uri = URI.parse(@uri_string + "?uuid=#{node_uuid}") if node_uuid
+          uri = URI.parse(@uri_string + "?node_uuid=#{node_uuid}") if node_uuid
         else
           # the UUID is the first element of the @command_array
           uuid = get_uuid_from_prev_args
