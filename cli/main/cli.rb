@@ -1,4 +1,3 @@
-#require 'project_hanlon'
 
 require 'json'
 require 'colored'
