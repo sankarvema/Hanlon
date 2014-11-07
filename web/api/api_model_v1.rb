@@ -180,11 +180,11 @@ module Hanlon
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Model Template Named: [#{model_template_name}]" unless model_template && (model_template.class != Array || model_template.length > 0)
                 # then, construct the response
                 slice_success_object(SLICE_REF, :get_model_template_by_uuid, model_template[0], :success_type => :generic)
-              end     # end GET /model/templates/{uuid}
+              end     # end GET /model/templates/{name}
 
-            end     # end resource /model/templates/:uuid
+            end     # end resource /:name
 
-          end     # end resource /model/templates
+          end     # end resource :templates
 
           resource '/:uuid' do
 
@@ -269,9 +269,9 @@ module Hanlon
               slice_success_response(SLICE_REF, :remove_model_by_uuid, "Model [#{model.uuid}] removed", :success_type => :removed)
             end     # end DELETE /model/{uuid}
 
-          end     # end resource /model/:uuid
+          end     # end resource /:uuid
 
-        end     # end resource /model
+        end     # end resource :model
 
       end
 
