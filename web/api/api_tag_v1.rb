@@ -80,7 +80,7 @@ module Hanlon
               found_matcher << [matcher, tag] if matcher.uuid.scan(matcher_uuid).count > 0
             }
             # if it's still an empty array, fill it with something
-            found_matcher << [nil, tag] if found_matcher.empty? 
+            found_matcher << [nil, tag] if found_matcher.empty?
             found_matcher.count == 1 ? found_matcher.first : nil
           end
 
@@ -221,6 +221,15 @@ module Hanlon
                 compare = params["compare"]
                 value = params["value"]
                 inverse = params["inverse"]
+                # if the user is creating a 'like' tag matcher, but the value passed in is
+                # not a valid regular expression, then throw an error
+                if compare == 'like'
+                  begin
+                    regex_value = Regexp.new(value)
+                  rescue SyntaxError, RegexpError => e
+                    raise ProjectHanlon::Error::Slice::CouldNotCreate, "Invalid regexp value; #{e.message}"
+                  end
+                end
                 # if an inverse value was not provided, default to false
                 inverse = "false" unless inverse
                 tagrule = SLICE_REF.get_object("tagrule_with_uuid", :tag, tag_uuid)
