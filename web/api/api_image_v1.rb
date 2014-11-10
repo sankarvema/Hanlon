@@ -118,7 +118,7 @@ module Hanlon
               image.set_lcl_image_path(ProjectHanlon.config.image_path)
               image.image_status, image.image_status_message = image.verify(image.image_path)
             end
-            slice_success_object(SLICE_REF, :get_all_images, images, :success_type => :created)
+            slice_success_object(SLICE_REF, :get_all_images, images, :success_type => :generic)
           end     # end GET /image
 
           # POST /image
