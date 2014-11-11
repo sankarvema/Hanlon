@@ -21,56 +21,59 @@ describe 'Hanlon::WebService::ActiveModel' do
         expect(parsed['http_err_code']).to eq(200)
         expect(parsed['errcode']).to eq(0)
 
-        # TODO - How can we make sure an active model exists in a test environment?
-        # Here we expect there is at least one active_model available
-        # and we save the UUID so we can test with it below
-        $active_model_uuid = parsed['response'][0]['@uuid']
-
-        # This part is just set-up to get the node_uuid and hw_id for testing below
-        uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid)
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
-        # make the request
-        response = http_client.request(request)
-        # parse the output and validate
-        parsed = JSON.parse(response.body)
-        $node_uuid = parsed['response']['@model']['@node']['@uuid']
-        $hw_id     = parsed['response']['@model']['@node']['@hw_id'][0]
+      # Removing this section until we have methods to dynamically create active models
+      #   # TODO - How can we make sure an active model exists in a test environment?
+      #   # Here we expect there is at least one active_model available
+      #   # and we save the UUID so we can test with it below
+      #   $active_model_uuid = parsed['response'][0]['@uuid']
+      #
+      #   # This part is just set-up to get the node_uuid and hw_id for testing below
+      #   uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid)
+      #   http_client = Net::HTTP.new(uri.host, uri.port)
+      #   request = Net::HTTP::Get.new(uri.request_uri)
+      #   # make the request
+      #   response = http_client.request(request)
+      #   # parse the output and validate
+      #   parsed = JSON.parse(response.body)
+      #   $node_uuid = parsed['response']['@model']['@node']['@uuid']
+      #   $hw_id     = parsed['response']['@model']['@node']['@hw_id'][0]
       end
 
-      it 'Returns an active model instance (by node_uuid)' do
-        uri = URI.parse(hnl_uri + '/active_model?node_uuid=' + $node_uuid)
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
-        # make the request
-        response = http_client.request(request)
-        # parse the output and validate
-        parsed = JSON.parse(response.body)
-        expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
-        expect(parsed['command']).to eq('get_all_active_models')
-        expect(parsed['result']).to eq('Ok')
-        expect(parsed['http_err_code']).to eq(200)
-        expect(parsed['errcode']).to eq(0)
-        #make sure we are getting the same active model
-        expect(parsed['response']['@uuid']).to eq($active_model_uuid)
-      end
+      # TODO - Removing this section until we have methods to dynamically create active models
+      # it 'Returns an active model instance (by node_uuid)' do
+      #   uri = URI.parse(hnl_uri + '/active_model?node_uuid=' + $node_uuid)
+      #   http_client = Net::HTTP.new(uri.host, uri.port)
+      #   request = Net::HTTP::Get.new(uri.request_uri)
+      #   # make the request
+      #   response = http_client.request(request)
+      #   # parse the output and validate
+      #   parsed = JSON.parse(response.body)
+      #   expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
+      #   expect(parsed['command']).to eq('get_all_active_models')
+      #   expect(parsed['result']).to eq('Ok')
+      #   expect(parsed['http_err_code']).to eq(200)
+      #   expect(parsed['errcode']).to eq(0)
+      #   #make sure we are getting the same active model
+      #   expect(parsed['response']['@uuid']).to eq($active_model_uuid)
+      # end
 
-      it 'Returns an active model instance (by hw_id)' do
-        uri = URI.parse(hnl_uri + '/active_model?hw_id=' + $hw_id)
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
-        # make the request
-        response = http_client.request(request)
-        # parse the output and validate
-        parsed = JSON.parse(response.body)
-        expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
-        expect(parsed['command']).to eq('get_all_active_models')
-        expect(parsed['result']).to eq('Ok')
-        expect(parsed['http_err_code']).to eq(200)
-        expect(parsed['errcode']).to eq(0)
-        #make sure we are getting the same active model
-        expect(parsed['response']['@uuid']).to eq($active_model_uuid)
-      end
+      # TODO - Removing this section until we have methods to dynamically create active models
+      # it 'Returns an active model instance (by hw_id)' do
+      #   uri = URI.parse(hnl_uri + '/active_model?hw_id=' + $hw_id)
+      #   http_client = Net::HTTP.new(uri.host, uri.port)
+      #   request = Net::HTTP::Get.new(uri.request_uri)
+      #   # make the request
+      #   response = http_client.request(request)
+      #   # parse the output and validate
+      #   parsed = JSON.parse(response.body)
+      #   expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
+      #   expect(parsed['command']).to eq('get_all_active_models')
+      #   expect(parsed['result']).to eq('Ok')
+      #   expect(parsed['http_err_code']).to eq(200)
+      #   expect(parsed['errcode']).to eq(0)
+      #   #make sure we are getting the same active model
+      #   expect(parsed['response']['@uuid']).to eq($active_model_uuid)
+      # end
 
     end   # end GET /active_model
 
@@ -109,20 +112,21 @@ describe 'Hanlon::WebService::ActiveModel' do
     describe 'resource /:uuid' do
 
       describe 'GET /active_model/{uuid}' do
-        it 'Returns the details for a specific active model instance (by uuid)' do
-          uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
-          # make the request
-          response = http_client.request(request)
-          # parse the output and validate
-          parsed = JSON.parse(response.body)
-          expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
-          expect(parsed['command']).to eq('get_active_model_by_uuid')
-          expect(parsed['result']).to eq('Ok')
-          expect(parsed['http_err_code']).to eq(200)
-          expect(parsed['errcode']).to eq(0)
-        end
+        # TODO - Removing this section until we have methods to dynamically create active models
+        # it 'Returns the details for a specific active model instance (by uuid)' do
+        #   uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid)
+        #   http_client = Net::HTTP.new(uri.host, uri.port)
+        #   request = Net::HTTP::Get.new(uri.request_uri)
+        #   # make the request
+        #   response = http_client.request(request)
+        #   # parse the output and validate
+        #   parsed = JSON.parse(response.body)
+        #   expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
+        #   expect(parsed['command']).to eq('get_active_model_by_uuid')
+        #   expect(parsed['result']).to eq('Ok')
+        #   expect(parsed['http_err_code']).to eq(200)
+        #   expect(parsed['errcode']).to eq(0)
+        # end
       end   # end GET /active_model/{uuid}
 
       describe 'DELETE /active_model/{uuid}' do
@@ -134,20 +138,21 @@ describe 'Hanlon::WebService::ActiveModel' do
 
       describe 'resource /logs' do
         describe 'GET /active_model/{uuid}/logs' do
-          it 'Returns the log entries for a specific active model instance (by uuid)' do
-            uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid + '/logs')
-            http_client = Net::HTTP.new(uri.host, uri.port)
-            request = Net::HTTP::Get.new(uri.request_uri)
-            # make the request
-            response = http_client.request(request)
-            # parse the output and validate
-            parsed = JSON.parse(response.body)
-            expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
-            expect(parsed['command']).to eq('get_active_model_logs')
-            expect(parsed['result']).to eq('Ok')
-            expect(parsed['http_err_code']).to eq(200)
-            expect(parsed['errcode']).to eq(0)
-          end
+          # TODO - Removing this section until we have methods to dynamically create active models
+          # it 'Returns the log entries for a specific active model instance (by uuid)' do
+          #   uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid + '/logs')
+          #   http_client = Net::HTTP.new(uri.host, uri.port)
+          #   request = Net::HTTP::Get.new(uri.request_uri)
+          #   # make the request
+          #   response = http_client.request(request)
+          #   # parse the output and validate
+          #   parsed = JSON.parse(response.body)
+          #   expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
+          #   expect(parsed['command']).to eq('get_active_model_logs')
+          #   expect(parsed['result']).to eq('Ok')
+          #   expect(parsed['http_err_code']).to eq(200)
+          #   expect(parsed['errcode']).to eq(0)
+          # end
         end   # end GET /active_model/{uuid}/logs
       end   # end resource /logs
 
