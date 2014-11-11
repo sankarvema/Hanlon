@@ -1,37 +1,39 @@
 
 hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
-describe 'Hanlon::WebService::Model' do
+describe 'Hanlon::WebService::Broker' do
 
-  describe 'resource :model' do
+  describe 'resource :broker' do
 
-    describe 'GET /model' do
-      it 'Returns a list of all model instances' do
-        uri = URI.parse(hnl_uri + '/model')
+    describe 'GET /broker' do
+      it 'Returns a list of all broker instances' do
+        uri = URI.parse(hnl_uri + '/broker')
         http_client = Net::HTTP.new(uri.host, uri.port)
         request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
         response = http_client.request(request)
         # parse the output and validate
         parsed = JSON.parse(response.body)
-        expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
-        expect(parsed['command']).to eq('get_all_models')
+        expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
+        expect(parsed['command']).to eq('get_all_brokers')
         expect(parsed['result']).to eq('Ok')
         expect(parsed['http_err_code']).to eq(200)
         expect(parsed['errcode']).to eq(0)
       end
-    end   # end GET /model
+    end   # end GET /broker
 
-    describe 'POST /model' do
-      it 'Creates a new model instance' do
-        uri = URI.parse(hnl_uri + '/model')
+    describe 'POST /broker' do
+      it 'Creates a new broker instance' do
+        uri = URI.parse(hnl_uri + '/broker')
 
-        template = 'discover_only'
-        label = 'spec_test_model'
+        plugin = 'puppet'
+        name = 'spec_test_broker'
+        description = 'spec test puppet broker'
 
         body_hash = {
-            :template => template,
-            :label => label,
+            :plugin => plugin,
+            :name => name,
+            :description => description,
             :req_metadata_params => {},
         }
         json_data = body_hash.to_json
@@ -45,42 +47,42 @@ describe 'Hanlon::WebService::Model' do
         response = http_client.request(request)
         # parse the output and validate
         parsed = JSON.parse(response.body)
-        expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
-        expect(parsed['command']).to eq('create_model')
+        expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
+        expect(parsed['command']).to eq('create_broker')
         expect(parsed['result']).to eq('Created')
         expect(parsed['http_err_code']).to eq(201)
         expect(parsed['errcode']).to eq(0)
         # save the created UUID for later use
-        $model_uuid = parsed['response']['@uuid']
+        $broker_uuid = parsed['response']['@uuid']
       end
-    end   # end POST /model
+    end   # end POST /broker
 
-    describe 'resource :templates' do
+    describe 'resource :plugins' do
 
-      describe 'GET /model/templates' do
-        it 'Returns a list of available model templates' do
-          uri = URI.parse(hnl_uri + '/model/templates')
+      describe 'GET /broker/plugins' do
+        it 'Returns a list of available broker plugins' do
+          uri = URI.parse(hnl_uri + '/broker/plugins')
           http_client = Net::HTTP.new(uri.host, uri.port)
           request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
           response = http_client.request(request)
           # parse the output and validate
           parsed = JSON.parse(response.body)
-          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
-          expect(parsed['command']).to eq('get_model_templates')
+          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
+          expect(parsed['command']).to eq('get_broker_plugins')
           expect(parsed['result']).to eq('Ok')
           expect(parsed['http_err_code']).to eq(200)
           expect(parsed['errcode']).to eq(0)
         end
-      end   # end GET /model/templates
+      end   # end GET /broker/plugins
 
       describe 'resource /:name' do
-        describe 'GET /model/templates/{name}' do
-          it 'Returns details for a specific model template (by name)' do
+        describe 'GET /broker/plugins/{name}' do
+          it 'Returns details for a specific broker plugin (by name)' do
 
-            template = 'discover_only'
+            broker = 'puppet'
 
-            uri = URI.parse(hnl_uri + '/model/templates/' + template)
+            uri = URI.parse(hnl_uri + '/broker/plugins/' + broker)
 
             http_client = Net::HTTP.new(uri.host, uri.port)
             request = Net::HTTP::Get.new(uri.request_uri)
@@ -88,46 +90,45 @@ describe 'Hanlon::WebService::Model' do
             response = http_client.request(request)
             # parse the output and validate
             parsed = JSON.parse(response.body)
-            expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
-            expect(parsed['command']).to eq('get_model_template_by_uuid')
+            expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
+            expect(parsed['command']).to eq('get_broker_plugin_by_uuid')
             expect(parsed['result']).to eq('Ok')
             expect(parsed['http_err_code']).to eq(200)
             expect(parsed['errcode']).to eq(0)
           end
-        end   # end GET /model/templates/{name}
+        end   # end GET /broker/plugins/{name}
       end   # end resource /:name
-
-    end   # end resource :templates
+    end   # end resource :plugins
 
     describe 'resource /:uuid' do
 
-      describe 'GET /model/{uuid}' do
-        it 'Returns details for a specific model instance (by UUID)' do
-          uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
+      describe 'GET /broker/{uuid}' do
+        it 'Returns details for a specific broker instance (by UUID)' do
+          uri = URI.parse(hnl_uri + '/broker/' + $broker_uuid)
           http_client = Net::HTTP.new(uri.host, uri.port)
           request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
           response = http_client.request(request)
           # parse the output and validate
           parsed = JSON.parse(response.body)
-          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
-          expect(parsed['command']).to eq('get_model_by_uuid')
+          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
+          expect(parsed['command']).to eq('get_broker_by_uuid')
           expect(parsed['result']).to eq('Ok')
           expect(parsed['http_err_code']).to eq(200)
           expect(parsed['errcode']).to eq(0)
-          # make sure we are getting the same model
-          expect(parsed['response']['@uuid']).to eq($model_uuid)
+          # make sure we are getting the same broker
+          expect(parsed['response']['@uuid']).to eq($broker_uuid)
         end
-      end   # end GET /model/{uuid}
+      end   # end GET /broker/{uuid}
 
-      describe 'PUT /model/{uuid}' do
-        it 'Updates a model instance (by UUID)' do
-          uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
+      describe 'PUT /broker/{uuid' do
+        it 'Updates a broker instance (by UUID)' do
+          uri = URI.parse(hnl_uri + '/broker/' + $broker_uuid)
 
-          label = 'new_spec_test_model'
+          name = 'new_spec_test_broker'
 
           body_hash = {
-              :label => label,
+              :name => name,
           }
           json_data = body_hash.to_json
 
@@ -140,37 +141,39 @@ describe 'Hanlon::WebService::Model' do
           response = http_client.request(request)
           # parse the output and validate
           parsed = JSON.parse(response.body)
-          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
-          expect(parsed['command']).to eq('update_model')
+          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
+          expect(parsed['command']).to eq('update_broker')
           expect(parsed['result']).to eq('Updated')
           expect(parsed['http_err_code']).to eq(202)
           expect(parsed['errcode']).to eq(0)
-          # make sure we are updating the label
-          expect(parsed['response']['@label']).to eq(label)
+          # make sure we are updating the name
+          expect(parsed['response']['@name']).to eq(name)
         end
-      end   # end PUT /model/{uuid}
+      end   # end PUT /broker/{uuid}
 
-      describe 'DELETE /model/{uuid}' do
-        it 'Removes a model instance (by UUID)' do
-          uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
+      describe 'DELETE /broker/{uuid' do
+        it 'Removes a broker instance (by UUID)' do
+          uri = URI.parse(hnl_uri + '/broker/' + $broker_uuid)
           http_client = Net::HTTP.new(uri.host, uri.port)
           request = Net::HTTP::Delete.new(uri.request_uri)
           # make the request
           response = http_client.request(request)
           # parse the output and validate
           parsed = JSON.parse(response.body)
-          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
-          expect(parsed['command']).to eq('remove_model_by_uuid')
+          expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
+          expect(parsed['command']).to eq('remove_broker_by_uuid')
           expect(parsed['result']).to eq('Removed')
           expect(parsed['http_err_code']).to eq(202)
           expect(parsed['errcode']).to eq(0)
-          # make sure we are returning the same model uuid
-          expect(parsed['response']).to include($model_uuid)
+          # make sure we are returning the same broker uuid
+          expect(parsed['response']).to include($broker_uuid)
         end
-      end   # end DELETE /model/{uuid}
+      end   # end DELETE /broker/{uuid}
 
     end   # end resource /:uuid
 
-  end   # end resource :model
+  end   # end resource :broker
+
 
 end
+

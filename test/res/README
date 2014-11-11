@@ -1,0 +1,4 @@
+This is the test resource folder.
+
+The hanlon microkernel image should go here for proper image api testing.
+api_image_spec.rb will download the microkernel image.
