@@ -34,6 +34,20 @@ describe 'Hanlon::WebService::Policy' do
 
   end
 
+  after(:all) do
+    # Delete the temporary model used for testing
+    uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
+    http_client = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Delete.new(uri.request_uri)
+    # make the request
+    response = http_client.request(request)
+    # parse the output and validate
+    parsed = JSON.parse(response.body)
+    unless parsed['http_err_code'] == 202
+      raise 'Could not create a model'
+    end
+  end
+
   describe 'resource :policy' do
 
     describe 'GET /policy' do
