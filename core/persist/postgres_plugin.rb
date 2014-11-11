@@ -39,7 +39,7 @@ module ProjectHanlon
           @connection = PG::Connection.new(:host => hostname, :port => port, :connect_timeout => timeout, :dbname => dbname, :user => username, :password => password)
         rescue PG::Error => e
           if e.message.include? 'database "' + dbname + '" does not exist'
-            @connection = create_database(hostname, port, dbname, timeout)
+            @connection = create_database(hostname, port, username, password, dbname, timeout)
           else
             logger.error e.message
             raise
