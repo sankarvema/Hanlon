@@ -19,8 +19,8 @@ services:
   - mongodb
 
 before_script:
-  - mkdir image
   - sleep 15
+  - export TEST_MODE=true
 
 script:
   - ./hanlon_init
