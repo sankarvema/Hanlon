@@ -73,14 +73,14 @@ describe 'Hanlon::WebService::Node' do
 
       describe 'GET /node/power' do
         # it 'Returns the power state of a node (by hw_id)' do
-        #   # TODO
+        #   # TODO - 'resource :power' not yet implemented
         #
         # end
       end   # end GET /node/power
 
       describe 'POST /node/power' do
         # it 'Resets the power state of a node (by hw_id)' do
-        #   # TODO
+        #   # TODO - 'resource :power' not yet implemented
         #
         # end
       end   # end POST /node/power
@@ -134,14 +134,14 @@ describe 'Hanlon::WebService::Node' do
 
         describe 'GET /node/{uuid}/power' do
           # it 'Returns the power state of a specific node (by uuid)' do
-          #   # TODO
+          #   # TODO - 'resource :power' not yet implemented
           #
           # end
         end   # end GET /node/{uuid}/power
 
         describe 'POST /node/{uuid}/power' do
           # it 'Resets the power state of a specific node (by uuid)' do
-          #   # TODO
+          #   # TODO - 'resource :power' not yet implemented
           #
           # end
         end   # end POST /node/{uuid}/power

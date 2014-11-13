@@ -150,7 +150,7 @@ describe 'Hanlon::WebService::Policy' do
     end   # end resource :templates
 
     describe 'resource :callback' do
-      # TODO - this section not yet implemented
+      # TODO - 'resource :callback' not yet implemented
     end   # resource :callback
 
     describe 'resource /:uuid' do
