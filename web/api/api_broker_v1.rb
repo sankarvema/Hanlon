@@ -167,11 +167,11 @@ module Hanlon
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Broker Plugin Named: [#{broker_plugin_name}]" unless broker_plugin && (broker_plugin.class != Array || broker_plugin.length > 0)
                 # then, construct the response
                 slice_success_object(SLICE_REF, :get_broker_plugin_by_uuid, broker_plugin[0], :success_type => :generic)
-              end     # end GET /broker/plugins/{uuid}
+              end     # end GET /broker/plugins/{name}
 
-            end     # end resource /broker/plugins/:uuid
+            end     # end resource /broker/plugins/:name
 
-          end     # end resource /broker/plugins
+          end     # end resource :plugins
 
           resource '/:uuid' do
 
@@ -255,9 +255,9 @@ module Hanlon
               slice_success_response(SLICE_REF, :remove_broker_by_uuid, "Broker [#{broker.uuid}] removed", :success_type => :removed)
             end     # end DELETE /broker/{uuid}
 
-          end     # end resource /broker/:uuid
+          end     # end resource /:uuid
 
-        end     # end resource /broker
+        end     # end resource :broker
 
       end
 

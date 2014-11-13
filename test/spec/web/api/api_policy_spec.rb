@@ -4,7 +4,7 @@ hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 describe 'Hanlon::WebService::Policy' do
 
   before(:all) do
-    # Create a model because we need a model to be able to create a policy
+    # Create a temporary model to facilitate creating a policy below
     uri = URI.parse(hnl_uri + '/model')
 
     template = 'discover_only'
@@ -27,7 +27,7 @@ describe 'Hanlon::WebService::Policy' do
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 201
-      raise 'Could not create a model'
+      raise 'Could not create a temporary model'
     end
     # save the created UUID for later use
     $model_uuid = parsed['response']['@uuid']
@@ -44,7 +44,7 @@ describe 'Hanlon::WebService::Policy' do
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 202
-      raise 'Could not create a model'
+      raise 'Could not delete the temporary model'
     end
   end
 
