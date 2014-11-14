@@ -3,10 +3,19 @@ hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
 describe 'Hanlon::WebService::ActiveModel' do
 
+  include SpecHttpHelper
+
   before(:all) do
 
-    # Register a node with relevant attributes
     $hw_id = "TEST#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}#{rand(9)}"
+    $node_uuid = nil
+    $model_uuid = nil
+    $tag_uuid = nil
+    $tag_matcher_uuid = nil
+    $policy_uuid = nil
+    $active_model_uuid = nil
+
+    # Register a node with relevant attributes
     uri = URI.parse(hnl_uri + '/node/register')
     uuid = $hw_id
     last_state = 'idle'
@@ -21,13 +30,8 @@ describe 'Hanlon::WebService::ActiveModel' do
         :attributes_hash => attributes_hash,
     }
     json_data = body_hash.to_json
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    http_client.read_timeout = ProjectHanlon.config.http_timeout
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = json_data
-    request['Content-Type'] = 'application/json'
     # make the request
-    response = http_client.request(request)
+    response = spec_http_post_json_data(uri, json_data)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 200
@@ -47,13 +51,8 @@ describe 'Hanlon::WebService::ActiveModel' do
         :req_metadata_params => {},
     }
     json_data = body_hash.to_json
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    http_client.read_timeout = ProjectHanlon.config.http_timeout
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = json_data
-    request['Content-Type'] = 'application/json'
     # make the request
-    response = http_client.request(request)
+    response = spec_http_post_json_data(uri, json_data)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 201
@@ -72,13 +71,8 @@ describe 'Hanlon::WebService::ActiveModel' do
         :tag => tag,
     }
     json_data = body_hash.to_json
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    http_client.read_timeout = ProjectHanlon.config.http_timeout
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = json_data
-    request['Content-Type'] = 'application/json'
     # make the request
-    response = http_client.request(request)
+    response = spec_http_post_json_data(uri, json_data)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 201
@@ -99,13 +93,8 @@ describe 'Hanlon::WebService::ActiveModel' do
         :value => value,
     }
     json_data = body_hash.to_json
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    http_client.read_timeout = ProjectHanlon.config.http_timeout
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = json_data
-    request['Content-Type'] = 'application/json'
     # make the request
-    response = http_client.request(request)
+    response = spec_http_post_json_data(uri, json_data)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 201
@@ -130,13 +119,8 @@ describe 'Hanlon::WebService::ActiveModel' do
         :enabled => enabled,
     }
     json_data = body_hash.to_json
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    http_client.read_timeout = ProjectHanlon.config.http_timeout
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = json_data
-    request['Content-Type'] = 'application/json'
     # make the request
-    response = http_client.request(request)
+    response = spec_http_post_json_data(uri, json_data)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 201
@@ -147,10 +131,8 @@ describe 'Hanlon::WebService::ActiveModel' do
 
     # Perform node checkin
     uri = URI.parse(hnl_uri + "/node/checkin?hw_id=#{$hw_id}&last_state=idle")
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Get.new(uri.request_uri)
     # make the request
-    response = http_client.request(request)
+    response = spec_http_get(uri)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 200
@@ -164,10 +146,8 @@ describe 'Hanlon::WebService::ActiveModel' do
 
     # Remove the policy
     uri = URI.parse(hnl_uri + '/policy/' + $policy_uuid)
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Delete.new(uri.request_uri)
     # make the request
-    response = http_client.request(request)
+    response = spec_http_delete(uri)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 202
@@ -177,10 +157,8 @@ describe 'Hanlon::WebService::ActiveModel' do
 
     # Remove the tag
     uri = URI.parse(hnl_uri + '/tag/' + $tag_uuid)
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Delete.new(uri.request_uri)
     # make the request
-    response = http_client.request(request)
+    response = spec_http_delete(uri)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 202
@@ -190,10 +168,8 @@ describe 'Hanlon::WebService::ActiveModel' do
 
     # Remove the model
     uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Delete.new(uri.request_uri)
     # make the request
-    response = http_client.request(request)
+    response = spec_http_delete(uri)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 202
@@ -209,10 +185,8 @@ describe 'Hanlon::WebService::ActiveModel' do
 
       it 'Returns a list of all active model instances' do
         uri = URI.parse(hnl_uri + '/active_model')
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        response = spec_http_get(uri)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
@@ -224,10 +198,8 @@ describe 'Hanlon::WebService::ActiveModel' do
 
       it 'Returns an active model instance (by node_uuid)' do
         uri = URI.parse(hnl_uri + '/active_model?node_uuid=' + $node_uuid)
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        response = spec_http_get(uri)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
@@ -242,10 +214,8 @@ describe 'Hanlon::WebService::ActiveModel' do
 
       it 'Returns an active model instance (by hw_id)' do
         uri = URI.parse(hnl_uri + '/active_model?hw_id=' + $hw_id)
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        response = spec_http_get(uri)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
@@ -275,10 +245,8 @@ describe 'Hanlon::WebService::ActiveModel' do
       describe 'GET /active_model/logs' do
         it 'Returns the log entries for all active model instances' do
           uri = URI.parse(hnl_uri + '/active_model/logs')
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
@@ -296,10 +264,8 @@ describe 'Hanlon::WebService::ActiveModel' do
       describe 'GET /active_model/{uuid}' do
         it 'Returns the details for a specific active model instance (by uuid)' do
           uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
@@ -314,10 +280,8 @@ describe 'Hanlon::WebService::ActiveModel' do
         describe 'GET /active_model/{uuid}/logs' do
           it 'Returns the log entries for a specific active model instance (by uuid)' do
             uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid + '/logs')
-            http_client = Net::HTTP.new(uri.host, uri.port)
-            request = Net::HTTP::Get.new(uri.request_uri)
             # make the request
-            response = http_client.request(request)
+            response = spec_http_get(uri)
             # parse the output and validate
             parsed = JSON.parse(response.body)
             expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')
@@ -332,10 +296,8 @@ describe 'Hanlon::WebService::ActiveModel' do
       describe 'DELETE /active_model/{uuid}' do
         it 'Removes an active model instance (by uuid)' do
           uri = URI.parse(hnl_uri + '/active_model/' + $active_model_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Delete.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_delete(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::ActiveModel')

@@ -3,15 +3,19 @@ hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
 describe 'Hanlon::WebService::Broker' do
 
+  include SpecHttpHelper
+
+  before(:all) do
+    $broker_uuid = nil
+  end
+
   describe 'resource :broker' do
 
     describe 'GET /broker' do
       it 'Returns a list of all broker instances' do
         uri = URI.parse(hnl_uri + '/broker')
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        response = spec_http_get(uri)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
@@ -38,13 +42,8 @@ describe 'Hanlon::WebService::Broker' do
         }
         json_data = body_hash.to_json
 
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        http_client.read_timeout = ProjectHanlon.config.http_timeout
-        request = Net::HTTP::Post.new(uri.request_uri)
-        request.body = json_data
-        request['Content-Type'] = 'application/json'
         # make the request
-        response = http_client.request(request)
+        response = spec_http_post_json_data(uri, json_data)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
@@ -62,10 +61,8 @@ describe 'Hanlon::WebService::Broker' do
       describe 'GET /broker/plugins' do
         it 'Returns a list of available broker plugins' do
           uri = URI.parse(hnl_uri + '/broker/plugins')
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
@@ -84,10 +81,8 @@ describe 'Hanlon::WebService::Broker' do
 
             uri = URI.parse(hnl_uri + '/broker/plugins/' + broker)
 
-            http_client = Net::HTTP.new(uri.host, uri.port)
-            request = Net::HTTP::Get.new(uri.request_uri)
             # make the request
-            response = http_client.request(request)
+            response = spec_http_get(uri)
             # parse the output and validate
             parsed = JSON.parse(response.body)
             expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
@@ -105,10 +100,8 @@ describe 'Hanlon::WebService::Broker' do
       describe 'GET /broker/{uuid}' do
         it 'Returns details for a specific broker instance (by UUID)' do
           uri = URI.parse(hnl_uri + '/broker/' + $broker_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
@@ -132,13 +125,8 @@ describe 'Hanlon::WebService::Broker' do
           }
           json_data = body_hash.to_json
 
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          http_client.read_timeout = ProjectHanlon.config.http_timeout
-          request = Net::HTTP::Put.new(uri.request_uri)
-          request.body = json_data
-          request['Content-Type'] = 'application/json'
           # make the request
-          response = http_client.request(request)
+          response = spec_http_put_json_data(uri, json_data)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')
@@ -154,10 +142,8 @@ describe 'Hanlon::WebService::Broker' do
       describe 'DELETE /broker/{uuid' do
         it 'Removes a broker instance (by UUID)' do
           uri = URI.parse(hnl_uri + '/broker/' + $broker_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Delete.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_delete(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Broker')

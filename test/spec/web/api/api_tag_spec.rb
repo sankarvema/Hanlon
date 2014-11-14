@@ -3,15 +3,21 @@ hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
 describe 'Hanlon::WebService::Tag' do
 
+  include SpecHttpHelper
+
+  before(:all) do
+    $tag_uuid = nil
+    $tag_matcher_uuid = nil
+
+  end
+
   describe 'resource :tag' do
 
     describe 'GET /tag' do
       it 'Returns a list of all tags' do
         uri = URI.parse(hnl_uri + '/tag')
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        response = spec_http_get(uri)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -35,13 +41,8 @@ describe 'Hanlon::WebService::Tag' do
         }
         json_data = body_hash.to_json
 
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        http_client.read_timeout = ProjectHanlon.config.http_timeout
-        request = Net::HTTP::Post.new(uri.request_uri)
-        request.body = json_data
-        request['Content-Type'] = 'application/json'
         # make the request
-        response = http_client.request(request)
+        response = spec_http_post_json_data(uri, json_data)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -59,10 +60,8 @@ describe 'Hanlon::WebService::Tag' do
       describe 'GET /tag/{uuid}' do
         it 'Returns details for a specific tag (by uuid)' do
           uri = URI.parse(hnl_uri + '/tag/' + $tag_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -86,13 +85,8 @@ describe 'Hanlon::WebService::Tag' do
           }
           json_data = body_hash.to_json
 
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          http_client.read_timeout = ProjectHanlon.config.http_timeout
-          request = Net::HTTP::Put.new(uri.request_uri)
-          request.body = json_data
-          request['Content-Type'] = 'application/json'
           # make the request
-          response = http_client.request(request)
+          response = spec_http_put_json_data(uri, json_data)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -113,10 +107,8 @@ describe 'Hanlon::WebService::Tag' do
         describe 'GET /tag/{uuid}/matcher' do
           it 'Returns a list of all tag matchers for a given tag (by uuid)' do
             uri = URI.parse(hnl_uri + '/tag/' + $tag_uuid + '/matcher')
-            http_client = Net::HTTP.new(uri.host, uri.port)
-            request = Net::HTTP::Get.new(uri.request_uri)
             # make the request
-            response = http_client.request(request)
+            response = spec_http_get(uri)
             # parse the output and validate
             parsed = JSON.parse(response.body)
             expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -142,13 +134,8 @@ describe 'Hanlon::WebService::Tag' do
             }
             json_data = body_hash.to_json
 
-            http_client = Net::HTTP.new(uri.host, uri.port)
-            http_client.read_timeout = ProjectHanlon.config.http_timeout
-            request = Net::HTTP::Post.new(uri.request_uri)
-            request.body = json_data
-            request['Content-Type'] = 'application/json'
             # make the request
-            response = http_client.request(request)
+            response = spec_http_post_json_data(uri, json_data)
             # parse the output and validate
             parsed = JSON.parse(response.body)
             expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -166,10 +153,8 @@ describe 'Hanlon::WebService::Tag' do
           describe 'GET /tag/{uuid}/matcher/{matcher_uuid}' do
             it 'Returns the details for a tag matcher (for the specified tag)' do
               uri = URI.parse(hnl_uri + '/tag/' + $tag_uuid + '/matcher/' + $tag_matcher_uuid)
-              http_client = Net::HTTP.new(uri.host, uri.port)
-              request = Net::HTTP::Get.new(uri.request_uri)
               # make the request
-              response = http_client.request(request)
+              response = spec_http_get(uri)
               # parse the output and validate
               parsed = JSON.parse(response.body)
               expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -191,13 +176,8 @@ describe 'Hanlon::WebService::Tag' do
               }
               json_data = body_hash.to_json
 
-              http_client = Net::HTTP.new(uri.host, uri.port)
-              http_client.read_timeout = ProjectHanlon.config.http_timeout
-              request = Net::HTTP::Put.new(uri.request_uri)
-              request.body = json_data
-              request['Content-Type'] = 'application/json'
               # make the request
-              response = http_client.request(request)
+              response = spec_http_put_json_data(uri, json_data)
               # parse the output and validate
               parsed = JSON.parse(response.body)
               expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -214,10 +194,8 @@ describe 'Hanlon::WebService::Tag' do
           describe 'DELETE /tag/{uuid}/matcher/{matcher_uuid}' do
             it 'Removes the details for a tag matcher (for the specified tag)' do
               uri = URI.parse(hnl_uri + '/tag/' + $tag_uuid + '/matcher/' + $tag_matcher_uuid)
-              http_client = Net::HTTP.new(uri.host, uri.port)
-              request = Net::HTTP::Delete.new(uri.request_uri)
               # make the request
-              response = http_client.request(request)
+              response = spec_http_delete(uri)
               # parse the output and validate
               parsed = JSON.parse(response.body)
               expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')
@@ -237,10 +215,8 @@ describe 'Hanlon::WebService::Tag' do
       describe 'DELETE /tag/{uuid}' do
         it 'Removes a specific tag (by uuid)' do
           uri = URI.parse(hnl_uri + '/tag/' + $tag_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Delete.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_delete(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Tag')

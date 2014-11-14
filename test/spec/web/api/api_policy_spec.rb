@@ -3,7 +3,12 @@ hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
 describe 'Hanlon::WebService::Policy' do
 
+  include SpecHttpHelper
+
   before(:all) do
+    $model_uuid = nil
+    $policy_uuid = nil
+
     # Create a temporary model to facilitate creating a policy below
     uri = URI.parse(hnl_uri + '/model')
 
@@ -17,13 +22,8 @@ describe 'Hanlon::WebService::Policy' do
     }
     json_data = body_hash.to_json
 
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    http_client.read_timeout = ProjectHanlon.config.http_timeout
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = json_data
-    request['Content-Type'] = 'application/json'
     # make the request
-    response = http_client.request(request)
+    response = spec_http_post_json_data(uri, json_data)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 201
@@ -37,10 +37,8 @@ describe 'Hanlon::WebService::Policy' do
   after(:all) do
     # Delete the temporary model used for testing
     uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
-    http_client = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Delete.new(uri.request_uri)
     # make the request
-    response = http_client.request(request)
+    response = spec_http_delete(uri)
     # parse the output and validate
     parsed = JSON.parse(response.body)
     unless parsed['http_err_code'] == 202
@@ -53,10 +51,8 @@ describe 'Hanlon::WebService::Policy' do
     describe 'GET /policy' do
       it 'Returns a list of all policy instances' do
         uri = URI.parse(hnl_uri + '/policy')
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        response = spec_http_get(uri)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Policy')
@@ -84,13 +80,8 @@ describe 'Hanlon::WebService::Policy' do
         }
         json_data = body_hash.to_json
 
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        http_client.read_timeout = ProjectHanlon.config.http_timeout
-        request = Net::HTTP::Post.new(uri.request_uri)
-        request.body = json_data
-        request['Content-Type'] = 'application/json'
         # make the request
-        response = http_client.request(request)
+        response = spec_http_post_json_data(uri, json_data)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Policy')
@@ -108,10 +99,8 @@ describe 'Hanlon::WebService::Policy' do
       describe 'GET /policy/templates' do
         it 'Returns a list of available policy templates' do
           uri = URI.parse(hnl_uri + '/policy/templates')
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Policy')
@@ -131,10 +120,8 @@ describe 'Hanlon::WebService::Policy' do
 
             uri = URI.parse(hnl_uri + '/policy/templates/' + template)
 
-            http_client = Net::HTTP.new(uri.host, uri.port)
-            request = Net::HTTP::Get.new(uri.request_uri)
             # make the request
-            response = http_client.request(request)
+            response = spec_http_get(uri)
             # parse the output and validate
             parsed = JSON.parse(response.body)
             expect(parsed['resource']).to eq('ProjectHanlon::Slice::Policy')
@@ -158,10 +145,8 @@ describe 'Hanlon::WebService::Policy' do
       describe 'GET /policy/{uuid}' do
         it 'Returns details for a specific policy instance (by uuid)' do
           uri = URI.parse(hnl_uri + '/policy/' + $policy_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Policy')
@@ -185,13 +170,8 @@ describe 'Hanlon::WebService::Policy' do
           }
           json_data = body_hash.to_json
 
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          http_client.read_timeout = ProjectHanlon.config.http_timeout
-          request = Net::HTTP::Put.new(uri.request_uri)
-          request.body = json_data
-          request['Content-Type'] = 'application/json'
           # make the request
-          response = http_client.request(request)
+          response = spec_http_put_json_data(uri, json_data)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Policy')
@@ -207,10 +187,8 @@ describe 'Hanlon::WebService::Policy' do
       describe 'DELETE /policy/{uuid}' do
         it 'Removes a policy instance (by uuid)' do
           uri = URI.parse(hnl_uri + '/policy/' + $policy_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Delete.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_delete(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Policy')

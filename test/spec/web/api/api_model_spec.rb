@@ -3,15 +3,20 @@ hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
 describe 'Hanlon::WebService::Model' do
 
+  include SpecHttpHelper
+
+  before(:all) do
+    $model_uuid = nil
+
+  end
+
   describe 'resource :model' do
 
     describe 'GET /model' do
       it 'Returns a list of all model instances' do
         uri = URI.parse(hnl_uri + '/model')
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        response = spec_http_get(uri)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
@@ -36,13 +41,8 @@ describe 'Hanlon::WebService::Model' do
         }
         json_data = body_hash.to_json
 
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        http_client.read_timeout = ProjectHanlon.config.http_timeout
-        request = Net::HTTP::Post.new(uri.request_uri)
-        request.body = json_data
-        request['Content-Type'] = 'application/json'
         # make the request
-        response = http_client.request(request)
+        response = spec_http_post_json_data(uri, json_data)
         # parse the output and validate
         parsed = JSON.parse(response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
@@ -60,10 +60,8 @@ describe 'Hanlon::WebService::Model' do
       describe 'GET /model/templates' do
         it 'Returns a list of available model templates' do
           uri = URI.parse(hnl_uri + '/model/templates')
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
@@ -82,10 +80,8 @@ describe 'Hanlon::WebService::Model' do
 
             uri = URI.parse(hnl_uri + '/model/templates/' + template)
 
-            http_client = Net::HTTP.new(uri.host, uri.port)
-            request = Net::HTTP::Get.new(uri.request_uri)
             # make the request
-            response = http_client.request(request)
+            response = spec_http_get(uri)
             # parse the output and validate
             parsed = JSON.parse(response.body)
             expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
@@ -104,10 +100,8 @@ describe 'Hanlon::WebService::Model' do
       describe 'GET /model/{uuid}' do
         it 'Returns details for a specific model instance (by UUID)' do
           uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_get(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
@@ -131,13 +125,8 @@ describe 'Hanlon::WebService::Model' do
           }
           json_data = body_hash.to_json
 
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          http_client.read_timeout = ProjectHanlon.config.http_timeout
-          request = Net::HTTP::Put.new(uri.request_uri)
-          request.body = json_data
-          request['Content-Type'] = 'application/json'
           # make the request
-          response = http_client.request(request)
+          response = spec_http_put_json_data(uri, json_data)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
@@ -153,10 +142,8 @@ describe 'Hanlon::WebService::Model' do
       describe 'DELETE /model/{uuid}' do
         it 'Removes a model instance (by UUID)' do
           uri = URI.parse(hnl_uri + '/model/' + $model_uuid)
-          http_client = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Delete.new(uri.request_uri)
           # make the request
-          response = http_client.request(request)
+          response = spec_http_delete(uri)
           # parse the output and validate
           parsed = JSON.parse(response.body)
           expect(parsed['resource']).to eq('ProjectHanlon::Slice::Model')
