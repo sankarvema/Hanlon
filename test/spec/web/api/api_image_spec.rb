@@ -3,7 +3,12 @@ hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
 describe 'Hanlon::WebService::Image' do
 
+  include ProjectHanlon::HttpHelper
+
   before(:all) do
+    $lcl_hnl_path = nil
+    $image_uuid = nil
+
     # Check for the hanlon mk ISO and download if missing
     # Disabling this section until proper image testing can be performed
     # hnl_mk_iso = 'hnl_mk_prod-image.2.0.0.iso'
@@ -26,17 +31,16 @@ describe 'Hanlon::WebService::Image' do
     describe 'GET /image' do
       it 'Returns a list of all image instances' do
         uri = URI.parse(hnl_uri + '/image')
-        http_client = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Get.new(uri.request_uri)
         # make the request
-        response = http_client.request(request)
+        hnl_response, http_response = hnl_http_get(uri, true)
         # parse the output and validate
-        parsed = JSON.parse(response.body)
+        parsed = JSON.parse(http_response.body)
         expect(parsed['resource']).to eq('ProjectHanlon::Slice::Image')
         expect(parsed['command']).to eq('get_all_images')
         expect(parsed['result']).to eq('Ok')
         expect(parsed['http_err_code']).to eq(200)
         expect(parsed['errcode']).to eq(0)
+        expect(hnl_response).to_not be(nil)
       end
     end   # end GET /image
 
@@ -55,22 +59,17 @@ describe 'Hanlon::WebService::Image' do
     #     }
     #     json_data = body_hash.to_json
     #
-    #     http_client = Net::HTTP.new(uri.host, uri.port)
-    #     http_client.read_timeout = ProjectHanlon.config.http_timeout
-    #     request = Net::HTTP::Post.new(uri.request_uri)
-    #     request.body = json_data
-    #     request['Content-Type'] = 'application/json'
     #     # make the request
-    #     response = http_client.request(request)
+    #     hnl_response, http_response = hnl_http_post_json_data(uri, json_data, true)
     #     # parse the output and validate
-    #     parsed = JSON.parse(response.body)
+    #     parsed = JSON.parse(http_response.body)
     #     expect(parsed['resource']).to eq('ProjectHanlon::Slice::Image')
     #     expect(parsed['command']).to eq('create_image')
     #     expect(parsed['result']).to eq('Created')
     #     expect(parsed['http_err_code']).to eq(201)
     #     expect(parsed['errcode']).to eq(0)
     #     # save the created UUID for later use
-    #     $image_uuid = parsed['response']['@uuid']
+    #     $image_uuid = hnl_response['@uuid']
     #   end
     # end   # end POST /image
     #
@@ -80,30 +79,26 @@ describe 'Hanlon::WebService::Image' do
     #
     #     it 'Returns details for an image (by UUID)' do
     #       uri = URI.parse(hnl_uri + '/image/' + $image_uuid)
-    #       http_client = Net::HTTP.new(uri.host, uri.port)
-    #       request = Net::HTTP::Get.new(uri.request_uri)
     #       # make the request
-    #       response = http_client.request(request)
+    #       hnl_response, http_response = hnl_http_get(uri, true)
     #       # parse the output and validate
-    #       parsed = JSON.parse(response.body)
+    #       parsed = JSON.parse(http_response.body)
     #       expect(parsed['resource']).to eq('ProjectHanlon::Slice::Image')
     #       expect(parsed['command']).to eq('get_image_by_uuid')
     #       expect(parsed['result']).to eq('Ok')
     #       expect(parsed['http_err_code']).to eq(200)
     #       expect(parsed['errcode']).to eq(0)
     #       # make sure we are getting the same image
-    #       expect(parsed['response']['@uuid']).to eq($image_uuid)
+    #       expect(hnl_response['@uuid']).to eq($image_uuid)
     #     end
     #
     #     it 'Returns a file from an image (by path)' do
     #       uri = URI.parse(hnl_uri + '/image/mk/' + $image_uuid + '/LICENSE')
-    #       http_client = Net::HTTP.new(uri.host, uri.port)
-    #       request = Net::HTTP::Get.new(uri.request_uri)
     #       # make the request
-    #       response = http_client.request(request)
+    #       hnl_response = hnl_http_get(uri)
     #       # parse the output and validate
     #       # we expect the image LICENSE file to start with Hanlon MicroKernel
-    #       expect(response.body.start_with?('Hanlon MicroKernel')).to eq(true)
+    #       expect(hnl_response.start_with?('Hanlon MicroKernel')).to eq(true)
     #     end
     #
     #   end   # end GET /image/{component}
@@ -111,19 +106,17 @@ describe 'Hanlon::WebService::Image' do
     #   describe 'DELETE /image/{component}' do
     #     it 'Removes an image (by UUID) and it\'s components' do
     #       uri = URI.parse(hnl_uri + '/image/' + $image_uuid)
-    #       http_client = Net::HTTP.new(uri.host, uri.port)
-    #       request = Net::HTTP::Delete.new(uri.request_uri)
     #       # make the request
-    #       response = http_client.request(request)
+    #       hnl_response, http_response = hnl_http_delete(uri, true)
     #       # parse the output and validate
-    #       parsed = JSON.parse(response.body)
+    #       parsed = JSON.parse(http_response.body)
     #       expect(parsed['resource']).to eq('ProjectHanlon::Slice::Image')
     #       expect(parsed['command']).to eq('remove_image_by_uuid')
     #       expect(parsed['result']).to eq('Removed')
     #       expect(parsed['http_err_code']).to eq(202)
     #       expect(parsed['errcode']).to eq(0)
     #       # make sure we are returning the same image uuid
-    #       expect(parsed['response']).to include($image_uuid)
+    #       expect(hnl_response).to include($image_uuid)
     #     end
     #   end   # end DELETE /image/{component}
     #
