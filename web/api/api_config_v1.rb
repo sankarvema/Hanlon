@@ -91,13 +91,6 @@ module Hanlon
             # GET /config/ipxe
             # Query for iPXE boot script to use (with Hanlon)
             desc "Retrieve the iPXE-bootstrap script to use (with Hanlon)"
-            before do
-              # only allow access to configuration resource from the hanlon server
-              unless request_is_from_hanlon_server(env['REMOTE_ADDR'])
-                env['api.format'] = :text
-                raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config/ipxe resource is only allowed from Hanlon server"
-              end
-            end
             get do
               @ipxe_options = {}
               @ipxe_options[:style] = :new
