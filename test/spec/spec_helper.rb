@@ -86,6 +86,3 @@ $hanlon_root = Pathname(__FILE__).realpath.dirname.join('..', '..').cleanpath.to
 $app_type    = 'client'
 
 require 'hanlon_global'
-
-# http helpers for spec tests
-require 'spec_http_helper'
