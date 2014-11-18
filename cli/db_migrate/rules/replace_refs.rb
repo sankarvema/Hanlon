@@ -12,10 +12,12 @@ attr_accessor :desc
       end
 
       def exec(rec)
-        doc = YAML.load rec.to_yaml
-        doc.to_s.gsub! 'ProjectRazor', 'ProjectHanlon'
+        doc = rec
+        doc.each {|k,v|
+          doc[k] = v.to_s.gsub! 'ProjectRazor', 'ProjectHanlon' if v.to_s.include? "ProjectRazor"
+        }
+        return doc
       end
-
     end
   end
 end
