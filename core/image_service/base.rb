@@ -113,7 +113,11 @@ module ProjectHanlon
       # Within each child class the methods are overridden for that child template
       def verify(lcl_image_path)
         set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
-        get_dir_hash(image_path) == @verification_hash
+        unless get_dir_hash(image_path) == @verification_hash
+          logger.error "ISO file structure is invalid"
+          return [false, "ISO file structure is invalid"]
+        end
+        [true, "Valid"]
       end
 
       def image_path
@@ -225,9 +229,7 @@ module ProjectHanlon
       end
 
       def print_items
-        set_lcl_image_path(ProjectHanlon.config.image_path)
-        success, message = verify(@_lcl_image_path)
-        return @uuid, @description, @filename, "#{success ? "Valid".green : "Broken/Missing".red}"
+        return @uuid, @description, @filename, "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
       end
 
       def print_item_header

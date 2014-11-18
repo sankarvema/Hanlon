@@ -58,7 +58,7 @@ module Hanlon
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Hanlon::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Hanlon::WebService::Utils::hnl_slice_success_response(slice, command, response, options)
           end
 
         end
@@ -70,63 +70,27 @@ module Hanlon
             :hidden => true
         }
         resource :config do
-
           # GET /config
-          # Query for Hanlon client configuration
-          desc "Retrieve the current Hanlon client configuration"
+          # Query for Hanlon server configuration
+          desc "Retrieve the current Hanlon server configuration"
           before do
-            # no validations added at this point
-          end
-          get do
-            client_config = ProjectHanlon::Config::Client.new
-            config = JSON(client_config.to_json)
-            slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
-          end
-
-          resource :server do
-            # GET /config/server
-            # Query for Hanlon server configuration
-            desc "Retrieve the current Hanlon server configuration"
-            before do
-              # only test if directly accessing the /config resource
-              if env["PATH_INFO"].match(/server$/)
-                # only allow access to configuration resource from the hanlon server
-                unless request_is_from_hanlon_server(env['REMOTE_ADDR'])
-                  raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config resource is only allowed from Hanlon server"
-                end
+            # only test if directly accessing the /config resource
+            if env["PATH_INFO"].match(/config$/)
+              # only allow access to configuration resource from the hanlon server
+              unless request_is_from_hanlon_server(env['REMOTE_ADDR'])
+                raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config resource is only allowed from Hanlon server"
               end
             end
-            get do
-              config = JSON(ProjectHanlon.config.to_json)
-              slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
-            end
-          end      # end GET /config/server
-
-          resource :client do
-            # GET /config/client
-            # Query for Hanlon client configuration
-            desc "Retrieve the current Hanlon client configuration"
-            before do
-              # no validations added at this point
-            end
-            get do
-              client_config = ProjectHanlon::Config::Client.new
-              config = JSON(client_config.to_json)
-              slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
-            end
-          end      # end GET /config/client
+          end
+          get do
+            config = JSON(ProjectHanlon.config.to_json)
+            slice_success_response(SLICE_REF, :get_config, config, :success_type => :generic)
+          end      # end GET /config
 
           resource :ipxe do
             # GET /config/ipxe
             # Query for iPXE boot script to use (with Hanlon)
             desc "Retrieve the iPXE-bootstrap script to use (with Hanlon)"
-            before do
-              # only allow access to configuration resource from the hanlon server
-              unless request_is_from_hanlon_server(env['REMOTE_ADDR'])
-                env['api.format'] = :text
-                raise ProjectHanlon::Error::Slice::MethodNotAllowed, "Remote Access Forbidden; access to /config/ipxe resource is only allowed from Hanlon server"
-              end
-            end
             get do
               @ipxe_options = {}
               @ipxe_options[:style] = :new
@@ -137,15 +101,10 @@ module Hanlon
               env['api.format'] = :text
               ERB.new(File.read(IPXE_ERB)).result(binding)
             end     # end GET /config/ipxe
-
           end     # end resource /config/ipxe
-
         end     # end resource /config
 
       end
-
     end
-
   end
-
 end

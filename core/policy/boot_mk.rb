@@ -24,16 +24,16 @@ module ProjectHanlon
 
       def get_boot_script(default_mk)
         image_svc_uri = "http://#{@config.hanlon_server}:#{@config.api_port}#{@config.websvc_root}/image/mk/#{default_mk.uuid}"
-        rz_mk_boot_debug_level = @config.rz_mk_boot_debug_level
-        rz_mk_boot_kernel_args = @config.rz_mk_boot_kernel_args
+        hnl_mk_boot_debug_level = @config.hnl_mk_boot_debug_level
+        hnl_mk_boot_kernel_args = @config.hnl_mk_boot_kernel_args
         # only allow values of 'quiet' or 'debug' for this parameter; if it's anything else set it
         # to an empty string
-        rz_mk_boot_debug_level = '' unless ['quiet','debug'].include? rz_mk_boot_debug_level
+        hnl_mk_boot_debug_level = '' unless ['quiet','debug'].include? hnl_mk_boot_debug_level
         boot_script = ""
         boot_script << "#!ipxe\n"
         boot_script << "kernel #{image_svc_uri}/#{default_mk.kernel} maxcpus=1"
-        boot_script << " #{rz_mk_boot_debug_level}" if rz_mk_boot_debug_level && !rz_mk_boot_debug_level.empty?
-        boot_script << " #{rz_mk_boot_kernel_args}" if rz_mk_boot_kernel_args && !rz_mk_boot_kernel_args.empty?
+        boot_script << " #{hnl_mk_boot_debug_level}" if hnl_mk_boot_debug_level && !hnl_mk_boot_debug_level.empty?
+        boot_script << " #{hnl_mk_boot_kernel_args}" if hnl_mk_boot_kernel_args && !hnl_mk_boot_kernel_args.empty?
         boot_script << " || goto error\n"
         boot_script << "initrd #{image_svc_uri}/#{default_mk.initrd} || goto error\n"
         boot_script << "boot || goto error\n"

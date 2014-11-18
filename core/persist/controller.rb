@@ -1,4 +1,3 @@
-#require 'project_hanlon'
 
 module ProjectHanlon
   module Persist

@@ -29,6 +29,17 @@ module ProjectHanlon
         end
       end
 
+      def verify(lcl_image_path)
+        # check to make sure that the hashes match (of the file list
+        # extracted and the file list from the ISO)
+        is_valid, result = super(lcl_image_path)
+        unless is_valid
+          return [false, result]
+        end
+        # No specific checks for OS images
+        [true, '']
+      end
+
       def print_item_header
         super.push "OS Name", "OS Version"
       end

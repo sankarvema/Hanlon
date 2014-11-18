@@ -124,12 +124,16 @@ module ProjectHanlon
       #Lists details for all images
       def get_images
         @command = :get_images
+        # get the images from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-
-        image_hash_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-
-        # convert it to an array of objects (from an array of hashes) and print the result
-        print_object_array(image_hash_array, "Images:", :style => :item)
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'filename'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Images:", :style => :table)
       end
 
       #Lists details for a specific image
@@ -139,11 +143,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + image_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Image:")
       end
@@ -157,7 +157,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon image add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon image add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -183,12 +183,7 @@ module ProjectHanlon
         body_hash["version"] = os_version if os_version
         json_data = body_hash.to_json
         puts "Attempting to add, please wait...".green
-
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Image Added:")
       end
 
@@ -198,10 +193,7 @@ module ProjectHanlon
         image_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated image) and return the results
         uri = URI.parse @uri_string + "/#{image_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 

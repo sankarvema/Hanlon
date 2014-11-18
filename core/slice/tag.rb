@@ -18,12 +18,12 @@ module ProjectHanlon
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
         commands = get_command_map("tag_help",
-                                          "get_all_tagrules",
-                                          "get_tagrule_by_uuid",
-                                          "add_tagrule",
-                                          "update_tagrule",
-                                          "remove_all_tagrules",
-                                          "remove_tagrule_by_uuid")
+                                   "get_all_tagrules",
+                                   "get_tagrule_by_uuid",
+                                   "add_tagrule",
+                                   "update_tagrule",
+                                   "remove_all_tagrules",
+                                   "remove_tagrule_by_uuid")
         # and add the corresponding 'matcher' commands to the set of slice_commands
         tag_uuid_match = /^((?!(matcher|add|get|all|remove|update|default)))\S+/
         commands[tag_uuid_match] = {}
@@ -77,110 +77,110 @@ module ProjectHanlon
 
       def all_command_option_data
         {
-          :add => [
-            { :name        => :name,
-              :default     => false,
-              :short_form  => '-n',
-              :long_form   => '--name NAME',
-              :description => 'Name for the tagrule being created',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :tag,
-              :default     => false,
-              :short_form  => '-t',
-              :long_form   => '--tag TAG',
-              :description => 'Tag for the tagrule being created',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            }
-          ],
-          :update => [
-            { :name        => :name,
-              :default     => nil,
-              :short_form  => '-n',
-              :long_form   => '--name NAME',
-              :description => 'New name for the tagrule being updated.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :tag,
-              :default     => nil,
-              :short_form  => '-t',
-              :long_form   => '--tag TAG',
-              :description => 'New tag for the tagrule being updated.',
-              :uuid_is     => 'required',
-              :required    => true
-            }
-          ],
-          :add_matcher => [
-            { :name        => :key,
-              :default     => nil,
-              :short_form  => '-k',
-              :long_form   => '--key KEY_FIELD',
-              :description => 'The node attribute key to match against.',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :compare,
-              :default     => nil,
-              :short_form  => '-c',
-              :long_form   => '--compare METHOD',
-              :description => 'The comparison method to use (\'equal\'|\'like\').',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :value,
-              :default     => nil,
-              :short_form  => '-v',
-              :long_form   => '--value VALUE',
-              :description => 'The value to match against',
-              :uuid_is     => 'not_allowed',
-              :required    => true
-            },
-            { :name        => :inverse,
-              :default     => nil,
-              :short_form  => '-i',
-              :long_form   => '--inverse VALUE',
-              :description => 'Inverse the match (true if key does not match value).',
-              :uuid_is     => 'not_allowed',
-              :required    => false
-            }
-          ],
-          :update_matcher => [
-            { :name        => :key,
-              :default     => nil,
-              :short_form  => '-k',
-              :long_form   => '--key KEY_FIELD',
-              :description => 'The new node attribute key to match against.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :compare,
-              :default     => nil,
-              :short_form  => '-c',
-              :long_form   => '--compare METHOD',
-              :description => 'The new comparison method to use (\'equal\'|\'like\').',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :value,
-              :default     => nil,
-              :short_form  => '-v',
-              :long_form   => '--value VALUE',
-              :description => 'The new value to match against.',
-              :uuid_is     => 'required',
-              :required    => true
-            },
-            { :name        => :inverse,
-              :default     => nil,
-              :short_form  => '-i',
-              :long_form   => '--inverse VALUE',
-              :description => 'Inverse the match (true|false).',
-              :uuid_is     => 'required',
-              :required    => true
-            }
-          ]
+            :add => [
+                { :name        => :name,
+                  :default     => false,
+                  :short_form  => '-n',
+                  :long_form   => '--name NAME',
+                  :description => 'Name for the tagrule being created',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :tag,
+                  :default     => false,
+                  :short_form  => '-t',
+                  :long_form   => '--tag TAG',
+                  :description => 'Tag for the tagrule being created',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                }
+            ],
+            :update => [
+                { :name        => :name,
+                  :default     => nil,
+                  :short_form  => '-n',
+                  :long_form   => '--name NAME',
+                  :description => 'New name for the tagrule being updated.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :tag,
+                  :default     => nil,
+                  :short_form  => '-t',
+                  :long_form   => '--tag TAG',
+                  :description => 'New tag for the tagrule being updated.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                }
+            ],
+            :add_matcher => [
+                { :name        => :key,
+                  :default     => nil,
+                  :short_form  => '-k',
+                  :long_form   => '--key KEY_FIELD',
+                  :description => 'The node attribute key to match against.',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :compare,
+                  :default     => nil,
+                  :short_form  => '-c',
+                  :long_form   => '--compare METHOD',
+                  :description => 'The comparison method to use (\'equal\'|\'like\').',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :value,
+                  :default     => nil,
+                  :short_form  => '-v',
+                  :long_form   => '--value VALUE',
+                  :description => 'The value to match against',
+                  :uuid_is     => 'not_allowed',
+                  :required    => true
+                },
+                { :name        => :inverse,
+                  :default     => nil,
+                  :short_form  => '-i',
+                  :long_form   => '--inverse VALUE',
+                  :description => 'Inverse the match (true if key does not match value).',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                }
+            ],
+            :update_matcher => [
+                { :name        => :key,
+                  :default     => nil,
+                  :short_form  => '-k',
+                  :long_form   => '--key KEY_FIELD',
+                  :description => 'The new node attribute key to match against.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :compare,
+                  :default     => nil,
+                  :short_form  => '-c',
+                  :long_form   => '--compare METHOD',
+                  :description => 'The new comparison method to use (\'equal\'|\'like\').',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :value,
+                  :default     => nil,
+                  :short_form  => '-v',
+                  :long_form   => '--value VALUE',
+                  :description => 'The new value to match against.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :inverse,
+                  :default     => nil,
+                  :short_form  => '-i',
+                  :long_form   => '--inverse VALUE',
+                  :description => 'Inverse the match (true|false).',
+                  :uuid_is     => 'required',
+                  :required    => true
+                }
+            ]
         }.freeze
       end
 
@@ -195,7 +195,11 @@ module ProjectHanlon
             # underscore character and swap the order when printing the command usage
             option_items = command_option_data(command)
             command, subcommand = command.split("_")
-            print_command_help(command, option_items, subcommand)
+            if subcommand
+              print_subcommand_help(command, subcommand, option_items)
+            else
+              print_command_help(command, option_items)
+            end
             return
           rescue
           end
@@ -225,9 +229,14 @@ module ProjectHanlon
 
       def get_all_tagrules
         @command = :get_all_tagrules
-        uri = URI.parse @uri_string
         # get the tagrules from the RESTful API (as an array of objects)
-        result = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
+        uri = URI.parse @uri_string
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'name'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
         # and print the result
         print_object_array(result, "Tag Rules:", :style => :table)
       end
@@ -239,11 +248,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + tagrule_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Tag Rule:")
       end
@@ -256,7 +261,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon tag add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon tag add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -268,10 +273,7 @@ module ProjectHanlon
             "name" => options[:name],
             "tag" => options[:tag]
         }.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Tag Rule Created:")
       end
 
@@ -283,7 +285,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return the options map constructed
         # from the @commmand_array)
-        tagrule_uuid, options = parse_and_validate_options(option_items, "hanlon tag update (UUID) (options...)", :require_one)
+        tagrule_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon tag update (UUID) (options...)")
         includes_uuid = true if tagrule_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -297,10 +299,7 @@ module ProjectHanlon
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated tag rule) and return the results
         uri = URI.parse(@uri_string + '/' + tagrule_uuid)
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Tag Rule Updated:")
       end
 
@@ -315,10 +314,7 @@ module ProjectHanlon
         tagrule_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated tag rule) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 
@@ -331,12 +327,12 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher")
         # get the tag matchers for the indicated tagrule (from the RESTful API) as an array of objects
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'key'
+          result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid, sort_fieldname)
         end
-        result = tag_matcher_hash_array_to_obj_array(expand_response_with_uris(result), tagrule_uuid)
         # and print the result
         print_object_array(result, "Tag Matchers:", :style => :table)
       end
@@ -348,11 +344,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}")
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher:")
       end
@@ -366,7 +358,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon tag matcher add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon tag matcher add (options...)")
         includes_uuid if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -384,10 +376,7 @@ module ProjectHanlon
             "value" => value,
             "inverse" => inverse
         }.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Added:")
       end
 
@@ -400,7 +389,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        matcher_uuid, options = parse_and_validate_options(option_items, "hanlon policy update UUID (options...)", :require_one)
+        matcher_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon policy update UUID (options...)")
         includes_uuid = true if matcher_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -421,10 +410,7 @@ module ProjectHanlon
         body_hash["value"] = value if value
         body_hash["inverse"] = inverse if inverse
         json_data = body_hash.to_json
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(tag_matcher_hash_array_to_obj_array([result], tagrule_uuid), "Tag Matcher Updated:")
       end
 
@@ -435,10 +421,7 @@ module ProjectHanlon
         matcher_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 

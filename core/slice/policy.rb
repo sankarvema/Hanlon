@@ -1,9 +1,7 @@
-#require 'slice_proxy'
 require 'data'
 require 'utility'
 require 'policies'
-
-require "json"
+require 'json'
 
 # Root namespace for policy objects
 # used to find them in object space for type checking
@@ -34,13 +32,13 @@ module ProjectHanlon
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
         commands = get_command_map(
-          "policy_help",
-          "get_all_policies",
-          "get_policy_by_uuid",
-          "add_policy",
-          "update_policy",
-          "remove_all_policies",
-          "remove_policy_by_uuid")
+            "policy_help",
+            "get_all_policies",
+            "get_policy_by_uuid",
+            "add_policy",
+            "update_policy",
+            "remove_all_policies",
+            "remove_policy_by_uuid")
         # and add any additional commands specific to this slice
         commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
         commands[:get][:else] = "get_policy_by_uuid"
@@ -115,7 +113,7 @@ module ProjectHanlon
                 { :name        => :tags,
                   :default     => nil,
                   :short_form  => '-t',
-                  :long_form   => '--tags TAG{ ,TAG,TAG}',
+                  :long_form   => '--tags TAG{,TAG,TAG}',
                   :description => 'Policy tags. Comma delimited.',
                   :uuid_is     => 'not_allowed',
                   :required    => true
@@ -165,7 +163,7 @@ module ProjectHanlon
                 { :name        => :tags,
                   :default     => nil,
                   :short_form  => '-t',
-                  :long_form   => '--tags TAG{ ,TAG,TAG}',
+                  :long_form   => '--tags TAG{,TAG,TAG}',
                   :description => 'Policy tags. Comma delimited.',
                   :uuid_is     => 'required',
                   :required    => true
@@ -203,18 +201,31 @@ module ProjectHanlon
         @command = :get_all_policies
         raise ProjectHanlon::Error::Slice::SliceCommandParsingFailed,
               "Unexpected arguments found in command #{@command} -> #{@command_array.inspect}" if @command_array.length > 0
+        # get the policies from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        policy_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-        print_object_array(policy_array, "Policies:", :style => :table)
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'line_number'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Policies:", :style => :table)
       end
 
       # Returns the policy templates available
       def get_policy_templates
         @command = :get_policy_templates
-        # get the list of policy templates nd print it
+        # get the policy templates from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/templates'
-        policy_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-        print_object_array(policy_templates, "Policy Templates:")
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'template'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Policy Templates:", :style => :table)
       end
 
       def get_policy_by_uuid
@@ -224,11 +235,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + policy_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Policy:")
       end
@@ -241,7 +248,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon policy add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon policy add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -264,10 +271,7 @@ module ProjectHanlon
             "enabled" => options[:enabled],
             "maximum" => options[:maximum]
         }.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Policy Created:")
       end
 
@@ -279,7 +283,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        policy_uuid, options = parse_and_validate_options(option_items, "hanlon policy update UUID (options...)", :require_one)
+        policy_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon policy update UUID (options...)")
         includes_uuid = true if policy_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -298,10 +302,7 @@ module ProjectHanlon
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Policy Updated:")
       end
 
@@ -316,10 +317,7 @@ module ProjectHanlon
         policy_uuid = get_uuid_from_prev_args
         # setup the DELETE (to update the remove the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 

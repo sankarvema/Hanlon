@@ -79,11 +79,11 @@ module Hanlon
           end
 
           def slice_success_response(slice, command, response, options = {})
-            Hanlon::WebService::Utils::rz_slice_success_response(slice, command, response, options)
+            Hanlon::WebService::Utils::hnl_slice_success_response(slice, command, response, options)
           end
 
           def slice_success_object(slice, command, response, options = {})
-            Hanlon::WebService::Utils::rz_slice_success_object(slice, command, response, options)
+            Hanlon::WebService::Utils::hnl_slice_success_object(slice, command, response, options)
           end
 
         end
@@ -118,7 +118,7 @@ module Hanlon
               image.set_lcl_image_path(ProjectHanlon.config.image_path)
               image.image_status, image.image_status_message = image.verify(image.image_path)
             end
-            slice_success_object(SLICE_REF, :get_all_images, images, :success_type => :created)
+            slice_success_object(SLICE_REF, :get_all_images, images, :success_type => :generic)
           end     # end GET /image
 
           # POST /image
@@ -202,6 +202,7 @@ module Hanlon
                 # it's a UUID, to retrieve the appropriate image and return it
                 image_uuid = component
                 image = SLICE_REF.get_object("images", :images, image_uuid)
+                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image
 
                 # fix 125 - add image local path to image end point
                 @_lcl_image_path = ProjectHanlon.config.image_path + "/"

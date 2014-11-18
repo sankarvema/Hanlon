@@ -47,6 +47,11 @@ module ProjectHanlon
         @vcenter_name            = nil
         @vcenter_datacenter_path = nil
         @vcenter_cluster_path    = nil
+
+        @enable_vsan             = "" 
+        @vsan_uuid               = UUID.generate
+        @packages                = []
+	@configure_disk_to_local = ""
         # Metadata
         @req_metadata_hash       = {
             "@esx_license"             => { :default     => "",
@@ -99,7 +104,9 @@ module ProjectHanlon
                                             :example     => "ntp.hanlon.example.local",
                                             :validation  => '^[\w.]{3,}$',
                                             :required    => true,
-                                            :description => "NTP server for node" },
+                                            :description => "NTP server for node" }
+        }
+        @opt_metadata_hash = {
             "@vcenter_name"            => { :default     => "",
                                             :example     => "vcenter01",
                                             :validation  => '^[\w.-]{3,}$',
@@ -114,9 +121,27 @@ module ProjectHanlon
                                             :example     => "Cluster01",
                                             :validation  => '^[a-zA-Z\d-]{3,}$',
                                             :required    => false,
-                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" }
-
-
+                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" },
+            "@enable_vsan"       => { :default     => "False",
+                                           :example     => "",
+                                           :validation  => '',
+                                           :required    => false,
+                                           :description => "Join vSAN cluster and create vSAN disk groups" },
+            "@vsan_uuid"               => { :default     => "",
+                                            :example     => "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                                            :validation  => '^[a-z\d]{8}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{12}$',
+                                            :required    => false,
+                                            :description => "VMware vSAN UUID.  Use the default or type in" },
+            "@packages"                => { :default     => "",
+                                            :example     => "",
+                                            :validation  => '',
+                                            :required    => false,
+                                            :description => "Optional for broker use: the vCenter Cluster to place ESXi node in" },
+	    "@configure_disk_to_local" => { :default     => "False",
+                                            :example     => "",
+                                            :validation  => '',
+                                            :required    => false,
+                                            :description => "Optional for vSAN, should we use non-local disks in vSAN disk group." }
         }
 
         from_hash(hash) unless hash == nil
@@ -154,10 +179,10 @@ module ProjectHanlon
 
       def callback
         {
-          "broker"      => :broker_agent_handoff,
-          "boot_cfg"    => :boot_cfg,
-          "kickstart"   => :kickstart,
-          "postinstall" => :postinstall,
+            "broker"      => :broker_agent_handoff,
+            "boot_cfg"    => :boot_cfg,
+            "kickstart"   => :kickstart,
+            "postinstall" => :postinstall,
         }
       end
 

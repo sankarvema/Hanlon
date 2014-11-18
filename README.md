@@ -1,4 +1,6 @@
-# Project Hanlon (v1.1.0)
+[![Build Status](https://travis-ci.org/csc/Hanlon.svg?branch=master)](https://travis-ci.org/csc/Hanlon)
+
+# Project Hanlon (v2.0.0)
 
 ## Introduction
 
@@ -64,13 +66,13 @@ into any errors or omissions in that list.
 ## Hanlon MicroKernel
 
 Hanlon uses an associated Hanlon-Microkernel instance to discover new nodes.
-Pre-build images of the current Hanlon-Microkernel (v1.0) are officially
+Pre-build images of the current Hanlon-Microkernel (v2.0.0) are officially
 available at:
 
-[https://github.com/csc/Hanlon-Microkernel/releases/tag/v1.0](https://github.com/csc/Hanlon-Microkernel/releases/tag/v1.0)
+[https://github.com/csc/Hanlon-Microkernel/releases/tag/v2.0.0](https://github.com/csc/Hanlon-Microkernel/releases/tag/v2.0.0)
 
-On that page, you will find three Microkernel images (`hnl_mk_debug-image.1.0.iso`,
-`hnl_mk_dev-image.1.0.iso` and `hnl_mk_prod-image.1.0.iso`). Those correspond to the
+On that page, you will find three Microkernel images (`hnl_mk_debug-image.2.0.0.iso`,
+`hnl_mk_dev-image.2.0.0.iso` and `hnl_mk_prod-image.2.0.0.iso`). Those correspond to the
 debug, development and production Microkernels (respectively). The difference between
 them is as follows:
 

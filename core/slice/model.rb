@@ -65,7 +65,16 @@ module ProjectHanlon
                   :description => 'The image UUID to use for the new model.',
                   :uuid_is     => 'not_allowed',
                   :required    => true
+                },
+                { :name        => :optional_yaml,
+                  :default     => false,
+                  :short_form  => '-o',
+                  :long_form   => '--option YAML_FILE',
+                  :description => 'Use optional yaml file to create model',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
                 }
+
             ],
             :update => [
                 { :name        => :label,
@@ -87,7 +96,7 @@ module ProjectHanlon
                 { :name        => :change_metadata,
                   :default     => false,
                   :short_form  => '-c',
-                  :long_form   => '--change-metadata',
+                  :long_form   => '--change-metadata [YAML_FILE]',
                   :description => 'Used to trigger a change in the model\'s meta-data',
                   :uuid_is     => 'required',
                   :required    => true
@@ -102,7 +111,11 @@ module ProjectHanlon
           begin
             # load the option items for this command (if they exist) and print them
             option_items = command_option_data(command)
-            print_command_help(command, option_items)
+            # this line adjusts the help output width for the help on the 'update' command
+            # (for all others, a width of 32 will be used for the summary section of the
+            # commmand help)
+            optparse_options = (command == 'update' ? {:width => 34} : { })
+            print_command_help(command, option_items, optparse_options)
             return
           rescue
           end
@@ -126,9 +139,16 @@ module ProjectHanlon
 
       def get_all_models
         @command = :get_all_models
+        # get the models from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        model_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-        print_object_array(model_array, "Models:", :style => :table)
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'label'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Models:", :style => :table)
       end
 
       def get_model_by_uuid
@@ -138,21 +158,23 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + model_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Model:")
       end
 
       def get_all_templates
         @command = :get_all_templates
-        # get the list of model templates nd print it
+        # get the model templates from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/templates'
-        model_templates = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-        print_object_array(model_templates, "Model Templates:")
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'name'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Model Templates:", :style => :table)
       end
 
       def add_model
@@ -168,36 +190,40 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon model add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon model add (options...)", :width => 40)
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
+        optional_yaml_file = options[:optional_yaml]
         template = options[:template]
         label = options[:label]
         image_uuid = options[:image_uuid]
         # use the arguments passed in to create a new model
-        model = get_model_using_template_name(options[:template])
-        raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{options[:template]}] " unless model
-        model.cli_create_metadata
+        model = get_model_using_template_name(template)
+        raise ProjectHanlon::Error::Slice::InputError, "Invalid model template [#{template}] " unless model
+        # read in the req_metadata_params (either from the YAML file if one was provided
+        # or from the CLI, will ask for any parameters required but not provided via the
+        # YAML file in the )
+        metadata_hash = {}
+        begin
+          metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+        rescue Exception => e
+          raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+        end
+        req_metadata_params = model.cli_get_metadata_params(metadata_hash)
+        raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled model creation" unless req_metadata_params
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
         body_hash = {
             "template" => template,
             "label" => label,
             "image_uuid" => image_uuid,
-            "req_metadata_hash" => model.req_metadata_hash
         }
-        model.req_metadata_hash.each { |key, md_hash_value|
-          value = model.instance_variable_get(key)
-          body_hash[key] = value
-        }
+        body_hash["req_metadata_params"] = req_metadata_params
         json_data = body_hash.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Model Created:")
       end
 
@@ -209,7 +235,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        model_uuid, options = parse_and_validate_options(option_items, "hanlon model update UUID (options...)", :require_one)
+        model_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon model update UUID (options...)", :width => 34)
         includes_uuid = true if model_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -218,20 +244,24 @@ module ProjectHanlon
         label = options[:label]
         image_uuid = options[:image_uuid]
         change_metadata = options[:change_metadata]
+        optional_yaml_file = (change_metadata && change_metadata.is_a?(String) ? change_metadata : nil)
         # now, use the values that were passed in to update the indicated model
         uri = URI.parse(@uri_string + '/' + model_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         model = hash_to_obj(result)
         # if the user requested a change to the meta-data hash associated with the
         # indicated model, then gather that new meta-data from the user
+        req_metadata_params = nil
         if change_metadata
-          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled Model creation" unless
-              model.cli_create_metadata
+          metadata_hash = {}
+          begin
+            metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+          rescue Exception => e
+            raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+          end
+          req_metadata_params = model.cli_get_metadata_params(metadata_hash)
+          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled model update" unless req_metadata_params
         end
         # add properties passed in from command line to the json_data
         # hash that we'll be passing in as the body of the request
@@ -239,18 +269,11 @@ module ProjectHanlon
         body_hash["label"] = label if label
         body_hash["image_uuid"] = image_uuid if image_uuid
         if change_metadata
-          model.req_metadata_hash.each { |key, md_hash_value|
-            value = model.instance_variable_get(key)
-            body_hash[key] = value
-          }
-          body_hash["req_metadata_hash"] = model.req_metadata_hash
+          body_hash["req_metadata_params"] = req_metadata_params
         end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated policy) and return the results
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Model Updated:")
       end
 
@@ -265,21 +288,14 @@ module ProjectHanlon
         model_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{model_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 
       def verify_image(model, image_uuid)
         uri = URI.parse ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root + "/image/#{image_uuid}"
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         image = hash_to_obj(result)
         if image && (image.class != Array || image.length > 0)

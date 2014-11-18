@@ -66,6 +66,14 @@ module ProjectHanlon
                   :description => 'A description for the broker target.',
                   :uuid_is     => 'not_allowed',
                   :required    => true
+                },
+                { :name        => :optional_yaml,
+                  :default     => false,
+                  :short_form  => '-o',
+                  :long_form   => '--option YAML_FILE',
+                  :description => 'Use optional yaml file to create model',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
                 }
             ],
             :update  =>  [
@@ -88,7 +96,7 @@ module ProjectHanlon
                 { :name        => :change_metadata,
                   :default     => false,
                   :short_form  => '-c',
-                  :long_form   => '--change-metadata',
+                  :long_form   => '--change-metadata [YAML_FILE]',
                   :description => 'Used to trigger a change in the broker\'s meta-data',
                   :uuid_is     => 'required',
                   :required    =>true
@@ -124,17 +132,31 @@ module ProjectHanlon
       # Returns all broker instances
       def get_all_brokers
         @command = :get_all_brokers
+        # get the brokers from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string
-        broker_array = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-        print_object_array(broker_array, "Broker Targets:", :style => :table)
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'name'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Broker Targets:", :style => :table)
       end
 
       # Returns the broker plugins available
       def get_broker_plugins
         @command = :get_broker_plugins
+        # get the broker plugins from the RESTful API (as an array of objects)
         uri = URI.parse @uri_string + '/plugins'
-        broker_plugins = hash_array_to_obj_array(expand_response_with_uris(hnl_http_get(uri)))
-        print_object_array(broker_plugins, "Available Broker Plugins:")
+        result = hnl_http_get(uri)
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'plugin'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        # and print the result
+        print_object_array(result, "Available Broker Plugins:", :style => :table)
       end
 
       def get_broker_by_uuid
@@ -144,11 +166,7 @@ module ProjectHanlon
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + broker_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
         print_object_array(hash_array_to_obj_array([result]), "Broker:")
       end
@@ -161,32 +179,32 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        tmp, options = parse_and_validate_options(option_items, "hanlon broker add (options...)", :require_all)
+        tmp, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon broker add (options...)")
         includes_uuid = true if tmp && tmp != "add"
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
+        optional_yaml_file = options[:optional_yaml]
         # use the arguments passed in to create a new broker
         broker = new_object_from_template_name(SLICE_BROKER_PREFIX, options[:plugin])
-        broker.cli_create_metadata
+        metadata_hash = {}
+        begin
+          metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+        rescue Exception => e
+          raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+        end
+        req_metadata_params = broker.cli_get_metadata_params(metadata_hash)
         # setup the POST (to create the requested broker) and return the results
         uri = URI.parse @uri_string
         body_hash = {
             "name" => options[:name],
             "description" => options[:description],
             "plugin" => options[:plugin],
-            "req_metadata_hash" => broker.req_metadata_hash
         }
-        broker.req_metadata_hash.each { |key, md_hash_value|
-          value = broker.instance_variable_get(key)
-          body_hash[key] = value
-        }
+        body_hash["req_metadata_params"] = req_metadata_params
         json_data = body_hash.to_json
-        result, response = hnl_http_post_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Broker Created:")
       end
 
@@ -198,7 +216,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        broker_uuid, options = parse_and_validate_options(option_items, "hanlon broker update (UUID) (options...)", :require_one)
+        broker_uuid, options = parse_and_validate_options(option_items, :require_one, :banner => "hanlon broker update (UUID) (options...)", :width => 34)
         includes_uuid = true if broker_uuid
         # check for usage errors (the boolean value at the end of this method
         # call is used to indicate whether the choice of options from the
@@ -207,20 +225,23 @@ module ProjectHanlon
         name = options[:name]
         description = options[:description]
         change_metadata = options[:change_metadata]
+        optional_yaml_file = (change_metadata && change_metadata.is_a?(String) ? change_metadata : nil)
         # now, use the values that were passed in to update the indicated broker
         uri = URI.parse(@uri_string + '/' + broker_uuid)
         # and get the results of the appropriate RESTful request using that URI
-        include_http_response = true
-        result, response = hnl_http_get(uri, include_http_response)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_get(uri)
         broker = hash_to_obj(result)
         # if the user requested a change to the meta-data hash associated with the
         # indicated broker, then gather that new meta-data from the user
         if change_metadata
-          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled Broker creation" unless
-              broker.cli_create_metadata
+          metadata_hash = {}
+          begin
+            metadata_hash = YAML.load(File.read(optional_yaml_file)) if optional_yaml_file
+          rescue Exception => e
+            raise ProjectHanlon::Error::Slice::InputError, "Cannot read from options file '#{optional_yaml_file}'"
+          end
+          req_metadata_params = broker.cli_get_metadata_params(metadata_hash)
+          raise ProjectHanlon::Error::Slice::UserCancelled, "User cancelled broker update" unless req_metadata_params
         end
         # add properties passed in from command line to the json_data
         # hash that we'll be passing in as the body of the request
@@ -228,18 +249,11 @@ module ProjectHanlon
         body_hash["name"] = name if name
         body_hash["description"] = description if description
         if change_metadata
-          broker.req_metadata_hash.each { |key, md_hash_value|
-            value = broker.instance_variable_get(key)
-            body_hash[key] = value
-          }
-          body_hash["req_metadata_hash"] = broker.req_metadata_hash
+          body_hash["req_metadata_params"] = req_metadata_params
         end
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated broker) and return the results
-        result, response = hnl_http_put_json_data(uri, json_data, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Broker Updated:")
       end
 
@@ -250,7 +264,7 @@ module ProjectHanlon
         # parse and validate the options that were passed in as part of this
         # subcommand (this method will return a UUID value, if present, and the
         # options map constructed from the @commmand_array)
-        broker_uuid, options = parse_and_validate_options(option_items, "hanlon broker remove (UUID)|(--all)", :require_all)
+        broker_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon broker remove (UUID)|(--all)")
         if !@web_command
           broker_uuid = @command_array.shift
         end
@@ -285,10 +299,7 @@ module ProjectHanlon
         broker_uuid = get_uuid_from_prev_args
         # setup the DELETE (to remove the indicated broker) and return the results
         uri = URI.parse @uri_string + "/#{broker_uuid}"
-        result, response = hnl_http_delete(uri, true)
-        if response.instance_of?(Net::HTTPBadRequest)
-          raise ProjectHanlon::Error::Slice::CommandFailed, result["result"]["description"]
-        end
+        result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
       end
 

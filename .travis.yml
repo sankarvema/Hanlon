@@ -1,0 +1,30 @@
+language: 
+  - ruby
+
+rvm:
+  - 1.9.3
+
+before_install:
+  - sudo apt-get -y update -qq
+
+install:
+  - sudo apt-get -y install build-essential
+  - sudo apt-get autoremove
+  - sudo apt-get clean
+  - sudo rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
+  - bundle install
+
+services:
+  - mongodb
+
+before_script:
+  - sleep 15
+  - export TEST_MODE=true
+
+script:
+  - ./hanlon_init
+  - sed -i "s/127.0.0.1/$MONGO_PORT_27017_TCP_ADDR/g" web/config/hanlon_server.conf
+  - ./web/run-puma.sh 2>&1 > /dev/null &
+  - sleep 15
+  - cd test
+  - rspec

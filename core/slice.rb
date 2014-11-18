@@ -297,7 +297,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
 
   def get_options(options = { }, optparse_options = { })
     optparse_options[:banner] ||= "hanlon [command] [options...]"
-    OptionParser.new do |opts|
+    optparse_options[:width] ||= 32
+    optparse_options[:indent] ||= ' ' * 4
+    OptionParser.new(optparse_options[:banner], optparse_options[:width], optparse_options[:indent]) do |opts|
       opts.banner = optparse_options[:banner]
       optparse_options[:options_items].each do |opt_item|
         options[opt_item[:name]] = opt_item[:default]
@@ -373,12 +375,13 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   end
 
   # used by slices to parse and validate the options for a particular subcommand
-  def parse_and_validate_options(option_items, banner, logic = nil)
+  def parse_and_validate_options(option_items, logic = nil, optparse_options = { })
     options = {}
     #uuid = @web_command ? @prev_args.peek(1) : @prev_args.peek(0)
     uuid = @prev_args.peek(0)
     # Get our optparse object passing our options hash, option_items hash, and our banner
-    optparse = get_options(options, :options_items => option_items, :banner => banner)
+    optparse_options[:options_items] = option_items
+    optparse = get_options(options, optparse_options)
     # set the command help text to the string output from optparse
     @command_help_text << optparse.to_s
     # if it's a web command, get the web options that were passed
@@ -392,20 +395,23 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     return uuid, options
   end
 
+  # used by the slices to print out detailed usage for individual subcommands
+  def print_subcommand_help(command, contained_resource, option_items, optparse_options = { })
+    optparse_options[:banner] = ( option_items.select { |elem| elem[:uuid_is] == "required" }.length > 0 ?
+        "hanlon #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (UUID) (options...)" :
+        "hanlon #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (options...)")
+    print_command_help(command, option_items, optparse_options)
+  end
+
   # used by the slices to print out detailed usage for individual commands
-  def print_command_help(command, option_items, contained_resource = nil)
-    banner = ""
-    if contained_resource
-      banner = ( option_items.select { |elem| elem[:uuid_is] == "required" }.length > 0 ?
-          "hanlon #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (UUID) (options...)" :
-          "hanlon #{slice_name} (#{slice_name.upcase}_UUID) #{contained_resource} #{command} (options...)")
-    else
+  def print_command_help(command, option_items, optparse_options = { })
+    unless optparse_options[:banner]
       banner = ( option_items.select { |elem| elem[:uuid_is] == "required" }.length > 0 ?
           "hanlon #{slice_name} #{command} (UUID) (options...)" :
           "hanlon #{slice_name} #{command} (options...)")
     end
-    usage_lines = get_options({}, :options_items => option_items,
-                              :banner => banner).to_s.split("\n")
+    optparse_options[:options_items] = option_items
+    usage_lines = get_options({}, optparse_options).to_s.split("\n")
     if usage_lines
       puts "Usage: #{usage_lines[0]}"
       usage_lines[1..usage_lines.size].each { |line|
@@ -472,7 +478,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # used by slices to construct a typical @slice_command hash map based on
   # an input set of function names
   def get_command_map(help_cmd_name, get_all_cmd_name, get_by_uuid_cmd_name,
-      add_cmd_name, update_cmd_name, remove_all_cmd_name, remove_by_uuid_cmd_name)
+                      add_cmd_name, update_cmd_name, remove_all_cmd_name, remove_by_uuid_cmd_name)
     return_all = ["all", '{}', /^\{.*\}$/, nil]
     cmd_map = {}
     get_all_cmd_name = "throw_missing_uuid_error" unless get_all_cmd_name
@@ -695,7 +701,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     print_array.each_with_index do |line, li|
       line_string = ""
       line.each_with_index do |col, ci|
-        max_col = print_array.collect { |x| x[ci].length }.max
+        # /\e\[(\d+)(;\d+)*m/
+        # Removes foreground and/or background colors
+        max_col = print_array.collect { |x| x[ci].gsub(/\e\[(\d+)(;\d+)*m/, '').length }.max
         if li == 0
           if header_color
             line_string << "#{col.center(max_col)}  ".send(header_color)
@@ -733,12 +741,30 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   end
 end
 
-def tag_matcher_hash_array_to_obj_array(hash_array, tagrule_uuid)
+def tag_matcher_hash_array_to_obj_array(hash_array, tagrule_uuid, sort_fieldname = nil)
+  # If a sort_field name is provided, sort the hash_array
+  if sort_fieldname
+    hash_array = sort_hash_array(hash_array, sort_fieldname)
+  end
   hash_array.map { |hash| class_from_string(hash["@classname"]).new(hash, tagrule_uuid) }
 end
 
-def hash_array_to_obj_array(hash_array)
+def hash_array_to_obj_array(hash_array, sort_fieldname = nil)
+  # If a sort_field name is provided, sort the hash_array
+  if sort_fieldname
+    hash_array = sort_hash_array(hash_array, sort_fieldname)
+  end
   hash_array.map { |hash_val| class_from_string(hash_val["@classname"]).new(hash_val) }
+end
+
+def sort_hash_array(hash_array, sort_fieldname)
+  # If the sort_fieldname in the first element of the hash array is a String,
+  # convert it to lower case for case insensitive sorting
+  if hash_array.first["@#{sort_fieldname}"].is_a? String
+    hash_array = hash_array.sort_by { |elem| elem["@#{sort_fieldname}"].downcase }
+  else
+    hash_array = hash_array.sort_by { |elem| elem["@#{sort_fieldname}"] }
+  end
 end
 
 def hash_to_obj(hash)
