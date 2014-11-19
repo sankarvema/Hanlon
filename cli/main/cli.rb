@@ -41,13 +41,6 @@ class ProjectHanlon::CLI
       #exit
     end
 
-    @cli_private = false
-
-    #if @options[:jsoncommand] then
-    #  @web_command = true
-    #  @cli_private = true
-    #end
-
     @debug = @options[:debug]
     @verbose = @options[:verbose]
 
@@ -85,14 +78,8 @@ class ProjectHanlon::CLI
   def call_hanlon_slice(raw_name, args)
     return nil if raw_name.nil?
 
-    if raw_name == 'config' and @web_command and !@cli_private then
-      @logger.error "Hanlon config called as web command"
-      return false # Will yield 404 which is good. This slice doesn't exist in the web UI
-    end
-
     name = file2const(raw_name)
     hanlon_module = Object.full_const_get(SLICE_PREFIX + name).new(args)
-    hanlon_module.web_command = @web_command
     hanlon_module.verbose = @verbose
     hanlon_module.debug = @debug
     hanlon_module.slice_call
@@ -152,11 +139,6 @@ class ProjectHanlon::CLI
       opts.on( '-d', '--debug', 'Enables printing proper Ruby stacktrace'.yellow ) do
         @options[:debug] = true
       end
-
-      #@options[:jsoncommand] = false
-      #opts.on( '-j', '--jsoncommand', 'Same as -w but not exposed in web UI.'.yellow ) do
-      #  @options[:jsoncommand] = true
-      #end
 
       @options[:nocolor] = false
       opts.on( '-n', '--no-color', 'Disables console color. Useful for script wrapping.'.yellow ) do

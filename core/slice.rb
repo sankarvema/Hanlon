@@ -4,7 +4,6 @@
 # change log to act as a restful proxy under util/api_proxy
 
 require 'forwardable'
-require 'require_all'
 require 'helpers/http_helper'
 
 # @todo danielp 2012-10-24: this shouldn't include the database tooling.
@@ -12,12 +11,9 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   include ProjectHanlon::HttpHelper
   include ProjectHanlon::Logging
 
-  attr_accessor :web_command, :uri_root, :hidden
+  attr_accessor :uri_root, :hidden
   attr_accessor :verbose
   attr_accessor :debug
-
-  # Load service config
-  #SERVICE_CONFIG = YAML.load_file(File.join($app_root, "conf/service.yaml"))
 
   # Initializes the Slice Base
   # @param [Array] args
@@ -25,7 +21,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     @command_array = []
     @command_array = args if args
     @command_help_text = ""
-    @web_command = false
     @prev_args = Stack.new
     @hidden = true
 
@@ -159,13 +154,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     return_hash["errcode"] = 0
     return_hash["response"] = response
     return_hash["client_config"] = ProjectHanlon.config.get_client_config_hash if mk_response
-    if @web_command
-      puts JSON.dump(return_hash)
-    else
-      print "\n\n#{slice_name}"
-      print " #{return_hash["command"]}\n"
-      print " #{return_hash["response"]}\n"
-    end
+    print "\n\t#{response}\n\n"
     logger.debug "(#{return_hash["resource"]}  #{return_hash["command"]}  #{return_hash["result"]})"
   end
 
@@ -215,11 +204,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     return_hash["slice"] = self.class.to_s
     return_hash["command"] = @command
     return_hash["client_config"] = ProjectHanlon.config.get_client_config_hash if mk_response
-    if @web_command
-      puts JSON.dump(return_hash)
-    else
-      list_help(return_hash)
-    end
+    list_help(return_hash)
     logger.send log_level, "Slice Error: #{return_hash["result"]}"
   end
 
@@ -377,17 +362,12 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # used by slices to parse and validate the options for a particular subcommand
   def parse_and_validate_options(option_items, logic = nil, optparse_options = { })
     options = {}
-    #uuid = @web_command ? @prev_args.peek(1) : @prev_args.peek(0)
     uuid = @prev_args.peek(0)
     # Get our optparse object passing our options hash, option_items hash, and our banner
     optparse_options[:options_items] = option_items
     optparse = get_options(options, optparse_options)
     # set the command help text to the string output from optparse
     @command_help_text << optparse.to_s
-    # if it's a web command, get the web options that were passed
-    if @web_command
-      options = get_options_web
-    end
     # parse our ARGV with the optparse unless options are already set from get_options_web
     optparse.parse!(@command_array) unless option_items.any? { |k| options[k] }
     # validate required options, we use the :require_one logic to check if at least one :required value is present
@@ -449,7 +429,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # (assumes that the UUID and, potentially one more argument if it's a web command
   # appear as the first two arguments in the @prev_args stack)
   def get_uuid_from_prev_args
-    @web_command && @prev_args.peek(0) == '{}' ? @prev_args.peek(1) : @prev_args.peek(0)
+      @prev_args.peek(0)
   end
 
   # used by the slices to throw an error when an error occurred while attempting to parse
@@ -548,36 +528,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
       return return_objects_using_uuid(collection, uuid)
     end
 
-    # Check if REST-driven request
-    if @web_command
-      # Get request filter JSON string
-      @filter_json_string = @command_array.shift
-      @filter_json_string = '{}' if @filter_json_string == 'null' # handles bad PUT requests
-      # Check if we were passed a filter string
-      if @filter_json_string != "{}" && @filter_json_string != nil
-        @command = "query_with_filter"
-        begin
-          # Render our JSON to a Hash
-          filter_hash = JSON.parse(@filter_json_string)
-          # if any of the Hash values are "true" or "false", convert to equivalent
-          # Boolean values (true and false, respectively)
-          filter_hash.each { |key, val|
-            (filter_hash[key] = true; next) if val == "true"
-            filter_hash[key] = false if val == "false"
-          }
-          return return_objects_using_filter(collection, filter_hash)
-        rescue StandardError => e
-          # We caught an error / likely JSON. We return the error text as a Slice error.
-          slice_error(e.message, false)
-        end
-      else
-        @command = "#{noun}_query_all"
-        return return_objects(collection)
-      end
-      # Is CLI driven
-    else
-      return_objects(collection)
-    end
+    return_objects(collection)
   end
 
   # Return objects using a filter
@@ -777,14 +728,4 @@ def class_from_string(str)
   end
 end
 
-# ToDo::Sankar::Refactor - remove _rel loading
-
-# Finally, ensure that all our slices are loaded.
-#require_all "./slice/"
-
-#Dir[File.dirname(__FILE__) + "/slice/**/*.rb"].each do |file|
-#  require file
-#end
-require "slice/slice_dep"
-
-require "image_service/microkernel"
+require 'slice/slice_dep'
