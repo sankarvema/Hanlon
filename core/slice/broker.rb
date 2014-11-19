@@ -1,5 +1,4 @@
-require "json"
-require "broker/base"
+require 'broker/base'
 
 # Root ProjectHanlon namespace
 module ProjectHanlon
@@ -255,37 +254,6 @@ module ProjectHanlon
         # setup the PUT (to update the indicated broker) and return the results
         result = hnl_http_put_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Broker Updated:")
-      end
-
-      def remove_broker
-        @command = :remove_broker
-        # load the appropriate option items for the subcommand we are handling
-        option_items = command_option_data(:remove)
-        # parse and validate the options that were passed in as part of this
-        # subcommand (this method will return a UUID value, if present, and the
-        # options map constructed from the @commmand_array)
-        broker_uuid, options = parse_and_validate_options(option_items, :require_all, :banner => "hanlon broker remove (UUID)|(--all)")
-        if !@web_command
-          broker_uuid = @command_array.shift
-        end
-        includes_uuid = true if broker_uuid
-        # check for usage errors (the boolean value at the end of this method
-        # call is used to indicate whether the choice of options from the
-        # option_items hash must be an exclusive choice)
-        check_option_usage(option_items, options, includes_uuid, true)
-        # and then invoke the right method (based on usage)
-        # selected_option = options.select { |k, v| v }.keys[0].to_s
-        if options[:all]
-          # remove all Brokers from the system
-          remove_all_brokers
-        elsif includes_uuid
-          # remove a specific Broker (by UUID)
-          remove_broker_with_uuid(broker_uuid)
-        else
-          # if get to here, no UUID was specified and 'all' was to used to try to
-          # remove all brokers from the system no included, so raise an error and exit
-          raise ProjectHanlon::Error::Slice::MissingArgument, "Must provide a UUID for the broker to remove (or 'all' to remove all)"
-        end
       end
 
       def remove_all_brokers
