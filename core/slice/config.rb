@@ -1,5 +1,4 @@
-require "json"
-require "yaml"
+require 'json'
 
 # Root ProjectHanlon namespace
 module ProjectHanlon
@@ -67,7 +66,6 @@ module ProjectHanlon
 
       def db_check
         @command = :db_check
-        raise ProjectHanlon::Error::Slice::MethodNotAllowed, "This method cannot be invoked via REST" if @web_command
         puts get_data.persist_ctrl.is_connected?
       end
 
