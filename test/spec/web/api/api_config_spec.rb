@@ -1,7 +1,7 @@
 
 hnl_uri = ProjectHanlon.config.hanlon_uri + ProjectHanlon.config.websvc_root
 
-describe 'Hanlon::WebService::Model' do
+describe 'Hanlon::WebService::Config' do
 
   include ProjectHanlon::HttpHelper
 
