@@ -191,12 +191,12 @@ module ProjectHanlon
           val = (args_array.size > 0 ? args_array.delete_at(0) : nil)
           # make sure the option starts with a dash (and throw an error if it does not)
           unless /^-.*$/.match(opt)
-            set_command_help_text
+            set_command_help_text(option_items)
             raise ProjectHanlon::Error::Slice::InputError, "Missing option for value '#{opt}'"
           end
           # make we found a value and that the value doesn't start with a dash (and throw an error if it does)
           unless val && /^[^-].*$/.match(val)
-            set_command_help_text
+            set_command_help_text(option_items)
             raise ProjectHanlon::Error::Slice::InputError, "Missing value for option '#{opt}'"
           end
         end
@@ -329,7 +329,7 @@ module ProjectHanlon
         nil
       end
 
-      def set_command_help_text
+      def set_command_help_text(option_items)
         options = {}
         # Get our optparse object passing our options hash, option_items hash, and our banner
         optparse_options = {:banner => "hanlon model add (options...)", :width => 40}
