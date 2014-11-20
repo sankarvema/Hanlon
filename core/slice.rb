@@ -425,13 +425,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     }
   end
 
-  # used by the slices to retrieve the UUID value from a set of previous arguments
-  # (assumes that the UUID and, potentially one more argument if it's a web command
-  # appear as the first two arguments in the @prev_args stack)
-  def get_uuid_from_prev_args
-      @prev_args.peek(0)
-  end
-
   # used by the slices to throw an error when an error occurred while attempting to parse
   # a slice command line
   def throw_syntax_error

@@ -244,7 +244,7 @@ module ProjectHanlon
       def get_tagrule_by_uuid
         @command = :get_tagrule_by_uuid
         # the UUID was the last "previous argument"
-        tagrule_uuid = get_uuid_from_prev_args
+        tagrule_uuid = @prev_args.peek(0)
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + tagrule_uuid)
         # and get the results of the appropriate RESTful request using that URI
@@ -311,7 +311,7 @@ module ProjectHanlon
       def remove_tagrule_by_uuid
         @command = :remove_tagrule_by_uuid
         # the UUID was the last "previous argument"
-        tagrule_uuid = get_uuid_from_prev_args
+        tagrule_uuid = @prev_args.peek(0)
         # setup the DELETE (to remove the indicated tag rule) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}"
         result = hnl_http_delete(uri)
@@ -418,7 +418,7 @@ module ProjectHanlon
         @command = :remove_matcher
         tagrule_uuid = @prev_args.peek(3)
         # the UUID was the last "previous argument"
-        matcher_uuid = get_uuid_from_prev_args
+        matcher_uuid = @prev_args.peek(0)
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}"
         result = hnl_http_delete(uri)

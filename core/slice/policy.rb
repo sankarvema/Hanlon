@@ -314,7 +314,7 @@ module ProjectHanlon
       def remove_policy_by_uuid
         @command = :remove_policy_by_uuid
         # the UUID was the last "previous argument"
-        policy_uuid = get_uuid_from_prev_args
+        policy_uuid = @prev_args.peek(0)
         # setup the DELETE (to update the remove the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
         result = hnl_http_delete(uri)

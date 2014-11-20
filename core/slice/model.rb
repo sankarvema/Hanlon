@@ -303,7 +303,7 @@ module ProjectHanlon
       def remove_model_by_uuid
         @command = :remove_model_by_uuid
         # the UUID was the last "previous argument"
-        model_uuid = get_uuid_from_prev_args
+        model_uuid = @prev_args.peek(0)
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{model_uuid}"
         result = hnl_http_delete(uri)
