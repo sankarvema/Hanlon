@@ -318,7 +318,7 @@ module ProjectHanlon
         # setup the DELETE (to update the remove the indicated policy) and return the results
         uri = URI.parse @uri_string + "/#{policy_uuid}"
         result = hnl_http_delete(uri)
-        slice_success(result, :success_type => :removed)
+        puts result
       end
 
     end

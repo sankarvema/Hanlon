@@ -307,7 +307,7 @@ module ProjectHanlon
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{model_uuid}"
         result = hnl_http_delete(uri)
-        slice_success(result, :success_type => :removed)
+        puts result
       end
 
       def verify_image(model, image_uuid)

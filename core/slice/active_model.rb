@@ -204,7 +204,7 @@ module ProjectHanlon
           uri = URI.parse(@uri_string + '/' + active_model_uuid)
         end
         result = hnl_http_delete(uri)
-        slice_success(result, :success_type => :removed)
+        puts result
       end
 
       def get_logs

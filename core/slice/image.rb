@@ -195,7 +195,7 @@ module ProjectHanlon
         # setup the DELETE (to remove the indicated image) and return the results
         uri = URI.parse @uri_string + "/#{image_uuid}"
         result = hnl_http_delete(uri)
-        slice_success(result, :success_type => :removed)
+        puts result
       end
 
       # utility methods (used to add various types of images)

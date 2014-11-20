@@ -268,7 +268,7 @@ module ProjectHanlon
         # setup the DELETE (to remove the indicated broker) and return the results
         uri = URI.parse @uri_string + "/#{broker_uuid}"
         result = hnl_http_delete(uri)
-        slice_success(result, :success_type => :removed)
+        puts result
       end
 
     end
