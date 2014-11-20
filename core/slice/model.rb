@@ -182,6 +182,22 @@ module ProjectHanlon
         includes_uuid = false
         # load the appropriate option items for the subcommand we are handling
         option_items = command_option_data(:add)
+        # check the command arguments; should have pairs of arguments that look like
+        # ['-option', 'value'] (or ['--option', 'value']); if find an option that doesn't start
+        # with a dash or a value that does, then we've found the error
+        args_array = @command_array.dup
+        while args_array.size > 0
+          opt = args_array.delete_at(0)
+          val = (args_array.size > 0 ? args_array.delete_at(0) : nil)
+          # make sure the option starts with a dash (and throw an error if it does not)
+          unless /^-.*$/.match(opt)
+            raise ProjectHanlon::Error::Slice::InputError, "Missing option for value '#{opt}'"
+          end
+          # make we found a value and that the value doesn't start with a dash (and throw an error if it does)
+          unless val && /^[^-].*$/.match(val)
+            raise ProjectHanlon::Error::Slice::InputError, "Missing value for option '#{opt}'"
+          end
+        end
         command_hash = Hash[*@command_array]
         template_name = command_hash["-t"] || command_hash["--template"]
         option_items = option_items.map { |option|
