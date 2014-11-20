@@ -263,8 +263,8 @@ module ProjectHanlon
 
       def remove_broker_by_uuid
         @command = :remove_broker_by_uuid
-        # the UUID is the first element of the @command_array
-        broker_uuid = get_uuid_from_prev_args
+        # the UUID was the last "previous argument"
+        broker_uuid = @prev_args.peek(0)
         # setup the DELETE (to remove the indicated broker) and return the results
         uri = URI.parse @uri_string + "/#{broker_uuid}"
         result = hnl_http_delete(uri)

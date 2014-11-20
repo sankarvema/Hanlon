@@ -139,7 +139,8 @@ module ProjectHanlon
       #Lists details for a specific image
       def get_image_by_uuid
         @command = :get_image_by_uuid
-        image_uuid = get_uuid_from_prev_args
+        # the UUID was the last "previous argument"
+        image_uuid = @prev_args.peek(0)
         # setup the proper URI depending on the options passed in
         uri = URI.parse(@uri_string + '/' + image_uuid)
         # and get the results of the appropriate RESTful request using that URI
@@ -189,8 +190,8 @@ module ProjectHanlon
 
       def remove_image
         @command = :remove_image
-        # the UUID is the first element of the @command_array
-        image_uuid = get_uuid_from_prev_args
+        # the UUID was the last "previous argument"
+        image_uuid = @prev_args.peek(0)
         # setup the DELETE (to remove the indicated image) and return the results
         uri = URI.parse @uri_string + "/#{image_uuid}"
         result = hnl_http_delete(uri)

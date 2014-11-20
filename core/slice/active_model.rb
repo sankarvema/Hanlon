@@ -135,10 +135,10 @@ module ProjectHanlon
 
       def get_active_model_by_uuid
         @command = :get_active_model_by_uuid
-        # the UUID is the first element of the @command_array
-        uuid = get_uuid_from_prev_args
+        # the UUID was the last "previous argument"
+        active_model_uuid = @prev_args.peek(0)
         # setup the proper URI depending on the options passed in
-        uri = URI.parse(@uri_string + '/' + uuid)
+        uri = URI.parse(@uri_string + '/' + active_model_uuid)
         # and get the results of the appropriate RESTful request using that URI
         result = hnl_http_get(uri)
         # finally, based on the options selected, print the results
@@ -198,10 +198,10 @@ module ProjectHanlon
           uri = URI.parse(@uri_string + "?hw_id=#{hardware_id}") if hardware_id
           uri = URI.parse(@uri_string + "?node_uuid=#{node_uuid}") if node_uuid
         else
-          # the UUID is the first element of the @command_array
-          uuid = get_uuid_from_prev_args
+          # the UUID was the last "previous argument"
+          active_model_uuid = @prev_args.peek(0)
           # setup the DELETE (to update the remove the indicated active_model) and return the results
-          uri = URI.parse @uri_string + "/#{uuid}"
+          uri = URI.parse(@uri_string + '/' + active_model_uuid)
         end
         result = hnl_http_delete(uri)
         slice_success(result, :success_type => :removed)
