@@ -156,9 +156,9 @@ module ProjectHanlon
       new_config = default_config.dup
       override_params.each { |key, value|
         begin
-        new_config[key] = value
+          new_config[key] = value
         rescue NoMethodError => e
-          puts "WARNING: no parameter name '#{key}' found in Hanlon #{config_type_str} config; skipped" if warn_skipped_params
+          print "WARNING: no parameter name '#{key}' found in Hanlon #{config_type_str} config; skipped\n" if warn_skipped_params
         end
       }
       new_config
@@ -192,12 +192,13 @@ end
 begin
   optparse.parse!
 rescue Exception => e
-  puts "ERROR: could not parse command (#{e.message})"
+  print "ERROR: could not parse command (#{e.message})\n"
+  print optparse
   exit 1
 end
 
 if options[:defaults_file] && options[:json_defaults]
-  puts "ERROR: only one of '-d,--defaults-file FILE' or '-j,--json-defaults STRING' can be used"
+  print "ERROR: only one of '-d,--defaults-file FILE' or '-j,--json-defaults STRING' can be used\n"
   print optparse
   exit 2
 end
