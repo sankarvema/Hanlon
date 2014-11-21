@@ -187,14 +187,14 @@ optparse = OptionParser.new do |opts|
     exit
   end
 
-  if options[:defaults_file] && options[:json_defaults]
-    puts "ERROR: only one of '-d,--defaults-file FILE' or '-j,--json-defaults STRING' can be used"
-    print opts
-    exit
-  end
-
 end
 
 optparse.parse!
+
+if options[:defaults_file] && options[:json_defaults]
+  puts "ERROR: only one of '-d,--defaults-file FILE' or '-j,--json-defaults STRING' can be used"
+  print optparse
+  exit
+end
 
 exit ProjectHanlon::Init.new.run(options)
