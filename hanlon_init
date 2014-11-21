@@ -6,6 +6,9 @@
 
 require 'pathname'
 require 'colored'
+require 'optparse'
+require 'yaml'
+require 'json'
 
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './core').cleanpath.to_s)
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './util').cleanpath.to_s)
@@ -28,7 +31,25 @@ module ProjectHanlon
       nil
     end
 
-    def run(*argv)
+    def run(options)
+
+      default_params = {}
+      if options[:defaults_file]
+        default_params = begin
+          YAML.load(File.open(options[:defaults_file]))
+        rescue Exception => e
+          puts "Could not parse defaults YAML file (#{options[:defaults_file]}): #{e.message}"
+          exit 3
+        end
+      elsif options[:json_defaults]
+        default_params = begin
+          JSON.parse(options[:json_defaults])
+        rescue Exception => e
+          puts "Could not parse defaults JSON string '#{options[:json_defaults]}': #{e.message}"
+          exit 4
+        end
+      end
+
       puts
       puts "#{ProjectHanlon::Properties.app_name} (ver #{ProjectHanlon::Properties.app_build_version})".green
       puts ProjectHanlon::Properties.app_copy_right.yellow
@@ -37,7 +58,7 @@ module ProjectHanlon
       puts
 
       validate_hanlon_struct
-      create_hanlon_config_file
+      create_hanlon_config_file(default_params)
 
       puts
       puts "Setting up of #{ProjectHanlon::Properties.app_name} environment complete".blue
@@ -45,12 +66,13 @@ module ProjectHanlon
       return 0
     end
 
-    def create_hanlon_config_file
+    def create_hanlon_config_file(override_params)
 
       puts "Creating server configuration file...".cyan
 
       web_config_path = File.join($app_root, "web/config/hanlon_server.conf")
-      server_config = ProjectHanlon::Config::Server.new
+      default_server_config = ProjectHanlon::Config::Server.new
+      server_config = add_config_overrides(default_server_config, override_params, 'server', true)
 
       case check_file server_config, web_config_path
         when -1
@@ -67,7 +89,8 @@ module ProjectHanlon
       puts "Creating client configuration file...".cyan
 
       cli_config_path = File.join($app_root, "cli/config/hanlon_client.conf")
-      client_config = ProjectHanlon::Config::Client.new
+      default_client_config = ProjectHanlon::Config::Client.new
+      client_config = add_config_overrides(default_client_config, override_params, 'client')
 
       case check_file client_config, cli_config_path
         when -1
@@ -128,7 +151,56 @@ module ProjectHanlon
       "#{ProjectHanlon::Properties.app_name} log files initialized"
     end
 
+    def add_config_overrides(default_config, override_params, config_type_str, warn_skipped_params = nil)
+      return default_server_config unless override_params
+      new_config = default_config.dup
+      override_params.each { |key, value|
+        begin
+          new_config[key] = value
+        rescue NoMethodError => e
+          print "WARNING: no parameter name '#{key}' found in Hanlon #{config_type_str} config; skipped\n" if warn_skipped_params
+        end
+      }
+      new_config
+    end
+
   end
 end
 
-exit ProjectHanlon::Init.new.run(*ARGV)
+options = {}
+optparse = OptionParser.new do |opts|
+  opts.banner    = "Usage: #{opts.program_name} [options]".green
+  opts.separator "Options".yellow
+
+  options[:defaults_file] = nil
+  opts.on( '-d', '--defaults-file FILE', 'FILE containing default config values (YAML)'.yellow ) do |file|
+    options[:defaults_file] = file
+  end
+
+  options[:json_defaults] = nil
+  opts.on( '-j', '--json-defaults STRING', 'STRING containing default config values (JSON)'.yellow ) do |json_string|
+    options[:json_defaults] = json_string
+  end
+
+  opts.on_tail( '-h', '--help', 'Display this screen'.yellow ) do
+    print opts
+    exit
+  end
+
+end
+
+begin
+  optparse.parse!
+rescue Exception => e
+  print "ERROR: could not parse command (#{e.message})\n"
+  print optparse
+  exit 1
+end
+
+if options[:defaults_file] && options[:json_defaults]
+  print "ERROR: only one of '-d,--defaults-file FILE' or '-j,--json-defaults STRING' can be used\n"
+  print optparse
+  exit 2
+end
+
+exit ProjectHanlon::Init.new.run(options)
