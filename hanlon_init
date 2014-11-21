@@ -8,6 +8,7 @@ require 'pathname'
 require 'colored'
 require 'optparse'
 require 'yaml'
+require 'json'
 
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './core').cleanpath.to_s)
 $LOAD_PATH.unshift((Pathname(__FILE__).realpath.dirname + './util').cleanpath.to_s)
@@ -38,6 +39,13 @@ module ProjectHanlon
           YAML.load(File.open(options[:defaults_file]))
         rescue Exception => e
           puts "Could not parse defaults YAML file (#{options[:defaults_file]}): #{e.message}"
+          exit
+        end
+      elsif options[:json_defaults]
+        default_params = begin
+          JSON.parse(options[:json_defaults])
+        rescue Exception => e
+          puts "Could not parse defaults JSON string '#{options[:json_defaults]}': #{e.message}"
           exit
         end
       end
@@ -169,10 +177,22 @@ optparse = OptionParser.new do |opts|
     options[:defaults_file] = file
   end
 
+  options[:json_defaults] = nil
+  opts.on( '-j', '--json-defaults STRING', 'STRING containing default config values (JSON)'.yellow ) do |json_string|
+    options[:json_defaults] = json_string
+  end
+
   opts.on_tail( '-h', '--help', 'Display this screen'.yellow ) do
     print opts
     exit
   end
+
+  if options[:defaults_file] && options[:json_defaults]
+    puts "ERROR: only one of '-d,--defaults-file FILE' or '-j,--json-defaults STRING' can be used"
+    print opts
+    exit
+  end
+
 end
 
 optparse.parse!
