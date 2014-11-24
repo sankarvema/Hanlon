@@ -36,24 +36,14 @@ module ProjectHanlon::Migrate
 
     def cmd_validate
 
-      #puts "Validate #{self.class.name} command #{display_name} with #{$global.args[0]}"
-      #print args
-
       valid = false
-      #puts @cmd_function
-      @cmd_function = "cmd_help"
-      #puts @cmd_function
 
-      #@config_cmds.each { |cmd| puts cmd}
-      #puts "command map...\n#{@cmd_map}"
+      @cmd_function = "cmd_help"
 
       @cmd_map.each {|cmd|
 
-        #puts "run command #{cmd}"
         if cmd[0] == $global.args[0] or cmd[1] == $global.args[0]
           func = "#{cmd[3]}"
-          #puts "validation function to exec:: #{func}"
-          #puts eval func
           if eval func
             @cmd_function = cmd[4]
             valid = true
@@ -68,14 +58,12 @@ module ProjectHanlon::Migrate
     end
 
     def cmd_exec
-      #puts "exec #{self.class.name} command with #{@cmd_function}"
-
       eval "#{@cmd_function}"
       true
     end
 
     def cmd_help
-      puts "Help for #{self.class.name} command"
+      puts "Help for <#{command_name}> command"
       puts
       @cmd_map.each {|cmd|
         cmd_string = "#{cmd[0]}, #{cmd[1]}"
@@ -84,7 +72,7 @@ module ProjectHanlon::Migrate
     end
 
     def cmd_error
-      puts "Error for #{self.class.name} command"
+      puts "Error for #{command_name} command"
     end
 
     def no_more_args

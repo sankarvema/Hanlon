@@ -3,11 +3,10 @@ module ProjectHanlon::Migrate
   def self.run_command(command, args)
 
     command = normalize_command(command)
-    puts "migration called with #{command}"
-
     cmd_class = "ProjectHanlon::Migrate::Command::" + command
-    puts "cmd_class is #{cmd_class}"
     cmd = ProjectHanlon::Utility.class_from_string(cmd_class).new
+
+    #ToDo:: Throws exception on wrong command
 
     #cmd = cmd_class.to_class
     # puts "finding cmd_class"
@@ -36,9 +35,4 @@ module ProjectHanlon::Migrate
     command.slice(0, 1).capitalize + command.slice(1..-1).downcase
   end
 
-  def self.class_from_string(str)
-    str.split('::').inject(Object) do |mod, class_name|
-      mod.const_get(class_name)
-    end
-  end
 end

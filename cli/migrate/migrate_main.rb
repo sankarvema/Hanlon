@@ -113,7 +113,6 @@ class ProjectHanlon::MigrateMain
 
       opts.on_tail( '-h', '--help', 'Display this screen'.yellow ) do
         print opts
-        #print_available_slices
         exit
       end
     end

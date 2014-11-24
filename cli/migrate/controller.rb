@@ -7,11 +7,9 @@ module ProjectHanlon::Migrate
 
     def initialize
       @db_objects = %w"node model policy tag policy_rule bound_policy images active broker policy_table"
-      #@db_objects = %w"tag"
     end
 
     def perform(action)
-      puts
       config = ProjectHanlon::Config::Common.instance
 
       if(!dbs_active)
@@ -52,10 +50,8 @@ module ProjectHanlon::Migrate
         puts "Processing data collection #{name} having (#{source_count} documents)".yellow
 
         doc_counter = 1
-        #puts source_collection.find().count
-        source_collection.find().each { |row|
-          #puts source_collection.count
-          #puts row
+
+        source_collection.each { |row|
           doc = YAML.load row.to_yaml
 
           rec_id = rec_id(doc)
@@ -67,14 +63,14 @@ module ProjectHanlon::Migrate
             rule_obj = rule_hash[rule_name].new()
             print "\r#{row_summary} | #{rule_counter} | #{rule_obj.desc.ljust(50)} | Running..."
             doc_new = rule_obj.exec(doc_new)
-            print "\r#{row_summary} | #{rule_counter} | #{rule_obj.desc.ljust(50)} | Processed"
+            print "\r#{row_summary} | #{rule_counter} | #{rule_obj.desc.ljust(50)} | Processed "
             rule_counter = rule_counter + 1
           end # end of rule loop
 
           if action=="run"
             dest_connection.object_hash_update doc_new, name
             message="Save document to destination"
-            print "\r#{row_summary} | #{rule_counter-1} | #{message.ljust(50)} | Migrated"
+            print "\r#{row_summary} | #{rule_counter-1} | #{message.ljust(50)} | Migrated   "
           end
           puts
           doc_counter=doc_counter + 1
@@ -121,11 +117,12 @@ module ProjectHanlon::Migrate
       source_active = source_connection.is_connected?
       dest_active = dest_connection.is_connected?
 
-      puts "Check parameters...".yellow
+      puts "Validate DB parameters...".yellow
       puts "\tSource database connection:: #{ source_active ? 'OK':'Failed'}"
       puts "\t#{source}".white
       puts "\tDestination database connection:: #{ dest_active ? 'OK':'Failed'}"
       puts "\t#{dest}".white
+      puts
 
       return dest_active && source_active
     end
