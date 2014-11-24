@@ -7,6 +7,7 @@ require 'migrate/rule'
 require 'helpers/console'
 
 module ProjectHanlon::Migrate
+
 end
 
 
