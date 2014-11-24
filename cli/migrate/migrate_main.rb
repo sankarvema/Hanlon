@@ -6,7 +6,7 @@ require 'logging/logger'
 require 'slice/config'
 require 'properties'
 
-require 'migrate/global'
+
 
 #$global = ProjectHanlon::DbMigration::Global
 
@@ -64,7 +64,7 @@ class ProjectHanlon::MigrateMain
       print "\n [#{command}] ".red
       print "<-Invalid Command \n".yellow
     end
-    return -1
+    return ProjectHanlon::Migrate::ErrorCodes[:invalid_arguments]
 
   end
 

@@ -20,6 +20,7 @@ $app_type = "migrate"
 require 'rubygems' if RUBY_VERSION < '1.9'
 
 require 'config/migrate'
+require 'migrate/global'
 
 $config_file_path = "#{$app_root}/config/hanlon_#{$app_type}.conf"
 
@@ -31,7 +32,7 @@ if !File.exist? $config_file_path then
   puts "Migration config file missing at #{$config_file_path}".red
   puts " Default config file generated".white
   puts "   Please re-run hanlon migration tool after editing the configuration file".white
-  return -1
+  return ProjectHanlon::Migrate::ErrorCodes[:missing_config_file]
 end
 
 require 'migrate/migrate_main'
