@@ -1,0 +1,12 @@
+This DB directory is a duplication of core/persist.
+
+Redundant set of classes maintained here for DB migration script implementation for the following reasons
+
+1. persist/controller.rb directly works with config parameters whose parametric name change for db migration. This should be changed to pass db connection parameters to db initializer instead of directly reading from config file
+2. persist/mongo_plugin.rb and persist/postgres_plugin.rb directly retrieves db_name from comfig file
+3. Additional methods implemented for both mongo and postgres. These are to be added to persist/xxx.rb files
+
+
+Error identified:
+1. persist/postgres_plugin.rb is throwing error due to incorrect parameters for db connection. (I personally never tested hanlon with postgresql). Existing persist/postgres_plugin.rb code added as_is. After testing hanlon with postgresql, if this error is fixed same to be reflected here
+
