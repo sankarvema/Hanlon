@@ -1,6 +1,6 @@
 require 'mongo'
 
-module ProjectHanlon::DbMigration
+module ProjectHanlon::Migrate
   class DbController
     include(ProjectHanlon::Logging)
 
@@ -26,12 +26,12 @@ module ProjectHanlon::DbMigration
 
       if (db_mode == :mongo)
         logger.debug "Using Mongo plugin"
-        require "db_migrate/db/mongo_plugin" unless ProjectHanlon::DbMigration.const_defined?(:MongoPlugin)
-        @database = ProjectHanlon::DbMigration::MongoPlugin.new
+        require "migrate/db/mongo_plugin" unless ProjectHanlon::Migrate.const_defined?(:MongoPlugin)
+        @database = ProjectHanlon::Migrate::MongoPlugin.new
       elsif (db_mode == :postgres)
         logger.debug "Using Postgres plugin"
-        require "db_migrate/db/postgres_plugin" unless ProjectHanlon::DbMigration.const_defined?(:PostgresPlugin)
-        @database = ProjectHanlon::DbMigration::PostgresPlugin.new
+        require "migrate/db/postgres_plugin" unless ProjectHanlon::Migrate.const_defined?(:PostgresPlugin)
+        @database = ProjectHanlon::Migrate::PostgresPlugin.new
       else
         logger.error "Invalid Database plugin(#{db_mode})"
         return;

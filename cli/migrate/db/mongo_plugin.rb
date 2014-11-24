@@ -1,9 +1,9 @@
 require "mongo"
 require "set"
-require "db_migrate/db/plugin_interface"
+require "migrate/db/plugin_interface"
 
 module ProjectHanlon
-  module DbMigration
+  module Migrate
     # MongoDB version of {ProjectHanlon::Persist::PluginInterface}
     # used by {ProjectHanlon::Persist::Controller} when ':mongo' is the 'persist_mode' in
     # ProjectHanlon configuration

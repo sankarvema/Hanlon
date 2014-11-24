@@ -3,7 +3,7 @@ require "pg"
 require "db_migrate/db/plugin_interface"
 
 module ProjectHanlon
-  module DbMigration
+  module Migrate
     # PostgreSQL version of {ProjectHanlon::Persist::PluginInterface}
     # used by {ProjectHanlon::Persist::Controller} when ':postgres' is the 'persist_mode'
     # in ProjectHanlon configuration

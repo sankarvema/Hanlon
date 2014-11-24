@@ -1,5 +1,5 @@
 module ProjectHanlon
-  module DbMigration
+  module Migrate
     # Stores key/value pairs in the form of uuid and hashes. The hash is typically stored as a
     # JSON or BSON impage. The storage also maintains an integer version which is incremented every
     # time that the value is updated.

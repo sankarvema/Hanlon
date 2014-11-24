@@ -1,6 +1,8 @@
 require 'migrate/errors'
 require 'migrate/command'
 require 'migrate/factory'
+require 'migrate/controller'
+require 'migrate/rule'
 
 require 'helpers/console'
 
