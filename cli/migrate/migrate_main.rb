@@ -6,10 +6,7 @@ require 'logging/logger'
 require 'slice/config'
 require 'properties'
 
-
-
-#$global = ProjectHanlon::DbMigration::Global
-
+$global = ProjectHanlon::Migrate::Global
 
 class ProjectHanlon::MigrateMain
   include(ProjectHanlon::Logging)
@@ -53,8 +50,8 @@ class ProjectHanlon::MigrateMain
 
     command = argv.shift
     if command != nil
-      if ProjectHanlon::DbMigration::run_command(command, argv)
-        return ProjectHanlon::DbMigration::ErrorCodes[:no_error]
+      if ProjectHanlon::Migrate::run_command(command, argv)
+        return ProjectHanlon::Migrate::ErrorCodes[:no_error]
       end
     end
 
@@ -130,7 +127,21 @@ class ProjectHanlon::MigrateMain
   end
 
   def print_available_commands
-    #ToDo:: To be implemented
+    print "\n", "Available Commands\n".yellow
+    # first, find all slices that extend the ProjectHanlon::DbMigrate class
+    commands = ObjectSpace.each_object(Class).select { |klass| klass < ProjectHanlon::Migrate::Command }
+    # then construct a hash containing those slices (or slice classes); the key for
+    # this hash is the command name
+    command_hash = Hash[commands.map { |a| [a.new().command_name, a] }]
+    # finally, output the list of slice names (sorted by name) for all
+    # of the "non-hidden" slices
+    command_hash.keys.sort.each do |command_name|
+      command_obj = command_hash[command_name].new()
+      unless command_obj.hidden
+        ProjectHanlon::Utility::Console.print_help_command_line command_obj.display_name, command_obj.description
+      end
+    end
+    print "\n"
   end
 
 end
