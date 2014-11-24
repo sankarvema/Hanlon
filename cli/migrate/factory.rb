@@ -7,7 +7,7 @@ module ProjectHanlon::Migrate
 
     cmd_class = "ProjectHanlon::Migrate::Command::" + command
     puts "cmd_class is #{cmd_class}"
-    cmd = class_from_string(cmd_class).new
+    cmd = ProjectHanlon::Utility.class_from_string(cmd_class).new
 
     #cmd = cmd_class.to_class
     # puts "finding cmd_class"
