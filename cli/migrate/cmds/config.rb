@@ -14,9 +14,9 @@ module ProjectHanlon::Migrate
         @cmd_function = "display_config"
         @cmd_map =
             [
-                ["-t", "--test", "Validate current configuration file for any issues", "no_more_args", "test_config"],
                 ["-g", "--generate", "Generate a default config file", "no_more_args","generate_config"],
                 ["-s", "--show", "Generate a default config file", "no_more_args","show_config"],
+                ["-t", "--test", "Validate current configuration file for any issues", "no_more_args", "test_config"],
                 ["-h", "--help", "Display this help message", "no_more_args", "cmd_help"]
             ]
       end
@@ -90,7 +90,22 @@ module ProjectHanlon::Migrate
       end
 
       def test_config
-        #ToDo:: To be implemented
+        puts "Test current configuration parameters...".blue
+        puts
+        puts "Current parameters...".yellow
+        config = ProjectHanlon::Config::Common.instance
+        config_yaml = JSON(config.to_json)
+        ProjectHanlon::Utility.print_yaml config_yaml
+        puts
+
+        source_connection = Mongo::Connection.new(config.source_persist_host, config.source_persist_port)
+        dist_connection = Mongo::Connection.new(config.destination_persist_host, config.destination_persist_port)
+        source_db= source_connection.db(config.source_persist_dbname)
+        dest_db= dist_connection.db(config.destination_persist_dbname)
+
+        puts "Check parameters...".yellow
+        puts "\tSource database connection:: #{source_connection.active? ? 'OK':'Failed'}"
+        puts "\tDestination database connection:: #{dist_connection.active? ? 'OK':'Failed'}"
 
         return true
       end

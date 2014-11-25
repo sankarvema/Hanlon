@@ -58,7 +58,7 @@ class ProjectHanlon::MigrateMain
     puts optparse
     print_available_commands
     if command
-      print "\n [#{command}] ".red
+      print "[#{command}] ".red
       print "<-Invalid Command \n".yellow
     end
     return ProjectHanlon::Migrate::ErrorCodes[:invalid_arguments]
@@ -91,10 +91,10 @@ class ProjectHanlon::MigrateMain
         @options[:verbose] = true
       end
 
-      @options[:debug] = false
-      opts.on( '-d', '--debug', 'Enables printing proper Ruby stacktrace'.yellow ) do
-        @options[:debug] = true
-      end
+      # @options[:debug] = false
+      # opts.on( '-d', '--debug', 'Enables printing proper Ruby stacktrace'.yellow ) do
+      #   @options[:debug] = true
+      # end
 
       @options[:nocolor] = false
       opts.on( '-n', '--no-color', 'Disables console color. Useful for script wrapping.'.yellow ) do

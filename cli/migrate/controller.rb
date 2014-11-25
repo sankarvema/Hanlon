@@ -32,8 +32,10 @@ module ProjectHanlon::Migrate
         end
       end
 
+      puts "Processing migration rules...".yellow
       rules = ObjectSpace.each_object(Class).select { |klass| klass < ProjectHanlon::Migrate::MigrationRule }
-      puts "#{rules.count} migration rules found"
+      puts "    #{rules.count} migration rule(s) found"
+      puts
 
       rule_hash = Hash[rules.map { |a| [a.new().rule_name, a] }]
 
@@ -47,7 +49,7 @@ module ProjectHanlon::Migrate
         dest_collection = dest_connection.object_hash_get_all(name) if action=="run"
         dest_count = dest_collection.count                          if action=="run"
 
-        puts "Processing data collection #{name} having (#{source_count} documents)".yellow
+        puts "Processing data collection <#{name}> (...having #{source_count} documents)".yellow
 
         doc_counter = 1
 
