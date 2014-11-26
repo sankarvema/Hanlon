@@ -315,7 +315,7 @@ module ProjectHanlon
         # setup the DELETE (to remove the indicated tag rule) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}"
         result = hnl_http_delete(uri)
-        slice_success(result, :success_type => :removed)
+        puts result
       end
 
       # Tag Matcher
@@ -422,7 +422,7 @@ module ProjectHanlon
         # setup the DELETE (to remove the indicated model) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher/#{matcher_uuid}"
         result = hnl_http_delete(uri)
-        slice_success(result, :success_type => :removed)
+        puts result
       end
 
     end

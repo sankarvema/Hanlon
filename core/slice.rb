@@ -136,28 +136,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     end
   end
 
-  # Called when slice action is successful
-  # Returns a json string representing a [Hash] with metadata and response
-  # @param [Hash] response
-  def slice_success(response, options = {})
-    mk_response = options[:mk_response] ? options[:mk_response] : false
-    type = options[:success_type] ? options[:success_type] : :generic
-
-    # Slice Success types
-    # Created, Updated, Removed, Retrieved. Generic
-
-    return_hash = {}
-    return_hash["resource"] = self.class.to_s
-    return_hash["command"] = @command
-    return_hash["result"] = success_types[type][:message]
-    return_hash["http_err_code"] = success_types[type][:http_code]
-    return_hash["errcode"] = 0
-    return_hash["response"] = response
-    return_hash["client_config"] = ProjectHanlon.config.get_client_config_hash if mk_response
-    print "\n\t#{response}\n\n"
-    logger.debug "(#{return_hash["resource"]}  #{return_hash["command"]}  #{return_hash["result"]})"
-  end
-
   def success_types
     {
         :generic => {
@@ -182,8 +160,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
   # Called when a slice action triggers an error
   # Returns a json string representing a [Hash] with metadata including error code and message
   # @param [Hash] error
-  def slice_error(error, options = {})
-    mk_response = options[:mk_response] ? options[:mk_response] : false
+  def slice_error(error)
     return_hash = {}
     log_level = :error
     if error.class.ancestors.include?(ProjectHanlon::Error::Slice::Generic)
@@ -196,16 +173,13 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
       # We use old style if error is String
       return_hash["std_err_code"] = 1
       return_hash["result"] = error
-      logger.error "Slice error: #{return_hash.inspect}"
-
     end
 
     @command = "null" if @command == nil
     return_hash["slice"] = self.class.to_s
     return_hash["command"] = @command
-    return_hash["client_config"] = ProjectHanlon.config.get_client_config_hash if mk_response
     list_help(return_hash)
-    logger.send log_level, "Slice Error: #{return_hash["result"]}"
+    logger.send log_level, "Slice Error: #{return_hash.inspect}"
   end
 
   def list_help(return_hash = nil)
