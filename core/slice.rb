@@ -3,8 +3,8 @@
 # this module invokes slices from CLI, ideally it should be a restful proxy
 # change log to act as a restful proxy under util/api_proxy
 
-require 'forwardable'
 require 'helpers/http_helper'
+require 'stack'
 
 # @todo danielp 2012-10-24: this shouldn't include the database tooling.
 class ProjectHanlon::Slice < ProjectHanlon::Object
@@ -21,7 +21,7 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     @command_array = []
     @command_array = args if args
     @command_help_text = ""
-    @prev_args = Stack.new
+    @prev_args = ProjectHanlon::Stack.new
     @hidden = true
 
     Diagnostics::Tracer.watch_object($config)
@@ -208,50 +208,6 @@ class ProjectHanlon::Slice < ProjectHanlon::Object
     # cares, since nothing in Hanlon catches it specifically. --daniel 2013-04-16
     all_command_option_data[command.to_sym] or
         fail "Unknown command #{command} was looked up in `command_option_data`"
-  end
-
-  # here, we define a Stack class that simply delegates the equivalent "push", "pop",
-  # "to_s" and "clear" calls to the underlying Array object using the delegation
-  # methods provided by Ruby through the Forwardable class.  We could do the same
-  # thing using an Array, but that wouldn't let us restrict the methods that
-  # were supported by our Stack to just those methods that a stack should have
-  class Stack
-    extend Forwardable
-    def_delegators :@array, :push, :pop, :to_s, :clear, :count
-
-    # initializes the underlying array for the stack
-    def initialize
-      @array = []
-    end
-
-    # looks at the last element pushed onto the stack
-    def look
-      @array.last
-    end
-
-    # peeks down to the n-th element in the stack (zero is the top,
-    # if the 'n' value that is passed is deeper than the stack, it's
-    # an error (and will result in an IndexError being thrown)
-    def peek(n = 0)
-      stack_idx = -(n+1)
-      @array[stack_idx]
-    end
-
-    def size
-      @array.size
-    end
-
-    def length
-      @array.length
-    end
-
-    def include?(val)
-      @array.include?(val)
-    end
-
-    def join(sep)
-      @array.join(sep)
-    end
   end
 
   def get_options(options = { }, optparse_options = { })
