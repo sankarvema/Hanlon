@@ -2,103 +2,26 @@
 
 require 'json'
 require 'socket'
-require 'facter'
-require 'facter/util/ip'
 require 'ipaddr'
-
-# monkey-patch Facter::Util::IP to fix problems we are seeing under
-# Tomcat (where the 'Facter.value(:kernel)' method call returns an
-# empty string)
-module Facter::Util::IP
-
-  def self.get_interface_value(interface, label)
-    tmp1 = []
-
-    # Pull each regex out of the map.
-    REGEX_MAP.each { |kernel, map|
-      regex = map[label.to_sym]
-
-      # Linux changes the MAC address reported via ifconfig when an ethernet interface
-      # becomes a slave of a bonding device to the master MAC address.
-      # We have to dig a bit to get the original/real MAC address of the interface.
-      bonddev = get_bonding_master(interface)
-      if label == 'macaddress' and bonddev
-        bondinfo = IO.readlines("/proc/net/bonding/#{bonddev}")
-        hwaddrre = /^Slave Interface: #{interface}\n[^\n].+?\nPermanent HW addr: (([0-9a-fA-F]{2}:?)*)$/m
-        value = hwaddrre.match(bondinfo.to_s)[1].upcase
-      else
-        output_int = get_single_interface_output(interface)
-        if interface != /^lo[0:]?\d?/
-          output_int.split('\n').each do |s|
-            if s =~ regex
-              value = $1
-              if label == 'netmask' && convert_from_hex?(kernel)
-                value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.')
-              end
-              tmp1.push(value)
-            end
-          end
-        end
-
-        if tmp1
-          value = tmp1.shift
-          return value if value
-        end
-      end
-    }
-    return ''
-  end
-
-  def self.get_interfaces
-    # first, try one location
-    output = %x{/sbin/ifconfig -a}
-    unless output.length > 0
-      # that didn't work, so try the other
-      output = %x{/usr/sbin/ifconfig -a}
-    end
-
-    # We get lots of warnings on platforms that don't get an output
-    # made.
-    if output
-      output.scan(/^\w+[.:]?\d+/)
-    else
-      []
-    end
-  end
-
-  def self.get_single_interface_output(interface)
-    # first, try one location
-    output = %x{/sbin/ifconfig #{interface}}
-    unless output.length > 0
-      # that didn't work, so try the other
-      output = %x{/usr/sbin/ifconfig #{interface}}
-    end
-    output
-  end
-
-end
 
 module Hanlon
   module WebService
     module Utils
 
       def request_from_hanlon_subnet?(remote_addr)
-        # First, retrieve a couple of parameters (the Hanlon server's IP address
-        # and the array of interfaces on the local machine)
-        hanlon_server_ip = ProjectHanlon.config.hanlon_server
-        interface_array = Facter::Util::IP.get_interfaces
-        # then, test each interface to see if the subnet for that interface
-        # includes the remote_addr IP address; return true if any of the interfaces
-        # define a subnet that includes that IP address, false if none of them do
-        interface_array.map { |val|
-          ip_addr = Facter::Util::IP.get_interface_value(val,'ipaddress')
-          # skip to next unless looking at loopback interface or IP address is the same as the hanlon_server_ip
-          next unless val == "lo" || ip_addr == hanlon_server_ip
-          netmask = Facter::Util::IP.get_interface_value(val,'netmask')
-          # construct a new IPAddr object from the ip_addr and netmask we just
-          # retrieved, then test to see if our remote_addr is in that same subnet
-          # (if so, map to true, otherwise map to false)
-          internal = IPAddr.new("#{ip_addr}/#{netmask}")
+        # First, retrieve the list of subnets defined in the Hanlon server
+        # configuration (this array is represented by a comma-separated string
+        # containing the individual subnets managed by the Hanlon server)
+        hanlon_subnets = ProjectHanlon.config.hanlon_subnets.split(',')
+        # then, test the subnet value for each interface to see if the subnet for
+        # that interface includes the remote_addr IP address; return true if any
+        # of the interfaces define a subnet that includes that IP address, false
+        # if none of them do
+        hanlon_subnets.map { |subnet_str|
+          # construct a new IPAddr object from each of the subnet strings retrieved
+          # from the Hanlon server configuration, then test to see if our remote_addr
+          # is in that subnet (if so, map to true, otherwise map to false)
+          internal = IPAddr.new(subnet_str)
           internal.include?(remote_addr) ? true : false
         }.include?(true)
       end
