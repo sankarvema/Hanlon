@@ -28,7 +28,12 @@ module Hanlon
       module_function :request_from_hanlon_subnet?
 
       def request_from_hanlon_server?(remote_addr)
-        Socket.ip_address_list.map{|val| val.ip_address}.include?(remote_addr)
+        # return whether the 'remote_addr' is the same as the 'hanlon_server' value
+        # declared in the Hanlon server configuration **or** the 'remote_addr' is included
+        # in the list of local IP addresses accessible through the 'Socket.ip_address_list'
+        # method (if so, we consider the request to be a local request)
+        remote_addr == ProjectHanlon.config.hanlon_server ||
+            Socket.ip_address_list.map{|val| val.ip_address}.include?(remote_addr)
       end
       module_function :request_from_hanlon_server?
 
