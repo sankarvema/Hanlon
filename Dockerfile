@@ -25,5 +25,4 @@ RUN bundle install --system
 EXPOSE 8026
 
 WORKDIR /home/hanlon/web
-CMD (cd /home/hanlon && ./hanlon_init -j '{"persist_host": "'$MONGO_PORT_27017_TCP_ADDR'"}' ) && ./run-puma.sh
-
+CMD (cd /home/hanlon && ./hanlon_init -j '{"hanlon_subnets": "'$HANLON_SUBNETS'", "hanlon_server": "'$DOCKER_HOST'", "persist_host": "'$MONGO_PORT_27017_TCP_ADDR'"}' ) && ./run-puma.sh
