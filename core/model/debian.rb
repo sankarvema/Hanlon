@@ -165,7 +165,6 @@ module ProjectHanlon
             :source_fix         => :postinstall,
             :apt_get_update     => :postinstall,
             :apt_get_upgrade    => :postinstall,
-            :apt_get_ruby       => :postinstall,
             :postinstall_inject => :postinstall,
             :os_boot            => :postinstall,
             :os_final           => :os_complete,
