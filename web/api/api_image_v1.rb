@@ -258,9 +258,8 @@ module Hanlon
                 raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Image with UUID: [#{image_uuid}]" unless image && (image.class != Array || image.length > 0)
                 # Use the Engine instance to remove the selected image from the database
                 engine = ProjectHanlon::Engine.instance
-                return_status = false
                 begin
-                  return_status = engine.remove_image(image)
+                  raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image_uuid}]" unless engine.remove_image(image)
                 rescue RuntimeError => e
                   raise ProjectHanlon::Error::Slice::InternalError, e.message
                 rescue Exception => e

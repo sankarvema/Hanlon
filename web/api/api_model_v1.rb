@@ -265,7 +265,17 @@ module Hanlon
               model_uuid = params[:uuid]
               model = SLICE_REF.get_object("model_with_uuid", :model, model_uuid)
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Model with UUID: [#{model_uuid}]" unless model && (model.class != Array || model.length > 0)
-              raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Model [#{model.uuid}]" unless get_data_ref.delete_object(model)
+              # Use the Engine instance to remove the selected model from the database
+              engine = ProjectHanlon::Engine.instance
+              begin
+                engine.remove_model(model)
+                raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Model [#{model.uuid}]" unless engine.remove_model(model)
+              rescue RuntimeError => e
+                raise ProjectHanlon::Error::Slice::InternalError, e.message
+              rescue Exception => e
+                # if got to here, then the Engine raised an exception
+                raise ProjectHanlon::Error::Slice::CouldNotRemove, e.message
+              end
               slice_success_response(SLICE_REF, :remove_model_by_uuid, "Model [#{model.uuid}] removed", :success_type => :removed)
             end     # end DELETE /model/{uuid}
 
