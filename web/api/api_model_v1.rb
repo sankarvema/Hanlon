@@ -269,6 +269,7 @@ module Hanlon
               engine = ProjectHanlon::Engine.instance
               begin
                 engine.remove_model(model)
+                raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Model [#{model.uuid}]" unless engine.remove_model(model)
               rescue RuntimeError => e
                 raise ProjectHanlon::Error::Slice::InternalError, e.message
               rescue Exception => e

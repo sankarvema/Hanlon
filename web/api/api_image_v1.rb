@@ -259,7 +259,7 @@ module Hanlon
                 # Use the Engine instance to remove the selected image from the database
                 engine = ProjectHanlon::Engine.instance
                 begin
-                  engine.remove_image(image)
+                  raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image_uuid}]" unless engine.remove_image(image)
                 rescue RuntimeError => e
                   raise ProjectHanlon::Error::Slice::InternalError, e.message
                 rescue Exception => e
