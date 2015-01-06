@@ -419,23 +419,38 @@ module ProjectHanlon
       }
     end
 
-    # removes an image, but only if it's not part of a bound policy or a policy rule
+    # removes an image, but only if it's not part of a model
     def remove_image(image)
-      # ensure image is not actively part of a policy_rule or bound_policy within a model;
-      # if so, then raise an exception (and return to the caller without removing the image)
+      # ensure image is not actively part of a model; if so, then raise an exception
+      # (and return to the caller without removing the image)
       models = get_data.fetch_all_objects(:model)
-      models.each { |model|
-        if model.respond_to?(:image_uuid) && model.image_uuid == image.uuid
-          logger.warn "Cannot remove image '#{image.uuid}' because it is used in model '#{model.uuid}'"
-          raise Exception, "Cannot remove image '#{image.uuid}' because it is used in model '#{model.uuid}'"
-        end
-      }
-      data = get_data
+      matching_models = models.select { |model| model.respond_to?(:image_uuid) && model.image_uuid == image.uuid }
+      if matching_models.size > 0
+        matching_model_uuids = matching_models.map { |model| model.uuid}
+        logger.warn "Cannot remove image '#{image.uuid}' because it is used in the following models #{matching_model_uuids}"
+        raise Exception, "Cannot remove image '#{image.uuid}' because it is used in the following models: #{matching_model_uuids}"
+      end
       unless image.remove(ProjectHanlon.config.image_path)
         logger.error 'attempt to remove image from image_path failed'
         raise RuntimeError, "Attempt to remove image '#{image.uuid}' from the image_path failed"
       end
-      return data.delete_object(image)
+      return get_data.delete_object(image)
+    end
+
+    # removes an model, but only if it's not part of a bound policy
+    def remove_model(model)
+      # ensure model is not actively part of a policy; if so, then raise an exception
+      # (and return to the caller without removing the model)
+      policies = get_data.fetch_all_objects(:policy)
+      matching_policies = policies.select { |policy|
+        policy.respond_to?(:model) && policy.model.uuid == model.uuid
+      }
+      if matching_policies.size > 0
+        matching_policy_uuids = matching_policies.map { |policy| policy.uuid}
+        logger.warn "Cannot remove model '#{model.uuid}' because it is used in the following policies: #{matching_policy_uuids}"
+        raise Exception, "Cannot remove model '#{model.uuid}' because it is used in following policies: #{matching_policy_uuids}"
+      end
+      return get_data.delete_object(model)
     end
 
 
