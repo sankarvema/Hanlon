@@ -23,22 +23,20 @@ module ProjectHanlon
         from_hash(hash) unless hash == nil
       end
 
-      def add(src_image_path, lcl_image_path, extra)
+      def add(src_image_path, lcl_image_path)
         # Add the iso to the image svc storage
 
         begin
-          resp = super(src_image_path, lcl_image_path, extra)
+          resp = super(src_image_path, lcl_image_path)
           if resp[0]
             success, result_string = verify(lcl_image_path)
             unless success
               logger.error result_string
               return [false, result_string]
             end
-            return resp
-          else
-            resp
           end
-          rescue => e
+          resp
+        rescue => e
             #logger.error e.message
             logger.log_exception e
             raise ProjectHanlon::Error::Slice::InternalError, e.message

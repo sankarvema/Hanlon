@@ -32,6 +32,11 @@ module ProjectHanlon
                 :classname => "ProjectHanlon::ImageService::OSInstall",
                 :method => "add_os"
             },
+            :win =>        {
+                :desc => "Windows Install ISO",
+                :classname => "ProjectHanlon::ImageService::WindowsInstall",
+                :method => "add_win"
+            },
             :esxi =>      {
                 :desc => "VMware Hypervisor ISO",
                 :classname => "ProjectHanlon::ImageService::VMwareHypervisor",
@@ -69,7 +74,7 @@ module ProjectHanlon
                   :default     => nil,
                   :short_form  => '-t',
                   :long_form   => '--type TYPE',
-                  :description => 'The type of image (mk, os, esxi, or xenserver)',
+                  :description => 'The type of image (mk, os, win, esxi, or xenserver)',
                   :uuid_is     => 'not_allowed',
                   :required    => true
                 },
@@ -201,15 +206,19 @@ module ProjectHanlon
       # utility methods (used to add various types of images)
 
       def add_mk(new_image, iso_path, image_path)
-        new_image.add(iso_path, image_path, nil)
+        new_image.add(iso_path, image_path)
       end
 
       def add_esxi(new_image, iso_path, image_path)
-        new_image.add(iso_path, image_path, nil)
+        new_image.add(iso_path, image_path)
       end
 
       def add_xenserver(new_image, iso_path, image_path)
-        new_image.add(iso_path, image_path, nil)
+        new_image.add(iso_path, image_path)
+      end
+
+      def add_win(new_image, iso_path, image_path)
+        new_image.add(iso_path, image_path)
       end
 
       def add_os(new_image, iso_path, image_path, os_name, os_version)

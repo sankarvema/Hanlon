@@ -16,13 +16,12 @@ module ProjectHanlon
 
       def add(src_image_path, lcl_image_path, extra)
         begin
-          resp = super(src_image_path, lcl_image_path, extra)
+          resp = super(src_image_path, lcl_image_path)
           if resp[0]
             @os_name = extra[:os_name]
             @os_version = extra[:os_version]
-          else
-            resp
           end
+          resp
         rescue => e
           logger.error e.message
           return [false, e.message]

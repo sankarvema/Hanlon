@@ -158,6 +158,7 @@ module Hanlon
             raise ProjectHanlon::Error::Slice::MissingArgument, '[/path/to/iso]' unless iso_path != nil && iso_path != ""
             classname = SLICE_REF.image_types[image_type.to_sym][:classname]
             image = ::Object::full_const_get(classname).new({})
+
             # We send the new image object to the appropriate method
             res = []
             unless image_type == "os"
@@ -168,6 +169,11 @@ module Hanlon
                                    ProjectHanlon.config.image_path, os_name, os_version
             end
             raise ProjectHanlon::Error::Slice::InternalError, res[1] unless res[0]
+            # TODO: Add code to support creation of multiple images that point to a common subdirectory
+            # that code should generate a new UUID for each sub-image and should reference a "hidden
+            # image" containing the reference to the underlying directory that the code was copied over
+            # into under it's own UUID; if it's not a "Windows" image should add a new image as is shown
+            # in the following line
             raise ProjectHanlon::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)
 
             # fix 125 - add image local path to image end point
