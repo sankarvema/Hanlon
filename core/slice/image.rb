@@ -190,7 +190,15 @@ module ProjectHanlon
         json_data = body_hash.to_json
         puts "Attempting to add, please wait...".green
         result = hnl_http_post_json_data(uri, json_data)
-        print_object_array(hash_array_to_obj_array([result]), "Image Added:")
+        # if got a single hash map back, then print the details
+        return print_object_array(hash_array_to_obj_array([result]), "Image Added:") unless result.is_a?(Array)
+        # otherwise print the table containing the results
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'wim_index'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        print_object_array(result, "Images:", :style => :table)
       end
 
       def remove_image

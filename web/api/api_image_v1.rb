@@ -86,6 +86,62 @@ module Hanlon
             Hanlon::WebService::Utils::hnl_slice_success_object(slice, command, response, options)
           end
 
+          def get_wim_subimages(image, wim_path)
+            # first, define the keys we want to select from the output of the
+            # 'wiminfo' command
+            selection_keys = ['Display Name', 'Index']
+
+            # then parse the output of that command; first breaking the output down into
+            # a nested array of sections, lines, and words; then selecting out the lines
+            # we want to keep from each section using the 'selection_keys' (defined above)
+            wim_map_array = %x[wiminfo #{wim_path}].split("\n\n").map { |section|
+              section.split("\n").map { |line|
+                line.split(":").each { |word| word.strip! }
+              }
+            }.each { |section|
+              # only keep lines in each section who's 'key' (the first word) is in the
+              # 'selection_keys' array defined above; then remove any sections that are
+              # left empty or that don't include both an 'Index' and a 'Description' key
+              section.keep_if { |line|
+                selection_keys.include?(line[0])
+              }
+            }.delete_if { |lines| lines.empty? || lines.size != 2 }
+
+            # now, transform the resulting array into a hash map who's keys are the 'Index'
+            # values for each element in the array and who's values are the 'Description'
+            # for that same array element
+            wim_map = {}
+            wim_map_array.each { |wim_section|
+              # convert the array element (the lines kept from each section) into a hash
+              wim_section_hash = Hash[*wim_section.flatten]
+              # then use the fields from that hash to fill in the elements in the wim_map
+              # hash (which we will use later)
+              wim_map[wim_section_hash[selection_keys[1]].to_i] = wim_section_hash[selection_keys[0]]
+            }
+            # now, based on what we found in the 'wim' file, add new images to an output array
+            # (one for each entry in the 'wim' file)
+            image_array = []
+            classname = SLICE_REF.image_types[:win][:classname]
+            image_class = ::Object::full_const_get(classname)
+            wim_map.each { |wim_index, os_name|
+              # create a new image object
+              new_image = image_class.new({})
+              # fill in some of the fields with the corresponding values
+              # from the underlying (base) image
+              new_image.filename = image.filename
+              new_image.image_status = image.image_status
+              new_image.image_status_message = image.image_status_message
+              # and add the OS name and WIM index extracted from the 'wiminfo'
+              # command output (above)
+              new_image.os_name = os_name
+              new_image.wim_index = wim_index
+              new_image.base_image_uuid = image.uuid
+              # finally, add the resulting object to the array of sub-images
+              image_array << new_image
+            }
+            image_array
+          end
+
         end
 
         # the following description hides this endpoint from the swagger-ui-based documentation
@@ -111,6 +167,7 @@ module Hanlon
           end
           get do
             images = SLICE_REF.get_object("images", :images)
+            images.reject! { |image| image.hidden }
 
             # fix 125 - add image local path to image end point
             @_lcl_image_path = ProjectHanlon.config.image_path + "/"
@@ -161,12 +218,12 @@ module Hanlon
 
             # We send the new image object to the appropriate method
             res = []
-            unless image_type == "os"
-              res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
-                                   ProjectHanlon.config.image_path
-            else
+            if image_type == 'os'
               res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
                                    ProjectHanlon.config.image_path, os_name, os_version
+            else
+              res = SLICE_REF.send SLICE_REF.image_types[image_type.to_sym][:method], image, iso_path,
+                                   ProjectHanlon.config.image_path
             end
             raise ProjectHanlon::Error::Slice::InternalError, res[1] unless res[0]
             # TODO: Add code to support creation of multiple images that point to a common subdirectory
@@ -174,13 +231,24 @@ module Hanlon
             # image" containing the reference to the underlying directory that the code was copied over
             # into under it's own UUID; if it's not a "Windows" image should add a new image as is shown
             # in the following line
-            raise ProjectHanlon::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)
+            raise ProjectHanlon::Error::Slice::InternalError, "Could not save base image." unless SLICE_REF.insert_image(image)
 
             # fix 125 - add image local path to image end point
             @_lcl_image_path = ProjectHanlon.config.image_path + "/"
 
             image.set_lcl_image_path(ProjectHanlon.config.image_path)
             image.image_status, image.image_status_message = image.verify(image.image_path)
+
+            # if it's a Windows image, add images for each of the sub-images contained within
+            # the top-level (base) Windows image we just added
+            if image_type == 'win'
+              path_to_wim = "#{ProjectHanlon.config.image_path}/#{image.path_prefix}/#{image.uuid}/sources/install.wim"
+              image_array = get_wim_subimages(image, path_to_wim)
+              image_array.each { |sub_image|
+                raise ProjectHanlon::Error::Slice::InternalError, "Could not save image #{sub_image.wim_index}." unless SLICE_REF.insert_image(sub_image)
+              }
+              return slice_success_object(SLICE_REF, :create_image, image_array, :success_type => :created)
+            end
 
             slice_success_object(SLICE_REF, :create_image, image, :success_type => :created)
           end     # end POST /image

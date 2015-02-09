@@ -4,7 +4,8 @@ module ProjectHanlon
     class WindowsInstall < ProjectHanlon::ImageService::Base
 
       attr_accessor :os_name
-      attr_accessor :os_version
+      attr_accessor :wim_index
+      attr_accessor :base_image_uuid
 
       def initialize(hash)
         super(hash)
@@ -20,9 +21,10 @@ module ProjectHanlon
           # supported methods to only support the 'mount' command
           resp = super(src_image_path, lcl_image_path, { :verify_copy => false, :supported_methods => ['mount'] })
           if resp[0]
-            # TODO: replace this with code that adds in images for each entry in the install.wim file
-            # (with names for each that are also extracted from that same file)
-            @os_name = "Windows (Generic)"
+            @os_name = "Windows (Base Image)"
+            @wim_index = 0
+            @base_image_uuid = @uuid
+            @hidden = true
           end
           resp
         rescue => e
@@ -49,13 +51,11 @@ module ProjectHanlon
       end
 
       def print_item_header
-        # super.push "OS Name", "OS Version"
-        super.push "OS Name", "OS Version"
+        super.push "OS Name", "WIM Index", "Base Image"
       end
 
       def print_item
-        # super.push @os_name.to_s, @os_version.to_s
-        super.push @os_name.to_s, @os_version.to_s
+        super.push @os_name, @wim_index.to_s, @base_image_uuid
       end
 
     end

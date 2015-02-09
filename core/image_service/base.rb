@@ -233,24 +233,23 @@ module ProjectHanlon
       end
 
       def print_header
-        return "UUID", "Type", "ISO Filename", "Status"
+        return "UUID", "Type", "Name/Filename", "Status"
       end
 
       def print_items
-        return @uuid, @description, @filename, "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
+        return @uuid, @description, get_name, "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
       end
 
       def print_item_header
-        return "UUID", "Type", "ISO Filename", "Status"
+        return "UUID", "Type", "Name/Filename", "Status"
       end
 
       def print_item
+        return @uuid, @description, get_name,  "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
+      end
 
-        #set_lcl_image_path(ProjectHanlon.config.image_path)
-        #success, message = verify(@_lcl_image_path)
-        #return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
-
-        return @uuid, @description, @filename,  "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
+      def get_name
+        @os_name ? @os_name : @filename
       end
 
       def line_color
