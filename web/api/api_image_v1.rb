@@ -333,7 +333,29 @@ module Hanlon
                 # Use the Engine instance to remove the selected image from the database
                 engine = ProjectHanlon::Engine.instance
                 begin
+                  # first, remove the image we were asked to remove
                   raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image_uuid}]" unless engine.remove_image(image)
+                  # if it's a Windows image, check to see if any other images reference the 'base_image_uuid'
+                  # from the image we just removed
+                  if image.class == ProjectHanlon::ImageService::WindowsInstall
+                    # get the base_image_uuid from the image we just removed and the list of
+                    # all current images in the system
+                    base_image_uuid = image.base_image_uuid
+                    other_images = SLICE_REF.get_object("images", :images)
+                    # then select only those that respond to the 'base_image_uuid' command, have
+                    # a 'base_image_uuid' that matches the 'base_image_uuid' for the image we just
+                    # removed, and aren't actually the base image (which has a 'base_image_uuid'
+                    # identical to it's own 'uuid')
+                    other_images.select! { |other_image|
+                      other_image.respond_to?(:base_image_uuid) && other_image.base_image_uuid == base_image_uuid && other_image.uuid != base_image_uuid
+                    }
+                    # if we didn't find any matching images, then we should also remove the
+                    # underlying base image object (since it's no longer needed)
+                    if other_images.empty?
+                      base_image = SLICE_REF.get_object("image_with_uuid", :images, base_image_uuid)
+                      raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Base Image [#{base_image_uuid}]" unless engine.remove_image(base_image)
+                    end
+                  end
                 rescue RuntimeError => e
                   raise ProjectHanlon::Error::Slice::InternalError, e.message
                 rescue Exception => e
