@@ -237,7 +237,7 @@ module ProjectHanlon
 
       def os_boot_script(policy_uuid)
         @result = "Replied with os boot script"
-        filepath = ('os_boot')
+        filepath = template_filepath('os_boot')
         ERB.new(File.read(filepath)).result(binding)
       end
 
