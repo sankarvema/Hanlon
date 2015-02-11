@@ -57,7 +57,7 @@ module ProjectHanlon
       def slice_commands
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
-        get_command_map(
+        commands = get_command_map(
             "image_help",
             "get_images",
             "get_image_by_uuid",
@@ -65,10 +65,29 @@ module ProjectHanlon
             nil,
             nil,
             "remove_image")
+        # and add a few more commands specific to this slice; first remove the default line that
+        # handles the lines where a UUID is passed in as part of a "get_node_by_uuid" command
+        commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
+        # then add a slightly different version of this line back in; one that incorporates
+        # the other flags we might pass in as part of a "get_all_nodes" command
+        commands[:get][/^(?!^(all|\-\-hidden|\-i|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_image_by_uuid"
+        # and add in a couple of lines to that handle those flags properly
+        commands[:get][["-i", "--hidden"]] = "get_images"
+        commands
       end
 
       def all_command_option_data
         {
+            :get_all => [
+                { :name        => :show_hidden,
+                  :default     => nil,
+                  :short_form  => '-i',
+                  :long_form   => '--hidden',
+                  :description => 'Return all images (including hidden images)',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                }
+            ],
             :add => [
                 { :name        => :type,
                   :default     => nil,
@@ -129,8 +148,12 @@ module ProjectHanlon
       #Lists details for all images
       def get_images
         @command = :get_images
+        # set a flag indicating whether or not the user wants to see all images,
+        # including the hidden ones
+        show_hidden = (@prev_args.peek(0) == "-i" || @prev_args.peek(0) == "--hidden")
         # get the images from the RESTful API (as an array of objects)
-        uri = URI.parse @uri_string
+        uri_str = ( show_hidden ? "#{@uri_string}?hidden=true" : @uri_string )
+        uri = URI.parse uri_str
         result = hnl_http_get(uri)
         unless result.blank?
           # convert it to a sorted array of objects (from an array of hashes)

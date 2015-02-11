@@ -26,6 +26,10 @@ module ProjectHanlon
             @base_image_uuid = @uuid
             @hidden = true
           end
+          # check the resulting image; if the verification step fails, then cleanup and exit
+          # (removes the image we just added and the underlying directory)
+          result = verify(lcl_image_path)
+          return cleanup_on_failure(true, true, result[1]) unless result[0]
           resp
         rescue => e
           logger.error e.message
@@ -33,20 +37,21 @@ module ProjectHanlon
         end
       end
 
-      # TODO: override the remove so that it supports 'removal by reference'
-      # only when the last reference to the underlying directory is removed
-      # should the underlying directory be removed???
+      def image_path
+        # if the base_image_uuid is set; return the path to that directory
+        # (if not, then we're creating a base directory so just return
+        # the path based on this image's uuid)
+        return @_lcl_image_path + "/" + @base_image_uuid if @base_image_uuid
+        @_lcl_image_path + "/" + @uuid
+      end
 
       def verify(lcl_image_path)
-        # check to make sure that the hashes match (of the file list
-        # extracted and the file list from the ISO)
-        # is_valid, result = super(lcl_image_path)
-        # unless is_valid
-        #   return [false, result]
-        # end
-
-        # For Windows images, the only really important thing is that we
-        # can find the 'install.wim' file once the image is unpacked
+        # set the 'lcl_image_path' if it is not already set
+        set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
+        # then test for validity; note that for Windows images, the only
+        # really important thing is that we can find an 'install.wim' file
+        # once the image is unpacked
+        return [false, "'#{filename}' is not an Windows ISO"] if Dir["#{image_path}/**/install.wim"].empty?
         [true, '']
       end
 

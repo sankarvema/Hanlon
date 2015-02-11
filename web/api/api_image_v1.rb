@@ -86,6 +86,7 @@ module Hanlon
             Hanlon::WebService::Utils::hnl_slice_success_object(slice, command, response, options)
           end
 
+          # get a list of the sub-images in a WIM image
           def get_wim_subimages(image, wim_path)
             # first, define the keys we want to select from the output of the
             # 'wiminfo' command
@@ -142,6 +143,19 @@ module Hanlon
             image_array
           end
 
+          def wiminfo_inpath
+            ENV['PATH'].split(':').collect {|d| Dir.entries d if Dir.exists? d}.flatten.include?('wiminfo')
+          end
+
+          # get a list of all of the images that reference the image with a 'uuid'
+          # corresponding to their 'base_image_uuid'
+          def get_referencing_images(base_image_uuid)
+            images = SLICE_REF.get_object("images", :images)
+            images.select! { |image|
+              image.respond_to?(:base_image_uuid) && image.base_image_uuid == base_image_uuid && image.uuid != base_image_uuid
+            }
+          end
+
         end
 
         # the following description hides this endpoint from the swagger-ui-based documentation
@@ -165,9 +179,13 @@ module Hanlon
               end
             end
           end
+          params do
+            optional "hidden", type: Boolean, desc: "Return all images (including hidden images)"
+          end
           get do
             images = SLICE_REF.get_object("images", :images)
-            images.reject! { |image| image.hidden }
+            # reject all hidden images unless the hidden flag was set to true
+            images.reject! { |image| image.hidden } unless params[:hidden]
 
             # fix 125 - add image local path to image end point
             @_lcl_image_path = ProjectHanlon.config.image_path + "/"
@@ -210,9 +228,13 @@ module Hanlon
 
             unless ([image_type.to_sym] - SLICE_REF.image_types.keys).size == 0
               raise ProjectHanlon::Error::Slice::InvalidImageType, "Invalid Image Type '#{image_type}', valid types are: " +
-                  SLICE_REF.image_types.keys.map { |k| k.to_s }.join(', ')
+                                                                     SLICE_REF.image_types.keys.map { |k| k.to_s }.join(', ')
             end
             raise ProjectHanlon::Error::Slice::MissingArgument, '[/path/to/iso]' unless iso_path != nil && iso_path != ""
+            if image_type == 'win' && !wiminfo_inpath
+              raise ProjectHanlon::Error::Slice::InternalError, "Missing command 'wiminfo'; required to extract Windows images"
+            end
+
             classname = SLICE_REF.image_types[image_type.to_sym][:classname]
             image = ::Object::full_const_get(classname).new({})
 
@@ -226,11 +248,6 @@ module Hanlon
                                    ProjectHanlon.config.image_path
             end
             raise ProjectHanlon::Error::Slice::InternalError, res[1] unless res[0]
-            # TODO: Add code to support creation of multiple images that point to a common subdirectory
-            # that code should generate a new UUID for each sub-image and should reference a "hidden
-            # image" containing the reference to the underlying directory that the code was copied over
-            # into under it's own UUID; if it's not a "Windows" image should add a new image as is shown
-            # in the following line
             raise ProjectHanlon::Error::Slice::InternalError, "Could not save base image." unless SLICE_REF.insert_image(image)
 
             # fix 125 - add image local path to image end point
@@ -242,7 +259,7 @@ module Hanlon
             # if it's a Windows image, add images for each of the sub-images contained within
             # the top-level (base) Windows image we just added
             if image_type == 'win'
-              path_to_wim = "#{ProjectHanlon.config.image_path}/#{image.path_prefix}/#{image.uuid}/sources/install.wim"
+              path_to_wim = Dir["#{image.image_path}/**/install.wim"][0]
               image_array = get_wim_subimages(image, path_to_wim)
               image_array.each { |sub_image|
                 raise ProjectHanlon::Error::Slice::InternalError, "Could not save image #{sub_image.wim_index}." unless SLICE_REF.insert_image(sub_image)
@@ -335,25 +352,30 @@ module Hanlon
                 begin
                   # first, remove the image we were asked to remove
                   raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image_uuid}]" unless engine.remove_image(image)
-                  # if it's a Windows image, check to see if any other images reference the 'base_image_uuid'
-                  # from the image we just removed
+                  # if it's a Windows image, then additional actions may be necessary (if it's a base image
+                  # then all of the images that reference that base image should be removed; if it's not a
+                  # base image but no other images reference the base image that it references, then the base
+                  # image should be removed as well since it's no longer necessary)
                   if image.class == ProjectHanlon::ImageService::WindowsInstall
-                    # get the base_image_uuid from the image we just removed and the list of
-                    # all current images in the system
-                    base_image_uuid = image.base_image_uuid
-                    other_images = SLICE_REF.get_object("images", :images)
-                    # then select only those that respond to the 'base_image_uuid' command, have
-                    # a 'base_image_uuid' that matches the 'base_image_uuid' for the image we just
-                    # removed, and aren't actually the base image (which has a 'base_image_uuid'
-                    # identical to it's own 'uuid')
-                    other_images.select! { |other_image|
-                      other_image.respond_to?(:base_image_uuid) && other_image.base_image_uuid == base_image_uuid && other_image.uuid != base_image_uuid
-                    }
-                    # if we didn't find any matching images, then we should also remove the
-                    # underlying base image object (since it's no longer needed)
-                    if other_images.empty?
-                      base_image = SLICE_REF.get_object("image_with_uuid", :images, base_image_uuid)
-                      raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Base Image [#{base_image_uuid}]" unless engine.remove_image(base_image)
+                    if image.uuid == image.base_image_uuid
+                      # if here, then we're removing a base image; need to find all of the
+                      # images that reference this image and remove them as well
+                      ref_images = get_referencing_images(image.uuid)
+                      ref_images.each { |ref_image|
+                        raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Referencing Image [#{ref_image.uuid}]" unless engine.remove_image(ref_image)
+                      }
+                    else
+                      # if here, then we're in a non-base Windows image; in this case we need to
+                      # get the base_image_uuid from the image we just removed determine whether
+                      # or not there are other images that reference that same base image
+                      base_image_uuid = image.base_image_uuid
+                      ref_images = get_referencing_images(base_image_uuid)
+                      # if we didn't find any matching images, then we should also remove the
+                      # underlying base image object (since it's no longer needed)
+                      if ref_images.empty?
+                        base_image = SLICE_REF.get_object("image_with_uuid", :images, base_image_uuid)
+                        raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Base Image [#{base_image_uuid}]" unless engine.remove_image(base_image)
+                      end
                     end
                   end
                 rescue RuntimeError => e
