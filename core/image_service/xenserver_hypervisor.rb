@@ -13,9 +13,9 @@ module ProjectHanlon
         from_hash(hash) unless hash == nil
       end
 
-      def add(src_image_path, lcl_image_path)
+      def add(src_image_path, lcl_image_path, extra = {})
         begin
-          resp = super(src_image_path, lcl_image_path)
+          resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
             unless verify(lcl_image_path)
               logger.error "Missing metadata"

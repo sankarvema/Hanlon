@@ -244,7 +244,7 @@ module Hanlon
                                    ProjectHanlon.config.image_path
             end
             raise ProjectHanlon::Error::Slice::InternalError, res[1] unless res[0]
-            raise ProjectHanlon::Error::Slice::InternalError, "Could not save base image." unless SLICE_REF.insert_image(image)
+            raise ProjectHanlon::Error::Slice::InternalError, "Could not save image." unless SLICE_REF.insert_image(image)
 
             # fix 125 - add image local path to image end point
             @_lcl_image_path = ProjectHanlon.config.image_path + "/"

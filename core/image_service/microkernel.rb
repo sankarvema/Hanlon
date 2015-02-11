@@ -23,11 +23,11 @@ module ProjectHanlon
         from_hash(hash) unless hash == nil
       end
 
-      def add(src_image_path, lcl_image_path)
+      def add(src_image_path, lcl_image_path, extra = {})
         # Add the iso to the image svc storage
 
         begin
-          resp = super(src_image_path, lcl_image_path)
+          resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
             success, result_string = verify(lcl_image_path)
             unless success

@@ -16,7 +16,7 @@ module ProjectHanlon
 
       def add(src_image_path, lcl_image_path, extra)
         begin
-          resp = super(src_image_path, lcl_image_path)
+          resp = super(src_image_path, lcl_image_path, extra)
           if resp[0]
             @os_name = extra[:os_name]
             @os_version = extra[:os_version]
