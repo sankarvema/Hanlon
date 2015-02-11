@@ -6,10 +6,13 @@ module ProjectHanlon
     # Base image abstract
     class Base < ProjectHanlon::Object
 
-      MOUNT_COMMAND = (Process::uid == 0 ? "mount" : "sudo -n mount")
-      UMOUNT_COMMAND = (Process::uid == 0 ? "umount" : "sudo -n umount")
-      ARCHIVE_COMMAND = "fuseiso"
-      ARCHIVE_UMOUNT_COMMAND = "fusermount"
+      MOUNT_COMMAND = 'mount'
+      UMOUNT_COMMAND = 'umount'
+      USER_MOUNT_COMMAND = (Process::uid == 0 ? "#{MOUNT_COMMAND}" : "sudo -n #{MOUNT_COMMAND}")
+      USER_UMOUNT_COMMAND = (Process::uid == 0 ? "#{UMOUNT_COMMAND}" : "sudo -n #{UMOUNT_COMMAND}")
+      ARCHIVE_COMMAND = 'fuseiso'
+      ARCHIVE_UMOUNT_COMMAND = 'fusermount'
+      UNZIP_COMMAND = '7z'
 
       attr_accessor :filename
       attr_accessor :description
@@ -36,10 +39,12 @@ module ProjectHanlon
 
       # Used to add an image to the service
       # Within each child class the methods are overridden for that child template
-      def add(src_image_path, lcl_image_path, extra)
+      def add(src_image_path, lcl_image_path, extra = {})
         set_lcl_image_path(lcl_image_path)
 
         begin
+          # set a few default values
+          extra[:verify_copy] = true unless extra.has_key?(:verify_copy)
           create_imagepath_success = false
           create_mount_success = false
           # Get full path
@@ -54,12 +59,14 @@ module ProjectHanlon
           return cleanup_on_failure(create_mount_success, create_imagepath_success, "File '#{isofullpath}' does not exist") unless File.exist?(isofullpath)
 
           # Make sure it has an .iso extension
-          return cleanup_on_failure(create_mount_success, create_imagepath_success, "File '#{isofullpath}' is not an ISO") if @filename[-4..-1] != ".iso"
+          return cleanup_on_failure(create_mount_success, create_imagepath_success, "File '#{isofullpath}' is not an ISO") if @filename[-4..-1].downcase != ".iso"
 
           # Confirm a mount doesn't already exist
           # TODO is_mounted method does not work with fuseiso
           unless is_mounted?(isofullpath)
-            unless mount(isofullpath)
+            supported_methods = extra[:supported_methods]
+            supported_methods = [ARCHIVE_COMMAND, MOUNT_COMMAND] unless supported_methods
+            unless mount(isofullpath, supported_methods)
               logger.error "Could not mount '#{isofullpath}' on '#{mount_path}'"
               return cleanup_on_failure(create_mount_success, create_imagepath_success, "Could not mount '#{isofullpath}' on '#{mount_path}'")
             end
@@ -79,17 +86,27 @@ module ProjectHanlon
           end
           create_imagepath_success = true
 
-          # Attempt to copy from mount path to image path
-          # No way to test if successful. FileUtils.cp_r returns nil.
-          FileUtils.cp_r(mount_path + "/.", image_path)
+          # if we are using the UNZIP_COMMAND to unpack the ISO, then invoke that here;
+          # otherwise we'll copy the contents from the 'mount_path' to the 'image_path'
+          if @mount_method == :zip
+            `#{UNZIP_COMMAND} x -y -o'#{image_path}' #{isofullpath}`
+          else
+            # Attempt to copy from mount path to image path
+            # No way to test if successful. FileUtils.cp_r returns nil.
+            FileUtils.cp_r(mount_path + "/.", image_path)
+          end
 
-          # Verify diff between mount / image paths
-          # For speed/flexibility reasons we just verify all files exists and not their contents
-          @verification_hash = get_dir_hash(image_path)
-          mount_hash = get_dir_hash(mount_path)
-          unless mount_hash == @verification_hash
-            logger.error "Image copy failed verification: #{@verification_hash} <> #{mount_hash}"
-            return cleanup_on_failure(create_mount_success, create_imagepath_success, "Image copy failed verification: #{@verification_hash} <> #{mount_hash}")
+          # if asked for verification and the ISO wasn't unpacked using the UNZIP_COMMAND,
+          # then compare the source and copy directory hashes
+          if extra[:verify_copy] && @mount_method != :zip
+            # Verify diff between mount / image paths
+            # For speed/flexibility reasons we just verify all files exists and not their contents
+            @verification_hash = get_dir_hash(image_path)
+            mount_hash = get_dir_hash(mount_path)
+            unless mount_hash == @verification_hash
+              logger.error "Image copy failed verification: #{@verification_hash} <> #{mount_hash}"
+              return cleanup_on_failure(create_mount_success, create_imagepath_success, "Image copy failed verification: #{@verification_hash} <> #{mount_hash}")
+            end
           end
 
         rescue => e
@@ -132,20 +149,23 @@ module ProjectHanlon
         false
       end
 
-      def mount(isoimage)
+      def mount(isoimage, supported_methods)
         # First, create the mount_path directory if it doesn't exist already
         FileUtils.mkpath(mount_path) unless File.directory?(mount_path)
-        # Then use the fuseiso command (if available on the system) or the
-        # mount command (if the fuseiso command is not available) to mount the
-        # isoimage
+        # Then, depending on the 'supported_methods' declared when this method
+        # is called, use the either the fuseiso command, the 7z command, or the
+        # mount command to mount the isoimage (the first 'supported_command',
+        # in that order, will be used)
         @mount_method = nil
-        if `which #{ARCHIVE_COMMAND}`.empty? == false
+        if supported_methods.include?(ARCHIVE_COMMAND) && exec_in_path(ARCHIVE_COMMAND)
           logger.debug "Mounting #{isoimage} using command '#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}'"
           `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
           @mount_method = :fuseiso
-        elsif (`which #{MOUNT_COMMAND}`.empty?) == false
-          logger.debug "Mounting #{isoimage} using command '#{MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}'"
-          `#{MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}`
+        elsif supported_methods.include?(UNZIP_COMMAND) && exec_in_path(UNZIP_COMMAND)
+          @mount_method = :zip
+        elsif supported_methods.include?(MOUNT_COMMAND) && exec_in_path(MOUNT_COMMAND)
+          logger.debug "Mounting #{isoimage} using command '#{USER_MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}'"
+          `#{USER_MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}`
           if $? != 0
             cleanup_on_failure(false, true, "Could not mount '#{isoimage}' on '#{mount_path}'")
           else
@@ -154,7 +174,7 @@ module ProjectHanlon
         else
           # raise an exception if neither command could be found
           # (this should not happen, but...)
-          raise "Neither #{ARCHIVE_COMMAND} or #{MOUNT_COMMAND} was available for extracting the ISO."
+          raise "No supported methods #{supported_methods} were available for extracting the ISO.".tr('[]\"','()\'')
         end
         # return true, indicating success
         true
@@ -172,9 +192,11 @@ module ProjectHanlon
           logger.debug "Unmounting via '#{ARCHIVE_UMOUNT_COMMAND} -u #{mount_path}' command"
           `#{ARCHIVE_UMOUNT_COMMAND} -u #{mount_path}`
           remove_dir_completely(mount_path)
+        elsif @mount_method == :zip
+          logger.debug "ISO was unpacked via the '#{UNZIP_COMMAND}' command; nothing to unmount/remove"
         elsif @mount_method == :mount
-          logger.debug "Unmounting via '#{UMOUNT_COMMAND} #{mount_path} 2> /dev/null' command"
-          `#{UMOUNT_COMMAND} #{mount_path} 2> /dev/null`
+          logger.debug "Unmounting via '#{USER_UMOUNT_COMMAND} #{mount_path} 2> /dev/null' command"
+          `#{USER_UMOUNT_COMMAND} #{mount_path} 2> /dev/null`
           remove_dir_completely(mount_path)
         else
           logger.error "Unrecognized mount_method (#{@mount_method}) used to mount volume; umount failed"
@@ -182,7 +204,7 @@ module ProjectHanlon
       end
 
       def mounts
-        `#{MOUNT_COMMAND}`.split("\n").map! { |x| x.split("on") }.map! { |x| [x[0], x[1].split(" ")[0]] }
+        `#{USER_MOUNT_COMMAND}`.split("\n").map! { |x| x.split("on") }.map! { |x| [x[0], x[1].split(" ")[0]] }
       end
 
       ## cleanup_on_failure method, based on arguments will unmount the iso,
@@ -225,24 +247,23 @@ module ProjectHanlon
       end
 
       def print_header
-        return "UUID", "Type", "ISO Filename", "Status"
+        return "UUID", "Type", "Name/Filename", "Status"
       end
 
       def print_items
-        return @uuid, @description, @filename, "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
+        return @uuid, @description, get_name, "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
       end
 
       def print_item_header
-        return "UUID", "Type", "ISO Filename", "Status"
+        return "UUID", "Type", "Name/Filename", "Status"
       end
 
       def print_item
+        return @uuid, @description, get_name,  "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
+      end
 
-        #set_lcl_image_path(ProjectHanlon.config.image_path)
-        #success, message = verify(@_lcl_image_path)
-        #return @uuid, @description, @filename, image_path.to_s, "#{success ? "Valid".green : "Broken/Missing".red}"
-
-        return @uuid, @description, @filename,  "#{@image_status ? "Valid".green : "Invalid - #{@image_status_message}".red}"
+      def get_name
+        @os_name ? @os_name : @filename
       end
 
       def line_color

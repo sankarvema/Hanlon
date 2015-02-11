@@ -20,9 +20,8 @@ module ProjectHanlon
           if resp[0]
             @os_name = extra[:os_name]
             @os_version = extra[:os_version]
-          else
-            resp
           end
+          resp
         rescue => e
           logger.error e.message
           return [false, e.message]

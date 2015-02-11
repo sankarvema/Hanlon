@@ -32,6 +32,11 @@ module ProjectHanlon
                 :classname => "ProjectHanlon::ImageService::OSInstall",
                 :method => "add_os"
             },
+            :win =>        {
+                :desc => "Windows Install ISO",
+                :classname => "ProjectHanlon::ImageService::WindowsInstall",
+                :method => "add_win"
+            },
             :esxi =>      {
                 :desc => "VMware Hypervisor ISO",
                 :classname => "ProjectHanlon::ImageService::VMwareHypervisor",
@@ -52,7 +57,7 @@ module ProjectHanlon
       def slice_commands
         # get the slice commands map for this slice (based on the set
         # of commands that are typical for most slices)
-        get_command_map(
+        commands = get_command_map(
             "image_help",
             "get_images",
             "get_image_by_uuid",
@@ -60,16 +65,35 @@ module ProjectHanlon
             nil,
             nil,
             "remove_image")
+        # and add a few more commands specific to this slice; first remove the default line that
+        # handles the lines where a UUID is passed in as part of a "get_node_by_uuid" command
+        commands[:get].delete(/^(?!^(all|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/)
+        # then add a slightly different version of this line back in; one that incorporates
+        # the other flags we might pass in as part of a "get_all_nodes" command
+        commands[:get][/^(?!^(all|\-\-hidden|\-i|\-\-help|\-h|\{\}|\{.*\}|nil)$)\S+$/] = "get_image_by_uuid"
+        # and add in a couple of lines to that handle those flags properly
+        commands[:get][["-i", "--hidden"]] = "get_images"
+        commands
       end
 
       def all_command_option_data
         {
+            :get_all => [
+                { :name        => :show_hidden,
+                  :default     => nil,
+                  :short_form  => '-i',
+                  :long_form   => '--hidden',
+                  :description => 'Return all images (including hidden images)',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
+                }
+            ],
             :add => [
                 { :name        => :type,
                   :default     => nil,
                   :short_form  => '-t',
                   :long_form   => '--type TYPE',
-                  :description => 'The type of image (mk, os, esxi, or xenserver)',
+                  :description => 'The type of image (mk, os, win, esxi, or xenserver)',
                   :uuid_is     => 'not_allowed',
                   :required    => true
                 },
@@ -114,18 +138,22 @@ module ProjectHanlon
         end
         puts "Image Slice: used to add, view, and remove Images.".red
         puts "Image Commands:".yellow
-        puts "\thanlon image [get] [all]         " + "View all images (detailed list)".yellow
-        puts "\thanlon image [get] (UUID)        " + "View details of specified image".yellow
-        puts "\thanlon image add (options...)    " + "Add a new image to the system".yellow
-        puts "\thanlon image remove (UUID)       " + "Remove existing image from the system".yellow
-        puts "\thanlon image --help|-h           " + "Display this screen".yellow
+        puts "\thanlon image [get] [all] [--hidden,-i]    " + "View all images (detailed list)".yellow
+        puts "\thanlon image [get] (UUID)                 " + "View details of specified image".yellow
+        puts "\thanlon image add (options...)             " + "Add a new image to the system".yellow
+        puts "\thanlon image remove (UUID)                " + "Remove existing image from the system".yellow
+        puts "\thanlon image --help|-h                    " + "Display this screen".yellow
       end
 
       #Lists details for all images
       def get_images
         @command = :get_images
+        # set a flag indicating whether or not the user wants to see all images,
+        # including the hidden ones
+        show_hidden = (@prev_args.peek(0) == "-i" || @prev_args.peek(0) == "--hidden")
         # get the images from the RESTful API (as an array of objects)
-        uri = URI.parse @uri_string
+        uri_str = ( show_hidden ? "#{@uri_string}?hidden=true" : @uri_string )
+        uri = URI.parse uri_str
         result = hnl_http_get(uri)
         unless result.blank?
           # convert it to a sorted array of objects (from an array of hashes)
@@ -185,7 +213,15 @@ module ProjectHanlon
         json_data = body_hash.to_json
         puts "Attempting to add, please wait...".green
         result = hnl_http_post_json_data(uri, json_data)
-        print_object_array(hash_array_to_obj_array([result]), "Image Added:")
+        # if got a single hash map back, then print the details
+        return print_object_array(hash_array_to_obj_array([result]), "Image Added:") unless result.is_a?(Array)
+        # otherwise print the table containing the results
+        unless result.blank?
+          # convert it to a sorted array of objects (from an array of hashes)
+          sort_fieldname = 'wim_index'
+          result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
+        end
+        print_object_array(result, "Images:", :style => :table)
       end
 
       def remove_image
@@ -201,15 +237,19 @@ module ProjectHanlon
       # utility methods (used to add various types of images)
 
       def add_mk(new_image, iso_path, image_path)
-        new_image.add(iso_path, image_path, nil)
+        new_image.add(iso_path, image_path)
       end
 
       def add_esxi(new_image, iso_path, image_path)
-        new_image.add(iso_path, image_path, nil)
+        new_image.add(iso_path, image_path)
       end
 
       def add_xenserver(new_image, iso_path, image_path)
-        new_image.add(iso_path, image_path, nil)
+        new_image.add(iso_path, image_path)
+      end
+
+      def add_win(new_image, iso_path, image_path)
+        new_image.add(iso_path, image_path)
       end
 
       def add_os(new_image, iso_path, image_path, os_name, os_version)
