@@ -70,6 +70,11 @@ module ProjectHanlon
       nil
     end
 
+    # searches for an executable (command) in the current path
+    def exec_in_path(command)
+      ENV['PATH'].split(':').collect {|d| Dir.entries d if Dir.exists? d}.flatten.include?(command)
+    end
+
     alias :new_object_from_type_name :new_object_from_template_name
 
 

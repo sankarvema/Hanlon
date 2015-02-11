@@ -143,10 +143,6 @@ module Hanlon
             image_array
           end
 
-          def wiminfo_inpath
-            ENV['PATH'].split(':').collect {|d| Dir.entries d if Dir.exists? d}.flatten.include?('wiminfo')
-          end
-
           # get a list of all of the images that reference the image with a 'uuid'
           # corresponding to their 'base_image_uuid'
           def get_referencing_images(base_image_uuid)
@@ -231,7 +227,7 @@ module Hanlon
                                                                      SLICE_REF.image_types.keys.map { |k| k.to_s }.join(', ')
             end
             raise ProjectHanlon::Error::Slice::MissingArgument, '[/path/to/iso]' unless iso_path != nil && iso_path != ""
-            if image_type == 'win' && !wiminfo_inpath
+            if image_type == 'win' && !SLICE_REF.exec_in_path('wiminfo')
               raise ProjectHanlon::Error::Slice::InternalError, "Missing command 'wiminfo'; required to extract Windows images"
             end
 

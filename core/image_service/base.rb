@@ -12,6 +12,7 @@ module ProjectHanlon
       USER_UMOUNT_COMMAND = (Process::uid == 0 ? "#{UMOUNT_COMMAND}" : "sudo -n #{UMOUNT_COMMAND}")
       ARCHIVE_COMMAND = 'fuseiso'
       ARCHIVE_UMOUNT_COMMAND = 'fusermount'
+      UNZIP_COMMAND = '7z'
 
       attr_accessor :filename
       attr_accessor :description
@@ -85,11 +86,19 @@ module ProjectHanlon
           end
           create_imagepath_success = true
 
-          # Attempt to copy from mount path to image path
-          # No way to test if successful. FileUtils.cp_r returns nil.
-          FileUtils.cp_r(mount_path + "/.", image_path)
+          # if we are using the UNZIP_COMMAND to unpack the ISO, then invoke that here;
+          # otherwise we'll copy the contents from the 'mount_path' to the 'image_path'
+          if @mount_method == :zip
+            `#{UNZIP_COMMAND} x -y -o'#{image_path}' #{isofullpath}`
+          else
+            # Attempt to copy from mount path to image path
+            # No way to test if successful. FileUtils.cp_r returns nil.
+            FileUtils.cp_r(mount_path + "/.", image_path)
+          end
 
-          if extra[:verify_copy]
+          # if asked for verification and the ISO wasn't unpacked using the UNZIP_COMMAND,
+          # then compare the source and copy directory hashes
+          if extra[:verify_copy] && @mount_method != :zip
             # Verify diff between mount / image paths
             # For speed/flexibility reasons we just verify all files exists and not their contents
             @verification_hash = get_dir_hash(image_path)
@@ -143,15 +152,18 @@ module ProjectHanlon
       def mount(isoimage, supported_methods)
         # First, create the mount_path directory if it doesn't exist already
         FileUtils.mkpath(mount_path) unless File.directory?(mount_path)
-        # Then use the fuseiso command (if available on the system) or the
-        # mount command (if the fuseiso command is not available) to mount the
-        # isoimage
+        # Then, depending on the 'supported_methods' declared when this method
+        # is called, use the either the fuseiso command, the 7z command, or the
+        # mount command to mount the isoimage (the first 'supported_command',
+        # in that order, will be used)
         @mount_method = nil
-        if supported_methods.include?(ARCHIVE_COMMAND) && `which #{ARCHIVE_COMMAND}`.empty? == false
+        if supported_methods.include?(ARCHIVE_COMMAND) && exec_in_path(ARCHIVE_COMMAND)
           logger.debug "Mounting #{isoimage} using command '#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}'"
           `#{ARCHIVE_COMMAND} -n #{isoimage} #{mount_path}`
           @mount_method = :fuseiso
-        elsif supported_methods.include?(MOUNT_COMMAND) && (`which #{MOUNT_COMMAND}`.empty?) == false
+        elsif supported_methods.include?(UNZIP_COMMAND) && exec_in_path(UNZIP_COMMAND)
+          @mount_method = :zip
+        elsif supported_methods.include?(MOUNT_COMMAND) && exec_in_path(MOUNT_COMMAND)
           logger.debug "Mounting #{isoimage} using command '#{USER_MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}'"
           `#{USER_MOUNT_COMMAND} -o loop #{isoimage} #{mount_path}`
           if $? != 0
@@ -162,7 +174,7 @@ module ProjectHanlon
         else
           # raise an exception if neither command could be found
           # (this should not happen, but...)
-          raise "Neither #{ARCHIVE_COMMAND} or #{MOUNT_COMMAND} was available for extracting the ISO."
+          raise "No supported methods #{supported_methods} were available for extracting the ISO.".tr('[]\"','()\'')
         end
         # return true, indicating success
         true
@@ -180,6 +192,8 @@ module ProjectHanlon
           logger.debug "Unmounting via '#{ARCHIVE_UMOUNT_COMMAND} -u #{mount_path}' command"
           `#{ARCHIVE_UMOUNT_COMMAND} -u #{mount_path}`
           remove_dir_completely(mount_path)
+        elsif @mount_method == :zip
+          logger.debug "ISO was unpacked via the '#{UNZIP_COMMAND}' command; nothing to unmount/remove"
         elsif @mount_method == :mount
           logger.debug "Unmounting via '#{USER_UMOUNT_COMMAND} #{mount_path} 2> /dev/null' command"
           `#{USER_UMOUNT_COMMAND} #{mount_path} 2> /dev/null`

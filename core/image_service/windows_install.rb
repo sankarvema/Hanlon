@@ -19,7 +19,7 @@ module ProjectHanlon
         begin
           # for Windows ISOs, the 'fuseiso' command will not work so we have to restrict the
           # supported methods to only support the 'mount' command
-          resp = super(src_image_path, lcl_image_path, { :verify_copy => false, :supported_methods => ['mount'] })
+          resp = super(src_image_path, lcl_image_path, { :verify_copy => false, :supported_methods => ['7z', 'mount'] })
           if resp[0]
             @os_name = "Windows (Base Image)"
             @wim_index = 0
