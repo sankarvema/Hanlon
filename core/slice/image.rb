@@ -138,11 +138,11 @@ module ProjectHanlon
         end
         puts "Image Slice: used to add, view, and remove Images.".red
         puts "Image Commands:".yellow
-        puts "\thanlon image [get] [all]         " + "View all images (detailed list)".yellow
-        puts "\thanlon image [get] (UUID)        " + "View details of specified image".yellow
-        puts "\thanlon image add (options...)    " + "Add a new image to the system".yellow
-        puts "\thanlon image remove (UUID)       " + "Remove existing image from the system".yellow
-        puts "\thanlon image --help|-h           " + "Display this screen".yellow
+        puts "\thanlon image [get] [all] [--hidden,-i]    " + "View all images (detailed list)".yellow
+        puts "\thanlon image [get] (UUID)                 " + "View details of specified image".yellow
+        puts "\thanlon image add (options...)             " + "Add a new image to the system".yellow
+        puts "\thanlon image remove (UUID)                " + "Remove existing image from the system".yellow
+        puts "\thanlon image --help|-h                    " + "Display this screen".yellow
       end
 
       #Lists details for all images
