@@ -42,6 +42,55 @@ module Hanlon
         start_scheduled_tasks
       end
 
+      def get_file_contents(file, env)
+        if File.exists?(file) && File.file?(file)
+          response = Rack::Response.new
+          if /\.rpm$/.match(file)
+            response["Content-Type"] = "application/x-rpm"
+          else
+            response["Content-Type"] = "application/octet-stream"
+          end
+          response["Connection"] = 'close'
+          response["Accept-Ranges"] = 'bytes'
+          open(file, 'rb') do |f|
+            start_offset = nil
+            end_offset = nil
+            http_range = env['HTTP_RANGE']
+            if http_range
+              vals = http_range.split(/\s+|=|-|\//)
+              start_offset = vals[1].to_i
+              end_offset = vals[2].to_i
+            else
+              start_offset = 0
+              end_offset = f.size - 1
+            end
+            f.seek(start_offset) if start_offset > 0
+            nbytes_read = end_offset - f.pos + 1
+            if nbytes_read > CHUNK_SIZE
+              until f.pos >= end_offset || f.eof?
+                nbytes_read = [CHUNK_SIZE, end_offset - f.pos + 1].min
+                response.write f.read(nbytes_read)
+              end
+            else
+              response.write f.read(nbytes_read)
+            end
+            if start_offset || end_offset < f.size
+              # if here, is a partial response
+              response['Content-Range'] = "bytes #{start_offset}-#{end_offset}/#{response['Content-Length']}"
+            end
+          end
+          return response.finish
+        end
+      end
+
+      def is_slice_path?(request_path_str)
+        slices = ObjectSpace.each_object(Class).select { |klass| klass < ProjectHanlon::Slice }
+        # then construct a regular expression that will filter out paths containing
+        # those strings
+        regex_str = "#{slices.map { |a| a.new([]).slice_name }.join('|')}"
+        /^([\/]+v1)\/(#{regex_str})(.*)$/.match(request_path_str)
+      end
+
       def call(env)
 
         request_path = env['PATH_INFO']
@@ -70,50 +119,34 @@ module Hanlon
           end
         end
 
-        matches_image = /^([\/]+v1)(\/image)(\/.*)$/.match(URI.unescape(request_path))
+        request_path_str = URI.unescape(request_path)
+        matches_image = /^([\/]+v1)(\/image)(\/.*)$/.match(request_path_str)
+        static_path = ProjectHanlon.config.hanlon_static_path
 
-        #matches_image.each { |a| puts ">>>#{a} " }
-
+        # if the request path matches the path for an image resource, then
+        # get the contents of that image resource; else if a path was
+        # configured for static content and the request path doesn't look
+        # like the path to access a slice, try to return it from the
+        # configured static content directory
         if matches_image
           file = File.join(ProjectHanlon.config.image_path, matches_image[3])
-
-          if File.exists?(file) && File.file?(file)
-            response = Rack::Response.new
-            if /\.rpm$/.match(file)
-              response["Content-Type"] = "application/x-rpm"
-            else
-              response["Content-Type"] = "application/octet-stream"
+          return get_file_contents(file, env) if File.exists?(file) && File.file?(file)
+        elsif static_path && !static_path.empty?
+          unless is_slice_path?(request_path_str)
+            # if we got to here, then the hanlon_static_path directory was set and the
+            # request path didn't look like the path for a slice command; so we'll try
+            # to serve up the result as static content (in the form of a file under
+            # the hanlon_static_path directory); first get the filename we should access
+            path_regex = /^([\/]+v1)\/(.+[^\/])$/.match(request_path_str)
+            file = File.join(static_path, path_regex[2])
+            # unless we can find the file in question and it's a file, return a
+            # "file not found" error (this could occur, for example, if the file is
+            # actually a directory, not a file)
+            unless File.exist?(file) && File.file?(file)
+              return Rack::Response.new("File not found: #{File.join(ProjectHanlon.config.base_path, request_path_str)}\n", 404)
             end
-            response["Connection"] = 'close'
-            response["Accept-Ranges"] = 'bytes'
-            open(file, 'rb') do |f|
-              start_offset = nil
-              end_offset = nil
-              http_range = env['HTTP_RANGE']
-              if http_range
-                vals = http_range.split(/\s+|=|-|\//)
-                start_offset = vals[1].to_i
-                end_offset = vals[2].to_i
-              else
-                start_offset = 0
-                end_offset = f.size - 1
-              end
-              f.seek(start_offset) if start_offset > 0
-              nbytes_read = end_offset - f.pos + 1
-              if nbytes_read > CHUNK_SIZE
-                until f.pos >= end_offset || f.eof?
-                  nbytes_read = [CHUNK_SIZE, end_offset - f.pos + 1].min
-                  response.write f.read(nbytes_read)
-                end
-              else
-                response.write f.read(nbytes_read)
-              end
-              if start_offset || end_offset < f.size
-                # if here, is a partial response
-                response['Content-Range'] = "bytes #{start_offset}-#{end_offset}/#{response['Content-Length']}"
-              end
-            end
-            return response.finish
+            # otherwise, if we got this far, return the file contents (if there are any)
+            return get_file_contents(file, env)
           end
         end
 
