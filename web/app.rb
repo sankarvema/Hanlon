@@ -83,7 +83,7 @@ module Hanlon
         end
       end
 
-      def is_slice_path?(request_path_str)
+      def is_static_path?(request_path_str)
         slices = ObjectSpace.each_object(Class).select { |klass| klass < ProjectHanlon::Slice }
         # then construct a regular expression that will filter out paths containing
         # those strings
@@ -121,7 +121,9 @@ module Hanlon
 
         request_path_str = URI.unescape(request_path)
         matches_image = /^([\/]+v1)(\/image)(\/.*)$/.match(request_path_str)
+
         static_path = ProjectHanlon.config.hanlon_static_path
+        matches_static = /^([\/]+v1)(\/static)(\/.*)$/.match(request_path_str)
 
         # if the request path matches the path for an image resource, then
         # get the contents of that image resource; else if a path was
@@ -131,23 +133,22 @@ module Hanlon
         if matches_image
           file = File.join(ProjectHanlon.config.image_path, matches_image[3])
           return get_file_contents(file, env) if File.exists?(file) && File.file?(file)
-        elsif static_path && !static_path.empty?
-          unless is_slice_path?(request_path_str)
-            # if we got to here, then the hanlon_static_path directory was set and the
-            # request path didn't look like the path for a slice command; so we'll try
-            # to serve up the result as static content (in the form of a file under
-            # the hanlon_static_path directory); first get the filename we should access
-            path_regex = /^([\/]+v1)\/(.+[^\/])$/.match(request_path_str)
-            file = File.join(static_path, path_regex[2])
-            # unless we can find the file in question and it's a file, return a
-            # "file not found" error (this could occur, for example, if the file is
-            # actually a directory, not a file)
-            unless File.exist?(file) && File.file?(file)
-              return Rack::Response.new("File not found: #{File.join(ProjectHanlon.config.base_path, request_path_str)}\n", 404)
-            end
-            # otherwise, if we got this far, return the file contents (if there are any)
-            return get_file_contents(file, env)
+        elsif matches_static
+          unless static_path && !static_path.empty?
+            return Rack::Response.new("Server Error: static path not set\n", 500)
           end
+          # if we got to here, then the hanlon_static_path directory was set and the
+          # request path looks like a request for static content; so we'll try
+          # to serve up the referenced file; first get the filename we should access
+          file = File.join(static_path, matches_static[3])
+          # unless we can find the file in question and it's a file, return a
+          # "file not found" error (this could occur, for example, if the file is
+          # actually a directory, not a file or if the file itself does not exist)
+          unless File.exist?(file) && File.file?(file)
+            return Rack::Response.new("File not found: #{File.join(ProjectHanlon.config.base_path, request_path_str)}\n", 404)
+          end
+          # otherwise, if we got this far, return the file contents (if there are any)
+          return get_file_contents(file, env)
         end
 
         # if not, then load it via the api
