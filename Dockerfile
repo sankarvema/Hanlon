@@ -7,7 +7,7 @@ MAINTAINER Joseph Callen <jcpowermac@gmail.com>
 
 # Install the required dependancies
 RUN apt-get -y update \
-    && apt-get -y install ruby1.9.3 git build-essential libssl0.9.8 libssl-dev p7zip-full software-properties-common \
+    && apt-get -y install ruby1.9.3 git build-essential libssl0.9.8 libssl-dev p7zip-full software-properties-common fuseiso \
     && add-apt-repository -y ppa:nilarimogard/webupd8 \
     && apt-get -y update \
     && apt-get -y install wimtools \
