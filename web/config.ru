@@ -1,6 +1,8 @@
 require './application'
 require 'yaml'
 
+Encoding.default_external = Encoding::UTF_8
+
 hanlon_config = YAML::load(File.open('config/hanlon_server.conf'))
 
 use Rack::Static,
