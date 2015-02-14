@@ -22,8 +22,6 @@ nohup.out
 /cli/config/*.conf
 /web/config/*.conf
 
-scripts
-
 # Sublime Text artifacts
 *.sublime*
 
