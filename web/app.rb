@@ -5,7 +5,6 @@ require 'uri'
 require 'api'
 
 require 'helper/swagger'
-require 'rack/http_streaming_response'
 
 module Hanlon
   module WebService
