@@ -11,7 +11,8 @@ module Hanlon
     class App
       include ProjectHanlon::Logging
 
-      CHUNK_SIZE = 2**20
+      CHUNK_SIZE = 2**24      # 16MB chunk size
+      IMAGE_SLICE_REF = ProjectHanlon::Slice::Image.new([])
 
       def initialize
 
@@ -131,7 +132,18 @@ module Hanlon
         # like the path to access a slice, try to return it from the
         # configured static content directory
         if matches_image
-          file = File.join(ProjectHanlon.config.image_path, matches_image[3])
+          matches_windows = /^(\/windows)\/([^\/]+)(\/.*)$/.match(matches_image[3])
+          if matches_windows
+            image_uuid = matches_windows[2]
+            image = IMAGE_SLICE_REF.get_object("images", :images, image_uuid)
+            return Rack::Response.new("Image not found: Image UUID = #{image_uuid})\n", 400) unless image
+            return Rack::Response.new("Incorrect type: Image #{image_uuid}) not a Windows image\n", 500) unless image.respond_to?(:base_image_uuid)
+            base_uuid = image.base_image_uuid
+            partial_path = File.join(matches_windows[1], base_uuid, matches_windows[3])
+          else
+            partial_path = matches_image[3]
+          end
+          file = File.join(ProjectHanlon.config.image_path, partial_path)
           return get_file_contents(file, env) if File.exists?(file) && File.file?(file)
         elsif matches_static
           unless static_path && !static_path.empty?
