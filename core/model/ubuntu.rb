@@ -119,11 +119,10 @@ module ProjectHanlon
           when "final"
             fsm_action(:os_final, :postinstall)
             return ""
-          when "source_fix"
-            fsm_action(:source_fix, :postinstall)
+          when "sources_fix"
+            fsm_action(:sources_fix, :postinstall)
             return
           when "send_ips"
-            #fsm_action(:source_fix, :postinstall)
             # Grab IP string
             @ip_string = @args_array.shift
             logger.debug "Node IP String: #{@ip_string}"
@@ -163,7 +162,7 @@ module ProjectHanlon
             :mk_call            => :postinstall,
             :boot_call          => :postinstall,
             :preseed_end        => :postinstall,
-            :source_fix         => :postinstall,
+            :sources_fix         => :postinstall,
             :apt_get_update     => :postinstall,
             :apt_get_upgrade    => :postinstall,
             :postinstall_inject => :postinstall,

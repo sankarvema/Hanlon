@@ -119,7 +119,6 @@ module ProjectHanlon
             fsm_action(:os_final, :postinstall)
             return ""
           when "send_ips"
-            #fsm_action(:source_fix, :postinstall)
             # Grab IP string
             @ip_string = @args_array.shift
             logger.debug "Node IP String: #{@ip_string}"
