@@ -32,8 +32,7 @@ Start-Process $setup $args -wait
 Invoke-WebRequest -Uri "<%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/autounattend/end" -UseBasicParsing
 
 # Get current IP
-$ifIndex = (Get-NetAdapter).ifIndex
-$IPv4Address = (Get-NetIPAddress -InterfaceIndex $ifIndex).IPv4Address
+$IPv4Address = (Get-WMIObject Win32_NetworkAdapterConfiguration).IPAddress[1]
 # Send IP to model
 Invoke-WebRequest -Uri "<%= callback_url("postinstall", "send_ips") %>/$IPv4Address" -Method GET
 
