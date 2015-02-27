@@ -108,11 +108,7 @@ module ProjectHanlon
           when "boot"
             fsm_action(:os_boot, :postinstall)
             return os_complete_script(@node)
-          when "source_fix"
-            fsm_action(:source_fix, :postinstall)
-            return
           when "send_ips"
-            #fsm_action(:source_fix, :postinstall)
             # Grab IP string
             @ip_string = @args_array.shift
             logger.debug "Node IP String: #{@ip_string}"
@@ -151,8 +147,7 @@ module ProjectHanlon
             :postinstall => {
                 :mk_call            => :postinstall,
                 :boot_call          => :postinstall,
-                :yast_end        => :postinstall,
-                :source_fix         => :postinstall,
+                :yast_end           => :postinstall,
                 :postinstall_inject => :postinstall,
                 :os_boot            => :os_complete,
                 :post_error         => :error_catch,
