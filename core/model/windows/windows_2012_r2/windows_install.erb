@@ -34,7 +34,7 @@ Invoke-WebRequest -Uri "<%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/au
 # Get current IP
 $IPv4Address = (Get-WMIObject Win32_NetworkAdapterConfiguration).IPAddress[1]
 # Send IP to model
-Invoke-WebRequest -Uri "<%= callback_url("postinstall", "send_ips") %>/$IPv4Address" -Method GET
+Invoke-WebRequest -Uri "<%= callback_url("postinstall", "send_ips") %>/$IPv4Address" -Method GET -UseBasicParsing
 
 # and restart the computer to finish the install process
 restart-computer
