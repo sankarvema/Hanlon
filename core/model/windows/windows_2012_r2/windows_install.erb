@@ -1,0 +1,43 @@
+
+#!powershell
+
+# define some parameters we'll use in this script
+$image_disk_size = 8
+
+# create partition for the install.wim download at the end of the disk
+$offset = ((Get-WmiObject Win32_DiskDrive).size / 1024) - (1024*1024*$image_disk_size)
+
+$command = @"
+select disk 0
+clean
+create partition primary offset=$offset
+select volume 0
+format fs=ntfs label=image quick
+assign letter=I
+"@
+
+$command | diskpart
+
+# download the WIM and autounattend.xml files to the partition we just created
+Write-Host "Downloading WIM..."
+(new-object net.webclient).DownloadFile("<%= api_svc_uri %>/image/windows/<%= image_uuid %>/sources/install.wim", "i:\\install.wim")
+(new-object net.webclient).DownloadFile("<%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/autounattend/file", "i:\\unattend.xml")
+
+# install OS by executing the setup.exe command as a blocking process
+$setup = "x:\sources\setup.exe"
+$args = "/unattend:i:\unattend.xml /installfrom:i:\install.wim /noreboot"
+Start-Process $setup $args -wait
+
+# send the callback indicating we've completed the OS install
+Invoke-WebRequest -Uri "<%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/autounattend/end" -UseBasicParsing
+
+# Get current IP
+$ifIndex = (Get-NetAdapter).ifIndex
+$IPv4Address = (Get-NetIPAddress -InterfaceIndex $ifIndex).IPv4Address
+# Send IP to model
+Invoke-WebRequest -Uri "<%= callback_url("postinstall", "send_ips") %>/$IPv4Address" -Method GET
+
+# and restart the computer to finish the install process
+restart-computer
+
+
