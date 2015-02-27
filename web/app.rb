@@ -11,7 +11,7 @@ module Hanlon
     class App
       include ProjectHanlon::Logging
 
-      CHUNK_SIZE = 2**24      # 16MB chunk size
+      CHUNK_SIZE = 2**26      # 64MB chunk size
       IMAGE_SLICE_REF = ProjectHanlon::Slice::Image.new([])
 
       def initialize
@@ -32,56 +32,69 @@ module Hanlon
               :root => File.expand_path('../../public', __FILE__),
               :urls => %w[/]
           })
-          @image_static = ::Rack::Static.new(
-              lambda { [404, {}, []] }, {
-              :root => File.expand_path('../../', __FILE__),
-              :urls => %w[/]
-          })
         end
         # starts up a set of tasks (using the rufus-scheduler gem) that will maintain
         # (and monitor) the system
         start_scheduled_tasks
       end
 
-      def get_file_contents(file, env)
-        if File.exists?(file) && File.file?(file)
-          response = Rack::Response.new
-          if /\.rpm$/.match(file)
-            response["Content-Type"] = "application/x-rpm"
-          else
-            response["Content-Type"] = "application/octet-stream"
-          end
-          response["Connection"] = 'close'
-          response["Accept-Ranges"] = 'bytes'
-          open(file, 'rb') do |f|
-            start_offset = nil
-            end_offset = nil
-            http_range = env['HTTP_RANGE']
-            if http_range
-              vals = http_range.split(/\s+|=|-|\//)
-              start_offset = vals[1].to_i
-              end_offset = vals[2].to_i
-            else
-              start_offset = 0
-              end_offset = f.size - 1
-            end
-            f.seek(start_offset) if start_offset > 0
-            nbytes_read = end_offset - f.pos + 1
-            if nbytes_read > CHUNK_SIZE
-              until f.pos >= end_offset || f.eof?
-                nbytes_read = [CHUNK_SIZE, end_offset - f.pos + 1].min
-                response.write f.read(nbytes_read)
-              end
-            else
-              response.write f.read(nbytes_read)
-            end
-            if start_offset || end_offset < f.size
-              # if here, is a partial response
-              response['Content-Range'] = "bytes #{start_offset}-#{end_offset}/#{response['Content-Length']}"
-            end
-          end
-          return response.finish
+      class FileStreamer
+        def initialize(path, file_size, start_offset, end_offset)
+          # initialize some parameters
+          @path = path
+          @start_offset = start_offset
+          @end_offset = end_offset
+          @file_size = file_size
         end
+
+        def each(&blk)
+          # open the file (and seek to the starting position,
+          # if necessary
+          open(@path, "rb") do |file|
+            file.seek(@start_offset) if @start_offset > 0
+            # determine the remaining length to read
+            remaining_len = @end_offset-@start_offset+1
+            # while there remains something to read
+            while remaining_len > 0
+              # read as much as you can (up to the CHUNK_SIZE)
+              part = file.read([CHUNK_SIZE, remaining_len].min)
+              # break out of the loop if nothing was read
+              break unless part
+              # otherwise, reduce the remaining length by what was
+              # just read from the file
+              remaining_len -= part.length
+              # and yield to return what we just read
+              yield part
+            end
+          end
+        end
+      end
+
+      def get_file_contents(path, env)
+        if /\.rpm$/.match(path)
+          file_type = "application/x-rpm"
+        else
+          file_type = "application/octet-stream"
+        end
+        # response["Connection"] = 'close'
+        # response["Accept-Ranges"] = 'bytes'
+        file_size = File.size?(path)
+        start_offset = nil
+        end_offset = nil
+        http_range = env['HTTP_RANGE']
+        if http_range
+          vals = http_range.split(/\s+|=|-|\//)
+          start_offset = vals[1].to_i
+          end_offset = vals[2].to_i
+        else
+          start_offset = 0
+          end_offset = file_size - 1
+        end
+        body = FileStreamer.new(path, file_size, start_offset, end_offset)
+        header = { 'Content-Type' => file_type, 'Connection' => 'close', 'Accept-Ranges' => 'bytes',
+        'Content-Length' => end_offset-start_offset+1 }
+        # and return the result
+        ["200", header, body]
       end
 
       def is_static_path?(request_path_str)
@@ -132,6 +145,7 @@ module Hanlon
         # like the path to access a slice, try to return it from the
         # configured static content directory
         if matches_image
+          # if here, it's a component from an image file
           matches_windows = /^(\/windows)\/([^\/]+)(\/.*)$/.match(matches_image[3])
           if matches_windows
             image_uuid = matches_windows[2]
@@ -144,8 +158,11 @@ module Hanlon
             partial_path = matches_image[3]
           end
           file = File.join(ProjectHanlon.config.image_path, partial_path)
-          return get_file_contents(file, env) if File.exists?(file) && File.file?(file)
+          # otherwise, if we got this far and the requested resource is actually a file,
+          # return the file contents (if there are any)
+          return get_file_contents(file, env) if File.exist?(file) && File.file?(file)
         elsif matches_static
+          # if here, then it's a request from something from the static path
           unless static_path && !static_path.empty?
             return Rack::Response.new("Server Error: static path not set\n", 500)
           end
