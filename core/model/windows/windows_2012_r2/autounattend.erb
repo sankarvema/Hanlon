@@ -75,7 +75,7 @@
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
-                    <Path>powershell -NoLogo -Command "Invoke-WebRequest -Uri  <%= callback_url("postinstall", "final") %> -Method GET"</Path>
+                    <Path>powershell -NoLogo -Command "Invoke-WebRequest -Uri  <%= callback_url("postinstall", "final") %> -Method GET -UseBasicParsing"</Path>
                     <Description>Hanlon Postinstall Final</Description>
                 </RunSynchronousCommand>
             </RunSynchronous>
