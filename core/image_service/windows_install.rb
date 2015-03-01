@@ -45,6 +45,15 @@ module ProjectHanlon
         @_lcl_image_path + "/" + @uuid
       end
 
+      # Used to remove an image to the service
+      # Within each child class the methods are overridden for that child template
+      def remove(lcl_image_path)
+        # skip removing the underlying image path unless we're removing a "base" image
+        return true unless @uuid == @base_image_uuid
+        set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
+        super(lcl_image_path)
+      end
+
       def verify(lcl_image_path)
         # set the 'lcl_image_path' if it is not already set
         set_lcl_image_path(lcl_image_path) unless @_lcl_image_path != nil
