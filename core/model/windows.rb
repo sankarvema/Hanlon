@@ -130,18 +130,9 @@ module ProjectHanlon
       def postinstall_call
         @arg = @args_array.shift
         case @arg
-          # when "inject"
-          #   fsm_action(:postinstall_inject, :postinstall)
-          #   return os_boot_script(@policy_uuid)
-          # when "boot"
-          #   fsm_action(:os_boot, :postinstall)
-          #   return os_complete_script(@node)
           when "final"
             fsm_action(:os_final, :postinstall)
             return ""
-          # when "source_fix"
-          #   fsm_action(:source_fix, :postinstall)
-          #   return
           when "send_ips"
             # Grab IP string
             @ip_string = @args_array.shift
@@ -182,11 +173,6 @@ module ProjectHanlon
             :mk_call            => :postinstall,
             :boot_call          => :postinstall,
             :autounattend_end   => :postinstall,
-            # :source_fix         => :postinstall,
-            # :win_get_update     => :postinstall,
-            # :win_get_upgrade    => :postinstall,
-            # :postinstall_inject => :postinstall,
-            # :os_boot            => :postinstall,
             :os_final           => :os_complete,
             :post_error         => :error_catch,
             :post_timeout       => :timeout_error,
@@ -253,18 +239,6 @@ module ProjectHanlon
         raise ProjectHanlon::Error::Slice::InternalError, "must provide Windows version." unless @osversion
         filepath = File.join(File.dirname(__FILE__), "windows/#{@osversion}/#{filename}.erb")
       end
-
-      # def os_boot_script(policy_uuid)
-      #   @result = "Replied with os boot script"
-      #   filepath = template_filepath('os_boot')
-      #   ERB.new(File.read(filepath)).result(binding)
-      # end
-
-      # def os_complete_script(node)
-      #   @result = "Replied with os complete script"
-      #   filepath = template_filepath('os_complete')
-      #   ERB.new(File.read(filepath)).result(binding)
-      # end
 
       def start_install(node, policy_uuid)
         filepath = template_filepath('boot_install')

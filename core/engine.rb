@@ -376,7 +376,7 @@ module ProjectHanlon
       max_active_elapsed_time = ProjectHanlon.config.register_timeout
       time_since_last_checkin = Time.now.to_i - node.timestamp.to_i
       return "inactive" if time_since_last_checkin > max_active_elapsed_time
-      return "active"
+      "active"
     end
 
     def get_system_tags
@@ -419,14 +419,26 @@ module ProjectHanlon
       }
     end
 
+    # checks to see if an image is in use by a model (or models)
+    def get_models_using_image(image_uuid)
+      # check to see if the image is used by a model (or models); if it is, then return
+      # the uuids of any models that use this image, else just an empty array (indicating
+      # no matching models have been found)
+      models = get_data.fetch_all_objects(:model)
+      matching_models = models.select { |model| model.respond_to?(:image_uuid) && model.image_uuid == image_uuid }
+      if matching_models.size > 0
+        matching_model_uuids = matching_models.map { |model| model.uuid}
+        return matching_model_uuids
+      end
+      []
+    end
+
     # removes an image, but only if it's not part of a model
     def remove_image(image)
       # ensure image is not actively part of a model; if so, then raise an exception
       # (and return to the caller without removing the image)
-      models = get_data.fetch_all_objects(:model)
-      matching_models = models.select { |model| model.respond_to?(:image_uuid) && model.image_uuid == image.uuid }
-      if matching_models.size > 0
-        matching_model_uuids = matching_models.map { |model| model.uuid}
+      matching_model_uuids = get_models_using_image(image.uuid)
+      unless matching_model_uuids.empty?
         logger.warn "Cannot remove image '#{image.uuid}' because it is used in the following models #{matching_model_uuids}"
         raise Exception, "Cannot remove image '#{image.uuid}' because it is used in the following models: #{matching_model_uuids}"
       end
@@ -434,7 +446,7 @@ module ProjectHanlon
         logger.error 'attempt to remove image from image_path failed'
         raise RuntimeError, "Attempt to remove image '#{image.uuid}' from the image_path failed"
       end
-      return get_data.delete_object(image)
+      get_data.delete_object(image)
     end
 
     # removes an model, but only if it's not part of a bound policy
@@ -450,7 +462,7 @@ module ProjectHanlon
         logger.warn "Cannot remove model '#{model.uuid}' because it is used in the following policies: #{matching_policy_uuids}"
         raise Exception, "Cannot remove model '#{model.uuid}' because it is used in following policies: #{matching_policy_uuids}"
       end
-      return get_data.delete_object(model)
+      get_data.delete_object(model)
     end
 
 
