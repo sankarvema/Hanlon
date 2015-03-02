@@ -9,6 +9,25 @@ $HanlonShareName = "Hanlon";
 $DebugPreference = "Continue";
 
 
+
+Function Convert-SmbiosUuid {
+
+Param (
+	[Parameter(Mandatory=$True)]
+	[String]
+	$rawUUID
+)
+
+# Create an array of each half (hyphen delimiter)
+$octets = $rawUUID.Split("-")
+# Create an array of each two-charactere byte (space delimiter)
+$bytes = $octets[0].Split(" ") + $octets[1].Split(" ")
+# Build the final string, piecing together byte by byte
+$prettyUUID = $bytes[3] + $bytes[2] + $bytes[1] + $bytes[0] + "-" + $bytes[5] + $bytes[4] + "-" + $bytes[7] + $bytes[6] + "-" + $bytes[8] + $bytes[9] + "-" + $bytes[10] + $bytes[11] + $bytes[12] + $bytes[13] + $bytes[14] + $bytes[15]
+Return $prettyUUID
+
+}
+
 Function Get-HanlonDhcpOptionValue {
 	[CmdletBinding()]
 	param(
@@ -138,20 +157,31 @@ Function Invoke-Main {
 	process {
 		try {
 			$HanlonServerSettings = Get-HanlonServerParameters 
-			$SmbiosUuid = (get-wmiobject win32_computersystemproduct).uuid
+
+            $IdentifyingNumber = (Get-WmiObject win32_computersystemproduct).IdentifyingNumber
+
+            $result = [regex]::match($IdentifyingNumber,'VMware\-(.*)').Groups[1]
+
+            if( $result.Success ) {
+                $SmbiosUuid = Convert-SmbiosUuid -rawUUID $result.Value
+            }
+            else {
+                $SmbiosUuid = (get-wmiobject win32_computersystemproduct).uuid
+
+            }
 
 			Write-Debug $SmbiosUuid
 
             $hanlonBaseUri = "http://$($HanlonServerSettings.IPAddress):$($HanlonServerSettings.port)/$($HanlonServerSettings.baseuri)"
 
             Write-Debug $hanlonBaseUri
-            $queryActiveModel = "$hanlonBaseUri/active_model?uuid=$SmbiosUuid"
+            $queryActiveModel = "$hanlonBaseUri/active_model?hw_id=$SmbiosUuid"
 
             Write-Debug $queryActiveModel
             $activeModel = Invoke-WebRequest -Uri $queryActiveModel -UseBasicParsing | ConvertFrom-Json
 
-            $activeModelUuid = Invoke-WebRequest -Uri $activeModel.response."@uri" -UseBasicParsing | ConvertFrom-Json
-            $uuid = $activeModelUuid.response."@uuid"
+            #$activeModelUuid = Invoke-WebRequest -Uri $activeModel.response."@uri" -UseBasicParsing | ConvertFrom-Json
+            $uuid = $activeModel.response."@uuid"
 
             iex ((new-object net.webclient).DownloadString("$hanlonBaseUri/policy/callback/$uuid/install/file")) 
 
