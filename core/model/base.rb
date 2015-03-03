@@ -220,12 +220,16 @@ module ProjectHanlon
         ProjectHanlon.config
       end
 
-      def image_svc_uri
-        "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}/image/#{@image_prefix}"
-      end
-
       def api_svc_uri
         "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}"
+      end
+
+      def image_svc_uri
+        "#{api_svc_uri}/image/#{@image_prefix}"
+      end
+
+      def static_uri
+        "#{api_svc_uri}/static"
       end
 
       def yaml_read_metadata(yaml_metadata_hash)

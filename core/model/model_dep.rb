@@ -17,6 +17,7 @@ require 'model/opensuse_12'
 require 'model/sles_11'
 require 'model/vmware_esxi'
 require 'model/xenserver'
+require 'model/windows'
 
 # level 3 - redhat
 require 'model/redhat_6'
@@ -42,3 +43,6 @@ require 'model/vmware_esxi_5'
 # level 3 - xenserver
 require 'model/xenserver_boston'
 require 'model/xenserver_tampa'
+
+# level 3 - windows
+require 'model/windows_2012_r2'

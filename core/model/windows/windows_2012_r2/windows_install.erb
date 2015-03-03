@@ -1,0 +1,70 @@
+
+#!powershell
+
+# define some parameters we'll use in this script
+$image_disk_size = 8
+
+# create partition for the install.wim download at the end of the disk
+$offset = [math]::floor((Get-WmiObject Win32_DiskDrive).size / 1024) - (1024*1024*$image_disk_size)
+
+$command = @"
+select disk 0
+clean
+create partition primary offset=$offset
+select volume 0
+format fs=ntfs label=image quick
+assign letter=I
+"@
+
+$command | diskpart
+
+# Create Drivers directory
+
+new-item -type directory "I:\drivers"
+
+# Load Compression
+[System.Reflection.Assembly]::LoadWithPartialName("System.IO.Compression.FileSystem") | Out-Null
+
+Write-Host "Downloading Drivers..."
+$drivers_downloaded = $false
+Try {
+  (new-object net.webclient).DownloadFile("<%= api_svc_uri %>/static/drivers.zip", "I:\\drivers.zip")
+  [System.IO.Compression.ZipFile]::ExtractToDirectory("I:\\drivers.zip", "I:\\drivers")
+  $drivers_downloaded = $true
+}
+Catch {
+  Write-Host "Unable to download drivers.zip, continuing..."
+}
+
+# download the WIM and autounattend.xml files to the partition we just created
+Write-Host "Downloading WIM..."
+(new-object net.webclient).DownloadFile("<%= api_svc_uri %>/image/windows/<%= image_uuid %>/sources/install.wim", "I:\\install.wim")
+(new-object net.webclient).DownloadFile("<%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/autounattend/file", "I:\\unattend.xml")
+
+# if we downloaded additional drivers, then modify the image in the `install.wim` file we just downloaded
+# so that it contains those drivers
+if ($drivers_downloaded) {
+  Write-Host "Modifying WIM..."
+  new-item -type directory "I:\mount-point"
+  mount-windowsimage -imagepath "I:\install.wim" -index <%= wim_index %> -path "I:\mount-point" -erroraction stop
+  Add-WindowsDriver -Recurse -Path "I:\mount-point" -Driver "I:\drivers"
+  dismount-windowsimage -save -path "I:\mount-point" -erroraction stop
+}
+
+# install OS by executing the setup.exe command as a blocking process
+$setup = "x:\sources\setup.exe"
+$args = "/unattend:I:\unattend.xml /installfrom:I:\install.wim /noreboot"
+Start-Process $setup $args -wait
+
+# send the callback indicating we've completed the OS install
+Invoke-WebRequest -Uri "<%= api_svc_uri %>/policy/callback/<%= policy_uuid %>/autounattend/end" -UseBasicParsing
+
+# Get current IP
+$IPv4Address = (Get-WMIObject Win32_NetworkAdapterConfiguration).IPAddress[1]
+# Send IP to model
+Invoke-WebRequest -Uri "<%= callback_url("postinstall", "send_ips") %>/$IPv4Address" -Method GET -UseBasicParsing
+
+# and restart the computer to finish the install process
+restart-computer
+
+

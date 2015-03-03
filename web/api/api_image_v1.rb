@@ -346,8 +346,6 @@ module Hanlon
                 # Use the Engine instance to remove the selected image from the database
                 engine = ProjectHanlon::Engine.instance
                 begin
-                  # first, remove the image we were asked to remove
-                  raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image_uuid}]" unless engine.remove_image(image)
                   # if it's a Windows image, then additional actions may be necessary (if it's a base image
                   # then all of the images that reference that base image should be removed; if it's not a
                   # base image but no other images reference the base image that it references, then the base
@@ -355,14 +353,30 @@ module Hanlon
                   if image.class == ProjectHanlon::ImageService::WindowsInstall
                     if image.uuid == image.base_image_uuid
                       # if here, then we're removing a base image; need to find all of the
-                      # images that reference this image and remove them as well
+                      # images that reference this image, then check each to see if any of them
+                      # are used in a model; first get a list of the images that reference this
+                      # image as their base image
                       ref_images = get_referencing_images(image.uuid)
+                      # then, check each of those to see if there are models that reference them;
+                      # along the way construct a map of image UUIDs and the models that reference them
+                      referenced_image_list = {}
+                      ref_images.each { |ref_image|
+                        matching_model_uuids = engine.get_models_using_image(ref_image.uuid)
+                        referenced_image_list[ref_image.uuid] = matching_model_uuids unless matching_model_uuids.empty?
+                      }
+                      # if we found images used in models that reference this base image, then throw an error
+                      raise ProjectHanlon::Error::Slice::CouldNotRemove, "Cannot remove Base Image [#{image.uuid}] because it is the base for one or more images that are used in the following models:  #{referenced_image_list}" unless referenced_image_list.empty?
+                      # otherwise, remove the base image and the images that reference it
+                      raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image.uuid}]" unless engine.remove_image(image)
                       ref_images.each { |ref_image|
                         raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Referencing Image [#{ref_image.uuid}]" unless engine.remove_image(ref_image)
                       }
                     else
-                      # if here, then we're in a non-base Windows image; in this case we need to
-                      # get the base_image_uuid from the image we just removed determine whether
+                      # if here, then we're in a non-base Windows image; since we're only removing a
+                      # "referencing image" (and not a "base image"), we can simply try to remove the
+                      # image we were asked to remove (and throw an error if we cannot remove it)
+                      raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image.uuid}]" unless engine.remove_image(image)
+                      # next, get the base_image_uuid from the image we just removed determine whether
                       # or not there are other images that reference that same base image
                       base_image_uuid = image.base_image_uuid
                       ref_images = get_referencing_images(base_image_uuid)
@@ -373,6 +387,10 @@ module Hanlon
                         raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Base Image [#{base_image_uuid}]" unless engine.remove_image(base_image)
                       end
                     end
+                  else
+                    # since this isn't a Windows image, we can simply attempt to remove the image we were
+                    # asked to remove (and throw an error if we cannot remove it)
+                    raise ProjectHanlon::Error::Slice::CouldNotRemove, "Could not remove Image [#{image_uuid}]" unless engine.remove_image(image)
                   end
                 rescue RuntimeError => e
                   raise ProjectHanlon::Error::Slice::InternalError, e.message

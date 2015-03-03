@@ -1,0 +1,12 @@
+#!ipxe
+echo Hanlon <%= @label %> model boot_call
+echo Installation node UUID : <%= node.uuid %>
+echo Installation image UUID: <%= @image_uuid %>
+echo Active Model node state: <%= @current_state %>
+
+sleep 3
+kernel <%= "#{static_uri}/#{kernel_path}" %> || goto error
+initrd <%= "#{static_uri}/boot/bcd BCD" %> || goto error
+initrd <%= "#{static_uri}/boot/boot.sdi boot.sdi" %> || goto error
+initrd <%= "#{static_uri}/sources/boot.wim boot.wim" %> || goto error
+boot

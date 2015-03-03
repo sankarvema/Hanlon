@@ -113,7 +113,9 @@ module ProjectHanlon
       attr_accessor :api_port
       attr_accessor :hanlon_log_level
 
+      attr_accessor :hanlon_cifs_share
       attr_accessor :hanlon_static_path
+      attr_accessor :hanlon_cifs_share
 
       attr_accessor :mk_checkin_interval
       attr_accessor :mk_checkin_skew
@@ -198,6 +200,7 @@ module ProjectHanlon
           'hnl_mk_boot_debug_level'   => "Logger::ERROR",
           'hanlon_log_level'          => "Logger::ERROR",
           'hanlon_static_path'        => "",
+          'hanlon_cifs_share'         => "",
 
           # used to pass arguments to the Microkernel's linux kernel;
           # e.g. "console=ttyS0" or "hanlon.ip=1.2.3.4"

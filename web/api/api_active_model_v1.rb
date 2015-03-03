@@ -128,7 +128,7 @@ module Hanlon
           end
           get do
             node_uuid = params[:node_uuid]
-            hw_id = params[:hw_id]
+            hw_id = params[:hw_id].upcase if params[:hw_id]
             raise ProjectHanlon::Error::Slice::InvalidCommand, "only one node selection parameter ('hw_id' or 'node_uuid') may be used" if (hw_id && node_uuid)
             # if either a node_uuid or a hw_id was provided, return the details for the active_model bound to the node
             # with that node_id, otherwise just return the list of all active_models
@@ -161,7 +161,7 @@ module Hanlon
           end
           delete do
             node_uuid = params[:node_uuid]
-            hw_id = params[:hw_id]
+            hw_id = params[:hw_id].upcase if params[:hw_id]
             raise ProjectHanlon::Error::Slice::InvalidCommand, "must select a node using one of the 'hw_id' or 'node_uuid' query parameters" unless (hw_id || node_uuid)
             raise ProjectHanlon::Error::Slice::InvalidCommand, "only one node selection parameter ('hw_id' or 'node_uuid') may be used" if (hw_id && node_uuid)
             # find the matching node; either by Hardware ID (SMBIOS UUID) or Hanlon-assigned UUID
