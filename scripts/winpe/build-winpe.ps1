@@ -151,6 +151,9 @@ Add-WindowsDriver -Recurse -Path $MountPath -Driver $DriversPath
 write-host "* Writing startup PowerShell script"
 $file   = join-path $MountPath "hanlon-discover.ps1"
 $client = join-path $ScriptPath "hanlon-discover.ps1"
+
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/csc/Hanlon/master/scripts/winpe/hanlon-discover.ps1" -OutFile $client -UseBasicParsing
+
 copy-item $client $file
  
 write-host "* Writing Windows\System32\startnet.cmd script"
@@ -171,6 +174,17 @@ Remove-Item $setup -ErrorAction SilentlyContinue
 
 Write-Host "* Generate Language Files"
 dism /image:$MountPath /gen-langini /distribution:$MountPath
+
+
+Write-Host "* Loading WinPE System Registry"
+REG LOAD HKLM\TEMP C:\MOUNT-POINT\WINDOWS\SYSTEM32\CONFIG\SYSTEM
+
+Write-Host "* Set CDROM Start to DWORD 4"
+Set-ItemProperty -Path "HKLM:\TEMP\ControlSet001\Services\cdrom" -Name Start -Value 4
+
+Write-Host "* Unload WinPE System Registry"
+REG UNLOAD HKLM\TEMP
+
 
 write-host "* Unmounting and saving the wim image"
 

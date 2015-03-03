@@ -23,7 +23,7 @@ $octets = $rawUUID.Split("-")
 # Create an array of each two-charactere byte (space delimiter)
 $bytes = $octets[0].Split(" ") + $octets[1].Split(" ")
 # Build the final string, piecing together byte by byte
-$prettyUUID = $bytes[3] + $bytes[2] + $bytes[1] + $bytes[0] + "-" + $bytes[5] + $bytes[4] + "-" + $bytes[7] + $bytes[6] + "-" + $bytes[8] + $bytes[9] + "-" + $bytes[10] + $bytes[11] + $bytes[12] + $bytes[13] + $bytes[14] + $bytes[15]
+$prettyUUID = $bytes[0] + $bytes[1] + $bytes[2] + $bytes[3] + "-" + $bytes[4] + $bytes[5] + "-" + $bytes[6] + $bytes[7] + "-" + $bytes[8] + $bytes[9] + "-" + $bytes[10] + $bytes[11] + $bytes[12] + $bytes[13] + $bytes[14] + $bytes[15]
 Return $prettyUUID
 
 }
@@ -162,11 +162,17 @@ Function Invoke-Main {
 
             $result = [regex]::match($IdentifyingNumber,'VMware\-(.*)').Groups[1]
 
+            Write-Debug $result
+
             if( $result.Success ) {
+                Write-Debug "Begin If"
                 $SmbiosUuid = Convert-SmbiosUuid -rawUUID $result.Value
+                Write-Debug "End If"
             }
             else {
+                Write-Debug "Begin Else"
                 $SmbiosUuid = (get-wmiobject win32_computersystemproduct).uuid
+                Write-Debug "End Else"
 
             }
 
