@@ -104,13 +104,18 @@ foreach ($p in $paths ) {
 $result = Test-RegistryValue -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows Kits\Installed Roots\" -Name "KitsRoot81"
 
 if(-not $result) {
-
-    iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+	try {
+    		iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 
 ###
 # Install Windows ADK only WinPE requirements
 ###
-    choco install windows-adk-winpe -y
+    		choco install windows-adk-winpe -y
+	}
+	catch {
+		Write-Error "Unable to install ADK, install manually"
+		exit 1
+	}
 }
 # OK where is the ADK?
 
