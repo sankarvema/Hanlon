@@ -139,7 +139,7 @@ module Hanlon
             optional :uuid, type: String, desc: "The Hardware ID (SMBIOS UUID) of the node."
           end
           get do
-            uuid = params[:uuid]
+            uuid = params[:uuid].upcase if params[:uuid]
             if uuid
               node = ProjectHanlon::Engine.instance.lookup_node_by_hw_id({:uuid => uuid, :mac_id => []})
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{uuid}]" unless node
@@ -165,7 +165,7 @@ module Hanlon
               optional :ipmi_password, type: String, desc: "The IPMI password"
             end
             get do
-              uuid = params[:hw_id]
+              uuid = params[:hw_id].upcase if params[:hw_id]
               node = ProjectHanlon::Engine.instance.lookup_node_by_hw_id({:uuid => uuid, :mac_id => []})
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Node with Hardware ID: [#{uuid}]" unless node
               ipmi_args = params.select { |key| [:ipmi_username, :ipmi_password].include?(key) }
