@@ -5,7 +5,7 @@
 $image_disk_size = 8
 
 # create partition for the install.wim download at the end of the disk
-$offset = ((Get-WmiObject Win32_DiskDrive).size / 1024) - (1024*1024*$image_disk_size)
+$offset = [math]::floor((Get-WmiObject Win32_DiskDrive).size / 1024) - (1024*1024*$image_disk_size)
 
 $command = @"
 select disk 0
@@ -17,6 +17,22 @@ assign letter=I
 "@
 
 $command | diskpart
+
+# Create Drivers directory
+
+new-item -type directory "i:\drivers"
+
+# Load Compression
+[System.Reflection.Assembly]::LoadWithPartialName("System.IO.Compression.FileSystem") | Out-Null
+
+Write-Host "Downloading Drivers..."
+Try {
+  (new-object net.webclient).DownloadFile("<%= api_svc_uri %>/static/drivers.zip", "I:\\drivers.zip")
+  [System.IO.Compression.ZipFile]::ExtractToDirectory("I:\\drivers.zip", "I:\\drivers")
+}
+Catch {
+  Write-Host "Unable to download drivers.zip, continuing..."
+}
 
 # download the WIM and autounattend.xml files to the partition we just created
 Write-Host "Downloading WIM..."
