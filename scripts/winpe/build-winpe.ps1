@@ -20,7 +20,7 @@ $DebugPreference = "Continue"
 
 $PackageCabs = @( "WinPE-WMI.cab", "WinPE-NetFx.cab", 
 				"WinPE-Scripting.cab", "WinPE-PowerShell.cab", 
-				"WinPE-Setup.cab", "WinPE-Setup-Server.cab")
+				"WinPE-Setup.cab", "WinPE-Setup-Server.cab", "WinPE-DismCmdlets.cab")
 
 $LangPackageCabs = @( "lp.cab", 
                       "WinPE-Setup_en-us.cab", 
