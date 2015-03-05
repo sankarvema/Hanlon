@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/csc/Hanlon.svg?branch=master)](https://travis-ci.org/csc/Hanlon)
 
-# Project Hanlon (v2.0.0)
+# Project Hanlon (v2.2.0)
 
 ## Introduction
 
