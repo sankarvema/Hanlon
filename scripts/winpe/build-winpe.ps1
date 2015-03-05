@@ -6,6 +6,7 @@
 # Sources:
 # http://stackoverflow.com/questions/5648931/test-if-registry-value-exists
 # https://github.com/puppetlabs/razor-server/blob/master/build-winpe/build-razor-winpe.ps1
+# http://blogs.technet.com/b/heyscriptingguy/archive/2013/02/19/use-a-powershell-function-to-see-if-a-command-exists.aspx
 ### 
 
 
@@ -19,7 +20,7 @@ $DebugPreference = "Continue"
 
 $PackageCabs = @( "WinPE-WMI.cab", "WinPE-NetFx.cab", 
 				"WinPE-Scripting.cab", "WinPE-PowerShell.cab", 
-				"WinPE-Setup.cab", "WinPE-Setup-Server.cab")
+				"WinPE-Setup.cab", "WinPE-Setup-Server.cab", "WinPE-DismCmdlets.cab")
 
 $LangPackageCabs = @( "lp.cab", 
                       "WinPE-Setup_en-us.cab", 
@@ -35,6 +36,26 @@ $ScriptPath = "$env:SystemDrive\script"
 $DriversPath = "$env:SystemDrive\drivers"
 
 $paths = @($MountPath,$WimPath,$ScriptPath,$DriversPath)
+
+
+Function Test-CommandExists {
+    Param ($command)
+    $oldPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'stop'
+    try {
+        if(Get-Command $command){
+            return $true
+        }
+    }
+    Catch {
+        Write-Host "$command does not exist"
+        return $false
+    }
+    Finally {
+        $ErrorActionPreference = $oldPreference
+    }
+
+} #end function test-CommandExists
 
 
 Function Test-RegistryValue {
@@ -105,12 +126,29 @@ $result = Test-RegistryValue -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows
 
 if(-not $result) {
 
-    iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+    if(-not (Test-CommandExists "choco")) {
+        iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+    }
 
 ###
 # Install Windows ADK only WinPE requirements
 ###
-    choco install windows-adk-winpe -y
+    choco install windows-adk-winpe | Out-Null
+    if($LASTEXITCODE -ne 0) {
+        $url = "http://download.microsoft.com/download/6/A/E/6AEA92B0-A412-4622-983E-5B305D2EBE56/adk/adksetup.exe"
+        $silentArgs = "/quiet /norestart /log $env:temp\win_adk.log /features OptionId.DeploymentTools OptionId.WindowsPreinstallationEnvironment"
+
+        Write-Host "choco install failed, implementing work around...`nADK setup may take a long time be patient..."
+        Invoke-WebRequest -Uri $url -OutFile "$ScriptPath\adksetup.exe" 
+        Start-Process "$ScriptPath\adksetup.exe" $silentArgs -Wait
+    }
+    
+    $result = Test-RegistryValue -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows Kits\Installed Roots\" -Name "KitsRoot81"
+
+    if( -not $result ) {
+        Write-Error "OK, I give up, you need to manually install the ADK"
+        exit 1
+    }
 }
 # OK where is the ADK?
 
@@ -121,7 +159,13 @@ Write-Debug $wim
 
 Copy-Item $wim $WimPath
 
-mount-windowsimage -imagepath "$WimPath\winpe.wim" -index 1 -path $MountPath -erroraction stop
+try {
+    mount-windowsimage -imagepath "$WimPath\winpe.wim" -index 1 -path $MountPath -erroraction stop
+}
+catch {
+    Write-Error $_
+    exit 1
+}
 
 
 foreach ($cab in $PackageCabs ) {
