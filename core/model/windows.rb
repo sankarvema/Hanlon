@@ -17,6 +17,9 @@ module ProjectHanlon
       attr_accessor :domainname
       # Compatible Image Prefix
       attr_accessor :image_prefix
+      # User Info
+      attr_accessor :windows_user
+      attr_accessor :organization
 
       def initialize(hash)
         super(hash)
@@ -34,6 +37,9 @@ module ProjectHanlon
         @image_uuid = true
         # Image prefix we can attach
         @image_prefix = "windows"
+        # User Info
+        @windows_user = ''
+        @organization = ''
         # Enable agent brokers for this model
         @broker_plugin = :agent
         @final_state = :os_complete
@@ -66,6 +72,20 @@ module ProjectHanlon
                 :validation    => '^[\S]{8,}',
                 :required      => true,
                 :description   => "admin password (> 8 characters)"
+            },
+            "@windows_user"   => {
+                :default       => "Windows User",
+                :example       => "My Full Name",
+                :validation    => '^[\S].*',
+                :required      => true,
+                :description   => "User Name (not blank)"
+            },
+            "@organization"   => {
+                :default       => "Windows Organization",
+                :example       => "My Organization Name",
+                :validation    => '^[\S].*',
+                :required      => true,
+                :description   => "Organization (not blank)"
             },
         }
       end
