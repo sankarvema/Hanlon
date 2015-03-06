@@ -222,6 +222,8 @@ module ProjectHanlon
           next if interface_name == 'lo'
           ip_addr = Facter::Util::IP.get_interface_value(interface_name,'ipaddress')
           netmask = Facter::Util::IP.get_interface_value(interface_name,'netmask')
+          # skip to next if interface does not have an ip address assinged
+          next if ip_addr == ""
           subnet_str = IPAddr.new("#{ip_addr}/#{netmask}").to_s
           subnet_str_array << "#{subnet_str}/#{netmask_to_cidr(netmask)}"
         }
