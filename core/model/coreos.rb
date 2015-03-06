@@ -48,13 +48,14 @@ module ProjectHanlon
             :example     => "example.com",
             :validation  => '^[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9](\.[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])*$',
             :required    => true,
-            :description => "local domain name (will be used in /etc/hosts file)",
+            :description => "local domain name (will be used in /etc/hosts file)"
+          },
           "@install_disk" => { 
             :default      => "/dev/sda",
             :example      => "/dev/sda",
             :validation   => '',
             :required     => false,
-            :description  => "The Core OS target disk" },
+            :description  => "The Core OS target disk"
           }
         }
         @opt_metadata_hash = {
@@ -63,8 +64,9 @@ module ProjectHanlon
             :example      => "",
             :validation   => '',
             :required     => false,
-            :description  => "A yaml containing CoreOS cloud config options" },
+            :description  => "A yaml containing CoreOS cloud config options"
           }
+        }
       end
 
       def callback
