@@ -18,6 +18,7 @@ require 'model/sles_11'
 require 'model/vmware_esxi'
 require 'model/xenserver'
 require 'model/windows'
+require 'model/coreos'
 
 # level 3 - redhat
 require 'model/redhat_6'
@@ -46,3 +47,6 @@ require 'model/xenserver_tampa'
 
 # level 3 - windows
 require 'model/windows_2012_r2'
+
+# level 3 - coreos
+require 'model/coreos_stable'
