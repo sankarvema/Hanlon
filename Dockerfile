@@ -1,6 +1,6 @@
 # Hanlon server
 #
-# VERSION 2.0.0
+# VERSION 2.2.0
 
 FROM ubuntu:latest
 MAINTAINER Joseph Callen <jcpowermac@gmail.com>
