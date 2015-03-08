@@ -41,7 +41,7 @@ if [[ "$1" == "start"  ]] ; then
                   -e HANLON_SUBNETS=$HANLON_SUBNETS \
                   -e HANLON_STATIC_PATH=$HANLON_STATIC_PATH \
                   -v $HANLON_IMAGE_PATH:/home/hanlon/image \
-                  -v $HANLON_SOURCE_PATH:/home/dev/hanlon \
+                  -v $HANLON_SOURCE_PATH:/home/hanlon \
                   --name hanlon-server --link hanlon-mongodb:mongo cscdock/hanlon
 
   while true; do
@@ -49,7 +49,7 @@ if [[ "$1" == "start"  ]] ; then
     curl -I http://127.0.0.1:8026/hanlon/api/v1/config/ipxe
     rc=$?
     if [[ $rc == 0 ]] ; then
-      sudo docker run -d -e DOCKER_HOST=$DOCKER_HOST -p 69:69 --name hanlon-atftpd --link hanlon-server:hanlon cscdock/atftpd
+      sudo docker run -d -e DOCKER_HOST=$DOCKER_HOST -p 69:69/udp --name hanlon-atftpd --link hanlon-server:hanlon cscdock/atftpd
       exit 0
     fi
   sleep 5
@@ -75,7 +75,7 @@ if [[ "$1" == "restart"  ]] ; then
                   -e HANLON_SUBNETS=$HANLON_SUBNETS \
                   -e HANLON_STATIC_PATH=$HANLON_STATIC_PATH \
                   -v $HANLON_IMAGE_PATH:/home/hanlon/image \
-                  -v $HANLON_SOURCE_PATH:/home/dev/hanlon \
+                  -v $HANLON_SOURCE_PATH:/home/hanlon \
                   --name hanlon-server --link hanlon-mongodb:mongo cscdock/hanlon
 
 fi
