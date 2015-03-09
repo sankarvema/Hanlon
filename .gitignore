@@ -34,6 +34,5 @@ doc/
 /image
 /node_modules
 /hanlon_daemon.pid
-/Gemfile.lock
 
 /ext/packaging
