@@ -33,6 +33,10 @@ module ProjectHanlon
         @image_prefix = "os"
         # Enable agent brokers for this model
         @broker_plugin = :agent
+        # Default install disk
+        @install_disk = "/dev/sda"
+        # Default: no cloud config
+        @cloud_config = nil
         @final_state = :os_complete
         from_hash(hash) unless hash == nil
         @req_metadata_hash = {
@@ -49,16 +53,16 @@ module ProjectHanlon
             :validation  => '^[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9](\.[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])*$',
             :required    => true,
             :description => "local domain name (will be used in /etc/hosts file)"
-          },
+          }
+        }
+        @opt_metadata_hash = {
           "@install_disk" => { 
             :default      => "/dev/sda",
             :example      => "/dev/sda",
             :validation   => '',
             :required     => false,
             :description  => "The Core OS target disk"
-          }
-        }
-        @opt_metadata_hash = {
+          },
           "@cloud_config" => { 
             :default      => "",
             :example      => "",
@@ -237,7 +241,11 @@ module ProjectHanlon
       end
 
       def cloud_config_yaml
-        @cloud_config.to_yaml
+        if @cloud_config
+          @cloud_config.to_yaml
+        else
+          ""
+        end
       end
 
       def kernel_path
@@ -256,14 +264,6 @@ module ProjectHanlon
 
       def config
         ProjectHanlon.config
-      end
-
-      def image_svc_uri
-        "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}/image/os"
-      end
-
-      def api_svc_uri
-        "http://#{config.hanlon_server}:#{config.api_port}#{config.websvc_root}"
       end
       
       def generate_cloud_config(policy_uuid)
