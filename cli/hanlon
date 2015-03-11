@@ -18,8 +18,6 @@ $hanlon_root = Pathname(__FILE__).parent.realpath.dirname.to_s
 $app_type = "client"
 
 require 'rubygems' if RUBY_VERSION < '1.9'
-#require 'require_all'
-#require_rel 'main/cli'
 require 'main/cli'
 
 exit ProjectHanlon::CLI.new.run(*ARGV)
