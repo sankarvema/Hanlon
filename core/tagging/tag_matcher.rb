@@ -34,12 +34,15 @@ module ProjectHanlon
       end
 
       # @param property_value [String]
-      def check_for_match(property_value)
+      def check_for_match(property_value_in)
         ret = true
         ret = false if @inverse == "true"
+        property_value = property_value_in
 
         case compare
           when "equal"
+            # ensure that we won't compare a string 'true' value with a boolean true value
+            property_value = property_value.to_s if property_value.class == TrueClass
             logger.debug "Checking if key:#{@key}=#{property_value} is equal to matcher value:#{@value}"
             if property_value == @value
               logger.debug "Match found"

@@ -4,25 +4,32 @@ module ProjectHanlon
   module Tagging
     class TagRule < ProjectHanlon::Object
       include(ProjectHanlon::Logging)
+
       attr_accessor :name
       attr_accessor :tag
       attr_accessor :tag_matchers
+      attr_accessor :field
+
       def initialize(hash)
         super()
         @name = "Tag Rule: #{@uuid}"
         @tag = ""
+        @field = nil
         @tag_matchers = []
         @_namespace = :tag
         @noun = "tag"
 
         from_hash(hash) unless hash == nil
-        tag_matcher_from_hash unless hash == nil
+        tag_matcher_from_hash unless hash == nil || @field
       end
 
       # This method is called by the engine on tagging
       # It allows us to parse the tag metaname vars and reply back with a correct tag
-      def get_tag(meta)
-        sanitize_tag parse_tag_metadata_vars(meta)
+      def get_tag(node)
+        if @field
+          return sanitize_tag node.attributes_hash[@field]
+        end
+        sanitize_tag parse_tag_metadata_vars(node.attributes_hash)
       end
 
       # Remove symbols, whitespace, junk from tags
@@ -87,6 +94,21 @@ module ProjectHanlon
 
       def check_tag_rule(attributes_hash)
         logger.debug "Checking tag rule"
+
+        # if it's a value tag, the field referenced should be one of the
+        # keys in the attributes_hash and the value associated with that
+        # key should be a string (return false if either of these two
+        # conditions are not met)
+        if @field
+          unless attributes_hash.keys.include?(@field)
+            logger.warn "Field '#{@field}' not found in attributes hash"
+            return false
+          end
+          is_string = attributes_hash[@field].class == String
+          logger.warn "Value in matching field '#{@field}' is not a String" unless is_string
+          return is_string
+        end
+
         logger.warn "No tag matchers for tag rule" if @tag_matchers.count == 0
         return false if @tag_matchers.count == 0
 
@@ -185,19 +207,39 @@ module ProjectHanlon
       end
 
       def print_header
-        return "Name", "Tags", "UUID", "Matchers [count]"
+        # return a header that can be used with any of our tag
+        # types (tags, value tags, or system tags)
+        ["Name", "Tag/Field", "UUID", "Type"]
       end
 
       def print_items
-        return @name, @tag, @uuid, @tag_matchers.count.to_s
+        # if it's a value tag, return the values appropriate for that
+        # type of tag (along with a type of 'val')
+        return [@name, @field, @uuid, 'val'] if @field
+        # check to see if it's a system tag or not (based on the formatting
+        # used in those tags for the tag string)
+        systag_parse = /^([\S]*)%V=([\S]+)-%([\S]*)$/.match(@tag)
+        # if the regex matched, it's a system-defined tag, so return the
+        # values appropriate for a system tag (along with a type of 'sys')
+        return [@name, "#{systag_parse[1]}{#{systag_parse[2]}}#{systag_parse[3]}", 'N/A', 'sys'] if systag_parse
+        # else, return the values appropriate for a regular tag (along with
+        # a type of 'tag')
+        [@name, @tag, @uuid, 'tag']
       end
 
       def print_item_header
-        ["Name", "Tags", "UUID", "Matcher"]
+        # if it's a value tag, return the appropriate header
+        # (there's no Matcher to return)
+        return ["Name", "Field", "UUID"] if @field
+        # else, return the header appropriate for a regular tag
+        ["Name", "Tag", "UUID", "Matcher"]
       end
 
       def print_item
-
+        # if it's a value tag, return the appropriate values
+        # (there are no tag matchers associated with a value tag)
+        return [@name, @field, @uuid] if @field
+        # else, return the values appropriate for a regular tag
         [@name, @tag, @uuid, tag_matcher_print]
       end
 

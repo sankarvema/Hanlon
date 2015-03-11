@@ -107,19 +107,31 @@ module Hanlon
           end     # end GET /tag
 
           # POST /tag
-          # Create a Hanlon tag
+          # Create a Hanlon tag; note that one of the two 'optional' parameters (the 'tag' or the 'field')
+          # must be specified, otherwise an error will be thrown
           #   parameters:
           #     name            | String | The "name" to use for the new tag   |         | Default: unavailable
+          #   optional:
           #     tag             | String | The "tag" value                     |         | Default: unavailable
+          #     field           | String | The "field" to based a tag on       |         | Default: unavailable
           desc "Create a new tag"
           params do
             requires "name", type: String, desc: "The new tag's name"
-            requires "tag", type: String, desc: "The new tag's 'tag' value"
+            optional "tag", type: String, desc: "The new tag's 'tag' value"
+            optional "field", type: String, desc: "Field to base tag on (for value tags)"
           end
           post do
+            # check to ensure one of the two optional parameters were included, throw an error
+            # if both are missing; also check to ensure that both were not specified, if that is the
+            # case then throw an error as well (since the type of tag you're creating is ambiguous)
+            raise ProjectHanlon::Error::Slice::InputError, "Usage Error: either a 'tag' or a 'field' must be defined to create a tag" unless params["tag"] || params["field"]
+            raise ProjectHanlon::Error::Slice::InputError, "Usage Error: only one of the 'tag' or 'field' parameters can be specified when creating a tag" if params["tag"] && params["field"]
             # create a new tag using the options that were passed into this subcommand,
             # then persist the tag
-            tagrule = ProjectHanlon::Tagging::TagRule.new({"@name" => params["name"], "@tag" => params["tag"]})
+            tag_params = { "@name" => params["name"] }
+            tag_params["@tag"] = params["tag"] if params["tag"]
+            tag_params["@field"] = params["field"] if params["field"]
+            tagrule = ProjectHanlon::Tagging::TagRule.new(tag_params)
             raise(ProjectHanlon::Error::Slice::CouldNotCreate, "Could not create Tag Rule") unless tagrule
             get_data_ref.persist_object(tagrule)
             slice_success_object(SLICE_REF, :create_tag, tagrule, :success_type => :created)
@@ -144,13 +156,15 @@ module Hanlon
             # Update a Hanlon tag (either the name or tag, or boht, can be updated using
             # this endpoint)
             #   parameters:
-            #     name            | String | The new "name" to assign to the tag      |         | Default: unavailable
-            #     tag             | String | The new "tag" value to assign to the tag |         | Default: unavailable
+            #     name            | String | The new "name" to assign to the tag        |         | Default: unavailable
+            #     tag             | String | The new "tag" value to assign to the tag   |         | Default: unavailable
+            #     field           | String | The new "field" value to assign to the tag |         | Default: unavailable
             desc "Update a specific tag (by UUID)"
             params do
               requires :uuid, type: String, desc: "The tag's UUID"
               optional "name", type: String, desc: "The tag's new name"
               optional "tag", type: String, desc: "The tag's new 'tag' value"
+              optional "field", type: String, desc: "The value tag's new 'field' value"
             end
             put do
               # get the input parameters that were passed in as part of the request
@@ -158,6 +172,7 @@ module Hanlon
               tag_uuid = params[:uuid]
               name = params["name"]
               tag = params["tag"]
+              field = params["field"]
               # check the values that were passed in (and gather new meta-data if
               # the --change-metadata flag was included in the update command and the
               # command was invoked via the CLI...it's an error to use this flag via
@@ -165,8 +180,12 @@ module Hanlon
               # get the tag to update
               tagrule = SLICE_REF.get_object("tagrule_with_uuid", :tag, tag_uuid)
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Tag Rule with UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
+              # ensure that we don't attempt to update the 'tag' associated with a value tag or the 'field' associated with a tag
+              raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot update a value tag's 'tag' parameter" if (tagrule.field && !(tagrule.field.empty?) && params["tag"])
+              raise ProjectHanlon::Error::Slice::InputError, "Usage Error: cannot update a tag's 'field' parameter" if (tagrule.tag && !(tagrule.tag.empty?) && params["field"])
               tagrule.name = name if name
               tagrule.tag = tag if tag
+              tagrule.field = field if field
               raise ProjectHanlon::Error::Slice::CouldNotUpdate, "Could not update Tag Rule [#{tagrule.uuid}]" unless tagrule.update_self
               slice_success_object(SLICE_REF, :update_tag, tagrule, :success_type => :updated)
             end     # end PUT /tag/{uuid}
@@ -217,6 +236,9 @@ module Hanlon
               end
               post do
                 tag_uuid = params[:uuid]
+                tagrule = SLICE_REF.get_object("tagrule_with_uuid", :tag, tag_uuid)
+                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Tag Rule with UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
+                raise ProjectHanlon::Error::Slice::InvalidCommand, "Tag [#{tag_uuid}] is a value tag (based on #{tagrule.field}); cannot add a tag matcher" if tagrule.field
                 key = params["key"]
                 compare = params["compare"]
                 value = params["value"]
@@ -232,8 +254,6 @@ module Hanlon
                 end
                 # if an inverse value was not provided, default to false
                 inverse = "false" unless inverse
-                tagrule = SLICE_REF.get_object("tagrule_with_uuid", :tag, tag_uuid)
-                raise ProjectHanlon::Error::Slice::InvalidUUID, "Cannot Find Tag Rule with UUID: [#{tag_uuid}]" unless tagrule && (tagrule.class != Array || tagrule.length > 0)
                 raise ProjectHanlon::Error::Slice::MissingArgument, "Value for 'compare' must be [equal|like]" unless compare == "equal" || compare == "like"
                 raise ProjectHanlon::Error::Slice::MissingArgument, "Value for 'inverse' must be [true|false]" unless inverse == "true" || inverse == "false"
                 matcher = tagrule.add_tag_matcher(:key => key, :compare => compare, :value => value, :inverse => inverse)
