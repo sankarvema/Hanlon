@@ -348,29 +348,27 @@ module ProjectHanlon
       uuid
     end
 
-    def node_tags(node)
-      node.attributes_hash
-      tag_policies = get_data.fetch_all_objects(:tag)
-      tag_policies = tag_policies + get_system_tags
-      tags         = []
-      tag_policies.each do
-      |tag_pol|
-        # ToDo; resolve error that is thrown from this line sporadically.
-        # Error thrown looks like this:
-        #
-        #   undefined method 'check_tag_rule' for true:TrueClass
-        #
-        if tag_pol.check_tag_rule(node.attributes_hash)
-          tags << tag_pol.get_tag(node.attributes_hash)
+    def get_tags(node, tag_rules)
+      tags = []
+      tag_rules.each { |tag_rule|
+        if tag_rule.check_tag_rule(node.attributes_hash)
+          tags << tag_rule.get_tag(node)
         end
-      end
-      # TODO remove any duplicates
-      get_system_tags
+      }
       tags
     end
 
+    def node_tags(node)
+      tag_rules = get_data.fetch_all_objects(:tag)
+      # add in tags for the declared policies
+      tags = get_tags(node, tag_rules)
+      # add a system tag for the hardware_id of the node
+      tags = tags + node.hw_id
+      # and, finally, add in any system tags that apply to this node
+      tags + get_tags(node, get_system_tag_rules)
+    end
+
     def node_status(node)
-      node.attributes_hash
       active_model = find_active_model(node)
       return "bound" if active_model
       max_active_elapsed_time = ProjectHanlon.config.register_timeout
@@ -379,7 +377,7 @@ module ProjectHanlon
       "active"
     end
 
-    def get_system_tags
+    def get_system_tag_rules
       system_tag_rules     = []
       system_tag_rules_dir = File.join(File.dirname(__FILE__), "tagging/system_rules/**/*.json")
       Dir.glob(system_tag_rules_dir).each do

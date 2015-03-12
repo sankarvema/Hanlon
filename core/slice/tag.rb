@@ -87,12 +87,20 @@ module ProjectHanlon
                   :required    => true
                 },
                 { :name        => :tag,
-                  :default     => false,
+                  :default     => nil,
                   :short_form  => '-t',
                   :long_form   => '--tag TAG',
                   :description => 'Tag for the tagrule being created',
                   :uuid_is     => 'not_allowed',
-                  :required    => true
+                  :required    => false
+                },
+                { :name        => :field,
+                  :default     => nil,
+                  :short_form  => '-f',
+                  :long_form   => '--field field',
+                  :description => 'Field to base tag on (for value tags)',
+                  :uuid_is     => 'not_allowed',
+                  :required    => false
                 }
             ],
             :update => [
@@ -109,6 +117,14 @@ module ProjectHanlon
                   :short_form  => '-t',
                   :long_form   => '--tag TAG',
                   :description => 'New tag for the tagrule being updated.',
+                  :uuid_is     => 'required',
+                  :required    => true
+                },
+                { :name        => :field,
+                  :default     => nil,
+                  :short_form  => '-f',
+                  :long_form   => '--field field',
+                  :description => 'Field to base tag on (for value tags)',
                   :uuid_is     => 'required',
                   :required    => true
                 }
@@ -237,8 +253,8 @@ module ProjectHanlon
           sort_fieldname = 'name'
           result = hash_array_to_obj_array(expand_response_with_uris(result), sort_fieldname)
         end
-        # and print the result
-        print_object_array(result, "Tag Rules:", :style => :table)
+        # and print the result (the list of user-defined tags) and the system-defined tags
+        print_object_array(result + ProjectHanlon::Engine.instance.get_system_tag_rules, "Tag Rules:", :style => :table)
       end
 
       def get_tagrule_by_uuid
@@ -267,12 +283,16 @@ module ProjectHanlon
         # call is used to indicate whether the choice of options from the
         # option_items hash must be an exclusive choice)
         check_option_usage(option_items, options, includes_uuid, false)
+        # check to ensure that at least one of the 'tag' and 'field' parameters were included
+        raise ProjectHanlon::Error::Slice::InputError, "Usage Error: either the 'tag' parameter or 'field' parameter must be specified when creating a tag" unless options[:tag] || options[:field]
+        # check to ensure that both the 'tag' and 'field' parameters were not included
+        raise ProjectHanlon::Error::Slice::InputError, "Usage Error: only one of the 'tag' or 'field' parameters can be specified when creating a tag" if options[:tag] && options[:field]
         # setup the POST (to create the requested policy) and return the results
         uri = URI.parse @uri_string
-        json_data = {
-            "name" => options[:name],
-            "tag" => options[:tag]
-        }.to_json
+        options_data = { "name" => options[:name] }
+        options_data["tag"] = options[:tag] if options[:tag]
+        options_data["field"] = options[:field] if options[:field]
+        json_data = options_data.to_json
         result = hnl_http_post_json_data(uri, json_data)
         print_object_array(hash_array_to_obj_array([result]), "Tag Rule Created:")
       end
@@ -296,6 +316,7 @@ module ProjectHanlon
         body_hash = {}
         body_hash["name"] = options[:name] if options[:name]
         body_hash["tag"] = options[:tag] if options[:tag]
+        body_hash["field"] = options[:field] if options[:field]
         json_data = body_hash.to_json
         # setup the PUT (to update the indicated tag rule) and return the results
         uri = URI.parse(@uri_string + '/' + tagrule_uuid)
@@ -368,7 +389,7 @@ module ProjectHanlon
         compare = options[:compare]
         value = options[:value]
         inverse = (options[:inverse] == nil ? "false" : options[:inverse])
-        # setup the POST (to create the requested policy) and return the results
+        # setup the POST (to create the requested matcher) and return the results
         uri = URI.parse @uri_string + "/#{tagrule_uuid}/matcher"
         json_data = {
             "key" => key,
@@ -428,4 +449,3 @@ module ProjectHanlon
     end
   end
 end
-
