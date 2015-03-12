@@ -5,9 +5,9 @@
 FROM ubuntu:latest
 MAINTAINER Joseph Callen <jcpowermac@gmail.com>
 
-# Install the required dependancies
+# Install the required dependencies
 RUN apt-get -y update \
-    && apt-get -y install ruby2.2.0 git build-essential libssl0.9.8 libssl-dev p7zip-full software-properties-common fuseiso \
+    && apt-get -y install ruby1.9.3 git build-essential libssl0.9.8 libssl-dev p7zip-full software-properties-common fuseiso \
     && add-apt-repository -y ppa:nilarimogard/webupd8 \
     && apt-get -y update \
     && apt-get -y install wimtools \
