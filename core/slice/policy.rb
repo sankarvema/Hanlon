@@ -324,5 +324,3 @@ module ProjectHanlon
     end
   end
 end
-
-

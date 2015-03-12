@@ -98,6 +98,40 @@ module Hanlon
             callback_return
           end
 
+          def split_tags(tags)
+            # set a default to use when returning the input 'tags'
+            # argument without change (can use this value to test if
+            # changes should be made to existing 'match_using' values
+            # in the calling routine)
+            match_using = nil
+            # if input argument is not a string, return it unchanged
+            if tags.is_a? String
+              # first, use both possible separators to split the input string and
+              # determine if the string we're splitting by actually exists in the
+              # input string in each case
+              comma_split = tags.split(',')
+              includes_comma = (comma_split.size > 1)
+              or_split = tags.split('|')
+              includes_or = (or_split.size > 1)
+              # if found both separator strings, return an error
+              raise ProjectHanlon::Error::Slice::InputError, "Usage Error: mixed-use of ',' and '| as separators in policy tag strings is not supported)" if includes_comma && includes_or
+              # if the input string is an '|' separated string, then return the
+              # or_split values as the policy tags tags and an 'or' as the string
+              # for how those policy tags should be matched to a node
+              # it must be a ',' separated string or a single tag as a string
+              # (in which case it'll contain neither a ',' nor an '|')
+              if includes_or
+                return [or_split, 'or']
+              end
+              # otherwise, return the comma_split values as the policy tag(s)
+              # and an 'and' as the string for how to match the policy tag(s)
+              # to a node
+              return [comma_split, 'and']
+            end
+            # return the result and how those tags should be matched
+            [tags, match_using]
+          end
+
         end
 
         resource :policy do
@@ -155,7 +189,8 @@ module Hanlon
               broker = SLICE_REF.get_object("broker_by_uuid", :broker, broker_uuid)
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Broker UUID [#{broker_uuid}]" unless (broker && (broker.class != Array || broker.length > 0)) || broker_uuid == "none"
             end
-            tags = tags.split(",") unless tags.class.to_s == "Array"
+            # split the tags and determine how they should be matched to a node for this policy (either an 'and' or an 'or')
+            tags, match_using = split_tags(tags)
             raise ProjectHanlon::Error::Slice::MissingTags, "Must provide at least one tag ['tag(,tag)']" unless tags.count > 0
             raise ProjectHanlon::Error::Slice::InvalidMaximumCount, "Policy maximum count must be a valid integer" unless maximum.to_i.to_s == maximum
             raise ProjectHanlon::Error::Slice::InvalidMaximumCount, "Policy maximum count must be > 0" unless maximum.to_i >= 0
@@ -164,6 +199,7 @@ module Hanlon
             policy.model         = model
             policy.broker        = broker
             policy.tags          = tags
+            policy.match_using   = match_using if match_using
             policy.enabled       = enabled
             policy.is_template   = false
             policy.maximum_count = maximum
@@ -315,7 +351,7 @@ module Hanlon
               raise ProjectHanlon::Error::Slice::InvalidUUID, "Invalid Policy UUID [#{policy_uuid}]" unless policy && (policy.class != Array || policy.length > 0)
 
               if tags
-                tags = tags.split(",") if tags.is_a? String
+                tags, match_using = split_tags(tags)
                 raise ProjectHanlon::Error::Slice::MissingArgument, "Policy Tags ['tag(,tag)']" unless tags.count > 0
               end
               model = nil
@@ -344,6 +380,7 @@ module Hanlon
               policy.model = model if model
               policy.broker = broker if broker
               policy.tags = tags if tags
+              policy.match_using = match_using if match_using
               policy.enabled = enabled if enabled
               policy.maximum_count = maximum if maximum
               if new_line_number
