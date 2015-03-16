@@ -24,6 +24,9 @@ module ProjectHanlon
       attr_accessor :line_number
       attr_accessor :bind_counter
 
+      # used to determine how to match policies to nodes
+      attr_accessor :match_using
+
 
       # TODO - method for setting tags that removes duplicates
 
@@ -40,6 +43,7 @@ module ProjectHanlon
         @node_uuid = nil
         @bind_timestamp = nil
         @bound = false
+        @match_using = 'and'
         @noun = "policy"
 
         from_hash(hash) unless hash == nil
@@ -108,6 +112,10 @@ module ProjectHanlon
 
       end
 
+      def get_tag_string
+        @tags.join((@match_using == 'and' ? "," : '|'))
+      end
+
       def print_header
         if @bound
           return "Label", "State", "Node UUID", "Broker", "Bind #", "UUID"
@@ -129,7 +137,7 @@ module ProjectHanlon
             return @template.to_s, @description.to_s
           else
             max_num = @maximum_count.to_i == 0 ? '-' : @maximum_count
-            return @line_number.to_s, @enabled.to_s, @label, "[#{@tags.join(",")}]", @model.label.to_s, "#{@bind_counter}/#{max_num}", @model.counter.to_s, @uuid
+            return @line_number.to_s, @enabled.to_s, @label, "[#{get_tag_string}]", @model.label.to_s, "#{@bind_counter}/#{max_num}", @model.counter.to_s, @uuid
           end
         end
       end
@@ -154,6 +162,7 @@ module ProjectHanlon
            "Template",
            "Description",
            "Tags",
+           "Match Using",
            "Model Label",
            "Broker Target",
            "Currently Bound",
@@ -184,7 +193,8 @@ module ProjectHanlon
            @enabled.to_s,
            @template.to_s,
            @description,
-           "[#{@tags.join(", ")}]",
+           "[#{get_tag_string}]",
+           @match_using,
            @model.label.to_s,
            broker_name,
            #current_count.to_s,

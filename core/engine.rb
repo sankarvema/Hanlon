@@ -115,22 +115,22 @@ module ProjectHanlon
       begin
 
         # Loop through each policy checking node's tags to see if that match
-        @policies.get.each do
-        |pl|
+        @policies.get.each { |policy|
           # Make sure there is at least one tag
-          if pl.tags.count > 0
-            if check_tags(node.tags, pl.tags) && pl.enabled.to_s == "true" && pl.is_under_maximum?
-              logger.debug "Matching policy (#{pl.label}) for Node #{node.uuid} using tags#{pl.tags.inspect}"
+          if policy.tags.count > 0
+            if check_tags(node.tags, policy) && policy.enabled.to_s == "true" && policy.is_under_maximum?
+              logger.debug "Matching policy (#{policy.label}) for Node #{node.uuid} using tags#{policy.tags.inspect}"
               # We found a policy that matches
               # we call the policy binding and exit loop
-              mk_bind_policy(node, pl)
+              mk_bind_policy(node, policy)
               return
             end
           else
-            logger.error "Policy (#{pl.label}) has no tags configured"
+            logger.error "Policy (#{policy.label}) has no tags configured"
           end
           logger.debug "No matching rules"
-        end
+        }
+
       rescue => e
         logger.error e.message
       end
@@ -332,12 +332,18 @@ module ProjectHanlon
       nil
     end
 
-    def check_tags(node_tags, policy_tags)
+    def check_tags(node_tags, policy)
+      policy_tags = policy.tags
       logger.debug "Node Tags: #{node_tags}"
       logger.debug "Policy Tags: #{policy_tags}"
-      policy_tags.each do
-      |pt|
-        return false unless node_tags.include?(pt)
+      # if we are matching using an 'or' comparison, then
+      # check to see if the intersection of the two arrays
+      # is empty or not; otherwise check to see if the
+      # difference between the two arrays is empty or not
+      if policy.match_using == 'or'
+        return false if (policy_tags & node_tags).empty?
+      else
+        return false unless (policy_tags - node_tags).empty?
       end
       true
     end
@@ -474,4 +480,3 @@ module ProjectHanlon
 
   end
 end
-
